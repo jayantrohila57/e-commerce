@@ -1,12 +1,33 @@
-import { baseFilterSchema, baseResponse, updateBaseSchema } from '@/shared/schema/common'
-import { pgTable, serial, text, integer, timestamp, pgEnum } from 'drizzle-orm/pg-core'
+import {
+  baseFilterSchema,
+  baseResponse,
+  updateBaseSchema
+} from '@/shared/schema/common'
+import {
+  pgTable,
+  serial,
+  text,
+  integer,
+  timestamp,
+  pgEnum
+} from 'drizzle-orm/pg-core'
 
-import { createSelectSchema, createInsertSchema, createUpdateSchema } from 'drizzle-zod'
+import {
+  createSelectSchema,
+  createInsertSchema,
+  createUpdateSchema
+} from 'drizzle-zod'
 
 import { z } from 'zod'
 
 export const statusEnum = pgEnum('status', ['pending', 'in_progress', 'done'])
-export const labelEnum = pgEnum('label', ['personal', 'work', 'study', 'urgent', 'misc'])
+export const labelEnum = pgEnum('label', [
+  'personal',
+  'work',
+  'study',
+  'urgent',
+  'misc'
+])
 
 export const todos = pgTable('todos', {
   id: serial('id').primaryKey(),

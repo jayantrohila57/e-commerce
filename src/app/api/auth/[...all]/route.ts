@@ -14,12 +14,12 @@ import { env } from '@/shared/config/env'
 
 const aj = arcjet({
   key: env.ARKJET_API_KEY!,
-  log: {
-    debug: console.debug,
-    info: console.info,
-    warn: console.warn,
-    error: console.error
-  },
+  // log: {
+  //   debug: env.USE_DEBUG_LOGS ? console.debug : () => null,
+  //   info: env.USE_DEBUG_LOGS ? console.info : () => null,
+  //   warn: env.USE_DEBUG_LOGS ? console.warn : () => null,
+  //   error: env.USE_DEBUG_LOGS ? console.error : () => null
+  // },
   characteristics: ['userIdOrIp'],
   rules: [shield({ mode: 'LIVE' })]
 })
@@ -84,7 +84,12 @@ async function checkArcjet(request: Request) {
   const userIdOrIp = (session?.user.id ?? findIp(request)) || '127.0.0.1'
 
   if (request.url.endsWith('/auth/sign-in')) {
-    if (body && typeof body === 'object' && 'email' in body && typeof body.email === 'string') {
+    if (
+      body &&
+      typeof body === 'object' &&
+      'email' in body &&
+      typeof body.email === 'string'
+    ) {
       return aj
         .withRule(
           protectSignup({

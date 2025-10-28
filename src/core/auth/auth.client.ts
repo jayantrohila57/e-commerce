@@ -1,13 +1,20 @@
 import { createAuthClient } from 'better-auth/react'
 import { nextCookies } from 'better-auth/next-js'
-import { env } from '@/shared/config/env'
+import { inferAdditionalFields } from 'better-auth/client/plugins'
+import { auth } from './auth'
 
-export const { signIn, signUp, signOut, useSession, getSession, $Infer } = createAuthClient({
-  baseURL: env.BETTER_AUTH_URL,
-  emailAndPassword: {
-    enabled: true
-  },
-  plugins: [nextCookies()]
+export const {
+  $Infer,
+  signIn,
+  signUp,
+  signOut,
+  useSession,
+  getSession,
+  resetPassword,
+  sendVerificationEmail,
+  requestPasswordReset
+} = createAuthClient({
+  plugins: [nextCookies(), inferAdditionalFields<typeof auth>()]
 })
 
 export const getClientSession = async () => {

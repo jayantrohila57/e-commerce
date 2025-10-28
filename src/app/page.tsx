@@ -15,19 +15,23 @@ export default function Home() {
     <div className="my-6 px-4">
       <div className="space-y-6 text-left">
         {session == null ? (
-          <>
-            <h1 className="text-3xl font-bold">Welcome to Our App</h1>
+          <div className="flex flex-row gap-4">
             <Button asChild size="lg">
               <Link href="/auth/sign-in">Sign In</Link>
             </Button>
             <Button asChild size="lg">
               <Link href="/auth/sign-up">Sign Up</Link>
             </Button>
-          </>
+            <Button asChild size="lg">
+              <Link href="/auth/forgot-password">Forgot Password</Link>
+            </Button>
+          </div>
         ) : (
           <>
             <h1 className="text-3xl font-bold">Welcome {session.user.name}!</h1>
-            <code className="whitespace-pre-wrap">{JSON.stringify(session, null, 2)}</code>
+            <code className="whitespace-pre-wrap">
+              {JSON.stringify(session, null, 2)}
+            </code>
             <div className="flex justify-center gap-4">
               <Button asChild size="lg">
                 <Link href="/profile">Profile</Link>

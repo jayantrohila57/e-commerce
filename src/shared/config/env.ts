@@ -11,5 +11,5 @@ export const env = {
   RESEND_FROM_EMAIL: String(process.env.RESEND_FROM_EMAIL)!,
   VERCEL: process.env.VERCEL,
   DATABASE_URL: String(process.env.DATABASE_URL)!,
-  ARKJET_API_KEY: String(process.env.ARKJET_API_KEY)!,
+  ARKJET_API_KEY: String(process.env.ARKJET_API_KEY)!
 }

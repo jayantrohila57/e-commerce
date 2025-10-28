@@ -1,13 +1,18 @@
 import { getServerSession } from '@/core/auth/auth.server'
-import { SignUpForm } from '@/module/auth/components/auth.sign-up'
+import { EmailVerification } from '@/module/auth/components/auth.verify-email'
 import { redirect } from 'next/navigation'
 
-export default async function SignUpPage() {
+export default async function VerifyEmail({
+  searchParams
+}: {
+  searchParams: Promise<{ email: string }>
+}) {
+  const { email } = await searchParams
   const { session } = await getServerSession()
   if (session != null) redirect('/')
   return (
     <div className="flex h-screen items-center justify-center">
-      <SignUpForm />
+      <EmailVerification email={email} />
     </div>
   )
 }

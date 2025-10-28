@@ -3,13 +3,22 @@
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import z from 'zod'
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/shared/components/ui/form'
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage
+} from '@/shared/components/ui/form'
 import { Input } from '@/shared/components/ui/input'
 import { Button } from '@/shared/components/ui/button'
 
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
 import { signIn } from '@/core/auth/auth.client'
+import { SUPPORTED_OAUTH_PROVIDER_DETAILS } from '@/core/auth/auth.providers'
+import { Github } from 'lucide-react'
 
 const signInSchema = z.object({
   email: z.email().min(1),
@@ -60,7 +69,11 @@ export function SignInForm() {
               <FormItem>
                 <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <Input type="email" autoComplete="email webauthn" {...field} />
+                  <Input
+                    type="email"
+                    autoComplete="email webauthn"
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -84,7 +97,11 @@ export function SignInForm() {
                   </Button>
                 </div>
                 <FormControl>
-                  <Input type="password" autoComplete="current-password webauthn" {...field} />
+                  <Input
+                    type="password"
+                    autoComplete="current-password webauthn"
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -96,6 +113,19 @@ export function SignInForm() {
           </Button>
         </form>
       </Form>
+      <div className="">
+        <Button
+          variant="outline"
+          onClick={() => {
+            return signIn.social({
+              provider: 'github',
+              callbackURL: '/'
+            })
+          }}>
+          <Github />
+          {SUPPORTED_OAUTH_PROVIDER_DETAILS['github'].name}
+        </Button>
+      </div>
     </div>
   )
 }

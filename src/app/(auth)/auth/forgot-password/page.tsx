@@ -1,13 +1,13 @@
 import { getServerSession } from '@/core/auth/auth.server'
-import { SignUpForm } from '@/module/auth/components/auth.sign-up'
+import { ForgotPasswordForm } from '@/module/auth/components/auth.forgot-password'
 import { redirect } from 'next/navigation'
 
-export default async function SignUpPage() {
+export default async function ForgotPasswordPage() {
   const { session } = await getServerSession()
-  if (session != null) redirect('/')
+  if (session) redirect('/')
   return (
     <div className="flex h-screen items-center justify-center">
-      <SignUpForm />
+      <ForgotPasswordForm />
     </div>
   )
 }

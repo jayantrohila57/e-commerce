@@ -1,0 +1,12 @@
+export interface PageProps {
+  searchParams: Promise<{
+    page: string
+    limit: string
+    q: string
+    sortField: string
+    sortOrder: string
+  }>
+  params: Promise<{
+    slug: string
+  }>
+}

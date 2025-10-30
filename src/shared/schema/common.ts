@@ -7,19 +7,19 @@ export const baseFilterSchema = z.object({
   sort: z
     .object({
       column: z.string(),
-      order: z.enum(['asc', 'desc'])
+      order: z.enum(['asc', 'desc']),
     })
     .optional(),
-  filters: z.object({}).optional()
+  filters: z.object({}).optional(),
 })
 
 export const baseResponse = z.object({
   status: z.enum(['success', 'error', 'failed']),
   message: z.string(),
-  data: z.unknown()
+  data: z.unknown(),
 })
 
 export const updateBaseSchema = z.object({
   id: z.number(),
-  data: z.object({})
+  data: z.object({}),
 })

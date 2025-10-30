@@ -2,21 +2,26 @@ import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
   experimental: {
-    authInterrupts: true
+    authInterrupts: true,
+    typedEnv: true,
   },
+  typescript: {
+    tsconfigPath: 'tsconfig.json',
+  },
+  typedRoutes: true,
   reactCompiler: true,
   images: {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'lh3.googleusercontent.com'
+        hostname: 'lh3.googleusercontent.com',
       },
       {
         protocol: 'https',
-        hostname: 'avatars.githubusercontent.com'
-      }
-    ]
-  }
+        hostname: 'avatars.githubusercontent.com',
+      },
+    ],
+  },
 }
 
 export default nextConfig

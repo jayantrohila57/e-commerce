@@ -3,14 +3,7 @@
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import z from 'zod'
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage
-} from '@/shared/components/ui/form'
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/shared/components/ui/form'
 import { Input } from '@/shared/components/ui/input'
 import { Button } from '@/shared/components/ui/button'
 import { toast } from 'sonner'
@@ -21,7 +14,7 @@ const signUpSchema = z.object({
   name: z.string().min(1),
   email: z.email().min(1),
   password: z.string().min(6),
-  favoriteNumber: z.string().nullable()
+  favoriteNumber: z.string().nullable(),
 })
 
 type SignUpForm = z.infer<typeof signUpSchema>
@@ -34,8 +27,8 @@ export function SignUpForm() {
       name: '',
       email: '',
       password: '',
-      favoriteNumber: '2'
-    }
+      favoriteNumber: '2',
+    },
   })
 
   const openEmailVerificationTab = (email: string) => {
@@ -48,13 +41,13 @@ export function SignUpForm() {
       { ...data },
       {
         onSuccess: ({ data }) => {
-          router.push('/auth/verify-email?email=' + data?.user?.email)
+          router.push(`/auth/verify-email?email=${data?.user?.email}`)
           toast.success('Sign up successful')
         },
         onError: (error) => {
           toast.error(error.error.message || 'Failed to sign up')
-        }
-      }
+        },
+      },
     )
 
     if (res.error == null && !res.data.user.emailVerified) {
@@ -64,7 +57,10 @@ export function SignUpForm() {
 
   return (
     <Form {...form}>
-      <form className="space-y-4" onSubmit={form.handleSubmit(handleSignUp)}>
+      <form
+        className="space-y-4"
+        onSubmit={void form.handleSubmit(handleSignUp)}
+      >
         <FormField
           control={form.control}
           name="name"
@@ -86,7 +82,10 @@ export function SignUpForm() {
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input type="email" {...field} />
+                <Input
+                  type="email"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -100,14 +99,21 @@ export function SignUpForm() {
             <FormItem>
               <FormLabel>Password</FormLabel>
               <FormControl>
-                <Input type="password" {...field} />
+                <Input
+                  type="password"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
 
-        <Button type="submit" disabled={isSubmitting} className="w-full">
+        <Button
+          type="submit"
+          disabled={isSubmitting}
+          className="w-full"
+        >
           {isSubmitting ? 'Loading...' : 'Sign Up'}
         </Button>
       </form>

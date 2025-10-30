@@ -1,11 +1,17 @@
 {
-  "plugins": ["prettier-plugin-tailwindcss"],
-  "bracketSameLine": true,
+  "printWidth": 120,
   "semi": false,
   "singleQuote": true,
-  "trailingComma": "none",
-  "printWidth": 80,
+  "trailingComma": "all",
+  "singleAttributePerLine": true,
+  "objectWrap": "preserve",
+  "proseWrap": "preserve",
+  "quoteProps": "as-needed",
+  "bracketSameLine": false,
   "tabWidth": 2,
+  "useTabs": false,
+  "bracketSpacing": true,
   "arrowParens": "always",
-  "endOfLine": "auto"
+  "endOfLine": "auto",
+  "plugins": ["prettier-plugin-tailwindcss"]
 }

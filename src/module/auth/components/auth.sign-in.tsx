@@ -3,14 +3,7 @@
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import z from 'zod'
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage
-} from '@/shared/components/ui/form'
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/shared/components/ui/form'
 import { Input } from '@/shared/components/ui/input'
 import { Button } from '@/shared/components/ui/button'
 
@@ -19,10 +12,11 @@ import { useRouter } from 'next/navigation'
 import { signIn } from '@/core/auth/auth.client'
 import { SUPPORTED_OAUTH_PROVIDER_DETAILS } from '@/core/auth/auth.providers'
 import { Github } from 'lucide-react'
+import { PasskeyButton } from './auth.passkey-button'
 
 const signInSchema = z.object({
   email: z.email().min(1),
-  password: z.string().min(6)
+  password: z.string().min(6),
 })
 
 type SignInForm = z.infer<typeof signInSchema>
@@ -33,11 +27,15 @@ export function SignInForm() {
     resolver: zodResolver(signInSchema),
     defaultValues: {
       email: '',
-      password: ''
-    }
+      password: '',
+    },
   })
-  const openEmailVerificationTab = (email: string) => {}
-  const openForgotPassword = () => {}
+  const openEmailVerificationTab = (email: string) => {
+    void email
+  }
+  const openForgotPassword = () => {
+    return null
+  }
 
   const { isSubmitting } = form.formState
 
@@ -53,15 +51,18 @@ export function SignInForm() {
         },
         onSuccess: () => {
           router.push('/')
-        }
-      }
+        },
+      },
     )
   }
 
   return (
     <div className="space-y-4">
       <Form {...form}>
-        <form className="space-y-4" onSubmit={form.handleSubmit(handleSignIn)}>
+        <form
+          className="space-y-4"
+          onSubmit={void form.handleSubmit(handleSignIn)}
+        >
           <FormField
             control={form.control}
             name="email"
@@ -92,7 +93,8 @@ export function SignInForm() {
                     type="button"
                     variant="link"
                     size="sm"
-                    className="text-sm font-normal underline">
+                    className="text-sm font-normal underline"
+                  >
                     Forgot password?
                   </Button>
                 </div>
@@ -108,7 +110,11 @@ export function SignInForm() {
             )}
           />
 
-          <Button type="submit" disabled={isSubmitting} className="w-full">
+          <Button
+            type="submit"
+            disabled={isSubmitting}
+            className="w-full"
+          >
             {isSubmitting ? 'Signing in...' : 'Sign In'}
           </Button>
         </form>
@@ -117,15 +123,17 @@ export function SignInForm() {
         <Button
           variant="outline"
           onClick={() => {
-            return signIn.social({
+            void signIn.social({
               provider: 'github',
-              callbackURL: '/'
+              callbackURL: '/',
             })
-          }}>
+          }}
+        >
           <Github />
-          {SUPPORTED_OAUTH_PROVIDER_DETAILS['github'].name}
+          {SUPPORTED_OAUTH_PROVIDER_DETAILS.github.name}
         </Button>
       </div>
+      <PasskeyButton />
     </div>
   )
 }

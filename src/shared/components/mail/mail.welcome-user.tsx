@@ -1,12 +1,4 @@
-import {
-  Html,
-  Head,
-  Body,
-  Preview,
-  Container,
-  Text,
-  Section
-} from '@react-email/components'
+import { Html, Head, Body, Preview, Container, Text, Section } from '@react-email/components'
 
 interface WelcomeEmailProps {
   name: string
@@ -22,8 +14,8 @@ export const WelcomeEmail = ({ name }: WelcomeEmailProps) => (
           <Text style={headingStyle}>Welcome to Our App!</Text>
           <Text>Hello {name},</Text>
           <Text>
-            Thank you for signing up for our app! We’re thrilled to have you on
-            board. Explore, build, and make something amazing.
+            Thank you for signing up for our app! We’re thrilled to have you on board. Explore, build, and make
+            something amazing.
           </Text>
           <Text>
             Best regards,
@@ -38,7 +30,7 @@ export const WelcomeEmail = ({ name }: WelcomeEmailProps) => (
 
 const bodyStyle = {
   backgroundColor: '#f9f9f9',
-  fontFamily: 'Arial, sans-serif'
+  fontFamily: 'Arial, sans-serif',
 }
 
 const containerStyle = {
@@ -46,11 +38,11 @@ const containerStyle = {
   padding: '32px',
   borderRadius: '8px',
   maxWidth: '600px',
-  margin: '0 auto'
+  margin: '0 auto',
 }
 
 const headingStyle = {
   color: '#333',
   fontSize: '22px',
-  fontWeight: 'bold'
+  fontWeight: 'bold',
 }

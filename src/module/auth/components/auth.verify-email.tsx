@@ -32,27 +32,27 @@ export function EmailVerification({ email }: { email: string }) {
     return () => clearTimeout(timer)
   }, [])
 
+  const handleResendEmail = () => {
+    startEmailVerificationCountdown()
+    void sendVerificationEmail({
+      email,
+      callbackURL: '/',
+    })
+  }
+
   return (
     <div className="space-y-4">
       <p className="mt-2 text-sm">
-        We sent you a verification link. Please check your email and click the
-        link to verify your account.
+        We sent you a verification link. Please check your email and click the link to verify your account.
       </p>
 
       <Button
         variant="outline"
         className="w-full"
         disabled={timeToNextResend > 0}
-        onClick={() => {
-          startEmailVerificationCountdown()
-          return sendVerificationEmail({
-            email,
-            callbackURL: '/'
-          })
-        }}>
-        {timeToNextResend > 0
-          ? `Resend Email (${timeToNextResend})`
-          : 'Resend Email'}
+        onClick={handleResendEmail}
+      >
+        {timeToNextResend > 0 ? `Resend Email (${timeToNextResend})` : 'Resend Email'}
       </Button>
     </div>
   )

@@ -1,33 +1,12 @@
-import {
-  baseFilterSchema,
-  baseResponse,
-  updateBaseSchema
-} from '@/shared/schema/common'
-import {
-  pgTable,
-  serial,
-  text,
-  integer,
-  timestamp,
-  pgEnum
-} from 'drizzle-orm/pg-core'
+import { baseFilterSchema, baseResponse, updateBaseSchema } from '@/shared/schema/common'
+import { pgTable, serial, text, integer, timestamp, pgEnum } from 'drizzle-orm/pg-core'
 
-import {
-  createSelectSchema,
-  createInsertSchema,
-  createUpdateSchema
-} from 'drizzle-zod'
+import { createSelectSchema, createInsertSchema, createUpdateSchema } from 'drizzle-zod'
 
-import { z } from 'zod'
+import { type z } from 'zod'
 
 export const statusEnum = pgEnum('status', ['pending', 'in_progress', 'done'])
-export const labelEnum = pgEnum('label', [
-  'personal',
-  'work',
-  'study',
-  'urgent',
-  'misc'
-])
+export const labelEnum = pgEnum('label', ['personal', 'work', 'study', 'urgent', 'misc'])
 
 export const todos = pgTable('todos', {
   id: serial('id').primaryKey(),
@@ -36,7 +15,7 @@ export const todos = pgTable('todos', {
   label: labelEnum().notNull().default('misc'),
   priority: integer('priority').notNull().default(1),
   createdAt: timestamp('created_at').defaultNow().notNull(),
-  updatedAt: timestamp('updated_at').defaultNow().notNull()
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
 })
 
 const todoSelectSchema = createSelectSchema(todos)
@@ -46,50 +25,50 @@ const todoUpdateSchema = createUpdateSchema(todos)
 const todosSchema = {
   get: {
     input: todoSelectSchema.pick({
-      id: true
+      id: true,
     }),
     output: baseResponse.extend({
-      data: todoSelectSchema
-    })
+      data: todoSelectSchema,
+    }),
   },
   getMany: {
     input: baseFilterSchema.extend({
       filters: todoSelectSchema.pick({
         status: true,
         label: true,
-        priority: true
-      })
+        priority: true,
+      }),
     }),
     output: baseResponse.extend({
-      data: todoSelectSchema.array()
-    })
+      data: todoSelectSchema.array(),
+    }),
   },
   create: {
     input: todoInsertSchema.omit({
       id: true,
       createdAt: true,
-      updatedAt: true
+      updatedAt: true,
     }),
     output: baseResponse.extend({
-      data: todoSelectSchema
-    })
+      data: todoSelectSchema,
+    }),
   },
   update: {
     input: updateBaseSchema.extend({
       data: todoUpdateSchema.omit({
         id: true,
         createdAt: true,
-        updatedAt: true
-      })
+        updatedAt: true,
+      }),
     }),
     output: baseResponse.extend({
-      data: todoSelectSchema
-    })
+      data: todoSelectSchema,
+    }),
   },
   delete: {
     input: updateBaseSchema,
-    output: baseResponse
-  }
+    output: baseResponse,
+  },
 }
 
 export default todosSchema

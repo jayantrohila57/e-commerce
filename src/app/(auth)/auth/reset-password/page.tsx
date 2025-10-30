@@ -3,7 +3,7 @@ import ResetPasswordForm from '@/module/auth/components/auth.reset-password'
 import { redirect } from 'next/navigation'
 
 export default async function ResetPasswordPage({
-  searchParams
+  searchParams,
 }: {
   searchParams: Promise<{ token: string; error: string }>
 }) {
@@ -12,7 +12,10 @@ export default async function ResetPasswordPage({
   if (session) redirect('/')
   return (
     <div className="flex h-screen items-center justify-center">
-      <ResetPasswordForm token={token} error={error} />
+      <ResetPasswordForm
+        token={token}
+        error={error}
+      />
     </div>
   )
 }

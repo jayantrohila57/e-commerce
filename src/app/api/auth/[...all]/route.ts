@@ -1,114 +1,21 @@
 import { toNextJsHandler } from 'better-auth/next-js'
-import arcjet, {
-  BotOptions,
-  detectBot,
-  EmailOptions,
-  protectSignup,
-  shield,
-  slidingWindow,
-  SlidingWindowRateLimitOptions
-} from '@arcjet/next'
-import { findIp } from '@arcjet/ip'
 import { auth } from '@/core/auth/auth'
-import { env } from '@/shared/config/env'
-
-const aj = arcjet({
-  key: env.ARKJET_API_KEY!,
-  // log: {
-  //   debug: env.USE_DEBUG_LOGS ? console.debug : () => null,
-  //   info: env.USE_DEBUG_LOGS ? console.info : () => null,
-  //   warn: env.USE_DEBUG_LOGS ? console.warn : () => null,
-  //   error: env.USE_DEBUG_LOGS ? console.error : () => null
-  // },
-  characteristics: ['userIdOrIp'],
-  rules: [shield({ mode: 'LIVE' })]
-})
-
-const botSettings = {
-  mode: 'LIVE',
-  allow: ['STRIPE_WEBHOOK']
-} satisfies BotOptions
-
-const restrictiveRateLimitSettings = {
-  mode: 'LIVE',
-  max: 1,
-  interval: '10m'
-} satisfies SlidingWindowRateLimitOptions<[]>
-
-const laxRateLimitSettings = {
-  mode: 'LIVE',
-  max: 2,
-  interval: '1m'
-} satisfies SlidingWindowRateLimitOptions<[]>
-
-const emailSettings = {
-  mode: 'LIVE',
-  block: ['DISPOSABLE', 'INVALID', 'NO_MX_RECORDS']
-} satisfies EmailOptions
+import { checkArcjet } from './arkjet.config'
 
 const authHandlers = toNextJsHandler(auth)
 export const { GET } = authHandlers
 
 export async function POST(request: Request) {
   const clonedRequest = request.clone()
-  const decision = await checkArcjet(request)
-
-  if (decision.isDenied()) {
-    if (decision.reason.isRateLimit()) {
-      return new Response(null, { status: 429 })
-    } else if (decision.reason.isEmail()) {
-      let message: string
-
-      if (decision.reason.emailTypes.includes('INVALID')) {
-        message = 'Email address format is invalid.'
-      } else if (decision.reason.emailTypes.includes('DISPOSABLE')) {
-        message = 'Disposable email addresses are not allowed.'
-      } else if (decision.reason.emailTypes.includes('NO_MX_RECORDS')) {
-        message = 'Email domain is not valid.'
-      } else {
-        message = 'Invalid email.'
-      }
-
-      return Response.json({ message }, { status: 400 })
-    } else {
-      return new Response(null, { status: 403 })
+  if (request) {
+    const decision = await checkArcjet(request)
+    if (decision.isDenied()) {
+      return new Response(null, {
+        status: 403,
+        statusText: 'Too many requests Please try again later',
+      })
     }
+    return authHandlers.POST(clonedRequest)
   }
-
   return authHandlers.POST(clonedRequest)
-}
-
-async function checkArcjet(request: Request) {
-  const body = (await request.json()) as unknown
-  const session = await auth.api.getSession({ headers: request.headers })
-  const userIdOrIp = (session?.user.id ?? findIp(request)) || '127.0.0.1'
-
-  if (request.url.endsWith('/auth/sign-in')) {
-    if (
-      body &&
-      typeof body === 'object' &&
-      'email' in body &&
-      typeof body.email === 'string'
-    ) {
-      return aj
-        .withRule(
-          protectSignup({
-            email: emailSettings,
-            bots: botSettings,
-            rateLimit: restrictiveRateLimitSettings
-          })
-        )
-        .protect(request, { email: body.email, userIdOrIp })
-    } else {
-      return aj
-        .withRule(detectBot(botSettings))
-        .withRule(slidingWindow(restrictiveRateLimitSettings))
-        .protect(request, { userIdOrIp })
-    }
-  }
-
-  return aj
-    .withRule(detectBot(botSettings))
-    .withRule(slidingWindow(laxRateLimitSettings))
-    .protect(request, { userIdOrIp })
 }

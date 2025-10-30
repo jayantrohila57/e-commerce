@@ -1,20 +1,35 @@
 import { createAuthClient } from 'better-auth/react'
 import { nextCookies } from 'better-auth/next-js'
-import { inferAdditionalFields } from 'better-auth/client/plugins'
-import { auth } from './auth'
+import { inferAdditionalFields, twoFactorClient, passkeyClient } from 'better-auth/client/plugins'
+import { type auth } from './auth'
 
 export const {
   $Infer,
   signIn,
   signUp,
   signOut,
+  twoFactor,
   useSession,
   getSession,
+  updateUser,
+  changeEmail,
   resetPassword,
+  revokeSession,
+  changePassword,
+  revokeOtherSessions,
   sendVerificationEmail,
-  requestPasswordReset
+  requestPasswordReset,
 } = createAuthClient({
-  plugins: [nextCookies(), inferAdditionalFields<typeof auth>()]
+  plugins: [
+    nextCookies(),
+    passkeyClient(),
+    twoFactorClient({
+      onTwoFactorRedirect: () => {
+        window.location.href = '/auth/2fa'
+      },
+    }),
+    inferAdditionalFields<typeof auth>(),
+  ],
 })
 
 export const getClientSession = async () => {

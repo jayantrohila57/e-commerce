@@ -9,5 +9,5 @@ export const verification = pgTable('verification', {
   updatedAt: timestamp('updated_at')
     .defaultNow()
     .$onUpdate(() => /* @__PURE__ */ new Date())
-    .notNull()
+    .notNull(),
 })

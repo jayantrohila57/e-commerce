@@ -1,6 +1,6 @@
-import type { Route } from 'next'
+// import type { Route } from 'next'
 
-type RouteTree = Route | ((...params: [string, ...string[]]) => Route) | { [key: string]: RouteTree }
+// type RouteTree = Route | ((...params: [string, ...string[]]) => Route) | { [key: string]: RouteTree }
 
 export const PATH = {
   ROOT: '/',
@@ -10,13 +10,11 @@ export const PATH = {
     SIGN_UP: '/auth/sign-up',
     FORGOT_PASSWORD: '/auth/forgot-password',
     RESET_PASSWORD: '/auth/reset-password',
-    LOGOUT: '/auth/sign-out',
   },
   ACCOUNT: {
     ROOT: '/account',
     PROFILE: '/account/profile',
     SECURITY: '/account/security',
-    SESSION: '/account/session',
   },
   STORE: {
     ROOT: '/store',
@@ -66,6 +64,6 @@ export const PATH = {
     RSS: '/rss.xml',
     SITEMAP: '/sitemap.xml',
   },
-} as const satisfies RouteTree
+} as const
 
 export type AppRoutes = typeof PATH

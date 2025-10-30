@@ -1,50 +1,59 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/shared/components/ui/card'
 import Link from 'next/link'
-import { User, Key, Link2, Trash2, Settings, Lock, Fingerprint } from 'lucide-react'
+import { User, Settings, type LucideIcon } from 'lucide-react'
 
-const accountSections = [
+import type { Route } from 'next'
+
+type NavItem<T extends string = string> = {
+  href: T
+  title: string
+  description: string
+  icon: LucideIcon
+}
+
+const accountSections: NavItem<Route>[] = [
   {
     title: 'Profile Update',
     href: '/account/profile',
     icon: User,
     description: 'Update your personal information, name, and email address',
   },
-  {
-    title: 'Change Password',
-    href: '/account/password',
-    icon: Key,
-    description: 'Update your password to keep your account secure',
-  },
-  {
-    title: 'Two-Factor Authentication',
-    href: '/account/two-factor',
-    icon: Lock,
-    description: 'Add an extra layer of security to your account',
-  },
-  {
-    title: 'Passkey Management',
-    href: '/account/passkeys',
-    icon: Fingerprint,
-    description: 'Manage your passkeys for passwordless authentication',
-  },
+  // {
+  //   title: 'Change Password',
+  //   href: '/account/password',
+  //   icon: Key,
+  //   description: 'Update your password to keep your account secure',
+  // },
+  // {
+  //   title: 'Two-Factor Authentication',
+  //   href: '/account/two-factor',
+  //   icon: Lock,
+  //   description: 'Add an extra layer of security to your account',
+  // },
+  // {
+  //   title: 'Passkey Management',
+  //   href: '/account/passkeys',
+  //   icon: Fingerprint,
+  //   description: 'Manage your passkeys for passwordless authentication',
+  // },
   {
     title: 'Session Management',
     href: '/account/sessions',
     icon: Settings,
     description: 'View and manage all active sessions across devices',
   },
-  {
-    title: 'Account Linking',
-    href: '/account/linking',
-    icon: Link2,
-    description: 'Connect your account with external providers',
-  },
-  {
-    title: 'Account Deletion',
-    href: '/account/delete',
-    icon: Trash2,
-    description: 'Permanently delete your account and all associated data',
-  },
+  // {
+  //   title: 'Account Linking',
+  //   href: '/account/linking',
+  //   icon: Link2,
+  //   description: 'Connect your account with external providers',
+  // },
+  // {
+  //   title: 'Account Deletion',
+  //   href: '/account/delete',
+  //   icon: Trash2,
+  //   description: 'Permanently delete your account and all associated data',
+  // },
 ]
 
 export default function AccountRootComponent() {

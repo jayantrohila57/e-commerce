@@ -3,16 +3,17 @@ import { Button } from '../../ui/button'
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from '../../ui/card'
 import { slugToTitle } from '@/shared/utils/lib/url.utils'
 import GoBackButton from '../../common/go-back'
+import type { Route } from 'next'
 
-interface SectionProps {
+interface SectionProps<T extends string = string> {
   title?: string
   description?: string
   action?: string
-  actionUrl?: string
+  actionUrl?: T
   children: React.ReactNode
 }
 
-export default function DashboardSection({ title, description, action, actionUrl, children }: SectionProps) {
+export default function DashboardSection({ title, description, action, actionUrl, children }: SectionProps<Route>) {
   return (
     <Card className="bg-card h-full w-full gap-0 rounded-md pb-0">
       {title && description && (

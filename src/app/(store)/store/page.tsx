@@ -8,7 +8,7 @@ export const metadata = {
   description: 'Store Home',
 }
 
-export default async function StorePage({ params, searchParams }: PageProps<NextUrls['PRODUCTS']>) {
+export default async function StorePage({ params, searchParams }: PageProps<NextUrls['STORE']>) {
   const syncParam = await params
   const syncSearchParams = await searchParams
   const { session, user } = await getServerSession()

@@ -18,6 +18,9 @@ import { AuthSignOutButton } from '@/module/auth/components/auth.sign-out-button
 import { Button } from '@/shared/components/ui/button'
 
 import type { Route } from 'next'
+import Shell from '@/shared/components/layout/shell'
+import Header from '@/shared/components/layout/header/header'
+import Section from '@/shared/components/layout/section/section'
 
 type NavItem<T extends string = string> = {
   href: T
@@ -47,70 +50,84 @@ const accountSections: NavItem<Route>[] = [
   },
 ]
 
+export const metadata = {
+  title: 'Account',
+  description: 'Account Description',
+}
 export default async function AccountLayout({ children }: { children: React.ReactNode }) {
   const session = await getServerSession()
 
   return (
-    <div className="bg-background min-h-screen">
-      <div className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-4">
-          {/* Sidebar Navigation */}
-          <aside className="lg:col-span-1">
-            <Card>
-              <CardHeader>
-                <div className="flex flex-row items-center justify-start gap-4">
-                  <div className="">
-                    <Avatar className="h-12 w-12">
-                      <AvatarImage
-                        src={session?.user?.image || ''}
-                        alt="User avatar"
-                      />
-                      <AvatarFallback className="text-lg">NA</AvatarFallback>
-                    </Avatar>
-                  </div>
-                  <div className="">
-                    <CardTitle>{session?.user?.name || 'User Profile'}</CardTitle>
-                    <CardDescription>{session?.user?.email}</CardDescription>
-                  </div>
-                </div>
-                <CardAction>
-                  <Badge>{session?.user?.role ?? 'User'}</Badge>
-                </CardAction>
-              </CardHeader>
-              <Separator className="my-0" />
-              <CardContent>
-                <div className="mb-4 text-lg font-semibold">Account Setting</div>
-                <nav className="flex flex-col gap-4">
-                  {accountSections.map((section) => {
-                    const Icon = section.icon
-                    return (
-                      <Link
-                        key={section.href}
-                        href={section.href}
-                      >
-                        <Button
-                          variant="outline"
-                          className="flex w-full items-center justify-start"
-                        >
-                          <Icon className="h-4 w-4" />
-                          <span>{section.title}</span>
-                        </Button>
-                      </Link>
-                    )
-                  })}
-                </nav>
-              </CardContent>
-              <Separator className="my-0" />
-              <CardFooter>
-                <AuthSignOutButton />
-              </CardFooter>
-            </Card>
-          </aside>
+    <Shell>
+      <Shell.Header>
+        <Header />
+      </Shell.Header>
+      <Shell.Main>
+        <Shell.Section>
+          <Section {...metadata}>
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-4">
+              {/* Sidebar Navigation */}
+              <aside className="lg:col-span-1">
+                <Card>
+                  <CardHeader>
+                    <div className="flex flex-row items-center justify-start gap-4">
+                      <div className="">
+                        <Avatar className="h-12 w-12">
+                          <AvatarImage
+                            src={session?.user?.image || ''}
+                            alt="User avatar"
+                          />
+                          <AvatarFallback className="text-lg">NA</AvatarFallback>
+                        </Avatar>
+                      </div>
+                      <div className="">
+                        <CardTitle>{session?.user?.name || 'User Profile'}</CardTitle>
+                        <CardDescription>{session?.user?.email}</CardDescription>
+                      </div>
+                    </div>
+                    <CardAction>
+                      <Badge>{session?.user?.role ?? 'User'}</Badge>
+                    </CardAction>
+                  </CardHeader>
+                  <Separator className="my-0" />
+                  <CardContent>
+                    <div className="mb-4 text-lg font-semibold">Account Setting</div>
+                    <nav className="flex flex-col gap-4">
+                      {accountSections.map((section) => {
+                        const Icon = section.icon
+                        return (
+                          <Link
+                            key={section.href}
+                            href={section.href}
+                          >
+                            <Button
+                              variant="outline"
+                              className="flex w-full items-center justify-start"
+                            >
+                              <Icon className="h-4 w-4" />
+                              <span>{section.title}</span>
+                            </Button>
+                          </Link>
+                        )
+                      })}
+                    </nav>
+                  </CardContent>
+                  <Separator className="my-0" />
+                  <CardFooter>
+                    <AuthSignOutButton />
+                  </CardFooter>
+                </Card>
+              </aside>
 
-          {/* Main Content */}
-          <main className="lg:col-span-3">{children}</main>
-        </div>
-      </div>
-    </div>
+              {/* Main Content */}
+              <main className="lg:col-span-3">{children}</main>
+            </div>
+          </Section>
+        </Shell.Section>
+      </Shell.Main>
+      <Shell.Footer>
+        <div className="footer">footer</div>
+      </Shell.Footer>
+    </Shell>
   )
 }

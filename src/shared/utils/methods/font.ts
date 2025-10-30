@@ -1,4 +1,4 @@
-import { Poppins as Font } from 'next/font/google'
+import { Poppins as Font, Oswald as SecondaryFont } from 'next/font/google'
 
 const font = Font({
   subsets: ['latin'],
@@ -6,10 +6,10 @@ const font = Font({
   weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
 })
 
-const monoFont = Font({
+const secondaryFont = SecondaryFont({
   subsets: ['latin'],
-  variable: '--font-geist-mono',
-  weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
+  variable: '--font-oswald-sans',
+  weight: ['200', '300', '400', '500', '600', '700'],
 })
 
 const viewport = {
@@ -21,6 +21,6 @@ const viewport = {
   initialScale: 1,
 }
 
-const className = `${font.variable} ${monoFont.variable} antialiased`
+const className = `${font.variable} ${secondaryFont.variable} antialiased`
 
 export { font, viewport, className }

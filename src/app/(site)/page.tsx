@@ -44,7 +44,7 @@ export default async function Home({}: PageProps<NextUrls['ROOT']>) {
               ) : (
                 <>
                   <h1 className="text-3xl font-bold">Welcome {user?.name}!</h1>
-                  <code className="whitespace-pre-wrap">{JSON.stringify(session, null, 2)}</code>
+                  <code className="whitespace-pre-wrap">{JSON.stringify({ session, user }, null, 2)}</code>
                   <div className="flex justify-center gap-4">
                     <Button
                       asChild

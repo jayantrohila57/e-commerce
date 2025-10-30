@@ -1,0 +1,85 @@
+'use client'
+
+import { ChevronsUpDown, UserIcon } from 'lucide-react'
+import { Avatar, AvatarFallback, AvatarImage } from '@/shared/components/ui/avatar'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/shared/components/ui/dropdown-menu'
+
+import Link from 'next/link'
+import { Button } from '@/shared/components/ui/button'
+import { type User } from 'better-auth'
+import { PATH } from '@/shared/config/routes'
+import { SignOutDropdownMenuItem } from '@/module/auth/components/auth.sign-out-dropdown'
+
+export function UserDropdown({ user }: { user: User }) {
+  const fallbackName = user?.name
+    ?.split(' ')
+    ?.map((name) => name?.[0])
+    ?.join('')
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button
+          variant="ghost"
+          className="flex h-10 items-center gap-4 bg-transparent px-2"
+        >
+          <div className="flex items-center gap-2 px-0 py-1.5 text-left text-sm">
+            <Avatar className="h-8 w-8 rounded-full">
+              <AvatarImage
+                src={user?.image ?? ''}
+                alt={user?.name ?? ''}
+              />
+              <AvatarFallback className="text-primary rounded-lg border-none">{fallbackName}</AvatarFallback>
+            </Avatar>
+            <div className="grid flex-1 text-left text-sm leading-tight">
+              <span className="w-auto truncate font-medium">{user?.name}</span>
+              <span className="text-muted-foreground w-auto truncate text-xs">{user?.email}</span>
+            </div>
+            <ChevronsUpDown className="text-muted-foreground ml-auto h-8" />
+          </div>
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent
+        className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
+        side={'bottom'}
+        align="end"
+        sideOffset={4}
+      >
+        <DropdownMenuLabel className="p-0 font-normal">
+          <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
+            <Avatar className="h-8 w-8 rounded-lg">
+              <AvatarImage
+                src={user?.image ?? ''}
+                alt={user?.name ?? ''}
+              />
+              <AvatarFallback className="rounded-lg">{fallbackName}</AvatarFallback>
+            </Avatar>
+            <div className="hidden flex-1 text-left text-sm leading-tight md:grid">
+              <span className="truncate font-medium">{user?.name}</span>
+              <span className="truncate text-xs">{user?.email}</span>
+            </div>
+          </div>
+        </DropdownMenuLabel>
+        <DropdownMenuGroup>
+          <Link href={PATH.ACCOUNT.ROOT}>
+            <DropdownMenuItem>
+              <UserIcon />
+              {'Account'}
+            </DropdownMenuItem>
+          </Link>
+        </DropdownMenuGroup>
+        <DropdownMenuSeparator />
+        <DropdownMenuGroup>
+          <SignOutDropdownMenuItem />
+        </DropdownMenuGroup>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  )
+}

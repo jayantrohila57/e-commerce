@@ -1,122 +1,112 @@
 'use client'
 
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import z from 'zod'
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/shared/components/ui/form'
-import { Input } from '@/shared/components/ui/input'
-import { Button } from '@/shared/components/ui/button'
+import type z from 'zod/v3'
 import { toast } from 'sonner'
 import { signUp } from '@/core/auth/auth.client'
 import { useRouter } from 'next/navigation'
+import { AuthSchema } from '../dto/auth-schema'
+import Form from '@/shared/components/form/form'
+import { useTransition } from 'react'
+import { Separator } from '@/shared/components/ui/separator'
+import { Shield } from 'lucide-react'
+import Link from 'next/link'
+import { PATH } from '@/shared/config/routes'
+import { Button } from '@/shared/components/ui/button'
 
-const signUpSchema = z.object({
-  name: z.string().min(1),
-  email: z.email().min(1),
-  password: z.string().min(6),
-  favoriteNumber: z.string().nullable(),
-})
-
-type SignUpForm = z.infer<typeof signUpSchema>
+type FormValues = z.infer<typeof AuthSchema.SIGN_UP.INPUT>
 
 export function SignUpForm() {
   const router = useRouter()
-  const form = useForm<SignUpForm>({
-    resolver: zodResolver(signUpSchema),
-    defaultValues: {
-      name: '',
-      email: '',
-      password: '',
-      favoriteNumber: '2',
-    },
-  })
+  const [isPending, startTransition] = useTransition()
 
-  const openEmailVerificationTab = (email: string) => {
-    return email
+  async function handleSubmit(data: FormValues) {
+    startTransition(async () => {
+      const res = await signUp.email(
+        { ...data },
+        {
+          onSuccess: ({ data }) => {
+            router.push(`/auth/verify-email?email=${data?.user?.email}`)
+            toast.success('Sign up successful')
+          },
+          onError: (error) => {
+            toast.error(error.error.message || 'Failed to sign up')
+          },
+        },
+      )
+
+      if (res.error == null && !res.data.user.emailVerified) {
+        router.push(`/auth/verify-email?email=${res?.data?.user?.email}`)
+      }
+    })
   }
-  const { isSubmitting } = form.formState
 
-  async function handleSignUp(data: SignUpForm) {
-    const res = await signUp.email(
-      { ...data },
-      {
-        onSuccess: ({ data }) => {
-          router.push(`/auth/verify-email?email=${data?.user?.email}`)
-          toast.success('Sign up successful')
-        },
-        onError: (error) => {
-          toast.error(error.error.message || 'Failed to sign up')
-        },
-      },
-    )
-
-    if (res.error == null && !res.data.user.emailVerified) {
-      openEmailVerificationTab(data.email)
-    }
+  function onSubmit(data: FormValues) {
+    void handleSubmit({ ...data, email: data?.email?.toLowerCase() })
   }
 
   return (
-    <Form {...form}>
-      <form
-        className="space-y-4"
-        onSubmit={void form.handleSubmit(handleSignUp)}
-      >
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Name</FormLabel>
-              <FormControl>
-                <Input {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+    <Form
+      defaultValues={{ name: '', email: '', password: '' }}
+      schema={AuthSchema.SIGN_UP.INPUT}
+      onSubmitAction={onSubmit}
+      className="grid h-auto grid-cols-1 gap-4 px-1"
+    >
+      <Form.Field
+        {...{
+          name: 'name',
+          label: 'Name',
+          type: 'text',
+          placeholder: 'Jane Doe',
+        }}
+      />
+      <Form.Field
+        {...{
+          name: 'email',
+          label: 'Email',
+          type: 'text',
+          placeholder: 'you@example.com',
+        }}
+      />
+      <Form.Field
+        {...{
+          name: 'password',
+          label: 'Password',
+          type: 'password',
+          placeholder: '********',
+          needValidation: true,
+        }}
+      />
 
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Email</FormLabel>
-              <FormControl>
-                <Input
-                  type="email"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+      <Separator />
 
-        <FormField
-          control={form.control}
-          name="password"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Password</FormLabel>
-              <FormControl>
-                <Input
-                  type="password"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <Button
-          type="submit"
-          disabled={isSubmitting}
-          className="w-full"
-        >
-          {isSubmitting ? 'Loading...' : 'Sign Up'}
-        </Button>
-      </form>
+      <Form.Submit
+        disabled={isPending}
+        isLoading={isPending}
+      />
+      <div className="text-muted-foreground flex flex-row flex-wrap items-start justify-start gap-1 text-xs">
+        <Shield className="text-muted-foreground mt-0.5 h-3 w-3" />
+        By signing up, you agree to our
+        <Link href={PATH.SITE.LEGAL.TERMS}>
+          <Button
+            className="h-auto p-0 text-xs underline underline-offset-2"
+            size={'sm'}
+            variant={'link'}
+          >
+            Terms of Service
+          </Button>
+        </Link>
+        and
+        <Link href={PATH.SITE.LEGAL.PRIVACY}>
+          <Button
+            size={'sm'}
+            className="h-auto p-0 text-xs underline underline-offset-2"
+            variant={'link'}
+          >
+            Privacy Policy
+          </Button>
+        </Link>
+        .
+      </div>
     </Form>
   )
 }

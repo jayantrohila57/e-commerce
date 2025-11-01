@@ -1,4 +1,5 @@
-import z from 'zod'
+import z from 'zod/v3'
+import { STATUS } from '../config/api.config'
 
 export const baseFilterSchema = z.object({
   search: z.string().optional(),
@@ -13,11 +14,13 @@ export const baseFilterSchema = z.object({
   filters: z.object({}).optional(),
 })
 
-export const baseResponse = z.object({
-  status: z.enum(['success', 'error', 'failed']),
-  message: z.string(),
-  data: z.unknown(),
-})
+export const BaseResponseSchema = <T extends z.ZodTypeAny>(dataSchema: T) =>
+  z.object({
+    status: z.enum([STATUS.SUCCESS, STATUS.ERROR, STATUS.FAILED]),
+    message: z.string(),
+    data: dataSchema.nullable().optional(),
+    code: z.number().nullable().optional(),
+  })
 
 export const updateBaseSchema = z.object({
   id: z.number(),

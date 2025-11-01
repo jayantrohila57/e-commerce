@@ -2,15 +2,39 @@
 
 import { Button } from '@/shared/components/ui/button'
 import { signOut } from '@/core/auth/auth.client'
+import { Loader, LogOut } from 'lucide-react'
+import { toast } from 'sonner'
+import { debugError } from '@/shared/utils/lib/logger.utils'
+import { useTransition } from 'react'
+import { useRouter } from 'next/navigation'
+import { PATH } from '@/shared/config/routes'
 
 export const AuthSignOutButton = () => {
+  const [isLoading, startTransition] = useTransition()
+
+  const router = useRouter()
+
+  const handleSignOut = () => {
+    startTransition(async () => {
+      const toastId = toast.loading('Signing Out')
+      try {
+        await signOut()
+        toast.success('Signed Out', { id: toastId })
+        router.push(PATH.SITE.ROOT)
+      } catch (error) {
+        debugError('SIGNOUT ERROR', { error })
+        toast.error('Failed to Sign Out', { id: toastId })
+      }
+    })
+  }
   return (
     <Button
-      onClick={() => void signOut()}
+      onClick={handleSignOut}
       size="lg"
       variant="outline"
     >
-      Signout
+      {isLoading ? <Loader className="h-4 w-4 animate-spin" /> : <LogOut className="h-4 w-4" />}
+      {isLoading ? 'Signing Out' : 'Sign Out'}
     </Button>
   )
 }

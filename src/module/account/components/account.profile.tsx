@@ -2,7 +2,7 @@
 
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import z from 'zod'
+import z from 'zod/v3'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/shared/components/ui/form'
 import { Input } from '@/shared/components/ui/input'
 import { Button } from '@/shared/components/ui/button'
@@ -12,7 +12,7 @@ import { changeEmail, updateUser } from '@/core/auth/auth.client'
 
 const profileUpdateSchema = z.object({
   name: z.string().min(1),
-  email: z.email().min(1),
+  email: z.string().min(1),
 })
 
 type ProfileUpdateForm = z.infer<typeof profileUpdateSchema>
@@ -20,15 +20,17 @@ type ProfileUpdateForm = z.infer<typeof profileUpdateSchema>
 export function ProfileUpdateForm({
   user,
 }: {
-  user: {
-    email: string
-    name: string
-  }
+  user:
+    | {
+        email: string
+        name: string
+      }
+    | undefined
 }) {
   const router = useRouter()
   const form = useForm<ProfileUpdateForm>({
     resolver: zodResolver(profileUpdateSchema),
-    defaultValues: user,
+    defaultValues: user ?? {},
   })
 
   const { isSubmitting } = form.formState
@@ -40,7 +42,7 @@ export function ProfileUpdateForm({
       }),
     ]
 
-    if (data.email !== user.email) {
+    if (data.email !== user?.email) {
       promises.push(
         changeEmail({
           newEmail: data.email,
@@ -59,7 +61,7 @@ export function ProfileUpdateForm({
     } else if (emailResult.error) {
       toast.error(emailResult.error.message || 'Failed to change email')
     } else {
-      if (data.email !== user.email) {
+      if (data.email !== user?.email) {
         toast.success('Verify your new email address to complete the change.')
       } else {
         toast.success('Profile updated successfully')

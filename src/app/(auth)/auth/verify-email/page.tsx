@@ -1,11 +1,11 @@
 import { getServerSession } from '@/core/auth/auth.server'
 import { EmailVerification } from '@/module/auth/components/auth.verify-email'
 import { redirect } from 'next/navigation'
-import Section from '@/shared/components/layout/section/section'
 import Shell from '@/shared/components/layout/shell'
 import { PATH } from '@/shared/config/routes'
+import { AuthCard, AuthFooterNote } from '@/shared/components/layout/section/auth.card-layout'
 
-const metadata = {
+export const metadata = {
   title: 'Verify Email',
   description: 'Verify Email',
 }
@@ -16,11 +16,18 @@ export default async function VerifyEmail({ searchParams }: { searchParams: Prom
 
   return (
     <Shell>
-      <Shell.Section>
-        <Section {...metadata}>
-          <EmailVerification email={email} />
-        </Section>
-      </Shell.Section>
+      <AuthCard
+        {...metadata}
+        footer={
+          <AuthFooterNote
+            hint="Need to sign in your account?"
+            action="Sign in"
+            href={PATH.AUTH.SIGN_IN}
+          />
+        }
+      >
+        <EmailVerification email={email} />
+      </AuthCard>
     </Shell>
   )
 }

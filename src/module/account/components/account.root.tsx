@@ -14,7 +14,7 @@ type NavItem<T extends string = string> = {
 const accountSections: NavItem<Route>[] = [
   {
     title: 'Profile Update',
-    href: '/account/profile',
+    href: '/account/profile' as Route,
     icon: User,
     description: 'Update your personal information, name, and email address',
   },
@@ -38,7 +38,7 @@ const accountSections: NavItem<Route>[] = [
   // },
   {
     title: 'Session Management',
-    href: '/account/sessions',
+    href: '/account/sessions' as Route,
     icon: Settings,
     description: 'View and manage all active sessions across devices',
   },
@@ -72,7 +72,7 @@ export default function AccountRootComponent() {
               key={section.href}
               href={section.href}
             >
-              <Card className="hover:bg-accent/50 h-full cursor-pointer transition-colors">
+              <Card className="hover:bg-accent/50 motion-colors h-full cursor-pointer">
                 <CardHeader>
                   <div className="flex items-center gap-3">
                     <div className="bg-primary/10 rounded-lg p-2">

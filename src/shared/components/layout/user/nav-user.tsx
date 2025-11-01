@@ -1,6 +1,6 @@
 'use client'
 
-import { ChevronsUpDown, UserIcon } from 'lucide-react'
+import { UserIcon } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/shared/components/ui/avatar'
 import {
   DropdownMenu,
@@ -27,23 +27,16 @@ export function UserDropdown({ user }: { user: User }) {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button
-          variant="ghost"
-          className="flex h-10 items-center gap-4 bg-transparent px-2"
+          variant="outline"
+          size="icon"
         >
-          <div className="flex items-center gap-2 px-0 py-1.5 text-left text-sm">
-            <Avatar className="h-8 w-8 rounded-full">
-              <AvatarImage
-                src={user?.image ?? ''}
-                alt={user?.name ?? ''}
-              />
-              <AvatarFallback className="text-primary rounded-lg border-none">{fallbackName}</AvatarFallback>
-            </Avatar>
-            <div className="grid flex-1 text-left text-sm leading-tight">
-              <span className="w-auto truncate font-medium">{user?.name}</span>
-              <span className="text-muted-foreground w-auto truncate text-xs">{user?.email}</span>
-            </div>
-            <ChevronsUpDown className="text-muted-foreground ml-auto h-8" />
-          </div>
+          <Avatar className="h-full w-full">
+            <AvatarImage
+              src={user?.image ?? ''}
+              alt={user?.name ?? ''}
+            />
+            <AvatarFallback className="text-primary border-none">{fallbackName}</AvatarFallback>
+          </Avatar>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent

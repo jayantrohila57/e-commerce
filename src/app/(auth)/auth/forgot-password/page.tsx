@@ -1,9 +1,9 @@
 import { getServerSession } from '@/core/auth/auth.server'
 import { ForgotPasswordForm } from '@/module/auth/components/auth.forgot-password'
 import { redirect } from 'next/navigation'
-import Section from '@/shared/components/layout/section/section'
 import Shell from '@/shared/components/layout/shell'
 import { PATH } from '@/shared/config/routes'
+import { AuthCard, AuthFooterNote } from '@/shared/components/layout/section/auth.card-layout'
 
 export const metadata = {
   title: 'Forgot Password',
@@ -15,11 +15,18 @@ export default async function ForgotPasswordPage() {
 
   return (
     <Shell>
-      <Shell.Section>
-        <Section {...metadata}>
-          <ForgotPasswordForm />
-        </Section>
-      </Shell.Section>
+      <AuthCard
+        {...metadata}
+        footer={
+          <AuthFooterNote
+            hint="Need to sign in your account?"
+            action="Sign in"
+            href={PATH.AUTH.SIGN_IN}
+          />
+        }
+      >
+        <ForgotPasswordForm />
+      </AuthCard>
     </Shell>
   )
 }

@@ -4,6 +4,7 @@ const nextConfig: NextConfig = {
   experimental: {
     authInterrupts: true,
     typedEnv: true,
+    viewTransition: true,
   },
   typescript: {
     tsconfigPath: 'tsconfig.json',
@@ -15,6 +16,11 @@ const nextConfig: NextConfig = {
       {
         protocol: 'https',
         hostname: 'lh3.googleusercontent.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+        pathname: '/**',
       },
       {
         protocol: 'https',

@@ -1,61 +1,48 @@
 'use client'
 
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import z from 'zod'
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/shared/components/ui/form'
+import type z from 'zod/v3'
 import { Button } from '@/shared/components/ui/button'
 import { toast } from 'sonner'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/shared/components/ui/card'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { resetPassword } from '@/core/auth/auth.client'
-import { Input } from '@/shared/components/ui/input'
 import { PATH } from '@/shared/config/routes'
+import { AuthSchema } from '../dto/auth-schema'
+import Form from '@/shared/components/form/form'
+import { useTransition } from 'react'
+import { Separator } from '@/shared/components/ui/separator'
 
-const resetPasswordSchema = z.object({
-  password: z.string().min(6),
-})
-
-type ResetPasswordForm = z.infer<typeof resetPasswordSchema>
+type FormValues = z.infer<typeof AuthSchema.CHANGE_PASSWORD.INPUT>
 
 export default function ResetPasswordForm({ token, error }: { token: string; error: string }) {
   const router = useRouter()
+  const [pending, startTransition] = useTransition()
 
-  const form = useForm<ResetPasswordForm>({
-    resolver: zodResolver(resetPasswordSchema),
-    defaultValues: {
-      password: '',
-    },
-  })
+  function onSubmit(data: FormValues) {
+    startTransition(async () => {
+      if (token == null) return
 
-  const { isSubmitting } = form.formState
-
-  async function handleResetPassword(data: ResetPasswordForm) {
-    if (token == null) return
-
-    await resetPassword(
-      {
-        newPassword: data.password,
-        token,
-      },
-      {
-        onError: (error) => {
-          toast.error(error.error.message || 'Failed to reset password')
+      await resetPassword(
+        {
+          newPassword: data.password,
+          token,
         },
-        onSuccess: () => {
-          toast.success('Password reset successful', {
-            description: 'Redirection to login...',
-          })
-          setTimeout(() => {
-            router.push(PATH.AUTH.SIGN_IN)
-          }, 1000)
+        {
+          onError: (error) => {
+            toast.error(error.error.message || 'Failed to reset password')
+          },
+          onSuccess: () => {
+            toast.success('Password reset successful', {
+              description: 'Redirection to login...',
+            })
+            setTimeout(() => {
+              router.push(PATH.AUTH.SIGN_IN)
+            }, 1000)
+          },
         },
-      },
-    )
-  }
-  const handleSubmit = () => {
-    form.handleSubmit(handleResetPassword)
+      )
+    })
   }
 
   if (token == null || error != null) {
@@ -80,45 +67,40 @@ export default function ResetPasswordForm({ token, error }: { token: string; err
   }
 
   return (
-    <div className="my-6 px-4">
-      <Card className="mx-auto w-full max-w-md">
-        <CardHeader>
-          <CardTitle className="text-2xl">Reset Your Password</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Form {...form}>
-            <form
-              className="space-y-4"
-              onSubmit={handleSubmit}
-            >
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Password</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="password"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <Button
-                type="submit"
-                disabled={isSubmitting}
-                className="flex-1"
-              >
-                {isSubmitting ? 'Resetting...' : 'Reset Password'}
-              </Button>
-            </form>
-          </Form>
-        </CardContent>
-      </Card>
-    </div>
+    <Form
+      defaultValues={{
+        password: '',
+        confirmPassword: '',
+        token: token,
+        oldPassword: null,
+        userId: null,
+      }}
+      schema={AuthSchema.CHANGE_PASSWORD.INPUT}
+      onSubmitAction={onSubmit}
+      className="grid h-auto grid-cols-1 gap-4 p-1"
+    >
+      <Form.Field
+        {...{
+          name: 'password',
+          label: 'Password',
+          type: 'password',
+          placeholder: '********',
+          needValidation: true,
+        }}
+      />
+      <Form.Field
+        {...{
+          name: 'confirmPassword',
+          label: 'Confirm Password',
+          type: 'password',
+          placeholder: '********',
+        }}
+      />
+      <Separator />
+      <Form.Submit
+        disabled={pending}
+        isLoading={pending}
+      />
+    </Form>
   )
 }

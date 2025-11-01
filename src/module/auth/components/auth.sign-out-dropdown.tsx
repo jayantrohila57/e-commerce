@@ -7,6 +7,8 @@ import { toast } from 'sonner'
 import { Loader, LogOut } from 'lucide-react'
 import { signOut } from '@/core/auth/auth.client'
 import { debugError } from '@/shared/utils/lib/logger.utils'
+import { useRouter } from 'next/navigation'
+import { PATH } from '@/shared/config/routes'
 
 export const SignOutDropdownMenuItem = React.forwardRef<
   React.ElementRef<typeof DropdownMenuPrimitive.Item>,
@@ -15,6 +17,7 @@ export const SignOutDropdownMenuItem = React.forwardRef<
   }
 >(({ className, inset, ...props }, ref) => {
   const [isLoading, startTransition] = React.useTransition()
+  const router = useRouter()
 
   const handleSignOut = () => {
     startTransition(async () => {
@@ -22,6 +25,7 @@ export const SignOutDropdownMenuItem = React.forwardRef<
       try {
         await signOut()
         toast.success('Signed Out', { id: toastId })
+        router.push(PATH.SITE.ROOT)
       } catch (error) {
         debugError('SIGNOUT ERROR', { error })
         toast.error('Failed to Sign Out', { id: toastId })
@@ -35,7 +39,7 @@ export const SignOutDropdownMenuItem = React.forwardRef<
       onClick={handleSignOut}
       disabled={isLoading}
       className={cn(
-        'focus:bg-accent focus:text-accent-foreground relative flex cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm transition-colors outline-none select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0',
+        'focus:bg-accent focus:text-accent-foreground motion-colors relative flex cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none select-none data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0',
         inset && 'pl-8',
         className,
       )}

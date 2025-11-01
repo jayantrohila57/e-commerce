@@ -15,6 +15,7 @@ import {
 
 import { cn } from '@/shared/utils/lib/utils'
 import { Label } from '@/shared/components/ui/label'
+import { Asterisk } from 'lucide-react'
 
 const Form = FormProvider
 
@@ -83,17 +84,24 @@ function FormItem({ className, ...props }: React.ComponentProps<'div'>) {
   )
 }
 
-function FormLabel({ className, ...props }: React.ComponentProps<typeof LabelPrimitive.Root>) {
+interface FormLabelProps extends React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root> {
+  required?: boolean
+}
+function FormLabel({ className, required, ...props }: FormLabelProps) {
   const { error, formItemId } = useFormField()
-
+  const hasError = !!error
   return (
     <Label
       data-slot="form-label"
       data-error={!!error}
-      className={cn('data-[error=true]:text-destructive', className)}
+      className={cn('data-[error=true]:text-destructive flex flex-row gap-1', className)}
       htmlFor={formItemId}
       {...props}
-    />
+    >
+      {' '}
+      <span className="relative w-fit">{props.children}</span>
+      {props.children && required && <Asterisk className={cn('h-[11px] w-[11px]', hasError && 'text-destructive')} />}
+    </Label>
   )
 }
 

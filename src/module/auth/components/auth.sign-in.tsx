@@ -1,139 +1,80 @@
 'use client'
 
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import z from 'zod'
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/shared/components/ui/form'
-import { Input } from '@/shared/components/ui/input'
-import { Button } from '@/shared/components/ui/button'
-
+import type z from 'zod/v3'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
 import { signIn } from '@/core/auth/auth.client'
-import { SUPPORTED_OAUTH_PROVIDER_DETAILS } from '@/core/auth/auth.providers'
-import { Github } from 'lucide-react'
-import { PasskeyButton } from './auth.passkey-button'
+import { PATH } from '@/shared/config/routes'
+import Form from '@/shared/components/form/form'
+import { useTransition } from 'react'
+import { AuthSchema } from '../dto/auth-schema'
 
-const signInSchema = z.object({
-  email: z.email().min(1),
-  password: z.string().min(6),
-})
-
-type SignInForm = z.infer<typeof signInSchema>
+type FormValues = z.infer<typeof AuthSchema.SIGN_IN.INPUT>
 
 export function SignInForm() {
   const router = useRouter()
-  const form = useForm<SignInForm>({
-    resolver: zodResolver(signInSchema),
-    defaultValues: {
-      email: '',
-      password: '',
-    },
-  })
-  const openEmailVerificationTab = (email: string) => {
-    void email
-  }
-  const openForgotPassword = () => {
-    return null
-  }
+  const [pending, startTransition] = useTransition()
 
-  const { isSubmitting } = form.formState
-
-  async function handleSignIn(data: SignInForm) {
-    await signIn.email(
-      { ...data, callbackURL: '/' },
-      {
-        onError: (error) => {
-          if (error.error.code === 'EMAIL_NOT_VERIFIED') {
-            openEmailVerificationTab(data.email)
-          }
-          toast.error(error.error.message || 'Failed to sign in')
-        },
-        onSuccess: () => {
-          router.push('/')
-        },
-      },
-    )
+  const onSubmit = (data: FormValues) => {
+    startTransition(async () => {
+      const toastId = toast.loading('Signing In')
+      const result = await signIn.email({
+        email: data.email,
+        password: data.password,
+        rememberMe: data.rememberMe === 'true',
+      })
+      if (result?.error) {
+        if (result.error.code === 'EMAIL_NOT_VERIFIED') {
+          router.push(`${PATH.AUTH.VERIFY_EMAIL}?email=${data.email}`)
+        }
+        toast.error(result.error.message || 'Failed to sign in')
+      } else {
+        toast.success('Signed in successfully!', { id: toastId })
+        router.push(PATH.SITE.ROOT)
+      }
+    })
   }
 
   return (
-    <div className="space-y-4">
-      <Form {...form}>
-        <form
-          className="space-y-4"
-          onSubmit={void form.handleSubmit(handleSignIn)}
-        >
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Email</FormLabel>
-                <FormControl>
-                  <Input
-                    type="email"
-                    autoComplete="email webauthn"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="password"
-            render={({ field }) => (
-              <FormItem>
-                <div className="flex items-center justify-between">
-                  <FormLabel>Password</FormLabel>
-                  <Button
-                    onClick={openForgotPassword}
-                    type="button"
-                    variant="link"
-                    size="sm"
-                    className="text-sm font-normal underline"
-                  >
-                    Forgot password?
-                  </Button>
-                </div>
-                <FormControl>
-                  <Input
-                    type="password"
-                    autoComplete="current-password webauthn"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <Button
-            type="submit"
-            disabled={isSubmitting}
-            className="w-full"
-          >
-            {isSubmitting ? 'Signing in...' : 'Sign In'}
-          </Button>
-        </form>
-      </Form>
-      <div className="">
-        <Button
-          variant="outline"
-          onClick={() => {
-            void signIn.social({
-              provider: 'github',
-              callbackURL: '/',
-            })
-          }}
-        >
-          <Github />
-          {SUPPORTED_OAUTH_PROVIDER_DETAILS.github.name}
-        </Button>
-      </div>
-      <PasskeyButton />
-    </div>
+    <Form
+      defaultValues={{ email: '', password: '', rememberMe: 'true' }}
+      schema={AuthSchema.SIGN_IN.INPUT}
+      onSubmitAction={onSubmit}
+      className="grid h-auto grid-cols-1 gap-4 px-1"
+    >
+      <Form.Field
+        {...{
+          name: 'email',
+          label: 'Email',
+          type: 'text',
+          placeholder: 'you@example.com',
+        }}
+      />
+      <Form.Field
+        {...{
+          name: 'password',
+          label: 'Password',
+          type: 'password',
+          placeholder: '********',
+        }}
+      />
+      <Form.Field
+        {...{
+          name: 'rememberMe',
+          label: 'Remember Me',
+          type: 'checkbox',
+          options: [
+            {
+              label: 'You can stay signed in for longer.',
+              value: 'true',
+            },
+          ],
+        }}
+      />
+      <Form.Submit
+        disabled={pending}
+        isLoading={pending}
+      />
+    </Form>
   )
 }

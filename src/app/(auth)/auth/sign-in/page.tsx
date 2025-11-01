@@ -1,11 +1,13 @@
 import { getServerSession } from '@/core/auth/auth.server'
 import { SignInForm } from '@/module/auth/components/auth.sign-in'
-import Section from '@/shared/components/layout/section/section'
 import Shell from '@/shared/components/layout/shell'
 import { redirect } from 'next/navigation'
 import { PATH } from '@/shared/config/routes'
+import { AuthProviders } from '@/module/auth/components/auth.providers'
+import { Separator } from '@/shared/components/ui/separator'
+import { AuthCard, AuthFooterNote } from '@/shared/components/layout/section/auth.card-layout'
 
-const metadata = {
+export const metadata = {
   title: 'Sign In',
   description: 'Sign In to your account',
 }
@@ -15,11 +17,24 @@ export default async function SignInPage() {
 
   return (
     <Shell>
-      <Shell.Section>
-        <Section {...metadata}>
-          <SignInForm />
-        </Section>
-      </Shell.Section>
+      <AuthCard
+        {...metadata}
+        footer={
+          <AuthFooterNote
+            hint="New here?"
+            action="Create an account"
+            href={PATH.AUTH.SIGN_UP}
+          />
+        }
+      >
+        <SignInForm />
+        <div className="grid grid-cols-11 items-center justify-center">
+          <Separator className="col-span-5" />
+          <span className="text-muted-foreground col-span-1 w-full text-center text-xs">or</span>
+          <Separator className="col-span-5" />
+        </div>
+        <AuthProviders />
+      </AuthCard>
     </Shell>
   )
 }

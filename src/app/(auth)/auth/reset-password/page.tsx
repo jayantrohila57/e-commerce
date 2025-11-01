@@ -1,30 +1,36 @@
 import { getServerSession } from '@/core/auth/auth.server'
 import ResetPasswordForm from '@/module/auth/components/auth.reset-password'
 import { redirect } from 'next/navigation'
-import Section from '@/shared/components/layout/section/section'
 import Shell from '@/shared/components/layout/shell'
 import { PATH } from '@/shared/config/routes'
-import { type NextUrls } from '@/shared/config/next-urls'
+import { AuthCard, AuthFooterNote } from '@/shared/components/layout/section/auth.card-layout'
 
-const metadata = {
+export const metadata = {
   title: 'Reset Password',
   description: 'Reset Password',
 }
-export default async function ResetPasswordPage({ searchParams }: PageProps<NextUrls['RESET_PASSWORD']>) {
+export default async function ResetPasswordPage({ searchParams }: PageProps<'/auth/reset-password'>) {
   const { token, error } = await searchParams
   const { session } = await getServerSession()
   if (session) redirect(PATH.ROOT)
   if (!token) redirect(PATH.AUTH.FORGOT_PASSWORD)
   return (
     <Shell>
-      <Shell.Section>
-        <Section {...metadata}>
-          <ResetPasswordForm
-            token={token as string}
-            error={error as string}
+      <AuthCard
+        {...metadata}
+        footer={
+          <AuthFooterNote
+            hint="Need help?"
+            action="Contact support"
+            href={PATH.SITE.ROOT} // TODO: Fix route
           />
-        </Section>
-      </Shell.Section>
+        }
+      >
+        <ResetPasswordForm
+          token={token as string}
+          error={error as string}
+        />
+      </AuthCard>
     </Shell>
   )
 }

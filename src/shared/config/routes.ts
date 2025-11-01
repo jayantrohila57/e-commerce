@@ -1,6 +1,4 @@
-// import type { Route } from 'next'
-
-// type RouteTree = Route | ((...params: [string, ...string[]]) => Route) | { [key: string]: RouteTree }
+import { type Route } from 'next'
 
 export const PATH = {
   ROOT: '/',
@@ -10,11 +8,13 @@ export const PATH = {
     SIGN_UP: '/auth/sign-up',
     FORGOT_PASSWORD: '/auth/forgot-password',
     RESET_PASSWORD: '/auth/reset-password',
+    VERIFY_EMAIL: '/auth/verify-email',
   },
   ACCOUNT: {
     ROOT: '/account',
     PROFILE: '/account/profile',
     SECURITY: '/account/security',
+    SESSIONS: '/account/sessions',
   },
   STORE: {
     ROOT: '/store',
@@ -44,10 +44,16 @@ export const PATH = {
     CONTACT: '/contact',
     LEGAL: {
       ROOT: '/legal',
-      LICENSE: '/legal/licenses',
-      PRIVACY: '/legal/privacy-policy',
-      TERMS: '/legal/terms-of-service',
-      COOKIES: '/legal/cookies-policy',
+      SLUG: (slug: string) => `/legal/${slug}`,
+      LICENSE: '/legal/licenses' as Route,
+      PRIVACY: '/legal/privacy-policy' as Route,
+      TERMS: '/legal/terms-of-service' as Route,
+      COOKIES: '/legal/cookies-policy' as Route,
+      REFUND: '/legal/refund-policy' as Route,
+      RETURN: '/legal/return-policy' as Route,
+      SHIPPING: '/legal/shipping-policy' as Route,
+      USER_AGREEMENT: '/legal/user-agreement' as Route,
+      DATA_PROTECTION: '/legal/data-protection' as Route,
     },
     SUPPORT: {
       ROOT: '/support',

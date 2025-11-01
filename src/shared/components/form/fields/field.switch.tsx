@@ -1,0 +1,47 @@
+'use client'
+
+import { useFormContext } from 'react-hook-form'
+import { Switch } from '@/shared/components/ui/switch'
+import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/shared/components/ui/form'
+import type { FormInputProps } from '../form.types'
+import { cn } from '@/shared/utils/lib/utils'
+import { useId } from 'react'
+
+export const InputSwitch: React.FC<FormInputProps> = (props) => {
+  const reactId = useId()
+  const stableId = props.name ? `${props.name}-${reactId}` : reactId
+  const { control } = useFormContext()
+
+  if (props?.hidden) return null
+  if (props.type !== 'switch') return null
+
+  return (
+    <FormField
+      control={control}
+      name={props.name}
+      render={({ field, fieldState }) => (
+        <FormItem
+          id={stableId}
+          className={cn(props.className)}
+        >
+          <FormLabel required={props.required}>{props.label}</FormLabel>
+          <FormControl>
+            <div className="bg-background flex items-center justify-between gap-4 rounded-md border p-2">
+              <Switch
+                {...field}
+                {...props.fieldProps}
+                checked={field.value || false}
+                onCheckedChange={field.onChange}
+                className={cn(fieldState.error && 'border-destructive data-[state=checked]:bg-destructive')}
+              />
+            </div>
+          </FormControl>
+          <FormDescription className={cn('flex justify-between')}>
+            <span>{props.helperText}</span>
+          </FormDescription>
+          <FormMessage>{fieldState.error?.message}</FormMessage>
+        </FormItem>
+      )}
+    />
+  )
+}

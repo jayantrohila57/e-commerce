@@ -1,4 +1,4 @@
-import React, { type ReactNode } from 'react'
+import React, { ViewTransition, type ReactNode } from 'react'
 import { cva, type VariantProps } from 'class-variance-authority'
 import { cn } from '@/shared/utils/lib/utils'
 
@@ -14,7 +14,7 @@ interface ShellComponent extends ShellTypes {
 }
 
 export const Shell = ({ children }: ShellComponent) => {
-  return children
+  return <ViewTransition> {children}</ViewTransition>
 }
 
 const HeaderVariants = cva('', {
@@ -132,9 +132,11 @@ Shell.Main = Main
 const SectionVariants = cva('', {
   variants: {
     variant: {
-      default: 'my-4 container mx-auto max-w-9xl ',
+      default: 'my-12 container mx-auto px-0 max-w-9xl ',
       full: 'my-4 w-full',
+      flexed: 'my-12 flex container mx-auto px-0 max-w-9xl ',
       dashboard: 'flex flex-col gap-4 px-4',
+      center: 'flex min-h-svh flex-col items-center justify-center p-2 md:p-10',
     },
   },
   defaultVariants: {

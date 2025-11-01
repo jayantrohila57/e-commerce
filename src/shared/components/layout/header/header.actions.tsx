@@ -14,16 +14,36 @@ const ModeToggle = dynamic(async () => await import('@/core/theme/theme.selector
   loading: () => <Skeleton className="h-9 w-9 rounded-md" />,
 })
 
+const CartButton = dynamic(
+  async () => await import('@/shared/components/common/cart-button').then((mod) => mod.default),
+  {
+    ssr: false,
+    loading: () => <Skeleton className="h-9 w-9 rounded-md" />,
+  },
+)
+
+const WishListButton = dynamic(
+  async () => await import('@/shared/components/common/wishlist-button').then((mod) => mod.default),
+  {
+    ssr: false,
+    loading: () => <Skeleton className="h-9 w-9 rounded-md" />,
+  },
+)
+
 export function HeaderActions({ user, session }: { user: User | undefined; session: Session | undefined }) {
   if (!session) {
     return (
       <div className="flex flex-row gap-1 sm:gap-2 md:gap-4">
+        <CartButton />
+        <WishListButton />
         <ModeToggle />
         <Link href={PATH.AUTH.SIGN_UP}>
-          <Button variant="outline">Sign Up</Button>
-        </Link>
-        <Link href={PATH.AUTH.SIGN_IN}>
-          <Button variant="default">Sign In</Button>
+          <Button
+            size={'sm'}
+            variant="outline"
+          >
+            Sign Up
+          </Button>
         </Link>
       </div>
     )
@@ -31,6 +51,8 @@ export function HeaderActions({ user, session }: { user: User | undefined; sessi
   if (session) {
     return (
       <div className="flex flex-row gap-1 sm:gap-2 md:gap-4">
+        <CartButton />
+        <WishListButton />
         <ModeToggle />
         {user && <UserDropdown user={user} />}
       </div>

@@ -1,17 +1,53 @@
-## auth
+Route (app)
+┌ ƒ /
+├ ƒ /_not-found
 
-1. sign-in
-2. sign-up
-3. sign-out
-4. change-password
-5. reset-password
-6. verify-email
-7. verify-2fa
+├ ƒ /account
+├ ƒ /account/commerce/cart
+├ ƒ /account/commerce/order
+├ ƒ /account/user/profile
+├ ƒ /account/user/security
+├ ƒ /account/user/sessions
 
-## account
+├ ƒ /api/auth/[...all]
+├ ƒ /api/blob/upload
 
-1. change-email
-2. change-password
-3. delete-account
-4. update-profile
-5. update-2fa
+├ ƒ /auth
+├ ƒ /auth/forgot-password
+├ ƒ /auth/reset-password
+├ ƒ /auth/sign-in
+├ ƒ /auth/sign-up
+├ ƒ /auth/verify-email
+
+├ ƒ /blog
+
+├ ƒ /legal
+├ ƒ /legal/[slug]
+
+├ ƒ /marketing/about
+├ ƒ /marketing/newsletter
+
+├ ƒ /store
+├ ƒ /store/best-sellers
+├ ƒ /store/categories/[slug]
+├ ƒ /store/checkout
+├ ƒ /store/collections/[slug]
+├ ƒ /store/gift-cards
+├ ƒ /store/new
+├ ƒ /store/products
+├ ƒ /store/reviews/[productId]
+├ ƒ /store/sale
+├ ƒ /store/size-guide
+
+├ ƒ /studio
+
+├ ƒ /support
+├ ƒ /support/contact
+├ ƒ /support/faq
+├ ƒ /support/help-center
+├ ƒ /support/returns
+├ ƒ /support/shipping
+├ ƒ /support/tickets
+└ ƒ /support/tickets/[ticketId]
+
+ 

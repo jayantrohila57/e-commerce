@@ -17,7 +17,10 @@ export default async function SessionsPage() {
 
   const currentSessionToken = session?.session?.token
   return (
-    <Section {...metadata}>
+    <Section
+      className="bg-muted p-4"
+      {...metadata}
+    >
       <div className="grid h-full w-full grid-cols-12 gap-4">
         <div className="col-span-2 h-full w-full">
           <AccountSidebar />

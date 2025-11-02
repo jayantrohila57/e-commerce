@@ -105,7 +105,7 @@ ${error.stack ? `Stack: ${error.stack}` : ''}`
                     )}
                   </Button>
                   {(error.stack || error.digest || error.name) && (
-                    <div className="mt-3 h-[calc(100vh-28rem)] overflow-auto">
+                    <div className="mt-3">
                       {expanded && (
                         <div className="bg-destructive/20 mt-2 rounded-md p-4">
                           <pre className="text-sm wrap-break-word whitespace-pre-wrap">

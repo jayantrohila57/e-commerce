@@ -1,4 +1,4 @@
-import { SubNavHeader } from '@/shared/components/layout/section/auth.header'
+import { SubNavHeader } from '@/shared/components/layout/section/section.header'
 import Shell from '@/shared/components/layout/shell'
 
 export default function Layout({ children }: { children: React.ReactNode }) {

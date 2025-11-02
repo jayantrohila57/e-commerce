@@ -1,16 +1,16 @@
 import { getServerSession } from '@/core/auth/auth.server'
-
+import { AccountSidebar } from '@/module/account/components/account-sidebar'
 import Section from '@/shared/components/layout/section/section'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/shared/components/ui/card'
-import { redirect } from 'next/navigation'
 import { PATH } from '@/shared/config/routes'
-import { CommerceSidebar } from '@/module/account/components/account.commerce.sidebar'
+import { redirect } from 'next/navigation'
 
 export const metadata = {
-  title: 'Your Address',
-  description: 'Update cart details',
+  title: 'Your Settings',
+  description: 'View and manage all active sessions across your devices',
 }
-export default async function CartPage() {
+
+export default async function SettingPage() {
   const session = await getServerSession()
   if (!session) return redirect(PATH.ROOT)
 
@@ -21,13 +21,13 @@ export default async function CartPage() {
     >
       <div className="grid h-full w-full grid-cols-12 gap-4">
         <div className="col-span-2 h-full w-full">
-          <CommerceSidebar />
+          <AccountSidebar />
         </div>
         <div className="col-span-8 h-full w-full">
           <Card>
             <CardHeader>
-              <CardTitle>Cart Information</CardTitle>
-              <CardDescription>Update your cart details</CardDescription>
+              <CardTitle>Settings</CardTitle>
+              <CardDescription>These devices are currently signed in to your account</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6"></CardContent>
           </Card>

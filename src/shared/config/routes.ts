@@ -12,6 +12,8 @@ export const PATH = {
   },
   ACCOUNT: {
     ROOT: '/account',
+    USER: '/account/user' as Route,
+    COMMERCE: '/account/commerce' as Route,
     PROFILE: '/account/user/profile' as Route,
     SECURITY: '/account/user/security' as Route,
     SESSIONS: '/account/user/sessions' as Route,

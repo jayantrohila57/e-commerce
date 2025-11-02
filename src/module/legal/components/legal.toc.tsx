@@ -24,26 +24,22 @@ export function TableOfContents({ activeSection }: TableOfContentsProps) {
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Table of Contents</CardTitle>
-        <CardDescription>Find the section you are looking for in the table of contents below.</CardDescription>
-      </CardHeader>
-      <Separator />
-      <CardContent className="px-2">
-        <nav className="space-y-2">
-          {content.tableOfContents.map((item, index) => (
-            <Button
-              key={index}
-              variant={'link'}
-              onClick={() => scrollToSection(index)}
-            >
-              <span className="mt-0.5 shrink-0">{index + 1}.</span>
-              <span className="leading-snug">{item}</span>
-            </Button>
-          ))}
-        </nav>
-      </CardContent>
-    </Card>
+    <nav className="flex flex-col items-start justify-start px-2">
+      <div className="">
+        <p className="text-lg font-medium">Table of Contents</p>
+      </div>
+      {content.tableOfContents.map((item, index) => (
+        <Button
+          key={index}
+          variant={'link'}
+          size={'sm'}
+          className="p-0 text-xs"
+          onClick={() => scrollToSection(index)}
+        >
+          <span className="shrink-0">{index + 1}.</span>
+          <span className="leading-snug">{item}</span>
+        </Button>
+      ))}
+    </nav>
   )
 }

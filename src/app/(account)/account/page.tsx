@@ -1,5 +1,5 @@
 import { getServerSession } from '@/core/auth/auth.server'
-import AccountRootComponent from '@/module/account/components/account.root'
+import AccountRootComponent from '@/module/account/components/account.layout'
 import { PATH } from '@/shared/config/routes'
 import { redirect } from 'next/navigation'
 

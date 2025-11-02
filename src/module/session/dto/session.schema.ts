@@ -1,4 +1,4 @@
-import { user } from '@/module/user/dto/user.schema'
+import { user } from '@/core/db/schema'
 import { pgTable, text, timestamp } from 'drizzle-orm/pg-core'
 
 export const session = pgTable('session', {

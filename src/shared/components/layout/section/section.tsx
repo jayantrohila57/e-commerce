@@ -11,12 +11,12 @@ interface SectionProps {
   variant?: 'default' | 'full'
 }
 
-export default function Section({ variant, title, description, action, children, separator = false }: SectionProps) {
+export default function Section({ variant, title, description, action, children, separator = true }: SectionProps) {
   return (
     <Card className="bg-card/0 border-none p-0 shadow-none">
       {title && description && (
         <CardHeader className={variant === 'full' ? 'w-full p-0' : 'max-w-9xl container mx-auto p-0'}>
-          {title && <CardTitle className="font-oswald text-5xl">{title}</CardTitle>}
+          {title && <CardTitle className="font-oswald text-3xl">{title}</CardTitle>}
           {description && <CardDescription className="max-w-5xl text-xl">{description}</CardDescription>}
           <CardAction>{action && <Button variant={'outline'}>{action}</Button>}</CardAction>
         </CardHeader>

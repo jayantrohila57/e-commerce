@@ -1,4 +1,4 @@
-import { user } from '@/module/user/dto/user.schema'
+import { user } from '@/core/db/schema'
 import { BaseResponseSchema } from '@/shared/schema/common'
 import { pgTable, text, bigint, timestamp, boolean, integer } from 'drizzle-orm/pg-core'
 import { z } from 'zod/v3'

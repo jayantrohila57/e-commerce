@@ -1,7 +1,7 @@
 import { getServerSession } from '@/core/auth/auth.server'
 import { AccountSidebar } from '@/module/account/components/account-sidebar'
 import { ProfileUpdateForm } from '@/module/account/components/account.profile'
-import { ProfileCard } from '@/module/user/components/user.profile'
+import { ProfileCard } from '@/module/user/components/component.user.profile'
 
 import Section from '@/shared/components/layout/section/section'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/shared/components/ui/card'

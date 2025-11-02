@@ -12,9 +12,16 @@ export const PATH = {
   },
   ACCOUNT: {
     ROOT: '/account',
-    PROFILE: '/account/profile',
-    SECURITY: '/account/security',
-    SESSIONS: '/account/sessions',
+    PROFILE: '/account/user/profile' as Route,
+    SECURITY: '/account/user/security' as Route,
+    SESSIONS: '/account/user/sessions' as Route,
+    CART: '/account/commerce/cart' as Route,
+    WISHLIST: '/account/commerce/wishlist' as Route,
+    ORDER: '/account/commerce/order' as Route,
+    ADDRESS: '/account/commerce/address' as Route,
+    REVIEW: '/account/commerce/review' as Route,
+    SETTINGS: '/account/user/settings' as Route,
+    SHIPMENT: '/account/commerce/shipment' as Route,
   },
   STORE: {
     ROOT: '/store',
@@ -71,5 +78,3 @@ export const PATH = {
     SITEMAP: '/sitemap.xml',
   },
 } as const
-
-export type AppRoutes = typeof PATH

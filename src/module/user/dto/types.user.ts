@@ -1,23 +1,20 @@
-import { type InferContractRouterInputs, type InferContractRouterOutputs } from '@orpc/contract'
 import { type userContract } from './dto.user.contract'
+import type z from 'zod'
 
-export type Inputs = InferContractRouterInputs<typeof userContract>
-export type Outputs = InferContractRouterOutputs<typeof userContract>
+export type GetUserInput = z.infer<typeof userContract.get.input>
+export type GetUserOutput = z.infer<typeof userContract.get.output>
 
-export type GetUserInput = Inputs['get']
-export type GetUserOutput = Outputs['get']
+export type GetUsersInput = z.infer<typeof userContract.getMany.input>
+export type GetUsersOutput = z.infer<typeof userContract.getMany.output>
 
-export type GetUsersInput = Inputs['getMany']
-export type GetUsersOutput = Outputs['getMany']
+export type CreateUserInput = z.infer<typeof userContract.create.input>
+export type CreateUserOutput = z.infer<typeof userContract.create.output>
 
-export type CreateUserInput = Inputs['create']
-export type CreateUserOutput = Outputs['create']
+export type UpdateUserInput = z.infer<typeof userContract.update.input>
+export type UpdateUserOutput = z.infer<typeof userContract.update.output>
 
-export type UpdateUserInput = Inputs['update']
-export type UpdateUserOutput = Outputs['update']
-
-export type DeleteUserInput = Inputs['delete']
-export type DeleteUserOutput = Outputs['delete']
+export type DeleteUserInput = z.infer<typeof userContract.delete.input>
+export type DeleteUserOutput = z.infer<typeof userContract.delete.output>
 
 export type GetControllerInput = { input: GetUserInput }
 export type GetControllerOutput = Promise<GetUserOutput>

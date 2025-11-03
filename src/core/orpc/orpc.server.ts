@@ -1,13 +1,9 @@
-import { ORPCError } from '@orpc/server'
-import { implement } from '@orpc/server'
-
+import { ORPCError, os } from '@orpc/server'
 import { getServerSession } from '../auth/auth.server'
 import { debugLog } from '@/shared/utils/lib/logger.utils'
-import { contract } from './orpc.contract'
 
 export async function createORPCContext(opts: { headers: Headers }) {
   const { session, user } = await getServerSession()
-
   return {
     headers: opts.headers,
     session,
@@ -15,12 +11,10 @@ export async function createORPCContext(opts: { headers: Headers }) {
   }
 }
 
-const os = implement(contract)
 const o = os.$context<Awaited<ReturnType<typeof createORPCContext>>>()
 
 const timingMiddleware = o.middleware(async ({ next, path }) => {
   const start = Date.now()
-
   try {
     return await next()
   } finally {

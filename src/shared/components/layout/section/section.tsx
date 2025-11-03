@@ -23,9 +23,9 @@ export default function Section({
   className,
 }: SectionProps) {
   return (
-    <Card className={cn('bg-card/0 border-none p-0 shadow-none', className)}>
+    <Card className={cn('bg-card/0 gap-0 border-none p-0 shadow-none', className)}>
       {title && description && (
-        <div className={variant === 'full' ? 'w-full' : 'max-w-9xl container mx-auto'}>
+        <div className={variant === 'full' ? 'w-full' : 'max-w-9xl container mx-auto mb-4'}>
           <CardHeader className="px-0">
             {title && <CardTitle>{title}</CardTitle>}
             {description && <CardDescription>{description}</CardDescription>}
@@ -33,7 +33,7 @@ export default function Section({
           </CardHeader>
         </div>
       )}
-      {separator && <Separator />}
+      {separator && <Separator className="mb-4" />}
       <CardContent className="min-h-[600px] p-0">{children}</CardContent>
     </Card>
   )

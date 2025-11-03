@@ -1,10 +1,10 @@
 import z from 'zod'
 import { createInsertSchema, createSelectSchema, createUpdateSchema } from 'drizzle-zod'
-import { user } from './dto.user.schema'
+import { review } from './dto.review.schema'
 
-const userSelectSchema = createSelectSchema(user)
-const userInsertSchema = createInsertSchema(user)
-const userUpdateSchema = createUpdateSchema(user)
+const reviewSelectSchema = createSelectSchema(review)
+const reviewInsertSchema = createInsertSchema(review)
+const reviewUpdateSchema = createUpdateSchema(review)
 
 export const detailedResponse = <T extends z.ZodTypeAny>(dataSchema: T) =>
   z.object({
@@ -19,7 +19,7 @@ export const detailedResponse = <T extends z.ZodTypeAny>(dataSchema: T) =>
       .optional(),
   })
 
-export const userContract = {
+export const reviewContract = {
   get: {
     input: z.object({
       params: z.object({ id: z.string() }),
@@ -27,40 +27,65 @@ export const userContract = {
       body: z.object().optional(),
       headers: z.object().optional(),
     }),
-    output: detailedResponse(userSelectSchema.nullable()),
+    output: detailedResponse(reviewSelectSchema.nullable()),
   },
   getMany: {
     input: z.object({
       params: z.object().optional(),
       query: z.object().optional(),
       body: z.object({
-        search: z.string().optional(),
-        role: z.string().optional(),
-        banned: z.boolean().optional(),
+        productId: z.string().optional(),
+        userId: z.string().optional(),
+        rating: z.number().optional(),
         limit: z.number().optional(),
         offset: z.number().optional(),
       }),
       headers: z.object().optional(),
     }),
-    output: detailedResponse(z.array(userSelectSchema)),
+    output: detailedResponse(z.array(reviewSelectSchema)),
+  },
+  getProductReviews: {
+    input: z.object({
+      params: z.object({ productId: z.string() }),
+      query: z.object().optional(),
+      body: z.object({
+        rating: z.number().optional(),
+        limit: z.number().optional(),
+        offset: z.number().optional(),
+      }),
+      headers: z.object().optional(),
+    }),
+    output: detailedResponse(z.array(reviewSelectSchema)),
+  },
+  getUserReviews: {
+    input: z.object({
+      params: z.object({ userId: z.string() }),
+      query: z.object().optional(),
+      body: z.object({
+        limit: z.number().optional(),
+        offset: z.number().optional(),
+      }),
+      headers: z.object().optional(),
+    }),
+    output: detailedResponse(z.array(reviewSelectSchema)),
   },
   create: {
     input: z.object({
       params: z.object().optional(),
       query: z.object().optional(),
-      body: userInsertSchema,
+      body: reviewInsertSchema,
       headers: z.object().optional(),
     }),
-    output: detailedResponse(userSelectSchema),
+    output: detailedResponse(reviewSelectSchema),
   },
   update: {
     input: z.object({
       params: z.object({ id: z.string() }),
       query: z.object().optional(),
-      body: userUpdateSchema,
+      body: reviewUpdateSchema,
       headers: z.object().optional(),
     }),
-    output: detailedResponse(userSelectSchema),
+    output: detailedResponse(reviewSelectSchema),
   },
   delete: {
     input: z.object({
@@ -70,7 +95,7 @@ export const userContract = {
       headers: z.object().optional(),
     }),
     output: detailedResponse(
-      userSelectSchema
+      reviewSelectSchema
         .pick({
           id: true,
         })

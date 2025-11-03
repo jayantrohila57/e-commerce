@@ -1,10 +1,10 @@
 import z from 'zod'
 import { createInsertSchema, createSelectSchema, createUpdateSchema } from 'drizzle-zod'
-import { user } from './dto.user.schema'
+import { account } from './account.schema'
 
-const userSelectSchema = createSelectSchema(user)
-const userInsertSchema = createInsertSchema(user)
-const userUpdateSchema = createUpdateSchema(user)
+const accountSelectSchema = createSelectSchema(account)
+const accountInsertSchema = createInsertSchema(account)
+const accountUpdateSchema = createUpdateSchema(account)
 
 export const detailedResponse = <T extends z.ZodTypeAny>(dataSchema: T) =>
   z.object({
@@ -19,7 +19,7 @@ export const detailedResponse = <T extends z.ZodTypeAny>(dataSchema: T) =>
       .optional(),
   })
 
-export const userContract = {
+export const accountContract = {
   get: {
     input: z.object({
       params: z.object({ id: z.string() }),
@@ -27,40 +27,40 @@ export const userContract = {
       body: z.object().optional(),
       headers: z.object().optional(),
     }),
-    output: detailedResponse(userSelectSchema.nullable()),
+    output: detailedResponse(accountSelectSchema.nullable()),
   },
   getMany: {
     input: z.object({
       params: z.object().optional(),
       query: z.object().optional(),
       body: z.object({
-        search: z.string().optional(),
-        role: z.string().optional(),
-        banned: z.boolean().optional(),
+        userId: z.string().optional(),
+        providerId: z.string().optional(),
+        accountId: z.string().optional(),
         limit: z.number().optional(),
         offset: z.number().optional(),
       }),
       headers: z.object().optional(),
     }),
-    output: detailedResponse(z.array(userSelectSchema)),
+    output: detailedResponse(z.array(accountSelectSchema)),
   },
   create: {
     input: z.object({
       params: z.object().optional(),
       query: z.object().optional(),
-      body: userInsertSchema,
+      body: accountInsertSchema,
       headers: z.object().optional(),
     }),
-    output: detailedResponse(userSelectSchema),
+    output: detailedResponse(accountSelectSchema),
   },
   update: {
     input: z.object({
       params: z.object({ id: z.string() }),
       query: z.object().optional(),
-      body: userUpdateSchema,
+      body: accountUpdateSchema,
       headers: z.object().optional(),
     }),
-    output: detailedResponse(userSelectSchema),
+    output: detailedResponse(accountSelectSchema),
   },
   delete: {
     input: z.object({
@@ -70,7 +70,7 @@ export const userContract = {
       headers: z.object().optional(),
     }),
     output: detailedResponse(
-      userSelectSchema
+      accountSelectSchema
         .pick({
           id: true,
         })

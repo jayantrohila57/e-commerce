@@ -1,10 +1,10 @@
 import z from 'zod'
 import { createInsertSchema, createSelectSchema, createUpdateSchema } from 'drizzle-zod'
-import { user } from './dto.user.schema'
+import { address } from './dto.address.schema'
 
-const userSelectSchema = createSelectSchema(user)
-const userInsertSchema = createInsertSchema(user)
-const userUpdateSchema = createUpdateSchema(user)
+const addressSelectSchema = createSelectSchema(address)
+const addressInsertSchema = createInsertSchema(address)
+const addressUpdateSchema = createUpdateSchema(address)
 
 export const detailedResponse = <T extends z.ZodTypeAny>(dataSchema: T) =>
   z.object({
@@ -19,7 +19,7 @@ export const detailedResponse = <T extends z.ZodTypeAny>(dataSchema: T) =>
       .optional(),
   })
 
-export const userContract = {
+export const addressContract = {
   get: {
     input: z.object({
       params: z.object({ id: z.string() }),
@@ -27,40 +27,48 @@ export const userContract = {
       body: z.object().optional(),
       headers: z.object().optional(),
     }),
-    output: detailedResponse(userSelectSchema.nullable()),
+    output: detailedResponse(addressSelectSchema.nullable()),
   },
   getMany: {
     input: z.object({
       params: z.object().optional(),
       query: z.object().optional(),
       body: z.object({
+        userId: z.string().optional(),
         search: z.string().optional(),
-        role: z.string().optional(),
-        banned: z.boolean().optional(),
         limit: z.number().optional(),
         offset: z.number().optional(),
       }),
       headers: z.object().optional(),
     }),
-    output: detailedResponse(z.array(userSelectSchema)),
+    output: detailedResponse(z.array(addressSelectSchema)),
+  },
+  getUserAddresses: {
+    input: z.object({
+      params: z.object({ userId: z.string() }),
+      query: z.object().optional(),
+      body: z.object().optional(),
+      headers: z.object().optional(),
+    }),
+    output: detailedResponse(z.array(addressSelectSchema)),
   },
   create: {
     input: z.object({
       params: z.object().optional(),
       query: z.object().optional(),
-      body: userInsertSchema,
+      body: addressInsertSchema,
       headers: z.object().optional(),
     }),
-    output: detailedResponse(userSelectSchema),
+    output: detailedResponse(addressSelectSchema),
   },
   update: {
     input: z.object({
       params: z.object({ id: z.string() }),
       query: z.object().optional(),
-      body: userUpdateSchema,
+      body: addressUpdateSchema,
       headers: z.object().optional(),
     }),
-    output: detailedResponse(userSelectSchema),
+    output: detailedResponse(addressSelectSchema),
   },
   delete: {
     input: z.object({
@@ -70,7 +78,7 @@ export const userContract = {
       headers: z.object().optional(),
     }),
     output: detailedResponse(
-      userSelectSchema
+      addressSelectSchema
         .pick({
           id: true,
         })

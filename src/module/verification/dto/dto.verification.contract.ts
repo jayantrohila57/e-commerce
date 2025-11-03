@@ -1,10 +1,10 @@
 import z from 'zod'
 import { createInsertSchema, createSelectSchema, createUpdateSchema } from 'drizzle-zod'
-import { user } from './dto.user.schema'
+import { verification } from './verification.schema'
 
-const userSelectSchema = createSelectSchema(user)
-const userInsertSchema = createInsertSchema(user)
-const userUpdateSchema = createUpdateSchema(user)
+const verificationSelectSchema = createSelectSchema(verification)
+const verificationInsertSchema = createInsertSchema(verification)
+const verificationUpdateSchema = createUpdateSchema(verification)
 
 export const detailedResponse = <T extends z.ZodTypeAny>(dataSchema: T) =>
   z.object({
@@ -19,7 +19,7 @@ export const detailedResponse = <T extends z.ZodTypeAny>(dataSchema: T) =>
       .optional(),
   })
 
-export const userContract = {
+export const verificationContract = {
   get: {
     input: z.object({
       params: z.object({ id: z.string() }),
@@ -27,40 +27,39 @@ export const userContract = {
       body: z.object().optional(),
       headers: z.object().optional(),
     }),
-    output: detailedResponse(userSelectSchema.nullable()),
+    output: detailedResponse(verificationSelectSchema.nullable()),
   },
   getMany: {
     input: z.object({
       params: z.object().optional(),
       query: z.object().optional(),
       body: z.object({
-        search: z.string().optional(),
-        role: z.string().optional(),
-        banned: z.boolean().optional(),
+        identifier: z.string().optional(),
+        value: z.string().optional(),
         limit: z.number().optional(),
         offset: z.number().optional(),
       }),
       headers: z.object().optional(),
     }),
-    output: detailedResponse(z.array(userSelectSchema)),
+    output: detailedResponse(z.array(verificationSelectSchema)),
   },
   create: {
     input: z.object({
       params: z.object().optional(),
       query: z.object().optional(),
-      body: userInsertSchema,
+      body: verificationInsertSchema,
       headers: z.object().optional(),
     }),
-    output: detailedResponse(userSelectSchema),
+    output: detailedResponse(verificationSelectSchema),
   },
   update: {
     input: z.object({
       params: z.object({ id: z.string() }),
       query: z.object().optional(),
-      body: userUpdateSchema,
+      body: verificationUpdateSchema,
       headers: z.object().optional(),
     }),
-    output: detailedResponse(userSelectSchema),
+    output: detailedResponse(verificationSelectSchema),
   },
   delete: {
     input: z.object({
@@ -70,7 +69,7 @@ export const userContract = {
       headers: z.object().optional(),
     }),
     output: detailedResponse(
-      userSelectSchema
+      verificationSelectSchema
         .pick({
           id: true,
         })

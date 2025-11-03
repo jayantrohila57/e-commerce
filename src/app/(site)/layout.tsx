@@ -14,7 +14,6 @@ export default async function Layout({ children }: { children: React.ReactNode }
       {/* <CookieConsent /> */}
       <Shell.Header>
         <Header />
-        {/* <PromoBanner /> */}
       </Shell.Header>
       <Shell.Main>{children}</Shell.Main>
       <Shell.Footer>

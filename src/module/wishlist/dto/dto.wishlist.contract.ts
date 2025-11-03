@@ -1,10 +1,11 @@
 import z from 'zod'
 import { createInsertSchema, createSelectSchema, createUpdateSchema } from 'drizzle-zod'
-import { user } from './dto.user.schema'
+import { wishlist, wishlistItem } from './dto.wishlist.schema'
 
-const userSelectSchema = createSelectSchema(user)
-const userInsertSchema = createInsertSchema(user)
-const userUpdateSchema = createUpdateSchema(user)
+const wishlistSelectSchema = createSelectSchema(wishlist)
+const wishlistInsertSchema = createInsertSchema(wishlist)
+const wishlistItemSelectSchema = createSelectSchema(wishlistItem)
+const wishlistItemInsertSchema = createInsertSchema(wishlistItem)
 
 export const detailedResponse = <T extends z.ZodTypeAny>(dataSchema: T) =>
   z.object({
@@ -19,7 +20,11 @@ export const detailedResponse = <T extends z.ZodTypeAny>(dataSchema: T) =>
       .optional(),
   })
 
-export const userContract = {
+const wishlistWithItemsSchema = wishlistSelectSchema.extend({
+  items: z.array(wishlistItemSelectSchema).optional(),
+})
+
+export const wishlistContract = {
   get: {
     input: z.object({
       params: z.object({ id: z.string() }),
@@ -27,40 +32,62 @@ export const userContract = {
       body: z.object().optional(),
       headers: z.object().optional(),
     }),
-    output: detailedResponse(userSelectSchema.nullable()),
+    output: detailedResponse(wishlistSelectSchema.nullable()),
   },
   getMany: {
     input: z.object({
       params: z.object().optional(),
       query: z.object().optional(),
       body: z.object({
-        search: z.string().optional(),
-        role: z.string().optional(),
-        banned: z.boolean().optional(),
+        userId: z.string().optional(),
         limit: z.number().optional(),
         offset: z.number().optional(),
       }),
       headers: z.object().optional(),
     }),
-    output: detailedResponse(z.array(userSelectSchema)),
+    output: detailedResponse(z.array(wishlistSelectSchema)),
+  },
+  getUserWishlist: {
+    input: z.object({
+      params: z.object({ userId: z.string() }),
+      query: z.object().optional(),
+      body: z.object().optional(),
+      headers: z.object().optional(),
+    }),
+    output: detailedResponse(wishlistWithItemsSchema.nullable()),
   },
   create: {
     input: z.object({
       params: z.object().optional(),
       query: z.object().optional(),
-      body: userInsertSchema,
+      body: wishlistInsertSchema,
       headers: z.object().optional(),
     }),
-    output: detailedResponse(userSelectSchema),
+    output: detailedResponse(wishlistSelectSchema),
   },
-  update: {
+  addItem: {
+    input: z.object({
+      params: z.object().optional(),
+      query: z.object().optional(),
+      body: wishlistItemInsertSchema,
+      headers: z.object().optional(),
+    }),
+    output: detailedResponse(wishlistItemSelectSchema),
+  },
+  removeItem: {
     input: z.object({
       params: z.object({ id: z.string() }),
       query: z.object().optional(),
-      body: userUpdateSchema,
+      body: z.object().optional(),
       headers: z.object().optional(),
     }),
-    output: detailedResponse(userSelectSchema),
+    output: detailedResponse(
+      wishlistItemSelectSchema
+        .pick({
+          id: true,
+        })
+        .nullable(),
+    ),
   },
   delete: {
     input: z.object({
@@ -70,7 +97,7 @@ export const userContract = {
       headers: z.object().optional(),
     }),
     output: detailedResponse(
-      userSelectSchema
+      wishlistSelectSchema
         .pick({
           id: true,
         })

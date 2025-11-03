@@ -1,10 +1,10 @@
 import z from 'zod'
 import { createInsertSchema, createSelectSchema, createUpdateSchema } from 'drizzle-zod'
-import { user } from './dto.user.schema'
+import { shipment } from './dto.shipment.schema'
 
-const userSelectSchema = createSelectSchema(user)
-const userInsertSchema = createInsertSchema(user)
-const userUpdateSchema = createUpdateSchema(user)
+const shipmentSelectSchema = createSelectSchema(shipment)
+const shipmentInsertSchema = createInsertSchema(shipment)
+const shipmentUpdateSchema = createUpdateSchema(shipment)
 
 export const detailedResponse = <T extends z.ZodTypeAny>(dataSchema: T) =>
   z.object({
@@ -19,7 +19,7 @@ export const detailedResponse = <T extends z.ZodTypeAny>(dataSchema: T) =>
       .optional(),
   })
 
-export const userContract = {
+export const shipmentContract = {
   get: {
     input: z.object({
       params: z.object({ id: z.string() }),
@@ -27,40 +27,61 @@ export const userContract = {
       body: z.object().optional(),
       headers: z.object().optional(),
     }),
-    output: detailedResponse(userSelectSchema.nullable()),
+    output: detailedResponse(shipmentSelectSchema.nullable()),
   },
   getMany: {
     input: z.object({
       params: z.object().optional(),
       query: z.object().optional(),
       body: z.object({
-        search: z.string().optional(),
-        role: z.string().optional(),
-        banned: z.boolean().optional(),
+        orderId: z.string().optional(),
+        status: z.string().optional(),
         limit: z.number().optional(),
         offset: z.number().optional(),
       }),
       headers: z.object().optional(),
     }),
-    output: detailedResponse(z.array(userSelectSchema)),
+    output: detailedResponse(z.array(shipmentSelectSchema)),
+  },
+  getOrderShipments: {
+    input: z.object({
+      params: z.object({ orderId: z.string() }),
+      query: z.object().optional(),
+      body: z.object().optional(),
+      headers: z.object().optional(),
+    }),
+    output: detailedResponse(z.array(shipmentSelectSchema)),
   },
   create: {
     input: z.object({
       params: z.object().optional(),
       query: z.object().optional(),
-      body: userInsertSchema,
+      body: shipmentInsertSchema,
       headers: z.object().optional(),
     }),
-    output: detailedResponse(userSelectSchema),
+    output: detailedResponse(shipmentSelectSchema),
   },
   update: {
     input: z.object({
       params: z.object({ id: z.string() }),
       query: z.object().optional(),
-      body: userUpdateSchema,
+      body: shipmentUpdateSchema,
       headers: z.object().optional(),
     }),
-    output: detailedResponse(userSelectSchema),
+    output: detailedResponse(shipmentSelectSchema),
+  },
+  updateTracking: {
+    input: z.object({
+      params: z.object({ id: z.string() }),
+      query: z.object().optional(),
+      body: z.object({
+        carrier: z.string().optional(),
+        trackingNumber: z.string().optional(),
+        status: z.string().optional(),
+      }),
+      headers: z.object().optional(),
+    }),
+    output: detailedResponse(shipmentSelectSchema),
   },
   delete: {
     input: z.object({
@@ -70,7 +91,7 @@ export const userContract = {
       headers: z.object().optional(),
     }),
     output: detailedResponse(
-      userSelectSchema
+      shipmentSelectSchema
         .pick({
           id: true,
         })

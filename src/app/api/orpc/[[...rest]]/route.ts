@@ -1,10 +1,9 @@
 import { createORPCContext } from '@/core/orpc/orpc.server'
 import { OpenAPIHandler } from '@orpc/openapi/fetch'
 import { appRouter } from '@/core/orpc/orpc.router'
-import { interceptors, orpcPlugins } from '@/core/orpc/orpc.config'
+import { orpcPlugins } from '@/core/orpc/orpc.config'
 
 const handler = new OpenAPIHandler(appRouter, {
-  interceptors: [async ({ next }) => await interceptors({ next })],
   plugins: orpcPlugins,
 })
 

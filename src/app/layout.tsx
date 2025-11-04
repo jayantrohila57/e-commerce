@@ -3,6 +3,7 @@ import '@/shared/styles/globals.css'
 import { Toaster } from '@/shared/components/ui/sonner'
 import { className } from '@/shared/utils/methods/font'
 import { ThemeProvider } from '@/core/theme/theme.provider'
+import { Providers } from '@/core/query/providers'
 
 export default function RootLayout({ children }: LayoutProps<'/'>) {
   return (
@@ -14,11 +15,12 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
         suppressHydrationWarning
         className={className}
       >
-        <ThemeProvider>
-          {children}
-          <Toaster />
-        </ThemeProvider>
-        <Toaster />
+        <Providers>
+          <ThemeProvider>
+            {children}
+            <Toaster />
+          </ThemeProvider>
+        </Providers>
       </body>
     </html>
   )

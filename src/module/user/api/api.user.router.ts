@@ -9,7 +9,7 @@ export const userRouter = protectedProcedure.router({
         summary: 'Get a user by ID or other filter',
         description: 'Get a user by ID or other filter',
         path: '/user/get',
-        method: 'GET',
+        method: 'POST',
         tags: ['User'],
         inputStructure: 'detailed',
         outputStructure: 'compact',
@@ -22,7 +22,7 @@ export const userRouter = protectedProcedure.router({
         summary: 'Get many users',
         description: 'Get many users',
         path: '/user/getMany',
-        method: 'GET',
+        method: 'POST',
         tags: ['User'],
         inputStructure: 'detailed',
       })

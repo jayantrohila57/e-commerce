@@ -1,7 +1,8 @@
 import { createAuthClient } from 'better-auth/react'
 import { nextCookies } from 'better-auth/next-js'
-import { inferAdditionalFields, twoFactorClient, passkeyClient } from 'better-auth/client/plugins'
+import { inferAdditionalFields, twoFactorClient, passkeyClient, adminClient } from 'better-auth/client/plugins'
 import { type auth } from './auth'
+import { admin, user, ac } from './permissions'
 
 export const {
   $Infer,
@@ -23,6 +24,13 @@ export const {
   plugins: [
     nextCookies(),
     passkeyClient(),
+    adminClient({
+      ac,
+      roles: {
+        admin,
+        user,
+      },
+    }),
     twoFactorClient({
       onTwoFactorRedirect: () => {
         window.location.href = '/auth/2fa'

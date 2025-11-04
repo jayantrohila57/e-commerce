@@ -33,13 +33,15 @@ export const userContract = {
     input: z.object({
       params: z.object().optional(),
       query: z.object().optional(),
-      body: z.object({
-        search: z.string().optional(),
-        role: z.string().optional(),
-        banned: z.boolean().optional(),
-        limit: z.number().optional(),
-        offset: z.number().optional(),
-      }),
+      body: z
+        .object({
+          search: z.string().optional(),
+          role: z.string().optional(),
+          banned: z.boolean().optional(),
+          limit: z.number().optional(),
+          offset: z.number().optional(),
+        })
+        .optional(),
       headers: z.object().optional(),
     }),
     output: detailedResponse(z.array(userSelectSchema)),

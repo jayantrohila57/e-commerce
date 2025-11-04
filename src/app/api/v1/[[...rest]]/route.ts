@@ -9,7 +9,7 @@ const handler = new OpenAPIHandler(appRouter, {
 
 async function handleRequest(request: Request) {
   const { response } = await handler.handle(request, {
-    prefix: '/api/orpc',
+    prefix: '/api/v1',
     context: await createORPCContext(request),
   })
 

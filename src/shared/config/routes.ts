@@ -34,6 +34,61 @@ export const PATH = {
   },
   STUDIO: {
     ROOT: '/studio',
+
+    PRODUCTS: {
+      ROOT: '/studio/products',
+      NEW: '/studio/products/new',
+      EDIT: (id: string) => `/studio/products/${id}/edit`,
+    },
+
+    CATEGORIES: {
+      ROOT: '/studio/categories',
+      NEW: '/studio/categories/new',
+      EDIT: (id: string) => `/studio/categories/${id}/edit`,
+    },
+
+    ORDERS: {
+      ROOT: '/studio/orders',
+      VIEW: (id: string) => `/studio/orders/${id}`,
+    },
+
+    CUSTOMERS: {
+      ROOT: '/studio/customers',
+      VIEW: (id: string) => `/studio/customers/${id}`,
+    },
+
+    DISCOUNTS: {
+      ROOT: '/studio/discounts',
+      NEW: '/studio/discounts/new',
+      EDIT: (id: string) => `/studio/discounts/${id}/edit`,
+    },
+
+    SHIPPING: {
+      ROOT: '/studio/shipping',
+      EDIT: (id: string) => `/studio/shipping/${id}/edit`,
+    },
+
+    PAYMENTS: {
+      ROOT: '/studio/payments',
+      VIEW: (id: string) => `/studio/payments/${id}`,
+    },
+
+    MARKETING: {
+      ROOT: '/studio/marketing',
+      CAMPAIGNS: '/studio/marketing/campaigns',
+    },
+
+    ANALYTICS: {
+      ROOT: '/studio/analytics',
+      SALES: '/studio/analytics/sales',
+      CUSTOMERS: '/studio/analytics/customers',
+    },
+
+    SETTINGS: {
+      ROOT: '/studio/settings',
+      PROFILE: '/studio/settings/profile',
+      TEAM: '/studio/settings/team',
+    },
   },
   BLOG: {
     ROOT: '/blog',

@@ -9,26 +9,15 @@ import { discountRouter } from '@/module/discount/api/api.discount.router'
 import { productRouter } from '@/module/product/api/api.product.router'
 import { reviewRouter } from '@/module/review/api/api.review.router'
 
-const userLazyRouter = userRouter
-const addressLazyRouter = addressRouter
-const wishlistLazyRouter = wishlistRouter
-const cartLazyRouter = cartRouter
-const orderLazyRouter = orderRouter
-const shipmentLazyRouter = shipmentRouter
-const categoryLazyRouter = categoryRouter
-const discountLazyRouter = discountRouter
-const productLazyRouter = productRouter
-const reviewLazyRouter = reviewRouter
-
 export const appRouter = {
-  user: userLazyRouter,
-  address: addressLazyRouter,
-  wishlist: wishlistLazyRouter,
-  cart: cartLazyRouter,
-  order: orderLazyRouter,
-  shipment: shipmentLazyRouter,
-  category: categoryLazyRouter,
-  discount: discountLazyRouter,
-  product: productLazyRouter,
-  review: reviewLazyRouter,
+  user: userRouter,
+  address: addressRouter,
+  wishlist: wishlistRouter,
+  cart: cartRouter,
+  order: orderRouter,
+  shipment: shipmentRouter,
+  category: categoryRouter,
+  discount: discountRouter,
+  product: productRouter,
+  review: reviewRouter,
 }

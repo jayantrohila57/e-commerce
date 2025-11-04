@@ -1,4 +1,4 @@
-import { Poppins as Font, Special_Gothic as SecondaryFont } from 'next/font/google'
+import { Poppins as Font, Oswald as SecondaryFont } from 'next/font/google'
 
 const font = Font({
   subsets: ['latin'],

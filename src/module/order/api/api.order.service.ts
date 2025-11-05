@@ -68,7 +68,7 @@ export const orderService = {
         where: and(...conditions),
         with: {
           items: {
-            orderBy: (item: any, { desc }: any) => desc(item.createdAt),
+            orderBy: (item: { createdAt: Date }, { desc }: { desc: (arg0: Date) => Date }) => desc(item.createdAt),
           },
         },
         orderBy: (o, { desc }) => desc(o.createdAt),
@@ -87,7 +87,7 @@ export const orderService = {
         where: (o, { eq }) => eq(o.id, String(params.id)),
         with: {
           items: {
-            orderBy: (item: any, { desc }: any) => desc(item.createdAt),
+            orderBy: (item: { createdAt: Date }, { desc }: { desc: (arg0: Date) => Date }) => desc(item.createdAt),
           },
         },
       })

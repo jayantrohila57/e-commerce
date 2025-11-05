@@ -1,69 +1,26 @@
-import { protectedProcedure } from '@/core/orpc/orpc.server'
 import { categoryController } from './api.category.controller'
 import { categoryContract } from '../dto/dto.category.contract'
+import { createTRPCRouter, protectedProcedure } from '@/core/api/api.methods'
 
-export const categoryRouter = protectedProcedure.router({
-  category: {
-    get: protectedProcedure
-      .route({
-        summary: 'Get a category by ID or slug',
-        description: 'Get a category by ID or slug',
-        path: '/category/get',
-        method: 'GET',
-        tags: ['Category'],
-        inputStructure: 'detailed',
-        outputStructure: 'compact',
-      })
-      .input(categoryContract.get.input)
-      .output(categoryContract.get.output)
-      .handler(({ input }) => categoryController.get({ input })),
-    getMany: protectedProcedure
-      .route({
-        summary: 'Get many categories',
-        description: 'Get many categories',
-        path: '/category/getMany',
-        method: 'GET',
-        tags: ['Category'],
-        inputStructure: 'detailed',
-      })
-      .input(categoryContract.getMany.input)
-      .output(categoryContract.getMany.output)
-      .handler(({ input }) => categoryController.getMany({ input })),
-    create: protectedProcedure
-      .route({
-        summary: 'Create a new category',
-        description: 'Create a new category',
-        path: '/category/create',
-        method: 'POST',
-        tags: ['Category'],
-        inputStructure: 'detailed',
-      })
-      .input(categoryContract.create.input)
-      .output(categoryContract.create.output)
-      .handler(({ input }) => categoryController.create({ input })),
-    update: protectedProcedure
-      .route({
-        summary: 'Update a category',
-        description: 'Update a category',
-        path: '/category/update',
-        method: 'POST',
-        tags: ['Category'],
-        inputStructure: 'detailed',
-      })
-      .input(categoryContract.update.input)
-      .output(categoryContract.update.output)
-      .handler(({ input }) => categoryController.update({ input })),
-    delete: protectedProcedure
-      .route({
-        summary: 'Delete a category by ID',
-        description: 'Delete a category by ID',
-        path: '/category/delete',
-        method: 'DELETE',
-        tags: ['Category'],
-        inputStructure: 'detailed',
-      })
-      .input(categoryContract.delete.input)
-      .output(categoryContract.delete.output)
-      .handler(({ input }) => categoryController.delete({ input })),
-  },
+export const categoryRouter = createTRPCRouter({
+  get: protectedProcedure
+    .input(categoryContract.get.input)
+    .output(categoryContract.get.output)
+    .query(({ input }) => categoryController.get({ input })),
+  getMany: protectedProcedure
+    .input(categoryContract.getMany.input)
+    .output(categoryContract.getMany.output)
+    .query(({ input }) => categoryController.getMany({ input })),
+  create: protectedProcedure
+    .input(categoryContract.create.input)
+    .output(categoryContract.create.output)
+    .mutation(({ input }) => categoryController.create({ input })),
+  update: protectedProcedure
+    .input(categoryContract.update.input)
+    .output(categoryContract.update.output)
+    .mutation(({ input }) => categoryController.update({ input })),
+  delete: protectedProcedure
+    .input(categoryContract.delete.input)
+    .output(categoryContract.delete.output)
+    .mutation(({ input }) => categoryController.delete({ input })),
 })

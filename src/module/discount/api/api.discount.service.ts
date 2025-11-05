@@ -61,7 +61,7 @@ export const discountService = {
         },
       })
       // Check if expired
-      if (data && data.expiresAt && new Date(data.expiresAt) < new Date()) {
+      if (data?.expiresAt && new Date(data.expiresAt) < new Date()) {
         return null
       }
       return data ?? null

@@ -1,3 +1,4 @@
+import { HydrateClient } from '@/core/api/api.server'
 import { getServerSession } from '@/core/auth/auth.server'
 import DashboardSection from '@/shared/components/layout/section/section-dashboard'
 import Shell from '@/shared/components/layout/shell'
@@ -14,16 +15,14 @@ export default async function Home() {
   if (!session) return redirect(PATH.ROOT)
 
   return (
-    <Shell>
-      <Shell.Section variant="dashboard">
-        <DashboardSection {...metadata}>
-          <div className="">
-            {JSON.stringify({
-              session,
-            })}
-          </div>
-        </DashboardSection>
-      </Shell.Section>
-    </Shell>
+    <HydrateClient>
+      <Shell>
+        <Shell.Section variant="dashboard">
+          <DashboardSection {...metadata}>
+            <div className="">Hello</div>
+          </DashboardSection>
+        </Shell.Section>
+      </Shell>
+    </HydrateClient>
   )
 }

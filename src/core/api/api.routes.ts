@@ -1,3 +1,4 @@
+import { createCallerFactory, createTRPCRouter } from '@/core/api/api.methods'
 import { userRouter } from '@/module/user/api/api.user.router'
 import { addressRouter } from '@/module/address/api/api.address.router'
 import { wishlistRouter } from '@/module/wishlist/api/api.wishlist.router'
@@ -9,7 +10,7 @@ import { discountRouter } from '@/module/discount/api/api.discount.router'
 import { productRouter } from '@/module/product/api/api.product.router'
 import { reviewRouter } from '@/module/review/api/api.review.router'
 
-export const appRouter = {
+export const appRouter = createTRPCRouter({
   user: userRouter,
   address: addressRouter,
   wishlist: wishlistRouter,
@@ -20,4 +21,8 @@ export const appRouter = {
   discount: discountRouter,
   product: productRouter,
   review: reviewRouter,
-}
+})
+
+export type AppRouter = typeof appRouter
+
+export const createCaller = createCallerFactory(appRouter)

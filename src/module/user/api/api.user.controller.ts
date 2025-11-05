@@ -14,95 +14,76 @@ import {
 import { debugLog } from '@/shared/utils/lib/logger.utils'
 import { MESSAGE, STATUS } from '@/shared/config/api.config'
 import { userService } from './api.user.service'
+import { API_RESPONSE } from '@/shared/config/api.utils'
 
 export const userController = {
   get: async ({ input }: GetControllerInput): GetControllerOutput => {
     try {
       const output = await userService.get({ body: input.body, params: input.params })
-      return {
-        status: output ? STATUS.SUCCESS : STATUS.FAILED,
-        message: output ? MESSAGE.USER.GET.SUCCESS : MESSAGE.USER.GET.FAILED,
-        data: output,
-      }
+      return API_RESPONSE(
+        output ? STATUS.SUCCESS : STATUS.FAILED,
+        output ? MESSAGE.USER.GET.SUCCESS : MESSAGE.USER.GET.FAILED,
+        output,
+      )
     } catch (err) {
       debugLog('SERVICE:USER:GET:ERROR', err)
-      return {
-        status: STATUS.ERROR,
-        message: MESSAGE.USER.GET.ERROR,
-        data: null,
-      }
+      return API_RESPONSE(STATUS.ERROR, MESSAGE.USER.GET.ERROR, null)
     }
   },
 
   getMany: async ({ input }: GetManyControllerInput): GetManyControllerOutput => {
     try {
       const output = await userService.getMany({ body: input.body, params: input.params })
-      return {
-        status: output?.length ? STATUS.SUCCESS : STATUS.FAILED,
-        message: output?.length ? MESSAGE.USER.GET_MANY.SUCCESS : MESSAGE.USER.GET_MANY.FAILED,
-        data: output ?? [],
-      }
+      return API_RESPONSE(
+        output?.length ? STATUS.SUCCESS : STATUS.FAILED,
+        output?.length ? MESSAGE.USER.GET_MANY.SUCCESS : MESSAGE.USER.GET_MANY.FAILED,
+        output ?? [],
+      )
     } catch (err) {
       debugLog('SERVICE:USER:GET_MANY:ERROR', err)
-      return {
-        status: STATUS.ERROR,
-        message: MESSAGE.USER.GET_MANY.ERROR,
-        data: [],
-      }
+      return API_RESPONSE(STATUS.ERROR, MESSAGE.USER.GET_MANY.ERROR, [])
     }
   },
 
   create: async ({ input }: CreateControllerInput): CreateControllerOutput => {
     try {
       const output = await userService.create({ body: input.body })
-      return {
-        status: output ? STATUS.SUCCESS : STATUS.FAILED,
-        message: output ? MESSAGE.USER.CREATE.SUCCESS : MESSAGE.USER.CREATE.FAILED,
-        data: output,
-      }
+      return API_RESPONSE(
+        output ? STATUS.SUCCESS : STATUS.FAILED,
+        output ? MESSAGE.USER.CREATE.SUCCESS : MESSAGE.USER.CREATE.FAILED,
+        output,
+      )
     } catch (err) {
       debugLog('SERVICE:USER:CREATE:ERROR', err)
-      return {
-        status: STATUS.ERROR,
-        message: MESSAGE.USER.CREATE.ERROR,
-        data: null,
-      }
+      return API_RESPONSE(STATUS.ERROR, MESSAGE.USER.CREATE.ERROR, null)
     }
   },
 
   update: async ({ input }: UpdateControllerInput): UpdateControllerOutput => {
     try {
       const output = await userService.update({ body: input.body, params: input.params })
-      return {
-        status: output ? STATUS.SUCCESS : STATUS.FAILED,
-        message: output ? MESSAGE.USER.UPDATE.SUCCESS : MESSAGE.USER.UPDATE.FAILED,
-        data: output,
-      }
+      return API_RESPONSE(
+        output ? STATUS.SUCCESS : STATUS.FAILED,
+        output ? MESSAGE.USER.UPDATE.SUCCESS : MESSAGE.USER.UPDATE.FAILED,
+        output,
+      )
     } catch (err) {
       debugLog('SERVICE:USER:UPDATE:ERROR', err)
-      return {
-        status: STATUS.ERROR,
-        message: MESSAGE.USER.UPDATE.ERROR,
-        data: null,
-      }
+      return API_RESPONSE(STATUS.ERROR, MESSAGE.USER.UPDATE.ERROR, null)
     }
   },
 
   delete: async ({ input }: DeleteControllerInput): DeleteControllerOutput => {
     try {
       const output = await userService.delete({ params: input.params })
-      return {
-        status: output ? STATUS.SUCCESS : STATUS.FAILED,
-        message: output ? MESSAGE.USER.DELETE.SUCCESS : MESSAGE.USER.DELETE.FAILED,
-        data: output,
-      }
+      return API_RESPONSE(
+        output ? STATUS.SUCCESS : STATUS.FAILED,
+        output ? MESSAGE.USER.DELETE.SUCCESS : MESSAGE.USER.DELETE.FAILED,
+        output,
+      )
     } catch (err) {
       debugLog('SERVICE:USER:DELETE:ERROR', err)
-      return {
-        status: STATUS.ERROR,
-        message: MESSAGE.USER.DELETE.ERROR,
-        data: null,
-      }
+      return API_RESPONSE(STATUS.ERROR, MESSAGE.USER.DELETE.ERROR, null)
     }
   },
 }

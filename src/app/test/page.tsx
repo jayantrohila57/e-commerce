@@ -1,12 +1,7 @@
-'use client'
+import { apiServer } from '@/core/api/api.server'
 
-import { apiClient } from '@/core/orpc/orpc.client'
-import { useQuery } from '@tanstack/react-query'
-
-export default function Test() {
-  const query = apiClient.user.user.getMany.mutationOptions({
-    input: {},
-  })
+export default async function Test() {
+  const query = await apiServer.user.getMany({})
   return (
     <div>
       <h1>{JSON.stringify(query.data)}</h1>

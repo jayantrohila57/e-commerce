@@ -1,24 +1,28 @@
-import { createORPCContext } from '@/core/orpc/orpc.server'
-import { OpenAPIHandler } from '@orpc/openapi/fetch'
-import { appRouter } from '@/core/orpc/orpc.router'
-import { orpcPlugins } from '@/core/orpc/orpc.config'
+import { fetchRequestHandler } from '@trpc/server/adapters/fetch'
+import { type NextRequest } from 'next/server'
+import { createTRPCContext } from '@/core/api/api.methods'
+import { debugLog } from '@/shared/utils/lib/logger.utils'
+import { env } from '@/shared/config/env'
+import { appRouter } from '@/core/api/api.routes'
 
-const handler = new OpenAPIHandler(appRouter, {
-  plugins: orpcPlugins,
-})
-
-async function handleRequest(request: Request) {
-  const { response } = await handler.handle(request, {
-    prefix: '/api/v1',
-    context: await createORPCContext(request),
+const createContext = async (req: NextRequest) => {
+  return createTRPCContext({
+    headers: req.headers,
   })
-
-  return response ?? new Response('Not found', { status: 404 })
 }
 
-export const HEAD = handleRequest
-export const GET = handleRequest
-export const POST = handleRequest
-export const PUT = handleRequest
-export const PATCH = handleRequest
-export const DELETE = handleRequest
+const handler = (req: NextRequest) =>
+  fetchRequestHandler({
+    endpoint: '/api/v1',
+    req,
+    router: appRouter,
+    createContext: () => createContext(req),
+    onError:
+      env.NODE_ENV === 'development'
+        ? ({ path, error }) => {
+            debugLog(`❌ tRPC failed on ${path ?? '<no-path>'}: ${error.message}`)
+          }
+        : undefined,
+  })
+
+export { handler as GET, handler as POST }

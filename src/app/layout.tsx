@@ -1,9 +1,11 @@
 import '@/shared/styles/globals.css'
 
 import { Toaster } from '@/shared/components/ui/sonner'
-import { className } from '@/shared/utils/methods/font'
+import { className, viewport } from '@/shared/utils/methods/font'
 import { ThemeProvider } from '@/core/theme/theme.provider'
-import { Providers } from '@/core/query/providers'
+import { TRPCReactProvider } from '@/core/api/api.client'
+
+export { viewport }
 
 export default function RootLayout({ children }: LayoutProps<'/'>) {
   return (
@@ -15,12 +17,12 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
         suppressHydrationWarning
         className={className}
       >
-        <Providers>
+        <TRPCReactProvider>
           <ThemeProvider>
             {children}
             <Toaster />
           </ThemeProvider>
-        </Providers>
+        </TRPCReactProvider>
       </body>
     </html>
   )

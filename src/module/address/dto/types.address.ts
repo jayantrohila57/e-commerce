@@ -37,20 +37,22 @@ export type UpdateControllerOutput = Promise<UpdateAddressOutput>
 export type CreateControllerInput = { input: CreateAddressInput }
 export type CreateControllerOutput = Promise<CreateAddressOutput>
 
-export type GetServiceInput = { body: GetAddressInput['body']; params: GetAddressInput['params'] }
-export type GetServiceOutput = Promise<GetAddressOutput['data'] | null>
+export type GetServiceInput = GetAddressInput['params']
+export type GetServiceOutput = Promise<GetAddressOutput['data']>
 
-export type GetManyServiceInput = { body: GetAddressesInput['body']; params: GetAddressesInput['params'] }
-export type GetManyServiceOutput = Promise<GetAddressesOutput['data'] | null>
+export type GetManyServiceInput = GetAddressesInput['query']
+export type GetManyServiceOutput = Promise<GetAddressesOutput['data']>
 
-export type GetUserAddressesServiceInput = { params: GetUserAddressesInput['params'] }
-export type GetUserAddressesServiceOutput = Promise<GetUserAddressesOutput['data'] | null>
+export type GetUserAddressesServiceInput = GetUserAddressesInput['params']
+export type GetUserAddressesServiceOutput = Promise<GetUserAddressesOutput['data']>
 
-export type DeleteServiceInput = { params: DeleteAddressInput['params'] }
-export type DeleteServiceOutput = Promise<DeleteAddressOutput['data'] | null>
+export type CreateServiceInput = CreateAddressInput['body']
+export type CreateServiceOutput = Promise<CreateAddressOutput['data']>
 
-export type UpdateServiceInput = { body: UpdateAddressInput['body']; params: UpdateAddressInput['params'] }
-export type UpdateServiceOutput = Promise<UpdateAddressOutput['data'] | null>
+export type UpdateServiceInput = UpdateAddressInput['params'] & {
+  update: UpdateAddressInput['body']
+}
+export type UpdateServiceOutput = Promise<UpdateAddressOutput['data']>
 
-export type CreateServiceInput = { body: CreateAddressInput['body'] }
-export type CreateServiceOutput = Promise<CreateAddressOutput['data'] | null>
+export type DeleteServiceInput = DeleteAddressInput['params']
+export type DeleteServiceOutput = Promise<DeleteAddressOutput['data']>

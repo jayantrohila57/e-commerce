@@ -1,88 +1,147 @@
-import {
-  type CreateServiceInput,
-  type CreateServiceOutput,
-  type DeleteServiceInput,
-  type DeleteServiceOutput,
-  type GetManyServiceInput,
-  type GetManyServiceOutput,
-  type GetServiceInput,
-  type GetServiceOutput,
-  type GetUserAddressesServiceInput,
-  type GetUserAddressesServiceOutput,
-  type UpdateServiceInput,
-  type UpdateServiceOutput,
-} from '../dto/types.address'
-
-import { debugError } from '@/shared/utils/lib/logger.utils'
-import { db } from '@/core/db/db'
-import { eq, and, ilike } from 'drizzle-orm'
-import { address } from '@/core/db/schema'
+import { and, eq, ilike, ne, or, sql, type SQL } from 'drizzle-orm'
 import { v4 as uuidv4 } from 'uuid'
 
+import { db } from '@/core/db/db'
+import { address } from '../dto/dto.address.schema'
+import { debugError } from '@/shared/utils/lib/logger.utils'
+import type {
+  CreateServiceInput,
+  CreateServiceOutput,
+  DeleteServiceInput,
+  DeleteServiceOutput,
+  GetManyServiceInput,
+  GetManyServiceOutput,
+  GetServiceInput,
+  GetServiceOutput,
+  GetUserAddressesServiceInput,
+  GetUserAddressesServiceOutput,
+  UpdateServiceInput,
+  UpdateServiceOutput,
+} from '../dto/types.address'
+import type { AddressInsert, AddressUpdate } from '../dto/dto.address.contract'
+
 export const addressService = {
-  get: async ({ body, params }: GetServiceInput): GetServiceOutput => {
+  get: async (params: GetServiceInput): GetServiceOutput => {
     try {
+      if (!params?.id) return null
+
       const data = await db.query.address.findFirst({
-        where: (a, { eq }) => {
-          if (params?.id) return eq(a.id, String(params?.id))
-          return undefined
-        },
+        where: (a, { eq }) => eq(a.id, params.id),
       })
+
       return data ?? null
     } catch (error) {
       debugError('SERVICE:ADDRESS:GET:ERROR', error)
       return null
     }
   },
-  getMany: async ({ body }: GetManyServiceInput): GetManyServiceOutput => {
+
+  getMany: async (query: GetManyServiceInput): Promise<GetManyServiceOutput> => {
     try {
-      const conditions = []
-      if (body?.userId) conditions.push(eq(address.userId, String(body.userId)))
-      if (body?.search) conditions.push(ilike(address.fullName, `%${body.search}%`))
+      const conditions: SQL[] = []
+      const { userId, search, type, isDefault, limit = 50, offset = 0 } = query || {}
 
-      const data = await db.query.address.findMany({
-        where: conditions.length ? and(...conditions) : undefined,
-        orderBy: (a, { desc }) => desc(a.createdAt),
-        limit: body?.limit ?? 50,
-        offset: body?.offset ?? 0,
-      })
+      if (userId) conditions.push(eq(address.userId, String(userId)))
+      if (type) conditions.push(eq(address.type, type))
+      if (typeof isDefault === 'boolean') conditions.push(eq(address.isDefault, isDefault))
 
-      return data
+      if (search) {
+        const searchTerm = `%${search}%`
+        const searchConditions =
+          [
+            ilike(address.addressLine1, searchTerm),
+            ilike(address.city, searchTerm),
+            ilike(address.state, searchTerm),
+            ilike(address.postalCode, searchTerm),
+          ]?.filter((condition): condition is SQL => condition !== undefined) ?? []
+
+        if (searchConditions.length === 1) {
+          conditions.push(searchConditions[0])
+        } else if (searchConditions.length > 1) {
+          conditions.push(or(...searchConditions)!)
+        }
+      }
+
+      const [data, total] = await Promise.all([
+        db.query.address.findMany({
+          where: conditions.length > 0 ? and(...conditions) : undefined,
+          orderBy: (a, { desc }) => [desc(a.isDefault), desc(a.updatedAt)],
+          limit,
+          offset,
+        }),
+        db
+          .select({ count: sql<number>`count(*)` })
+          .from(address)
+          .where(conditions.length ? and(...conditions) : undefined)
+          .then((res) => Number(res[0]?.count ?? 0)),
+      ])
+
+      return {
+        data,
+        total,
+        limit,
+        offset,
+      }
     } catch (error) {
       debugError('SERVICE:ADDRESS:GET_MANY:ERROR', error)
-      return null
+      return { data: [], total: 0, limit: 0, offset: 0 }
     }
   },
-  getUserAddresses: async ({ params }: GetUserAddressesServiceInput): GetUserAddressesServiceOutput => {
+
+  getUserAddresses: async (params: GetUserAddressesServiceInput): GetUserAddressesServiceOutput => {
     try {
       const data = await db.query.address.findMany({
-        where: (a, { eq }) => eq(a.userId, String(params.userId)),
-        orderBy: (a, { desc }) => desc(a.createdAt),
+        where: (a, { eq }) => eq(a.userId, params.userId),
+        orderBy: (a, { desc }) => [desc(a.isDefault), desc(a.updatedAt)],
       })
       return data
     } catch (error) {
       debugError('SERVICE:ADDRESS:GET_USER_ADDRESSES:ERROR', error)
-      return null
+      return []
     }
   },
-  create: async ({ body }: CreateServiceInput): CreateServiceOutput => {
+
+  create: async (body: CreateServiceInput): Promise<CreateServiceOutput> => {
     try {
+      const addressData: Omit<AddressInsert, 'id' | 'createdAt' | 'updatedAt'> = {
+        userId: body.userId,
+        type: body.type ?? 'home',
+        addressLine1: body.addressLine1,
+        addressLine2: body.addressLine2,
+        landmark: body.landmark,
+        city: body.city,
+        state: body.state,
+        postalCode: body.postalCode,
+        isDefault: body.isDefault ?? false,
+        country: body.country ?? 'IN',
+        zoneId: body.zoneId,
+      }
+
       const [data] = await db
         .insert(address)
         .values({
           id: uuidv4(),
-          userId: body.userId ?? null,
-          label: body.label ?? null,
-          fullName: body.fullName ?? null,
-          phone: body.phone ?? null,
-          line1: body.line1 ?? null,
-          line2: body.line2 ?? null,
-          city: body.city ?? null,
-          state: body.state ?? null,
-          postalCode: body.postalCode ?? null,
-          country: body.country ?? 'IN',
+          userId: addressData.userId,
+          type: addressData.type,
+          addressLine1: addressData.addressLine1,
+          addressLine2: addressData.addressLine2,
+          landmark: addressData.landmark,
+          city: addressData.city,
+          state: addressData.state,
+          postalCode: addressData.postalCode,
+          isDefault: addressData.isDefault,
+          country: addressData.country,
+          zoneId: addressData.zoneId,
         })
         .returning()
+
+      // If this is set as default, update other addresses
+      if (data?.isDefault) {
+        await db
+          .update(address)
+          .set({ isDefault: false })
+          .where(and(eq(address.userId, data.userId), eq(address.isDefault, true), ne(address.id, data.id)))
+      }
 
       return data
     } catch (error) {
@@ -90,24 +149,23 @@ export const addressService = {
       return null
     }
   },
-  update: async ({ body, params }: UpdateServiceInput): UpdateServiceOutput => {
+
+  update: async ({ update: body, id }: UpdateServiceInput): Promise<UpdateServiceOutput> => {
     try {
-      const [data] = await db
-        .update(address)
-        .set({
-          userId: body.userId ?? undefined,
-          label: body.label ?? undefined,
-          fullName: body.fullName ?? undefined,
-          phone: body.phone ?? undefined,
-          line1: body.line1 ?? undefined,
-          line2: body.line2 ?? undefined,
-          city: body.city ?? undefined,
-          state: body.state ?? undefined,
-          postalCode: body.postalCode ?? undefined,
-          country: body.country ?? undefined,
-        })
-        .where(eq(address.id, String(params.id)))
-        .returning()
+      const updateData: Omit<AddressUpdate, 'id' | 'userId' | 'createdAt' | 'updatedAt'> = {
+        type: body.type,
+        addressLine1: body.addressLine1,
+        addressLine2: body.addressLine2,
+        landmark: body.landmark,
+        city: body.city,
+        state: body.state,
+        postalCode: body.postalCode,
+        isDefault: body.isDefault,
+        country: body.country,
+        zoneId: body.zoneId,
+      }
+
+      const [data] = await db.update(address).set(updateData).where(eq(address.id, id)).returning()
 
       return data
     } catch (error) {
@@ -115,7 +173,7 @@ export const addressService = {
       return null
     }
   },
-  delete: async ({ params }: DeleteServiceInput): DeleteServiceOutput => {
+  delete: async (params: DeleteServiceInput): DeleteServiceOutput => {
     try {
       const [deleted] = await db
         .delete(address)

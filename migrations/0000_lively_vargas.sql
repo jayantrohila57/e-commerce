@@ -21,17 +21,19 @@ CREATE TABLE "account" (
 --> statement-breakpoint
 CREATE TABLE "address" (
 	"id" text PRIMARY KEY NOT NULL,
-	"user_id" text,
-	"label" text,
-	"full_name" text,
-	"phone" text,
-	"line1" text,
-	"line2" text,
-	"city" text,
-	"state" text,
-	"postal_code" text,
+	"user_id" text NOT NULL,
+	"type" text DEFAULT 'home' NOT NULL,
+	"address_line1" text NOT NULL,
+	"address_line2" text,
+	"landmark" text,
+	"city" text NOT NULL,
+	"state" text NOT NULL,
+	"postal_code" text NOT NULL,
+	"is_default" boolean DEFAULT false,
 	"country" text DEFAULT 'IN',
-	"created_at" timestamp DEFAULT now()
+	"zone_id" text,
+	"created_at" timestamp with time zone DEFAULT now(),
+	"updated_at" timestamp with time zone DEFAULT now()
 );
 --> statement-breakpoint
 CREATE TABLE "cart" (
@@ -58,6 +60,20 @@ CREATE TABLE "category" (
 	"name" text NOT NULL,
 	"slug" text,
 	CONSTRAINT "category_slug_unique" UNIQUE("slug")
+);
+--> statement-breakpoint
+CREATE TABLE "delivery_zones" (
+	"id" text PRIMARY KEY NOT NULL,
+	"postal_code" text NOT NULL,
+	"city" text NOT NULL,
+	"state" text NOT NULL,
+	"is_serviceable" boolean DEFAULT true,
+	"delivery_days" integer DEFAULT 3,
+	"free_delivery_threshold" numeric(10, 2) DEFAULT '500.00',
+	"delivery_fee" numeric(10, 2) DEFAULT '50.00',
+	"created_at" timestamp with time zone DEFAULT now(),
+	"updated_at" timestamp with time zone DEFAULT now(),
+	CONSTRAINT "delivery_zones_postal_code_unique" UNIQUE("postal_code")
 );
 --> statement-breakpoint
 CREATE TABLE "discount" (
@@ -250,7 +266,8 @@ CREATE TABLE "wishlist_item" (
 );
 --> statement-breakpoint
 ALTER TABLE "account" ADD CONSTRAINT "account_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "address" ADD CONSTRAINT "address_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "address" ADD CONSTRAINT "address_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "address" ADD CONSTRAINT "address_zone_id_delivery_zones_id_fk" FOREIGN KEY ("zone_id") REFERENCES "public"."delivery_zones"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "cart" ADD CONSTRAINT "cart_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "cart_item" ADD CONSTRAINT "cart_item_cart_id_cart_id_fk" FOREIGN KEY ("cart_id") REFERENCES "public"."cart"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "cart_item" ADD CONSTRAINT "cart_item_product_id_product_id_fk" FOREIGN KEY ("product_id") REFERENCES "public"."product"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint

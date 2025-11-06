@@ -24,13 +24,12 @@ import { productAttributeValue } from '@/module/product/dto/dto.product.schema'
 import { order } from '@/module/order/dto/dto.order.schema'
 import { orderItem } from '@/module/order/dto/dto.order.schema'
 import { payment } from '@/module/payment/dto/dto.payment.schema'
-import { address } from '@/module/address/dto/dto.address.schema'
+import { address, deliveryZones } from '@/module/address/dto/dto.address.schema'
 import { discount } from '@/module/discount/dto/dto.discount.schema'
 import { wishlist } from '@/module/wishlist/dto/dto.wishlist.schema'
 import { wishlistItem } from '@/module/wishlist/dto/dto.wishlist.schema'
 import { review } from '@/module/review/dto/dto.review.schema'
 import { shipment } from '@/module/shipment/dto/dto.shipment.schema'
-
 export { discountTypeEnum, orderStatusEnum, paymentStatusEnum, paymentProviderEnum, shipmentStatusEnum }
 
 export {
@@ -52,6 +51,7 @@ export {
   order,
   orderItem,
   payment,
+  deliveryZones,
   address,
   discount,
   wishlist,

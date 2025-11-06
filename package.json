@@ -9,6 +9,7 @@
     "lint": "eslint",
     "auth:generate": "npx @better-auth/cli generate --config ./src/core/auth/auth.ts --yes",
     "auth:migrate": "npx @better-auth/cli migrate --config ./src/core/auth/auth.ts",
+    "db:introspect": "npx drizzle-kit introspect --config ./src/core/db/drizzle.ts",
     "db:generate": "npx drizzle-kit generate --config ./src/core/db/drizzle.ts",
     "db:migrate": "npx drizzle-kit migrate --config ./src/core/db/drizzle.ts",
     "db:push": "npx drizzle-kit push --config ./src/core/db/drizzle.ts",

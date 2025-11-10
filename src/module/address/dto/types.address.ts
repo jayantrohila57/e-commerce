@@ -1,5 +1,5 @@
 import { type addressContract } from './dto.address.contract'
-import type z from 'zod'
+import type z from 'zod/v3'
 
 export type GetAddressInput = z.infer<typeof addressContract.get.input>
 export type GetAddressOutput = z.infer<typeof addressContract.get.output>

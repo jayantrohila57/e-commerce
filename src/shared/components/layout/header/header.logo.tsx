@@ -8,7 +8,7 @@ export default function HeaderLogo() {
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
-          <h2 className="motion-all font-oswald cursor-pointer text-2xl font-light hover:scale-[.99] active:scale-[.97]">
+          <h2 className="motion-all font-oswald cursor-pointer text-2xl  hover:scale-[.99] active:scale-[.97]">
             <Link
               href={PATH.ROOT}
               aria-label={site.name}

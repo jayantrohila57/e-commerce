@@ -1,8 +1,6 @@
 import { Shell } from '@/shared/components/layout/shell'
 import DashboardSection from '@/shared/components/layout/section/section-dashboard'
-import { Card } from '@/shared/components/ui/card'
-import { Skeleton } from '@/shared/components/ui/skeleton'
-import { Separator } from '@/shared/components/ui/separator'
+import { Loader } from 'lucide-react'
 
 export default async function Loading() {
   return (
@@ -13,10 +11,9 @@ export default async function Loading() {
             title={'Loading'}
             description={'Loading... Please wait.'}
           >
-            <Card className="h-[calc(100vh-10.2rem)]">
-              <Separator />
-              <Skeleton className="h-full w-full" />
-            </Card>
+            <div className="flex h-[calc(100vh-10.2rem)] items-center justify-center">
+              <Loader className="animate-spin" />
+            </div>
           </DashboardSection>
         </Shell.Section>
       </Shell.Main>

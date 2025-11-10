@@ -83,7 +83,8 @@ export function NavMain() {
       items: [
         { title: 'All Products', url: PATH.STUDIO.PRODUCTS.ROOT },
         { title: 'Add Product', url: PATH.STUDIO.PRODUCTS.NEW },
-        { title: 'Categories', url: PATH.STUDIO.CATEGORIES.ROOT },
+        { title: 'Categories', url: PATH.STUDIO.PRODUCTS.CATEGORIES.ROOT },
+        { title: 'Inventory', url: PATH.STUDIO.PRODUCTS.INVENTORY.ROOT },
       ],
     },
     {
@@ -152,7 +153,7 @@ export function NavMain() {
   ]
 
   return (
-    <div>
+    <div className="bg-background rounded-md border p-[2.5px]">
       {[
         { title: 'Studio', section: mainItems },
         { title: 'Settings', section: setting },
@@ -173,9 +174,16 @@ export function NavMain() {
                 return (
                   <SidebarMenuItem key={item.title}>
                     <Link href={item.url as Route}>
-                      <SidebarMenuButton tooltip={item.title}>
+                      <SidebarMenuButton
+                        tooltip={item.title}
+                        className={cn(
+                          'transition-colors',
+                          isItemActive && 'bg-accent text-accent-foreground',
+                          !isItemActive && 'hover:bg-accent/50',
+                        )}
+                      >
                         {item.icon && (
-                          <item.icon className={cn('h-5 w-5', isItemActive ? 'opacity-100' : 'opacity-70')} />
+                          <item.icon className={cn('h-4 w-4', isItemActive ? 'opacity-100' : 'opacity-70')} />
                         )}
                         <span className={cn(isItemActive ? 'font-medium' : 'font-normal')}>{item.title}</span>
                       </SidebarMenuButton>
@@ -197,7 +205,7 @@ export function NavMain() {
                         tooltip={item.title}
                         className={cn(
                           'transition-colors',
-                          isItemActive && 'bg-accent text-accent-foreground',
+                          isItemActive && 'bg-accent/20 text-accent-foreground',
                           !isItemActive && 'hover:bg-accent/50',
                         )}
                       >
@@ -220,7 +228,7 @@ export function NavMain() {
                                   className={cn(
                                     'block w-full',
                                     isSubItemActive
-                                      ? 'bg-primary text-primary-foreground'
+                                      ? 'bg-accent text-accent-foreground'
                                       : 'text-muted-foreground hover:text-foreground',
                                   )}
                                 >
@@ -247,7 +255,7 @@ export function NavMain() {
               )
             })}
           </SidebarMenu>
-          <Separator className="my-4" />
+          {sectionIndex === 0 && <Separator className="my-4" />}
         </SidebarGroup>
       ))}
     </div>

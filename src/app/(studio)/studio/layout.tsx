@@ -12,7 +12,7 @@ export default async function Layout({ children }: LayoutProps<'/studio'>) {
           <AppSidebar />
           <SidebarInset>
             <SidebarHeader />
-            {children}
+            <Shell.Main variant={'dashboard'}>{children}</Shell.Main>
           </SidebarInset>
         </SidebarProvider>
       </Shell>

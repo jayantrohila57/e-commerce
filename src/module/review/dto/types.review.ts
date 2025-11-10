@@ -1,5 +1,5 @@
 import { type reviewContract } from './dto.review.contract'
-import type z from 'zod'
+import type z from 'zod/v3'
 
 export type GetReviewInput = z.infer<typeof reviewContract.get.input>
 export type GetReviewOutput = z.infer<typeof reviewContract.get.output>

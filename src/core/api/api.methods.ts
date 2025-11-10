@@ -1,6 +1,6 @@
 import { initTRPC, TRPCError } from '@trpc/server'
 import superjson from 'superjson'
-import { ZodError } from 'zod'
+import { ZodError } from 'zod/v3'
 import { getServerSession } from '../auth/auth.server'
 import { API_RESPONSE, prettyZodError, zodErrorObject } from '@/shared/config/api.utils'
 import { STATUS } from '@/shared/config/api.config'

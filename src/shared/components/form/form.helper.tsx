@@ -14,7 +14,7 @@ export function FormSection({ title, description, children, className, required 
   const id = title.toLowerCase().replace(/\s+/g, '-')
   return (
     <div
-      className={cn('bg-background grid rounded-md p-4 py-6 md:grid-cols-[25rem_1fr]', className)}
+      className={cn('bg-background grid rounded-md p-0 py-1 md:grid-cols-[15rem_1fr]', className)}
       role="group"
       aria-labelledby={id}
     >
@@ -36,7 +36,6 @@ export function FormSection({ title, description, children, className, required 
         </h2>
         {description ? <p className="text-muted-foreground text-xs">{description}</p> : null}
       </div>
-
       <div className="space-y-4 pt-2 pr-0.5">{children}</div>
     </div>
   )

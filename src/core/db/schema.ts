@@ -4,6 +4,8 @@ import {
   paymentStatusEnum,
   paymentProviderEnum,
   shipmentStatusEnum,
+  displayTypeEnum,
+  visibilityEnum,
 } from './schema.enum'
 
 import { account } from '@/module/account/dto/account.schema'
@@ -21,6 +23,7 @@ import { productVariant } from '@/module/product/dto/dto.product.schema'
 import { productImage } from '@/module/product/dto/dto.product.schema'
 import { productAttribute } from '@/module/product/dto/dto.product.schema'
 import { productAttributeValue } from '@/module/product/dto/dto.product.schema'
+import { series } from '@/module/series/dto/dto.series.schema'
 import { order } from '@/module/order/dto/dto.order.schema'
 import { orderItem } from '@/module/order/dto/dto.order.schema'
 import { payment } from '@/module/payment/dto/dto.payment.schema'
@@ -30,7 +33,19 @@ import { wishlist } from '@/module/wishlist/dto/dto.wishlist.schema'
 import { wishlistItem } from '@/module/wishlist/dto/dto.wishlist.schema'
 import { review } from '@/module/review/dto/dto.review.schema'
 import { shipment } from '@/module/shipment/dto/dto.shipment.schema'
-export { discountTypeEnum, orderStatusEnum, paymentStatusEnum, paymentProviderEnum, shipmentStatusEnum }
+import { warehouse } from '@/module/inventory/dto/dto.schema'
+import { inventory } from '@/module/inventory/dto/dto.schema'
+import { subcategory } from '@/module/subcategory/dto/dto.subcategory.schema'
+
+export {
+  discountTypeEnum,
+  orderStatusEnum,
+  paymentStatusEnum,
+  paymentProviderEnum,
+  shipmentStatusEnum,
+  displayTypeEnum,
+  visibilityEnum,
+}
 
 export {
   account,
@@ -43,6 +58,8 @@ export {
   cart,
   cartItem,
   category,
+  subcategory,
+  series,
   product,
   productVariant,
   productImage,
@@ -58,4 +75,6 @@ export {
   wishlistItem,
   review,
   shipment,
+  warehouse,
+  inventory,
 }

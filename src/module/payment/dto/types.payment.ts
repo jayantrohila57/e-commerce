@@ -1,5 +1,5 @@
 import { type paymentContract } from './dto.payment.contract'
-import type z from 'zod'
+import type z from 'zod/v3'
 
 export type GetPaymentInput = z.infer<typeof paymentContract.get.input>
 export type GetPaymentOutput = z.infer<typeof paymentContract.get.output>

@@ -9,3 +9,6 @@ const sql = neon(env.DATABASE_URL)
 config({ path: '.env', quiet: true })
 
 export const db = drizzle(sql, { schema })
+
+
+

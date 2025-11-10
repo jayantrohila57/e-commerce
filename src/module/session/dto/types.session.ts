@@ -1,5 +1,5 @@
 import { type sessionContract } from './dto.session.contract'
-import type z from 'zod'
+import type z from 'zod/v3'
 
 export type GetSessionInput = z.infer<typeof sessionContract.get.input>
 export type GetSessionOutput = z.infer<typeof sessionContract.get.output>

@@ -35,7 +35,18 @@ export interface BaseFormInputProps {
 export interface StandardInputProps extends BaseFormInputProps {
   type: Exclude<
     FieldType,
-    'number' | 'select' | 'radio' | 'textarea' | 'checkbox' | 'switch' | 'multiSelect' | 'slug' | 'otp' | 'password'
+    | 'number'
+    | 'select'
+    | 'radio'
+    | 'textarea'
+    | 'checkbox'
+    | 'switch'
+    | 'multiSelect'
+    | 'slug'
+    | 'otp'
+    | 'password'
+    | 'image'
+    | 'color'
   >
 }
 export interface NumberInputProps extends BaseFormInputProps {
@@ -73,7 +84,15 @@ export interface PasswordInputProps extends BaseFormInputProps {
   type: 'password'
   needValidation?: boolean
 }
+export interface ImageInputProps extends BaseFormInputProps {
+  type: 'image'
+  maxSizeMB?: number
+}
 
+export interface ColorInputProps extends BaseFormInputProps {
+  type: 'color'
+  options: Option[]
+}
 export type FormInputProps =
   | StandardInputProps
   | NumberInputProps
@@ -84,6 +103,8 @@ export type FormInputProps =
   | SlugInputProps
   | OtpInputProps
   | PasswordInputProps
+  | ImageInputProps
+  | ColorInputProps
 
 export interface FormProps<T extends z.ZodTypeAny> {
   className?: string

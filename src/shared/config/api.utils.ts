@@ -1,6 +1,6 @@
 import { debugError, debugLog, debugWarn } from '../utils/lib/logger.utils'
 import { STATUS } from './api.config'
-import { type ZodError } from 'zod'
+import { type ZodError } from 'zod/v3'
 
 export const prettyZodError = (error: ZodError) => {
   return error.issues
@@ -25,16 +25,17 @@ export function API_RESPONSE<T>(
   status: 'success' | 'error' | 'failed',
   message: string,
   data: T | null,
+  error?: Error | null,
 ): {
   status: 'success' | 'error' | 'failed'
   message: string
   data: T | null
 } {
-  if (status === 'success') debugLog('API:RESPONSE', [message], { data })
-  if (status === 'error') debugError('API:RESPONSE', [message], { data })
-  if (status === 'failed') debugWarn('API:RESPONSE', [message], { data })
+  if (status === 'success') debugLog(`API:RESPONSE:${status}`, [message], { data })
+  if (status === 'failed') debugWarn(`API:RESPONSE:${status}`, [message], { data })
+  if (status === 'error') debugError(`API:RESPONSE:${status}`, [message], { error })
   return {
-    status: status,
+    status,
     message,
     data,
   }

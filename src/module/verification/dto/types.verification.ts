@@ -1,5 +1,5 @@
 import { type verificationContract } from './dto.verification.contract'
-import type z from 'zod'
+import type z from 'zod/v3'
 
 export type GetVerificationInput = z.infer<typeof verificationContract.get.input>
 export type GetVerificationOutput = z.infer<typeof verificationContract.get.output>

@@ -1,5 +1,5 @@
 import { type wishlistContract } from './dto.wishlist.contract'
-import type z from 'zod'
+import type z from 'zod/v3'
 
 export type GetWishlistInput = z.infer<typeof wishlistContract.get.input>
 export type GetWishlistOutput = z.infer<typeof wishlistContract.get.output>

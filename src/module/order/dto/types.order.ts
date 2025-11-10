@@ -1,5 +1,5 @@
 import { type orderContract } from './dto.order.contract'
-import type z from 'zod'
+import type z from 'zod/v3'
 
 export type GetOrderInput = z.infer<typeof orderContract.get.input>
 export type GetOrderOutput = z.infer<typeof orderContract.get.output>

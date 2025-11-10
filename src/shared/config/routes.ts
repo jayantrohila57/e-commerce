@@ -39,12 +39,16 @@ export const PATH = {
       ROOT: '/studio/products',
       NEW: '/studio/products/new',
       EDIT: (id: string) => `/studio/products/${id}/edit`,
-    },
-
-    CATEGORIES: {
-      ROOT: '/studio/categories',
-      NEW: '/studio/categories/new',
-      EDIT: (id: string) => `/studio/categories/${id}/edit`,
+      CATEGORIES: {
+        ROOT: '/studio/products/categories',
+        NEW: '/studio/products/categories/new',
+        EDIT: (id: string) => `/studio/products/categories/${id}/edit`,
+      },
+      INVENTORY: {
+        ROOT: '/studio/products/inventory',
+        NEW: '/studio/products/inventory/new',
+        EDIT: (id: string) => `/studio/products/inventory/${id}/edit`,
+      },
     },
 
     ORDERS: {

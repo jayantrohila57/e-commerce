@@ -1,6 +1,6 @@
 'use client'
 
-import { useFormContext } from 'react-hook-form'
+import { useFormContext, useWatch } from 'react-hook-form'
 import { Input } from '@/shared/components/ui/input'
 import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/shared/components/ui/form'
 import type { FormInputProps } from '../form.types'
@@ -12,9 +12,8 @@ import { nameToSlug } from '@/shared/utils/lib/url.utils'
 export const InputSlug: React.FC<FormInputProps> = (props) => {
   const reactId = useId()
   const stableId = props.name ? `${props.name}-${reactId}` : reactId
-  const { control, watch, setValue } = useFormContext()
-
-  const sourceValue = props.slugField ? watch(props.slugField) : ''
+  const { control, setValue } = useFormContext()
+  const sourceValue = useWatch({ control, name: props.slugField || '' })
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
@@ -32,7 +31,7 @@ export const InputSlug: React.FC<FormInputProps> = (props) => {
         shouldDirty: true,
         shouldTouch: true,
       })
-    }, 300) // debounce delay in ms
+    }, 300)
 
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current)
@@ -58,7 +57,7 @@ export const InputSlug: React.FC<FormInputProps> = (props) => {
                 <span
                   className={cn(
                     'inline-flex items-center rounded-s-md border px-3',
-                    'bg-secondary-foreground text-secondary/80 border-input',
+                    'bg-secondary text-secondary-foreground border-input',
                     'gap-2',
                   )}
                 >

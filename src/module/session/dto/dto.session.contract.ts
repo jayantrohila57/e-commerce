@@ -1,4 +1,4 @@
-import z from 'zod'
+import z from 'zod/v3'
 import { createInsertSchema, createSelectSchema, createUpdateSchema } from 'drizzle-zod'
 import { session } from './session.schema'
 

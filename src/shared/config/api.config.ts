@@ -258,6 +258,31 @@ export const MESSAGE = {
       FAILED: 'Failed to delete category.',
       ERROR: 'Unexpected error while deleting category.',
     },
+    RESTORE: {
+      SUCCESS: 'Category restored successfully.',
+      FAILED: 'Failed to restore category.',
+      ERROR: 'Unexpected error while restoring category.',
+    },
+    TOGGLE_VISIBILITY: {
+      SUCCESS: 'Category visibility updated successfully.',
+      FAILED: 'Failed to update category visibility.',
+      ERROR: 'Unexpected error while updating category visibility.',
+    },
+    TOGGLE_FEATURED: {
+      SUCCESS: 'Category featured status updated successfully.',
+      FAILED: 'Failed to update category featured status.',
+      ERROR: 'Unexpected error while updating category featured status.',
+    },
+    REORDER: {
+      SUCCESS: 'Categories reordered successfully.',
+      FAILED: 'Failed to reorder categories.',
+      ERROR: 'Unexpected error while reordering categories.',
+    },
+    SEARCH: {
+      SUCCESS: 'Category search completed successfully.',
+      FAILED: 'No categories matched the search query.',
+      ERROR: 'Unexpected error while searching categories.',
+    },
   },
   DISCOUNT: {
     CREATE: {

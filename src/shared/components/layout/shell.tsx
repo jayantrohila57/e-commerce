@@ -101,7 +101,7 @@ const MainVariants = cva('', {
   variants: {
     variant: {
       default: 'min-h-screen',
-      dashboard: 'flex flex-1 flex-col',
+      dashboard: 'flex flex-1 h-screen overflow-hidden flex-col',
     },
   },
   defaultVariants: {
@@ -135,7 +135,7 @@ const SectionVariants = cva('', {
       default: 'my-12 container mx-auto px-0 max-w-9xl ',
       full: 'w-full',
       flexed: 'my-12 flex container mx-auto px-0 max-w-9xl ',
-      dashboard: 'flex flex-col gap-4 px-4',
+      dashboard: 'flex bg-secondary flex-col gap-0 p-1',
       center: 'flex min-h-svh flex-col items-center justify-center p-2 md:p-10',
     },
   },

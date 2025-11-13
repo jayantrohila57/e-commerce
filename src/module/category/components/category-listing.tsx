@@ -25,7 +25,7 @@ export const CategoryListing = ({ data }: { data: GetCategoryWithSubcategoriesOu
                     alt={subcategories?.title}
                     width={500}
                     height={500}
-                    className="motion-all bg-secondary aspect-square h-auto w-full rounded-full border object-cover object-center p-1 group-hover:drop-shadow"
+                    className="motion-all bg-secondary aspect-square h-auto w-full rounded-full border object-cover group-hover:drop-shadow"
                   />
                 </CardContent>
                 <CardHeader className="text-center">

@@ -60,6 +60,7 @@ const enforceRole = (roles: string[]) =>
     })
   })
 
+export const publicProcedure = t.procedure
 export const protectedProcedure = t.procedure.use(enforceUser)
 export const adminProcedure = t.procedure.use(enforceUser).use(enforceRole(['admin']))
 export const customerProcedure = t.procedure.use(enforceUser).use(enforceRole(['admin', 'user']))

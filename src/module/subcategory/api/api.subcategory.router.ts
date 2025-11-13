@@ -1,19 +1,19 @@
 import { subcategoryController } from './api.subcategory.controller'
 import { subcategoryContract } from '../dto/dto.subcategory.contract'
-import { createTRPCRouter, protectedProcedure } from '@/core/api/api.methods'
+import { createTRPCRouter, protectedProcedure, publicProcedure } from '@/core/api/api.methods'
 
 export const subcategoryRouter = createTRPCRouter({
-  get: protectedProcedure
+  get: publicProcedure
     .input(subcategoryContract.get.input)
     .output(subcategoryContract.get.output)
     .query(({ input }) => subcategoryController.get({ input })),
 
-  getMany: protectedProcedure
+  getMany: publicProcedure
     .input(subcategoryContract.getMany.input)
     .output(subcategoryContract.getMany.output)
     .query(({ input }) => subcategoryController.getMany({ input })),
 
-  getBySlug: protectedProcedure
+  getBySlug: publicProcedure
     .input(subcategoryContract.getBySlug.input)
     .output(subcategoryContract.getBySlug.output)
     .query(({ input }) => subcategoryController.getBySlug({ input })),

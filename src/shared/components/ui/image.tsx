@@ -21,10 +21,11 @@ export function BlurImage({ className, alt, fallbackSrc = '/fallback.png', ...pr
       src={errorSrc || src}
       className={cn(
         className,
-        'motion-all overflow-hidden',
+        'motion-all',
         isLoading ? 'animate-shimmer blur-xs' : 'blur-0',
-        hasError && 'bg-secondary',
+        errorSrc && 'bg-secondary',
       )}
+      sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'
       onLoad={() => setLoading(false)}
       onError={() => {
         setError(true)

@@ -21,8 +21,6 @@ import { category } from '@/module/category/dto/dto.category.schema'
 import { product } from '@/module/product/dto/dto.product.schema'
 import { productVariant } from '@/module/product/dto/dto.product.schema'
 import { productImage } from '@/module/product/dto/dto.product.schema'
-import { productAttribute } from '@/module/product/dto/dto.product.schema'
-import { productAttributeValue } from '@/module/product/dto/dto.product.schema'
 import { series } from '@/module/series/dto/dto.series.schema'
 import { order } from '@/module/order/dto/dto.order.schema'
 import { orderItem } from '@/module/order/dto/dto.order.schema'
@@ -65,8 +63,6 @@ export {
   product,
   productVariant,
   productImage,
-  productAttribute,
-  productAttributeValue,
   order,
   orderItem,
   payment,

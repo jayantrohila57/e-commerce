@@ -1,3 +1,4 @@
+import { attributeSelectSchema } from '@/module/attribute/dto/dto.attribute.contract'
 import z from 'zod/v3'
 
 export const detailedResponse = <T extends z.ZodTypeAny>(dataSchema: T) =>
@@ -80,11 +81,12 @@ export const seriesContract = {
         slug: z.string(),
       }),
     }),
-    output: detailedResponse(seriesSelectSchema.nullable()),
-    //     output: detailedResponse(z.object({
-    //   seriesData: seriesSelectSchema,
-    //   attributeData: z.array(attributeSelectSchema),
-    // })),
+    output: detailedResponse(
+      z.object({
+        seriesData: seriesSelectSchema.nullable(),
+        attributeData: z.array(attributeSelectSchema).nullable(),
+      }),
+    ),
   },
 
   getMany: {

@@ -2,7 +2,7 @@ import { pgTable, text, timestamp, integer, boolean } from 'drizzle-orm/pg-core'
 import { Many, relations } from 'drizzle-orm'
 
 import { displayTypeEnum, visibilityEnum } from '@/core/db/schema.enum'
-import { attribute, subcategory } from '@/core/db/schema'
+import { attribute, product, subcategory } from '@/core/db/schema'
 
 export const series = pgTable('series', {
   id: text('id').primaryKey(),
@@ -28,13 +28,15 @@ export const series = pgTable('series', {
     .$onUpdate(() => new Date()),
 })
 
+ 
 export const seriesRelations = relations(series, ({ one, many }) => ({
   subcategory: one(subcategory, {
     fields: [series.subcategorySlug],
     references: [subcategory.slug],
   }),
-  attribute: many(attribute),
-}))
+  attributes: many(attribute),
+  products: many(product),
+}));
 
 export type Series = typeof series.$inferSelect
 export type NewSeries = typeof series.$inferInsert

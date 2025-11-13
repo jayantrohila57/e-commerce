@@ -5,7 +5,7 @@ import Shell from '@/shared/components/layout/shell'
 import { PATH } from '@/shared/config/routes'
 import { Route } from 'next'
 
-export default async function Category() {
+export default async function CategoriesPage() {
   const { data } = await apiServer.category.getManyByTypes({
     query: {
       limit: 10,

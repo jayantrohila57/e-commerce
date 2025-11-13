@@ -1,22 +1,22 @@
 import { seriesController } from './api.series.controller'
 import { seriesContract } from '../dto/dto.series.contract'
-import { createTRPCRouter, protectedProcedure } from '@/core/api/api.methods'
+import { createTRPCRouter, protectedProcedure, publicProcedure } from '@/core/api/api.methods'
 
 export const seriesRouter = createTRPCRouter({
   // Get series by ID
-  get: protectedProcedure
+  get: publicProcedure
     .input(seriesContract.get.input)
     .output(seriesContract.get.output)
     .query(({ input }) => seriesController.get({ input })),
 
   // Get series by slug
-  getBySlug: protectedProcedure
+  getBySlug: publicProcedure
     .input(seriesContract.getBySlug.input)
     .output(seriesContract.getBySlug.output)
     .query(({ input }) => seriesController.getBySlug({ input })),
 
   // Get multiple series with filtering and pagination
-  getMany: protectedProcedure
+  getMany: publicProcedure
     .input(seriesContract.getMany.input)
     .output(seriesContract.getMany.output)
     .query(({ input }) => seriesController.getMany({ input })),

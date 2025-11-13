@@ -36,9 +36,10 @@ export default function DashboardSection({ title, description, action, actionUrl
           </div>
         </CardHeader>
       )}
-      <Separator />
-      <div className="motion-all h-[calc(100vh-8.4rem)] overflow-auto p-2">
-        <CardContent className="bg-muted/30 rounded-md border p-2 pb-20">{children}</CardContent>
+      <div className="motion-all p-2 pt-0">
+        <CardContent className="bg-muted/30 motion-all h-[calc(100vh-9.6rem)] overflow-auto rounded-md border p-2 pb-20">
+          {children}
+        </CardContent>
       </div>
     </Card>
   )

@@ -1,30 +1,31 @@
-import { Badge } from '@/shared/components/ui/badge'
 import {
   Globe,
-  EyeOff,
   Star,
   LayoutGrid,
   Clock,
   Calendar,
   Tag,
   Eye,
-  EyeOff as EyeOffIcon,
   Trash2,
   ExternalLink,
   ImageIcon,
-  Trash,
   PencilIcon,
+  Hash,
+  Box,
 } from 'lucide-react'
-import { cn } from '@/shared/utils/lib/utils'
+import { cn, truncateString } from '@/shared/utils/lib/utils'
 import { GetCategoryOutput } from '../dto/types.category'
 import { FormSection } from '@/shared/components/form/form.helper'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/shared/components/ui/table'
-import { format, formatDistanceToNow } from 'date-fns'
+import { Table, TableBody, TableCell, TableRow } from '@/shared/components/ui/table'
+import { format } from 'date-fns'
 import { Button } from '@/shared/components/ui/button'
 import Link from 'next/link'
 import { PATH } from '@/shared/config/routes'
 import { Route } from 'next'
 import { CategoryDelete } from './category-delete'
+import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from '@/shared/components/ui/card'
+import { BlurImage } from '@/shared/components/ui/image'
+import { Separator } from '@/shared/components/ui/separator'
 
 type CategoryPreviewCardProps = {
   data: GetCategoryOutput['data']
@@ -60,16 +61,61 @@ export function CategoryPreviewCard({ data }: CategoryPreviewCardProps) {
   if (!data) return null
 
   const filteredData = Object.entries(data).filter(
-    ([key]) => !['parentId', 'deletedAt', 'displayOrder', 'metaTitle', 'metaDescription'].includes(key),
+    ([key]) =>
+      ![
+        'parentId',
+        'deletedAt',
+        'displayOrder',
+        'metaTitle',
+        'metaDescription',
+        'description',
+        'image',
+        'title',
+      ].includes(key),
   )
 
   return (
     <FormSection
       title="Details"
-      description="Category details"
+      description="Categories are displayed on the homepage"
     >
-      <div className="grid h-full w-full grid-cols-12">
-        <div className="bg-secondary col-span-11 h-full w-full rounded-lg border shadow-xs">
+      <Card className="bg-secondary p-2 shadow-none">
+        <div className="flex flex-row gap-4">
+          <CardContent className="flex w-fit items-start justify-start p-0">
+            <BlurImage
+              src={String(data.image)}
+              alt={data.title}
+              width={500}
+              height={500}
+              className="motion-all bg-secondary aspect-square h-auto w-26 rounded-full border object-cover group-hover:drop-shadow hover:w-40"
+            />
+          </CardContent>
+          <Separator
+            orientation="vertical"
+            className="data-[orientation=vertical]:h-20"
+          />
+          <CardHeader className="h-full w-full p-0">
+            <CardTitle className="motion-all capitalize">{data.title}</CardTitle>
+            <CardDescription className="motion-all max-w-lg text-xs capitalize">
+              {truncateString(data.description, 500)}
+            </CardDescription>
+            <CardAction>
+              <div className="col-span-1 flex h-full w-full flex-row items-end justify-start gap-2">
+                <Link href={PATH.STUDIO.CATEGORIES.EDIT(String(data?.slug), String(data?.id)) as Route}>
+                  <Button
+                    variant={'default'}
+                    size={'icon'}
+                  >
+                    <PencilIcon />
+                  </Button>
+                </Link>
+                <CategoryDelete categoryId={String(data?.id)} />
+              </div>
+            </CardAction>
+          </CardHeader>
+        </div>
+        <Separator className="" />
+        <CardContent className="w-full p-0">
           <Table>
             <TableBody>
               {filteredData.map(([key, value]) => {
@@ -86,6 +132,9 @@ export function CategoryPreviewCard({ data }: CategoryPreviewCardProps) {
                         {key === 'deletedAt' && <Trash2 className="mr-2 h-3.5 w-3.5 opacity-70" />}
                         {key === 'image' && <ImageIcon className="mr-2 h-3.5 w-3.5 opacity-70" />}
                         {key === 'color' && <Globe className="mr-2 h-3.5 w-3.5 opacity-70" />}
+                        {key === 'slug' && <Tag className="mr-2 h-3.5 w-3.5 opacity-70" />}
+                        {key === 'id' && <Hash className="mr-2 h-3.5 w-3.5 opacity-70" />}
+                        {key === 'icon' && <Box className="mr-2 h-3.5 w-3.5 opacity-70" />}
                         <span className="capitalize">{key.replace(/([A-Z])/g, ' $1').trim()}</span>
                       </div>
                     </TableCell>
@@ -117,19 +166,8 @@ export function CategoryPreviewCard({ data }: CategoryPreviewCardProps) {
               })}
             </TableBody>
           </Table>
-        </div>
-        <div className="col-span-1 flex h-full w-full flex-col items-end justify-start gap-2 p-2">
-          <Link href={PATH.STUDIO.CATEGORIES.EDIT(String(data?.slug), String(data?.id)) as Route}>
-            <Button
-              variant={'default'}
-              size={'icon'}
-            >
-              <PencilIcon />
-            </Button>
-          </Link>
-          <CategoryDelete categoryId={String(data?.id)} />
-        </div>
-      </div>
+        </CardContent>
+      </Card>
     </FormSection>
   )
 }

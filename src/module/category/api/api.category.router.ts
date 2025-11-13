@@ -1,24 +1,24 @@
 import { categoryController } from './api.category.controller'
 import { categoryContract } from '../dto/dto.category.contract'
-import { createTRPCRouter, protectedProcedure } from '@/core/api/api.methods'
+import { createTRPCRouter, protectedProcedure, publicProcedure } from '@/core/api/api.methods'
 
 export const categoryRouter = createTRPCRouter({
-  get: protectedProcedure
+  get: publicProcedure
     .input(categoryContract.get.input)
     .output(categoryContract.get.output)
     .query(({ input }) => categoryController.get({ input })),
 
-  getMany: protectedProcedure
+  getMany: publicProcedure
     .input(categoryContract.getMany.input)
     .output(categoryContract.getMany.output)
     .query(({ input }) => categoryController.getMany({ input })),
 
-  getManyByTypes: protectedProcedure
+  getManyByTypes: publicProcedure
     .input(categoryContract.getManyByTypes.input)
     .output(categoryContract.getManyByTypes.output)
     .query(({ input }) => categoryController.getManyByTypes({ input })),
 
-  getBySlug: protectedProcedure
+  getBySlug: publicProcedure
     .input(categoryContract.getBySlug.input)
     .output(categoryContract.getBySlug.output)
     .query(({ input }) => categoryController.getBySlug({ input })),

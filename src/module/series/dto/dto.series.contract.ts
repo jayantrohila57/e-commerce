@@ -81,6 +81,10 @@ export const seriesContract = {
       }),
     }),
     output: detailedResponse(seriesSelectSchema.nullable()),
+    //     output: detailedResponse(z.object({
+    //   seriesData: seriesSelectSchema,
+    //   attributeData: z.array(attributeSelectSchema),
+    // })),
   },
 
   getMany: {

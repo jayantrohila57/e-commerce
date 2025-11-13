@@ -8,7 +8,7 @@ import { slugToTitle } from '@/shared/utils/lib/url.utils'
 import { Route } from 'next'
 import { SubCategorySection } from '@/module/subcategory/components/subcategories-section'
 
-export default async function Category({ params }: PageProps<'/studio/products/categories/[categorySlug]'>) {
+export default async function CategoryPage({ params }: PageProps<'/studio/products/categories/[categorySlug]'>) {
   const { categorySlug: slug } = await params
   const { data } = await apiServer.category.getBySlug({
     params: {

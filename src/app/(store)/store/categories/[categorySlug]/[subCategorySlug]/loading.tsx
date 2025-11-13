@@ -1,10 +1,10 @@
+import SubCategoriesListingSkeleton from '@/module/subcategory/components/subcategory-listing-skeleton'
 import Section from '@/shared/components/layout/section/section'
-import CategoryListingSkeleton from '@/module/category/components/category-listing-skeleton'
 
 export default async function CategoryLoading() {
   return (
     <Section>
-      <CategoryListingSkeleton />
+      <SubCategoriesListingSkeleton />
     </Section>
   )
 }

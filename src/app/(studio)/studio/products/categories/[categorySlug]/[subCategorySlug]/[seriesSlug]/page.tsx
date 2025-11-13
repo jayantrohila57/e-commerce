@@ -3,7 +3,7 @@ import DashboardSection from '@/shared/components/layout/section/section-dashboa
 import Shell from '@/shared/components/layout/shell'
 import { slugToTitle } from '@/shared/utils/lib/url.utils'
 
-export default async function Category({
+export default async function SeriesPage({
   params,
 }: PageProps<'/studio/products/categories/[categorySlug]/[subCategorySlug]/[seriesSlug]'>) {
   const { categorySlug: slug, subCategorySlug: sub, seriesSlug: series } = await params

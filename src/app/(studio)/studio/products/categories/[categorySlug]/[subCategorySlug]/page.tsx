@@ -8,7 +8,7 @@ import { PATH } from '@/shared/config/routes'
 import { slugToTitle } from '@/shared/utils/lib/url.utils'
 import { Route } from 'next'
 
-export default async function Category({
+export default async function SubCategoryPage({
   params,
 }: PageProps<'/studio/products/categories/[categorySlug]/[subCategorySlug]'>) {
   const { categorySlug: slug, subCategorySlug: sub } = await params

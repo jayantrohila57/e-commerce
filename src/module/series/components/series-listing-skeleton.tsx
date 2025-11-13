@@ -3,7 +3,7 @@ import { Separator } from '@/shared/components/ui/separator'
 import { Skeleton } from '@/shared/components/ui/skeleton'
 import { slugToTitle } from '@/shared/utils/lib/url.utils'
 
-export default function CategoriesListingSkeleton() {
+export default function SeriesListingSkeleton() {
   return (
     <div className="flex flex-col items-center justify-center">
       <div className="">

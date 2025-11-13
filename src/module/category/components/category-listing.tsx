@@ -4,14 +4,14 @@ import { BlurImage } from '@/shared/components/ui/image'
 import Link from 'next/link'
 import { Separator } from '@/shared/components/ui/separator'
 
-export const CategoryListing = ({ data }: { data: GetCategoryWithSubcategoriesOutput['data'] }) => {
+export const CategoryItem = ({ data }: { data: GetCategoryWithSubcategoriesOutput['data'] }) => {
   return (
-     <div className="flex flex-col items-center justify-center">
+    <div className="flex flex-col items-center justify-center">
       <div className="">
         <h2 className="text-4xl capitalize">{data?.category?.title}</h2>
       </div>
       <Separator className="my-6" />
-      <div className="grid-rows-auto mx-auto grid h-full w-full max-w-2xl grid-cols-4 gap-4 rounded-md">
+      <div className="grid-rows-auto mx-auto grid h-full w-full max-w-4xl grid-cols-4 gap-4 rounded-md">
         {data?.subcategories?.map((subcategories) => (
           <div
             key={subcategories?.id}

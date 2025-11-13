@@ -7,6 +7,12 @@ export type GetCategoryOutput = z.output<typeof categoryContract.get.output>
 export type GetCategoriesInput = z.input<typeof categoryContract.getMany.input>
 export type GetCategoriesOutput = z.output<typeof categoryContract.getMany.output>
 
+export type GetManyByTypesInput = z.input<typeof categoryContract.getManyByTypes.input>
+export type GetManyByTypesOutput = z.output<typeof categoryContract.getManyByTypes.output>
+
+export type GetCategoryWithSubcategoriesInput = z.infer<typeof categoryContract.getBySlug.input>
+export type GetCategoryWithSubcategoriesOutput = z.infer<typeof categoryContract.getBySlug.output>
+
 export type CreateCategoryInput = z.input<typeof categoryContract.create.input>
 export type CreateCategoryOutput = z.output<typeof categoryContract.create.output>
 
@@ -37,6 +43,14 @@ export type GetControllerOutput = Promise<GetCategoryOutput>
 export type GetManyControllerInput = { input: GetCategoriesInput }
 export type GetManyControllerOutput = Promise<GetCategoriesOutput>
 
+export type GetManyByTypesControllerInput = { input: GetManyByTypesInput }
+export type GetManyByTypesControllerOutput = Promise<GetManyByTypesOutput>
+
+export type GetCategoryWithSubcategoriesControllerInput = {
+  input: GetCategoryWithSubcategoriesInput
+}
+export type GetCategoryWithSubcategoriesControllerOutput = Promise<GetCategoryWithSubcategoriesOutput>
+
 export type CreateControllerInput = { input: CreateCategoryInput }
 export type CreateControllerOutput = Promise<CreateCategoryOutput>
 
@@ -66,6 +80,14 @@ export type GetServiceOutput = Promise<GetCategoryOutput['data'] | null>
 
 export type GetManyServiceInput = { query?: GetCategoriesInput['query'] }
 export type GetManyServiceOutput = Promise<GetCategoriesOutput['data'] | null>
+
+export type GetManyByTypesServiceInput = { query?: GetManyByTypesInput['query'] }
+export type GetManyByTypesServiceOutput = Promise<GetManyByTypesOutput['data'] | null>
+
+export type GetCategoryWithSubcategoriesServiceInput = {
+  params: GetCategoryWithSubcategoriesInput['params']
+}
+export type GetCategoryWithSubcategoriesServiceOutput = Promise<GetCategoryWithSubcategoriesOutput['data'] | null>
 
 export type CreateServiceInput = { body: CreateCategoryInput['body'] }
 export type CreateServiceOutput = Promise<CreateCategoryOutput['data'] | null>

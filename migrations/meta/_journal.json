@@ -8,6 +8,34 @@
       "when": 1762772174546,
       "tag": "0000_flawless_richard_fisk",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1762845818666,
+      "tag": "0001_smooth_warstar",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1762847086389,
+      "tag": "0002_cool_black_tarantula",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1762856199261,
+      "tag": "0003_even_talkback",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1762950609368,
+      "tag": "0004_fat_whirlwind",
+      "breakpoints": true
     }
   ]
 }

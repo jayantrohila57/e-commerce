@@ -1,11 +1,11 @@
 'use client'
 
-import { FormProvider, useForm, useFormContext, type FieldValues } from 'react-hook-form'
+import { FormProvider, useForm, useFormContext, useFormState, type FieldValues } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { cn } from '@/shared/utils/lib/utils'
 import type z from 'zod/v3'
 
-import { Fragment, memo, useMemo } from 'react'
+import { Fragment, JSX, memo, useEffect, useMemo } from 'react'
 import { Fields } from './fields.config'
 import type {
   FieldsWrapperProps,
@@ -21,6 +21,7 @@ import { Dot, Info, Loader } from 'lucide-react'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '../ui/hover-card'
 import { Separator } from '../ui/separator'
 import { Badge } from '../ui/badge'
+import { debugLog } from '@/shared/utils/lib/logger.utils'
 
 export const Form = <T extends z.ZodTypeAny>(props: FormProps<T>) => {
   const { onSubmitAction, className, children, schema, defaultValues } = props
@@ -42,10 +43,10 @@ export const Form = <T extends z.ZodTypeAny>(props: FormProps<T>) => {
     })()
   }
 
-  // const watch = form.watch()
-  // useEffect(() => {
-  //   debugLog('watch', watch)
-  // }, [watch])
+  const watch = form.watch()
+  useEffect(() => {
+    debugLog('watch', watch)
+  }, [watch])
 
   return (
     <FormProvider {...form}>
@@ -111,15 +112,51 @@ const FormWatchError = memo(
 
 FormWatchError.displayName = 'FormWatchError'
 
+const renderErrors = (obj: Record<string, any>, parentKey = ''): JSX.Element | null => {
+  if (!obj || typeof obj !== 'object') return null
+
+  return (
+    <ul className="border-muted space-y-1 border-l pl-3">
+      {Object.entries(obj).map(([key, value]) => {
+        const path = parentKey ? `${parentKey}.${key}` : key
+        const hasNested = value && typeof value === 'object' && !value?.message
+
+        return (
+          <li
+            key={path}
+            className="flex flex-col gap-1"
+          >
+            <div className="flex items-start gap-1">
+              <Dot className="text-muted-foreground mt-1 h-3 w-3 shrink-0" />
+              <span className="text-xs">
+                <strong className="capitalize">{key}</strong>
+                {value?.message && (
+                  <>
+                    {' : '}
+                    <span className="text-destructive">{value.message.toString()}</span>
+                  </>
+                )}
+              </span>
+            </div>
+            {hasNested && <div className="ml-3">{renderErrors(value, path)}</div>}
+          </li>
+        )
+      })}
+    </ul>
+  )
+}
+
 interface StatusBadgeProps<TFieldValues extends FieldValues> {
   label?: string
   className?: string
 }
 
 const StatusBadge = memo(<TFieldValues extends FieldValues>({ label, className }: StatusBadgeProps<TFieldValues>) => {
-  const {
-    formState: { isValid, errors },
-  } = useFormContext<TFieldValues>()
+  const { control } = useFormContext<TFieldValues>()
+  const { isValid, errors } = useFormState({
+    control,
+    name: undefined,
+  })
   const errorEntries = useMemo(() => Object?.entries(errors), [errors])
 
   return (
@@ -158,30 +195,13 @@ const StatusBadge = memo(<TFieldValues extends FieldValues>({ label, className }
             {isValid ? 'All good! No errors detected.' : 'Oops! Some errors found.'}
           </p>
 
-          {errorEntries?.length > 0 ? (
-            <div className="bg-background overflow-y-auto rounded-sm border p-2">
-              <ul className="space-y-2 text-xs">
-                {errorEntries?.map(([name, error]) => (
-                  <li
-                    key={name}
-                    className="flex items-start gap-1"
-                  >
-                    <span className="text-muted-foreground">
-                      <Dot className="h-4 w-4" />
-                    </span>
-                    <span>
-                      <strong className="capitalize">{name}</strong>
-                      {' : '} {(error?.message ?? 'Invalid value').toString()}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </div>
+          {Object.keys(errors).length > 0 ? (
+            <div className="bg-background max-h-60 overflow-y-auto rounded-sm border p-2">{renderErrors(errors)}</div>
           ) : (
             <p className="text-muted-foreground text-xs">
-              {isValid && errors
+              {isValid
                 ? 'You can submit the form now.'
-                : 'Oops! Some errors found.\n Submit the form to see more error details'}
+                : 'Oops! Some errors found. Submit the form to see more details.'}
             </p>
           )}
         </HoverCardContent>

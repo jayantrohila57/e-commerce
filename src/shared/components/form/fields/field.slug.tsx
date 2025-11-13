@@ -48,7 +48,7 @@ export const InputSlug: React.FC<FormInputProps> = (props) => {
       render={({ field, fieldState }) => (
         <FormItem
           id={stableId}
-          className={cn(props.className)}
+          className={cn('w-full', props.className)}
         >
           <FormLabel required={props.required}>{props.label}</FormLabel>
           <FormControl>
@@ -56,13 +56,13 @@ export const InputSlug: React.FC<FormInputProps> = (props) => {
               {props.inlinePrefix && (
                 <span
                   className={cn(
-                    'inline-flex items-center rounded-s-md border px-3',
-                    'bg-secondary text-secondary-foreground border-input',
+                    'inline-flex w-full max-w-fit items-center rounded-s-md border px-3',
+                    'bg-background dark:bg-input/30 border-input shadow-xs',
                     'gap-2',
                   )}
                 >
                   <LinkIcon className="text-primary size-4" />
-                  <span className="flex flex-row text-sm">{props.inlinePrefix}</span>
+                  <span className="inline-block w-full text-sm">{props.inlinePrefix}</span>
                 </span>
               )}
               <Input
@@ -72,7 +72,7 @@ export const InputSlug: React.FC<FormInputProps> = (props) => {
                 type="text"
                 className={cn(
                   fieldState.error && 'border-destructive focus-visible:ring-destructive',
-                  props.inlinePrefix && '-ms-px rounded-s-none shadow-none',
+                  props.inlinePrefix && '-ms-px rounded-s-none shadow-xs',
                 )}
               />
             </div>

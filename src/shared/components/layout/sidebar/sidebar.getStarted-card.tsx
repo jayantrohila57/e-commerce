@@ -3,19 +3,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/sha
 
 export function SidebarGetStartedCard() {
   return (
-    <Card className="gap-2 data-[state=open]:hidden block py-4 shadow-none">
+    <Card className="block gap-2 py-4 shadow-none data-[state=open]:hidden">
       <CardHeader className="px-4">
         <CardTitle className="text-sm font-medium">Get Started</CardTitle>
         <CardDescription>Kick off your journey. Build faster. Ship smarter.</CardDescription>
       </CardHeader>
-      <CardContent className="px-4">
+      <CardContent className="p-4">
         <div className="grid gap-2.5">
-          <Button
-            className="bg-sidebar-primary text-sidebar-primary-foreground w-full shadow-none"
-            size="sm"
-          >
-            Start Now
-          </Button>
+          <Button size="sm">Start Now</Button>
         </div>
       </CardContent>
     </Card>

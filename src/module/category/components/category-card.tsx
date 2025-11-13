@@ -1,5 +1,3 @@
-'use client'
-
 import {
   Card,
   CardAction,
@@ -10,13 +8,12 @@ import {
   CardTitle,
 } from '@/shared/components/ui/card'
 import { Badge } from '@/shared/components/ui/badge'
-import { Separator } from '@/shared/components/ui/separator'
-import { Eye, Lock, EyeOff, LinkIcon, Share, ExternalLink, ChevronDown, ChevronRight } from 'lucide-react'
-import Image from 'next/image'
+import { ChevronRight, GripVertical } from 'lucide-react'
 import { cn } from '@/shared/utils/lib/utils'
 import Link from 'next/link'
-import { env } from '@/shared/config/env'
 import { Route } from 'next'
+import { Button } from '@/shared/components/ui/button'
+import { Separator } from '@/shared/components/ui/separator'
 
 type Category = {
   visibility: 'public' | 'private' | 'hidden'
@@ -43,70 +40,25 @@ interface CategoryCardProps {
   className?: string
 }
 
-const tailwindColor = (color: string) => {
-  switch (color) {
-    case 'red':
-      return 'bg-red-500'
-    case 'green':
-      return 'bg-green-500'
-    case 'blue':
-      return 'bg-blue-500'
-    case 'yellow':
-      return 'bg-yellow-500'
-    case 'purple':
-      return 'bg-purple-500'
-    case 'orange':
-      return 'bg-orange-500'
-    case 'pink':
-      return 'bg-pink-500'
-    case 'gray':
-      return 'bg-gray-500'
-    default:
-      return 'bg-gray-500'
-  }
-}
-
 export function CategoryCard({ category, href, className }: CategoryCardProps) {
-  const visibilityIcon = category.visibility === 'public' ? Eye : category.visibility === 'private' ? Lock : EyeOff
-
   const content = (
-    <Card className={cn('hover:bg-muted/50 col-span-1 h-auto w-full gap-0 transition-colors', className)}>
-      <CardHeader className="pb-2">
-        <CardTitle>{category.title}</CardTitle>
-        <CardDescription>{category.description}</CardDescription>
-        <CardAction className="">
-          <div className="text-muted-foreground flex justify-between text-xs">
-            <ChevronRight />
-          </div>
-        </CardAction>
-      </CardHeader>
-      <CardFooter className="flex flex-row gap-2">
-        {category.visibility && (
-          <Badge
-            variant="outline"
-            className="capitalize"
-          >
-            {category.visibility}
-          </Badge>
-        )}
-        {category.isFeatured && (
-          <Badge
-            variant="outline"
-            className="capitalize"
-          >
-            Featured
-          </Badge>
-        )}
-        {category.displayType && (
-          <Badge
-            variant="outline"
-            className="capitalize"
-          >
-            {category.displayType}
-          </Badge>
-        )}
-      </CardFooter>
-    </Card>
+    <div className="bg-secondary flex flex-row items-center justify-start rounded-md border p-2 shadow-xs">
+      <Button
+        variant={'ghost'}
+        size={'icon'}
+        className="cursor-grab active:cursor-grabbing"
+      >
+        <GripVertical />
+      </Button>
+      <Separator
+        orientation="vertical"
+        className="mx-2 data-[orientation=vertical]:h-8"
+      />
+      <div className="flex h-full flex-col">
+        <h3 className="text-base font-semibold capitalize">{category.title}</h3>
+        <p className="text-xs">{category.description}</p>
+      </div>
+    </div>
   )
 
   if (href) {

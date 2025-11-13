@@ -1,14 +1,14 @@
 import { apiServer, HydrateClient } from '@/core/api/api.server'
-import { CategoryCard } from '@/module/category/components/category-card'
+import { CategoriesSection } from '@/module/category/components/category-section'
 import DashboardSection from '@/shared/components/layout/section/section-dashboard'
 import Shell from '@/shared/components/layout/shell'
 import { PATH } from '@/shared/config/routes'
 import { Route } from 'next'
 
 export default async function Category() {
-  const { data } = await apiServer.category.getMany({
+  const { data } = await apiServer.category.getManyByTypes({
     query: {
-      limit: 50,
+      limit: 10,
       offset: 0,
     },
   })
@@ -20,16 +20,9 @@ export default async function Category() {
             title="Category Management"
             description="Manage your product categories and subcategories"
             action="Add Category"
-            actionUrl={PATH.STUDIO.PRODUCTS.CATEGORIES.NEW as Route}
+            actionUrl={PATH.STUDIO.CATEGORIES.NEW as Route}
           >
-            <div className="grid h-auto w-full grid-cols-4 gap-2">
-              {data?.map((category) => (
-                <CategoryCard
-                  key={category.id}
-                  category={category}
-                />
-              ))}
-            </div>
+            <CategoriesSection data={data} />
           </DashboardSection>
         </Shell.Section>
       </Shell>

@@ -29,83 +29,87 @@ export const orderContract = {
   get: {
     input: z.object({
       params: z.object({ id: z.string() }),
-      query: z.object().optional(),
-      body: z.object().optional(),
-      headers: z.object().optional(),
+      query: z.object({}).optional(),
+      body: z.object({}).optional(),
+      headers: z.object({}).optional(),
     }),
     output: detailedResponse(orderSelectSchema.nullable()),
   },
   getMany: {
     input: z.object({
-      params: z.object().optional(),
-      query: z.object().optional(),
-      body: z.object({
-        userId: z.string().optional(),
-        status: z.string().optional(),
-        limit: z.number().optional(),
-        offset: z.number().optional(),
-      }),
-      headers: z.object().optional(),
+      params: z.object({}).optional(),
+      query: z
+        .object({
+          userId: z.string().optional(),
+          status: z.string().optional(),
+          limit: z.number().optional(),
+          offset: z.number().optional(),
+        })
+        .optional(),
+      body: z.object({}).optional(),
+      headers: z.object({}).optional(),
     }),
     output: detailedResponse(z.array(orderSelectSchema)),
   },
   getUserOrders: {
     input: z.object({
       params: z.object({ userId: z.string() }),
-      query: z.object().optional(),
-      body: z.object({
-        status: z.string().optional(),
-        limit: z.number().optional(),
-        offset: z.number().optional(),
-      }),
-      headers: z.object().optional(),
+      query: z
+        .object({
+          status: z.string().optional(),
+          limit: z.number().optional(),
+          offset: z.number().optional(),
+        })
+        .optional(),
+      body: z.object({}).optional(),
+      headers: z.object({}).optional(),
     }),
     output: detailedResponse(z.array(orderWithItemsSchema)),
   },
   getOrderWithItems: {
     input: z.object({
       params: z.object({ id: z.string() }),
-      query: z.object().optional(),
-      body: z.object().optional(),
-      headers: z.object().optional(),
+      query: z.object({}).optional(),
+      body: z.object({}).optional(),
+      headers: z.object({}).optional(),
     }),
     output: detailedResponse(orderWithItemsSchema.nullable()),
   },
   create: {
     input: z.object({
-      params: z.object().optional(),
-      query: z.object().optional(),
+      params: z.object({}).optional(),
+      query: z.object({}).optional(),
       body: orderInsertSchema.extend({
         items: z.array(orderItemInsertSchema).optional(),
       }),
-      headers: z.object().optional(),
+      headers: z.object({}).optional(),
     }),
     output: detailedResponse(orderWithItemsSchema),
   },
   update: {
     input: z.object({
       params: z.object({ id: z.string() }),
-      query: z.object().optional(),
+      query: z.object({}).optional(),
       body: orderUpdateSchema,
-      headers: z.object().optional(),
+      headers: z.object({}).optional(),
     }),
     output: detailedResponse(orderSelectSchema),
   },
   cancelOrder: {
     input: z.object({
       params: z.object({ id: z.string() }),
-      query: z.object().optional(),
-      body: z.object().optional(),
-      headers: z.object().optional(),
+      query: z.object({}).optional(),
+      body: z.object({}).optional(),
+      headers: z.object({}).optional(),
     }),
     output: detailedResponse(orderSelectSchema),
   },
   delete: {
     input: z.object({
       params: z.object({ id: z.string() }),
-      query: z.object().optional(),
-      body: z.object().optional(),
-      headers: z.object().optional(),
+      query: z.object({}).optional(),
+      body: z.object({}).optional(),
+      headers: z.object({}).optional(),
     }),
     output: detailedResponse(
       orderSelectSchema

@@ -3,10 +3,12 @@ import {
   type CreateControllerOutput,
   type DeleteControllerInput,
   type DeleteControllerOutput,
-  type GetManyControllerInput,
-  type GetManyControllerOutput,
   type UpdateControllerInput,
   type UpdateControllerOutput,
+  type GetManyControllerInput,
+  type GetManyControllerOutput,
+  type GetManyByTypesControllerInput,
+  type GetManyByTypesControllerOutput,
   type GetControllerInput,
   type GetControllerOutput,
   type RestoreControllerInput,
@@ -19,9 +21,11 @@ import {
   type ReorderControllerOutput,
   type SearchControllerInput,
   type SearchControllerOutput,
+  type GetCategoryWithSubcategoriesControllerInput,
+  type GetCategoryWithSubcategoriesControllerOutput,
 } from '../dto/types.category'
 
-import { debugLog } from '@/shared/utils/lib/logger.utils'
+import { debugError, debugLog } from '@/shared/utils/lib/logger.utils'
 import { MESSAGE, STATUS } from '@/shared/config/api.config'
 import { categoryService } from './api.category.service'
 import { API_RESPONSE } from '@/shared/config/api.utils'
@@ -46,13 +50,48 @@ export const categoryController = {
       return API_RESPONSE(
         output?.length ? STATUS.SUCCESS : STATUS.FAILED,
         output?.length ? MESSAGE.CATEGORY.GET_MANY.SUCCESS : MESSAGE.CATEGORY.GET_MANY.FAILED,
-        output ?? [],
+        output,
       )
     } catch (err) {
-      return API_RESPONSE(STATUS.ERROR, MESSAGE.CATEGORY.GET_MANY.ERROR, [], err as Error)
+      return API_RESPONSE(STATUS.ERROR, MESSAGE.CATEGORY.GET_MANY.ERROR, null, err as Error)
     }
   },
 
+  getManyByTypes: async ({ input }: GetManyByTypesControllerInput): GetManyByTypesControllerOutput => {
+    try {
+      const output = await categoryService.getManyByTypes({ query: input.query })
+      return API_RESPONSE(
+        output ? STATUS.SUCCESS : STATUS.FAILED,
+        output ? MESSAGE.CATEGORY.GET_MANY.SUCCESS : MESSAGE.CATEGORY.GET_MANY.FAILED,
+        output,
+      )
+    } catch (err) {
+      return API_RESPONSE(STATUS.ERROR, MESSAGE.CATEGORY.GET_MANY.ERROR, null, err as Error)
+    }
+  },
+
+  getBySlug: async ({
+    input,
+  }: GetCategoryWithSubcategoriesControllerInput): GetCategoryWithSubcategoriesControllerOutput => {
+    try {
+      const data = await categoryService.getBySlug({
+        params: input.params,
+      })
+
+      return API_RESPONSE(
+        data ? STATUS.SUCCESS : STATUS.FAILED,
+        data ? 'Category and subcategories retrieved successfully.' : 'Category not found.',
+        data,
+      )
+    } catch (err) {
+      return API_RESPONSE(
+        STATUS.ERROR,
+        'Unexpected error while retrieving category with subcategories.',
+        null,
+        err as Error,
+      )
+    }
+  },
   create: async ({ input }: CreateControllerInput): CreateControllerOutput => {
     try {
       const output = await categoryService.create({ body: input.body })
@@ -68,14 +107,25 @@ export const categoryController = {
 
   update: async ({ input }: UpdateControllerInput): UpdateControllerOutput => {
     try {
-      const output = await categoryService.update({ body: input.body, params: input.params })
-      return API_RESPONSE(
-        output ? STATUS.SUCCESS : STATUS.FAILED,
-        output ? MESSAGE.CATEGORY.UPDATE.SUCCESS : MESSAGE.CATEGORY.UPDATE.FAILED,
-        output,
-      )
+      const output = await categoryService.update({
+        body: input.body,
+        params: input.params,
+      })
+
+      if (!output) {
+        debugLog('CONTROLLER:CATEGORY:UPDATE:NOT_FOUND', { id: input.params.id })
+        return API_RESPONSE(STATUS.FAILED, MESSAGE.CATEGORY.UPDATE.FAILED, null)
+      }
+
+      debugLog('CONTROLLER:CATEGORY:UPDATE:SUCCESS', { id: input.params.id })
+      return API_RESPONSE(STATUS.SUCCESS, MESSAGE.CATEGORY.UPDATE.SUCCESS, output)
     } catch (err) {
-      return API_RESPONSE(STATUS.ERROR, MESSAGE.CATEGORY.UPDATE.ERROR, null, err as Error)
+      const error = err as Error
+      debugError('CONTROLLER:CATEGORY:UPDATE:ERROR', {
+        id: input?.params?.id,
+        error: error.message,
+      })
+      return API_RESPONSE(STATUS.ERROR, MESSAGE.CATEGORY.UPDATE.ERROR, null, error)
     }
   },
 

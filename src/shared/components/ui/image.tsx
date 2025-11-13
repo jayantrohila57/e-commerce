@@ -18,7 +18,12 @@ export function BlurImage({ className, alt, fallbackSrc, ...props }: BlurImagePr
       {...props}
       alt={alt}
       src={hasError && fallbackSrc ? fallbackSrc : props.src}
-      className={cn(className, 'motion-all', isLoading ? 'blur-lg animate-shimmer' : 'blur-0', hasError && 'opacity-70 grayscale')}
+      className={cn(
+        className,
+        'motion-all',
+        isLoading ? 'animate-shimmer blur-lg' : 'blur-0',
+        hasError && 'bg-secondary',
+      )}
       onLoad={() => setLoading(false)}
       onError={() => {
         setError(true)

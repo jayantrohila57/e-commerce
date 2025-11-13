@@ -40,7 +40,7 @@ export const displayTypeOptions: FilterOption<DisplayType>[] = [
 ]
 
 export const visibilityOptions: FilterOption<Visibility>[] = [
-  { value: Visibility.PUBLIC, label: 'Public', icon:  GlobeIcon, color: '' },
+  { value: Visibility.PUBLIC, label: 'Public', icon: GlobeIcon, color: '' },
   { value: Visibility.PRIVATE, label: 'Private', icon: EyeOffIcon, color: '' },
   { value: Visibility.HIDDEN, label: 'Hidden', icon: EyeOffIcon, color: '' },
 ]

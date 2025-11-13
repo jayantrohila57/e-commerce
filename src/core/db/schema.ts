@@ -36,6 +36,7 @@ import { shipment } from '@/module/shipment/dto/dto.shipment.schema'
 import { warehouse } from '@/module/inventory/dto/dto.schema'
 import { inventory } from '@/module/inventory/dto/dto.schema'
 import { subcategory } from '@/module/subcategory/dto/dto.subcategory.schema'
+import { attribute } from '@/module/attribute/dto/dto.attribute.schema'
 
 export {
   discountTypeEnum,
@@ -52,6 +53,7 @@ export {
   session,
   user,
   verification,
+  attribute,
   twoFactor,
   passkey,
   rateLimit,

@@ -3,7 +3,7 @@ import { Inter as Font, Oswald as SecondaryFont } from 'next/font/google'
 const font = Font({
   subsets: ['latin'],
   variable: '--font-geist-sans',
-  weight: [ '400'],
+  weight: ['400'],
 })
 
 const secondaryFont = SecondaryFont({

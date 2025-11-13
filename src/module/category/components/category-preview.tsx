@@ -1,97 +1,135 @@
-'use client'
-
-import Image from 'next/image'
-import { Card, CardHeader, CardContent, CardTitle, CardDescription } from '@/shared/components/ui/card'
 import { Badge } from '@/shared/components/ui/badge'
-import { GlobeIcon, EyeOffIcon, StarIcon, LayoutGridIcon } from 'lucide-react'
+import {
+  Globe,
+  EyeOff,
+  Star,
+  LayoutGrid,
+  Clock,
+  Calendar,
+  Tag,
+  Eye,
+  EyeOff as EyeOffIcon,
+  Trash2,
+  ExternalLink,
+  ImageIcon,
+  Trash,
+  PencilIcon,
+} from 'lucide-react'
 import { cn } from '@/shared/utils/lib/utils'
-import { useFormContext } from 'react-hook-form'
+import { GetCategoryOutput } from '../dto/types.category'
+import { FormSection } from '@/shared/components/form/form.helper'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/shared/components/ui/table'
+import { format, formatDistanceToNow } from 'date-fns'
+import { Button } from '@/shared/components/ui/button'
+import Link from 'next/link'
+import { PATH } from '@/shared/config/routes'
+import { Route } from 'next'
+import { CategoryDelete } from './category-delete'
 
-interface CategoryPreviewCardProps {
-  title: string
-  slug: string
-  description?: string | null
-  image?: string | null
-  color?: string
-  displayType: string
-  visibility: string
-  isFeatured?: boolean
+type CategoryPreviewCardProps = {
+  data: GetCategoryOutput['data']
+  className?: string
 }
 
-export function CategoryPreviewCard() {
-  const { watch } = useFormContext()
+const formatValue = (key: string, value: any) => {
+  if (value === null || value === undefined) return 'N/A'
 
-  const {
-    title,
-    slug,
-    description,
-    image,
-    color = '#FFFFFF',
-    displayType,
-    visibility,
-    isFeatured = false,
-  } = watch('body')
-  const visibilityIcon = visibility === 'public' ? GlobeIcon : visibility === 'private' ? EyeOffIcon : LayoutGridIcon
+  // Format dates
+  if (['createdAt', 'updatedAt', 'deletedAt'].includes(key) && value) {
+    return format(new Date(value), 'PPPpp')
+  }
 
-  const Icon = visibilityIcon
+  // Format boolean values
+  if (typeof value === 'boolean') {
+    return value ? 'Yes' : 'No'
+  }
+
+  // Handle arrays and objects
+  if (Array.isArray(value)) {
+    return value.length > 0 ? value.join(', ') : 'None'
+  }
+
+  if (typeof value === 'object') {
+    return JSON.stringify(value, null, 2)
+  }
+
+  return String(value)
+}
+
+export function CategoryPreviewCard({ data }: CategoryPreviewCardProps) {
+  if (!data) return null
+
+  const filteredData = Object.entries(data).filter(
+    ([key]) => !['parentId', 'deletedAt', 'displayOrder', 'metaTitle', 'metaDescription'].includes(key),
+  )
 
   return (
-    <Card
-      className={cn('relative overflow-hidden border-2 transition-all duration-200 hover:shadow-lg', 'rounded-2xl')}
-      style={{ borderColor: color }}
+    <FormSection
+      title="Details"
+      description="Category details"
     >
-      {image ? (
-        <div className="relative aspect-video w-full">
-          <Image
-            src={image}
-            alt={title}
-            fill
-            className="object-cover"
-          />
-          <div className="absolute inset-0" />
+      <div className="grid h-full w-full grid-cols-12">
+        <div className="bg-secondary col-span-11 h-full w-full rounded-lg border shadow-xs">
+          <Table>
+            <TableBody>
+              {filteredData.map(([key, value]) => {
+                const formattedValue = formatValue(key, value)
+                return (
+                  <TableRow key={key}>
+                    <TableCell className="text-muted-foreground font-medium">
+                      <div className="flex items-center">
+                        {key === 'isFeatured' && <Star className="mr-2 h-3.5 w-3.5 opacity-70" />}
+                        {key === 'visibility' && <Eye className="mr-2 h-3.5 w-3.5 opacity-70" />}
+                        {key === 'displayType' && <LayoutGrid className="mr-2 h-3.5 w-3.5 opacity-70" />}
+                        {key === 'createdAt' && <Calendar className="mr-2 h-3.5 w-3.5 opacity-70" />}
+                        {key === 'updatedAt' && <Clock className="mr-2 h-3.5 w-3.5 opacity-70" />}
+                        {key === 'deletedAt' && <Trash2 className="mr-2 h-3.5 w-3.5 opacity-70" />}
+                        {key === 'image' && <ImageIcon className="mr-2 h-3.5 w-3.5 opacity-70" />}
+                        {key === 'color' && <Globe className="mr-2 h-3.5 w-3.5 opacity-70" />}
+                        <span className="capitalize">{key.replace(/([A-Z])/g, ' $1').trim()}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell className="capitalize">
+                      {typeof formattedValue === 'string' && formattedValue.startsWith('http') ? (
+                        <a
+                          href={formattedValue}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-primary flex items-center hover:underline"
+                        >
+                          {formattedValue.split('/').pop()}
+                          <ExternalLink className="ml-1 h-3 w-3 opacity-70" />
+                        </a>
+                      ) : (
+                        <span
+                          className={cn(
+                            'font-mono text-sm',
+                            typeof value === 'boolean' && 'font-semibold',
+                            value === null && 'text-muted-foreground italic',
+                          )}
+                        >
+                          {formattedValue}
+                        </span>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                )
+              })}
+            </TableBody>
+          </Table>
         </div>
-      ) : (
-        <div
-          className="bg-muted flex aspect-video w-full items-center justify-center"
-          style={{ backgroundColor: color }}
-        >
-          <LayoutGridIcon className="text-muted-foreground h-10 w-10" />
+        <div className="col-span-1 flex h-full w-full flex-col items-end justify-start gap-2 p-2">
+          <Link href={PATH.STUDIO.CATEGORIES.EDIT(String(data?.slug), String(data?.id)) as Route}>
+            <Button
+              variant={'default'}
+              size={'icon'}
+            >
+              <PencilIcon />
+            </Button>
+          </Link>
+          <CategoryDelete categoryId={String(data?.id)} />
         </div>
-      )}
-
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2 text-lg font-bold">
-            {title}
-            {isFeatured && <StarIcon className="h-4 w-4 text-yellow-500" />}
-          </CardTitle>
-          <Badge
-            variant="secondary"
-            className="flex items-center gap-1 text-xs"
-          >
-            <Icon className="h-3 w-3" />
-            {visibility}
-          </Badge>
-        </div>
-        <CardDescription className="text-muted-foreground text-sm">/{slug}</CardDescription>
-      </CardHeader>
-
-      <CardContent>
-        {description && <p className="text-muted-foreground line-clamp-3 text-sm">{description}</p>}
-        <div className="mt-4 flex items-center justify-between">
-          <Badge
-            variant="outline"
-            className="text-xs capitalize"
-            style={{ borderColor: color, color }}
-          >
-            {displayType}
-          </Badge>
-          <div
-            className="h-5 w-5 rounded-full border"
-            style={{ backgroundColor: color, borderColor: color }}
-          />
-        </div>
-      </CardContent>
-    </Card>
+      </div>
+    </FormSection>
   )
 }

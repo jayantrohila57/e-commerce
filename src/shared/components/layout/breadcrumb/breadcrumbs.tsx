@@ -18,6 +18,7 @@ import { type Route } from 'next'
 import { PATH } from '@/shared/config/routes'
 import GoBackButton from '../../common/go-back'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/shared/components/ui/tooltip'
+import { slugToTitle } from '@/shared/utils/lib/url.utils'
 
 const generateBreadcrumbs = (pathname: string) => {
   const pathArray = pathname?.split('/')?.filter(Boolean)
@@ -62,7 +63,7 @@ export function Breadcrumbs({ className }: { className?: string }) {
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <BreadcrumbPage className="capitalize">{breadcrumb?.label}</BreadcrumbPage>
+                      <BreadcrumbPage className="capitalize">{slugToTitle(breadcrumb?.label)}</BreadcrumbPage>
                     </TooltipTrigger>
                     <TooltipContent>
                       <p id="go-back-tooltip">{'Your current page'}</p>
@@ -77,11 +78,11 @@ export function Breadcrumbs({ className }: { className?: string }) {
                         asChild
                         className="capitalize underline-offset-4 hover:underline"
                       >
-                        <Link href={breadcrumb?.href as Route}>{breadcrumb?.label}</Link>
+                        <Link href={breadcrumb?.href as Route}>{slugToTitle(breadcrumb?.label)}</Link>
                       </BreadcrumbLink>
                     </TooltipTrigger>
                     <TooltipContent>
-                      <p id="go-back-tooltip">{`Go to ${breadcrumb?.label}`}</p>
+                      <p id="go-back-tooltip">{`Go to ${slugToTitle(breadcrumb?.label)}`}</p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>

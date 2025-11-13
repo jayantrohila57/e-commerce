@@ -5,7 +5,6 @@ import Shell from '@/shared/components/layout/shell'
 import { PATH } from '@/shared/config/routes'
 import { type Route } from 'next'
 import { redirect } from 'next/navigation'
-import InventoryPage from '@/module/inventory/components/inventory.page'
 
 export const metadata = {
   title: 'Inventory',
@@ -23,9 +22,9 @@ export default async function Home() {
           <DashboardSection
             {...metadata}
             action="Add Inventory"
-            actionUrl={PATH.STUDIO.PRODUCTS.INVENTORY.NEW as Route}
+            actionUrl={PATH.STUDIO.INVENTORY.NEW as Route}
           >
-            <InventoryPage />
+            <div className=""></div>{' '}
           </DashboardSection>
         </Shell.Section>
       </Shell>

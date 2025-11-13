@@ -63,7 +63,7 @@ export const ImageUploadText: React.FC<FormInputProps> = (props) => {
                 onDrop={handleDrop}
                 data-dragging={isDragging || undefined}
                 className={cn(
-                  'border-input shadow hover:bg-accent/50 data-[dragging=true]:bg-accent/50 has-[input:focus]:border-ring has-[input:focus]:ring-ring/50 bg-background relative flex aspect-video min-h-96 max-w-2xl flex-col items-center justify-center overflow-hidden rounded-md border border-dashed p-4 transition-colors has-disabled:pointer-events-none has-disabled:opacity-50 has-[img]:border-none has-[input:focus]:ring-[3px]',
+                  'hover:bg-background dark:bg-input/30 data-[dragging=true]:bg-background has-[input:focus]:border-ring has-[input:focus]:ring-ring/50 bg-background border-input relative flex aspect-video max-h-80 min-h-60 flex-col items-center justify-center overflow-hidden rounded-md border p-4 shadow-xs transition-colors has-disabled:pointer-events-none has-disabled:opacity-50 has-[img]:border-none has-[input:focus]:ring-[3px]',
                   fieldState.error && 'border-destructive focus-visible:ring-destructive',
                 )}
               >

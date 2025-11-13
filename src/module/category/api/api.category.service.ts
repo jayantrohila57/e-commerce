@@ -5,6 +5,8 @@ import {
   type DeleteServiceOutput,
   type GetManyServiceInput,
   type GetManyServiceOutput,
+  type GetManyByTypesServiceInput,
+  type GetManyByTypesServiceOutput,
   type GetServiceInput,
   type GetServiceOutput,
   type UpdateServiceInput,
@@ -19,9 +21,11 @@ import {
   type ReorderServiceOutput,
   type SearchServiceInput,
   type SearchServiceOutput,
+  type GetCategoryWithSubcategoriesServiceInput,
+  type GetCategoryWithSubcategoriesServiceOutput,
 } from '../dto/types.category'
 
-import { debugError } from '@/shared/utils/lib/logger.utils'
+import { debugError, debugLog } from '@/shared/utils/lib/logger.utils'
 import { db } from '@/core/db/db'
 import { eq, and, ilike, inArray } from 'drizzle-orm'
 import { category } from '@/core/db/schema'
@@ -44,6 +48,53 @@ export const categoryService = {
     }
   },
 
+  getManyByTypes: async ({ query }: GetManyByTypesServiceInput): GetManyByTypesServiceOutput => {
+    try {
+      // Get featured categories
+      const featuredCategories = await db.query.category.findMany({
+        where: (c, { eq, and, isNull }) => and(eq(c.isFeatured, true), isNull(c.deletedAt)),
+      })
+
+      // Get categories by visibility
+      const [publicCategories, privateCategories, hiddenCategories] = await Promise.all([
+        db.query.category.findMany({
+          where: (c, { eq, and, isNull }) => and(eq(c.visibility, 'public'), isNull(c.deletedAt)),
+        }),
+        db.query.category.findMany({
+          where: (c, { eq, and, isNull }) => and(eq(c.visibility, 'private'), isNull(c.deletedAt)),
+        }),
+        db.query.category.findMany({
+          where: (c, { eq, and, isNull }) => and(eq(c.visibility, 'hidden'), isNull(c.deletedAt)),
+        }),
+      ])
+
+      // Get recent categories (last 10 created)
+      const recentCategories = await db.query.category.findMany({
+        where: (c, { and, isNull }) => and(isNull(c.deletedAt)),
+        limit: 10,
+      })
+
+      // Get soft-deleted categories
+      const deletedCategories = await db.query.category.findMany({
+        where: (c, { and, not, isNull }) => and(not(isNull(c.deletedAt))),
+      })
+
+      return {
+        featuredCategoryType: featuredCategories,
+        categoryVisibility: {
+          publicCategoryType: publicCategories,
+          privateCategoryType: privateCategories,
+          hiddenCategoryType: hiddenCategories,
+        },
+        recentCategoryType: recentCategories,
+        deletedCategoryType: deletedCategories,
+      }
+    } catch (error) {
+      debugError('SERVICE:CATEGORY:GET_MANY_BY_TYPES:ERROR', error)
+      return null
+    }
+  },
+
   getMany: async ({ query }: GetManyServiceInput): GetManyServiceOutput => {
     try {
       const conditions = []
@@ -61,6 +112,31 @@ export const categoryService = {
       return data
     } catch (error) {
       debugError('SERVICE:CATEGORY:GET_MANY:ERROR', error)
+      return null
+    }
+  },
+
+  getBySlug: async ({
+    params,
+  }: GetCategoryWithSubcategoriesServiceInput): GetCategoryWithSubcategoriesServiceOutput => {
+    try {
+      const categoryData = await db.query.category.findFirst({
+        where: (c, { eq }) => eq(c.slug, params.slug),
+      })
+
+      if (!categoryData) return null
+
+      const subcategoriesData = await db.query.subcategory.findMany({
+        where: (s, { eq }) => eq(s.categorySlug, categoryData.slug),
+        orderBy: (s, { asc }) => [asc(s.displayOrder)],
+      })
+
+      return {
+        category: categoryData,
+        subcategories: subcategoriesData,
+      }
+    } catch (error) {
+      debugError('SERVICE:CATEGORY_WITH_SUBCATEGORIES:GET_BY_SLUG:ERROR', error)
       return null
     }
   },
@@ -94,26 +170,68 @@ export const categoryService = {
 
   update: async ({ body, params }: UpdateServiceInput): UpdateServiceOutput => {
     try {
+      const existingCategory = await db
+        .select()
+        .from(category)
+        .where(eq(category.id, String(params.id)))
+        .limit(1)
+        .then((rows) => rows[0] || null)
+
+      if (!existingCategory) {
+        debugLog('SERVICE:CATEGORY:UPDATE:NOT_FOUND', { id: params.id })
+        return null
+      }
+
+      if (body.slug && body.slug !== existingCategory.slug) {
+        const existingSlug = await db
+          .select()
+          .from(category)
+          .where(eq(category.slug, body.slug))
+          .limit(1)
+          .then((rows) => rows[0] || null)
+
+        if (existingSlug) {
+          return null
+        }
+      }
+
+      const updateData: Record<string, any> = {
+        title: body.title ?? existingCategory.title,
+        slug: body.slug ?? existingCategory.slug,
+        description: body.description ?? existingCategory.description,
+        color: body.color ?? existingCategory.color,
+        displayType: body.displayType ?? existingCategory.displayType,
+        visibility: body.visibility ?? existingCategory.visibility,
+        displayOrder: body.displayOrder ?? existingCategory.displayOrder,
+        image: body.image ?? existingCategory.image,
+        isFeatured: body.isFeatured ?? existingCategory.isFeatured,
+        updatedAt: new Date(),
+      }
+
+      // Only include fields that were actually provided in the request
+      const updatedFields = Object.keys(body).filter((key) => body[key as keyof typeof body] !== undefined)
+
       const [data] = await db
         .update(category)
-        .set({
-          title: body.title ?? undefined,
-          slug: body.slug ?? undefined,
-          description: body.description ?? undefined,
-          color: body.color ?? undefined,
-          displayType: body.displayType ?? undefined,
-          visibility: body.visibility ?? undefined,
-          displayOrder: body.displayOrder ?? undefined,
-          image: body.image ?? undefined,
-          isFeatured: body.isFeatured ?? undefined,
-          updatedAt: new Date(),
-        })
+        .set(updateData)
         .where(eq(category.id, String(params.id)))
         .returning()
 
+      if (!data) {
+        return null
+      }
+
+      debugLog('SERVICE:CATEGORY:UPDATE:SUCCESS', {
+        id: params.id,
+        updatedFields,
+      })
+
       return data
     } catch (error) {
-      debugError('SERVICE:CATEGORY:UPDATE:ERROR', error)
+      debugError('SERVICE:CATEGORY:UPDATE:ERROR', {
+        id: params.id,
+        error: error instanceof Error ? error.message : String(error),
+      })
       return null
     }
   },

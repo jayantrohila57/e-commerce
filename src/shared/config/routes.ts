@@ -34,21 +34,34 @@ export const PATH = {
   },
   STUDIO: {
     ROOT: '/studio',
-
     PRODUCTS: {
       ROOT: '/studio/products',
       NEW: '/studio/products/new',
       EDIT: (id: string) => `/studio/products/${id}/edit`,
-      CATEGORIES: {
-        ROOT: '/studio/products/categories',
-        NEW: '/studio/products/categories/new',
-        EDIT: (id: string) => `/studio/products/categories/${id}/edit`,
-      },
-      INVENTORY: {
-        ROOT: '/studio/products/inventory',
-        NEW: '/studio/products/inventory/new',
-        EDIT: (id: string) => `/studio/products/inventory/${id}/edit`,
-      },
+    },
+    CATEGORIES: {
+      ROOT: '/studio/products/categories',
+      NEW: '/studio/products/categories/new',
+      EDIT: (slug: string, id: string) => `/studio/products/categories/${slug}/edit?id=${id}`,
+    },
+    SUB_CATEGORIES: {
+      ROOT: (categorySlug: string) => `/studio/products/categories/${categorySlug}`,
+      NEW: (categoryId: string, categorySlug: string) =>
+        `/studio/products/categories/${categorySlug}/new?id=${categoryId}`,
+      EDIT: (slug: string, categorySlug: string) => `/studio/products/categories/${categorySlug}/${slug}/edit`,
+    },
+    SERIES: {
+      ROOT: (categorySlug: string, subCategorySlug: string, seriesSlug: string) =>
+        `/studio/products/categories/${categorySlug}/${subCategorySlug}/${seriesSlug}`,
+      NEW: (categorySlug: string, subCategorySlug: string, subCategoryId: string) =>
+        `/studio/products/categories/${categorySlug}/${subCategorySlug}/new?id=${subCategoryId}`,
+      EDIT: (categorySlug: string, subCategorySlug: string, seriesSlug: string) =>
+        `/studio/products/categories/${categorySlug}/${subCategorySlug}/${seriesSlug}/edit`,
+    },
+    INVENTORY: {
+      ROOT: '/studio/products/inventory',
+      NEW: '/studio/products/inventory/new',
+      EDIT: (id: string) => `/studio/products/inventory/${id}/edit`,
     },
 
     ORDERS: {

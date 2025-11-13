@@ -5,12 +5,12 @@ import { Separator } from '../../ui/separator'
 
 export function StudioLogo() {
   return (
-    <SidebarMenu className="bg-background rounded-md p-[2.5px] border">
+    <SidebarMenu className="bg-background rounded-md border p-[2.5px]">
       <SidebarMenuItem>
         <SidebarMenuButton
           size="lg"
           asChild
-          className="data-[state=open]:border-sidebar-accent h-full data-[state=open]:text-sidebar-accent-foreground data-[state=open]:border"
+          className="data-[state=open]:border-sidebar-accent data-[state=open]:text-sidebar-accent-foreground h-full data-[state=open]:border"
         >
           <div className="flex items-center gap-2">
             <div className="flex aspect-square size-8 items-center justify-center rounded-lg">

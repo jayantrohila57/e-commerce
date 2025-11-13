@@ -13,6 +13,16 @@ export const categoryRouter = createTRPCRouter({
     .output(categoryContract.getMany.output)
     .query(({ input }) => categoryController.getMany({ input })),
 
+  getManyByTypes: protectedProcedure
+    .input(categoryContract.getManyByTypes.input)
+    .output(categoryContract.getManyByTypes.output)
+    .query(({ input }) => categoryController.getManyByTypes({ input })),
+
+  getBySlug: protectedProcedure
+    .input(categoryContract.getBySlug.input)
+    .output(categoryContract.getBySlug.output)
+    .query(({ input }) => categoryController.getBySlug({ input })),
+
   create: protectedProcedure
     .input(categoryContract.create.input)
     .output(categoryContract.create.output)

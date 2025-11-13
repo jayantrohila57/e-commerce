@@ -15,28 +15,36 @@ import type { z } from 'zod/v3'
 import { env } from '@/shared/config/env'
 import { colorOptions, displayTypeOptions, visibilityOptions } from '@/shared/config/options.config'
 import { CategoryPreviewCard } from './category-preview'
+import { useState } from 'react'
 
 const formSchema = categoryContract.create.input
 type FormValues = z.infer<typeof formSchema>
 
 export default function CategoryForm() {
   const router = useRouter()
+  const [toastId, setToastId] = useState<string | number>('')
 
   const createCategory = apiClient.category.create.useMutation({
     onSuccess: async ({ status, message }) => {
       if (status === STATUS.SUCCESS) {
-        toast.success(message)
-        router.push(PATH.STUDIO.PRODUCTS.CATEGORIES.ROOT as Route)
+        toast.success(message, { id: toastId })
+        setToastId('')
+        router.push(PATH.STUDIO.CATEGORIES.ROOT as Route)
       } else if (status === STATUS.FAILED || status === STATUS.ERROR) {
-        toast.error(message)
+        toast.error(message, { id: toastId })
+        setToastId('')
       }
     },
     onError: ({ message }) => {
-      toast.error(message || 'An error occurred while creating the category')
+      toast.error(message || 'An error occurred while creating the category', { id: toastId })
+      setToastId('')
     },
   })
 
   function onSubmit(data: FormValues) {
+    setToastId('')
+    const id = toast.loading('Creating category')
+    setToastId(id)
     createCategory.mutate({
       body: {
         slug: data.body.slug,
@@ -62,7 +70,7 @@ export default function CategoryForm() {
           slug: '',
           title: '',
           description: '',
-          color: '',
+          color: 'green',
           image: '',
           displayType: 'grid',
           visibility: 'public',
@@ -75,9 +83,9 @@ export default function CategoryForm() {
       }}
       schema={formSchema}
       onSubmitAction={onSubmit}
-      className="grid h-full grid-cols-4 gap-1 p-1"
+      className="grid h-full grid-cols-4 gap-1 pb-20"
     >
-      <div className="col-span-3 h-full w-full">
+      <div className="col-span-4 h-full w-full">
         <FormSection
           title="Category Details"
           description="Enter category information"
@@ -165,7 +173,7 @@ export default function CategoryForm() {
                 label: 'Visibility',
                 type: 'select',
                 description: 'Select the visibility of the post',
-                helperText: 'The visibility is used to generate the meta visibility of the post',
+                helperText: 'The visibility is used to generate visibility of the post',
                 required: true,
                 placeholder: 'Select type',
                 options: [
@@ -184,7 +192,7 @@ export default function CategoryForm() {
                 label: 'Is Featured',
                 type: 'switch',
                 description: 'Mark this post as featured',
-                helperText: 'The isFeatured is used to generate the meta isFeatured of the post',
+                helperText: 'The isFeatured is used to generate   isFeatured of the post',
                 required: true,
                 placeholder: 'Select isFeatured',
               }}
@@ -195,7 +203,7 @@ export default function CategoryForm() {
                 label: 'Color',
                 type: 'color',
                 description: 'Enter the color of the post',
-                helperText: 'The color is used to generate the meta color of the post',
+                helperText: 'The color is used to generate   color of the post',
                 required: true,
                 placeholder: 'Enter color',
                 options: [

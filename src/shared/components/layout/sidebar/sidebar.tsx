@@ -11,13 +11,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       collapsible="icon"
       {...props}
     >
-      <SidebarHeader className="pr-0 pl-1 py-1">
+      <SidebarHeader className="py-1 pr-0 pl-1">
         <StudioLogo />
       </SidebarHeader>
       <SidebarContent className="pl-1">
         <NavMain />
       </SidebarContent>
-      <SidebarFooter className="pl-1">
+      <SidebarFooter className="py-1 pr-0 pl-1">
         <SidebarGetStartedCard />
       </SidebarFooter>
     </Sidebar>

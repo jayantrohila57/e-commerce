@@ -42,7 +42,7 @@ export const InputDropdown: React.FC<FormInputProps> = (props) => {
               <SelectTrigger
                 id={props?.name}
                 className={cn(
-                  'focus:ring-ring focus:ring-2 focus:ring-offset-2 w-full',
+                  'focus:ring-ring bg-background dark:bg-input/30 w-full focus:ring-2 focus:ring-offset-2',
                   fieldState.error && 'border-destructive focus:ring-destructive/50',
                 )}
               >

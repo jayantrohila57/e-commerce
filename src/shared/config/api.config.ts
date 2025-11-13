@@ -153,6 +153,7 @@ export const MESSAGE = {
       ERROR: 'Unexpected error while deleting cart.',
     },
   },
+
   ORDER: {
     CREATE: {
       SUCCESS: 'Order created successfully.',
@@ -284,6 +285,58 @@ export const MESSAGE = {
       ERROR: 'Unexpected error while searching categories.',
     },
   },
+  SUBCATEGORY: {
+    CREATE: {
+      SUCCESS: 'Subcategory created successfully.',
+      FAILED: 'Failed to create subcategory.',
+      ERROR: 'Unexpected error while creating subcategory.',
+    },
+    GET: {
+      SUCCESS: 'Subcategory retrieved successfully.',
+      FAILED: 'Subcategory not found.',
+      ERROR: 'Unexpected error while retrieving subcategory.',
+    },
+    GET_MANY: {
+      SUCCESS: 'Subcategories retrieved successfully.',
+      FAILED: 'No subcategories found.',
+      ERROR: 'Unexpected error while retrieving subcategories.',
+    },
+    UPDATE: {
+      SUCCESS: 'Subcategory updated successfully.',
+      FAILED: 'Failed to update subcategory.',
+      ERROR: 'Unexpected error while updating subcategory.',
+    },
+    DELETE: {
+      SUCCESS: 'Subcategory deleted successfully.',
+      FAILED: 'Failed to delete subcategory.',
+      ERROR: 'Unexpected error while deleting subcategory.',
+    },
+    RESTORE: {
+      SUCCESS: 'Subcategory restored successfully.',
+      FAILED: 'Failed to restore subcategory.',
+      ERROR: 'Unexpected error while restoring subcategory.',
+    },
+    TOGGLE_VISIBILITY: {
+      SUCCESS: 'Subcategory visibility updated successfully.',
+      FAILED: 'Failed to update subcategory visibility.',
+      ERROR: 'Unexpected error while updating subcategory visibility.',
+    },
+    TOGGLE_FEATURED: {
+      SUCCESS: 'Subcategory featured status updated successfully.',
+      FAILED: 'Failed to update subcategory featured status.',
+      ERROR: 'Unexpected error while updating subcategory featured status.',
+    },
+    REORDER: {
+      SUCCESS: 'Subcategories reordered successfully.',
+      FAILED: 'Failed to reorder subcategories.',
+      ERROR: 'Unexpected error while reordering subcategories.',
+    },
+    SEARCH: {
+      SUCCESS: 'Subcategory search completed successfully.',
+      FAILED: 'No subcategories matched the search query.',
+      ERROR: 'Unexpected error while searching subcategories.',
+    },
+  },
   DISCOUNT: {
     CREATE: {
       SUCCESS: 'Discount created successfully.',
@@ -356,6 +409,59 @@ export const MESSAGE = {
       SUCCESS: 'Product deleted successfully.',
       FAILED: 'Failed to delete product.',
       ERROR: 'Unexpected error while deleting product.',
+    },
+  },
+  SERIES: {
+    CREATE: {
+      SUCCESS: 'Series created successfully.',
+      FAILED: 'Failed to create series.',
+      ERROR: 'Unexpected error while creating series.',
+    },
+    GET: {
+      SUCCESS: 'Series retrieved successfully.',
+      FAILED: 'Series not found.',
+      ERROR: 'Unexpected error while retrieving series.',
+    },
+    GET_MANY: {
+      SUCCESS: 'Series retrieved successfully.',
+      FAILED: 'No series found.',
+      EMPTY: 'No series found matching the criteria.',
+      ERROR: 'Unexpected error while retrieving series.',
+    },
+    UPDATE: {
+      SUCCESS: 'Series updated successfully.',
+      FAILED: 'Failed to update series.',
+      ERROR: 'Unexpected error while updating series.',
+    },
+    DELETE: {
+      SUCCESS: 'Series deleted successfully.',
+      FAILED: 'Failed to delete series.',
+      ERROR: 'Unexpected error while deleting series.',
+    },
+    RESTORE: {
+      SUCCESS: 'Series restored successfully.',
+      FAILED: 'Failed to restore series.',
+      ERROR: 'Unexpected error while restoring series.',
+    },
+    TOGGLE_VISIBILITY: {
+      SUCCESS: 'Series visibility updated successfully.',
+      FAILED: 'Failed to update series visibility.',
+      ERROR: 'Unexpected error while updating series visibility.',
+    },
+    TOGGLE_FEATURED: {
+      SUCCESS: 'Series featured status updated successfully.',
+      FAILED: 'Failed to update series featured status.',
+      ERROR: 'Unexpected error while updating series featured status.',
+    },
+    REORDER: {
+      SUCCESS: 'Series reordered successfully.',
+      FAILED: 'Failed to reorder series.',
+      ERROR: 'Unexpected error while reordering series.',
+    },
+    SEARCH: {
+      SUCCESS: 'Series search completed successfully.',
+      FAILED: 'No series found matching the search criteria.',
+      ERROR: 'Unexpected error while searching series.',
     },
   },
   REVIEW: {

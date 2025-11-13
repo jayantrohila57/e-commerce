@@ -27,7 +27,7 @@ export const InputRadio: React.FC<FormInputProps> = (props) => {
               {...field}
               {...props?.fieldProps}
               onValueChange={field.onChange}
-              className="bg-background flex flex-row gap-2 rounded-md border p-2"
+              className="bg-background dark:bg-input/30 flex flex-row gap-2 rounded-md border p-2"
             >
               {props?.options?.map(({ value, color, icon, label }) => (
                 <FormItem

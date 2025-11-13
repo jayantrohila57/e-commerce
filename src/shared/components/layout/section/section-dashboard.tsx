@@ -20,8 +20,8 @@ export default function DashboardSection({ title, description, action, actionUrl
         <CardHeader className="flex flex-row items-center justify-between p-3">
           <div className="flex h-full w-full flex-row items-center justify-end gap-2">
             <div className="h-full w-full">
-              {title && <CardTitle className='text-2xl'>{slugToTitle(title)}</CardTitle>}
-              {description && <CardDescription className=''>{description}</CardDescription>}
+              {title && <CardTitle className="text-2xl">{slugToTitle(title)}</CardTitle>}
+              {description && <CardDescription className="">{description}</CardDescription>}
             </div>
             <CardAction>
               {action && (
@@ -37,8 +37,8 @@ export default function DashboardSection({ title, description, action, actionUrl
         </CardHeader>
       )}
       <Separator />
-      <div className="motion-all h-[calc(100vh-8.4rem)] overflow-auto">
-        <CardContent className="p-2">{children}</CardContent>
+      <div className="motion-all h-[calc(100vh-8.4rem)] overflow-auto p-2">
+        <CardContent className="bg-muted/30 rounded-md border p-2 pb-20">{children}</CardContent>
       </div>
     </Card>
   )

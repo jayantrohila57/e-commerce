@@ -6,15 +6,19 @@ export const product = pgTable('product', {
   id: text('id').primaryKey(),
   title: text('title').notNull(),
   description: text('description'),
+  metaTitle: text('meta_title'),
+  metaDescription: text('meta_description'),
   slug: text('slug').notNull().unique(),
   seriesSlug: text('series_slug')
     .notNull()
     .references(() => series.slug),
-  brand: text('brand'),
   baseImage: text('base_image'),
   isActive: boolean('is_active').default(true),
-  createdAt: timestamp('created_at').defaultNow(),
-  updatedAt: timestamp('updated_at').defaultNow(),
+  deletedAt: timestamp('deleted_at', { withTimezone: true }),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true })
+    .defaultNow()
+    .$onUpdate(() => new Date()),
 })
 
 export const productVariant = pgTable('product_variant', {

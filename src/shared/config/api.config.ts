@@ -385,6 +385,11 @@ export const MESSAGE = {
       FAILED: 'Product not found.',
       ERROR: 'Unexpected error while retrieving product with details.',
     },
+    GET_BY_SLUG: {
+      SUCCESS: 'Product retrieved successfully.',
+      FAILED: 'Product not found.',
+      ERROR: 'Unexpected error while retrieving product.',
+    },
     GET_MANY: {
       SUCCESS: 'Products retrieved successfully.',
       FAILED: 'No products found.',
@@ -409,6 +414,11 @@ export const MESSAGE = {
       SUCCESS: 'Product deleted successfully.',
       FAILED: 'Failed to delete product.',
       ERROR: 'Unexpected error while deleting product.',
+    },
+    SEARCH: {
+      SUCCESS: 'Product searched successfully.',
+      FAILED: 'No products found.',
+      ERROR: 'Unexpected error while searching products.',
     },
   },
   SERIES: {

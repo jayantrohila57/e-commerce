@@ -2,7 +2,6 @@
 
 import { memo, useCallback } from 'react'
 import { ChevronLeft } from 'lucide-react'
-
 import { Button } from '@/shared/components/ui/button'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/shared/components/ui/tooltip'
 import { useRouter } from 'next/navigation'

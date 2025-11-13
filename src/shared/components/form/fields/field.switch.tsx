@@ -26,7 +26,7 @@ export const InputSwitch: React.FC<FormInputProps> = (props) => {
         >
           <FormLabel required={props.required}>{props.label}</FormLabel>
           <FormControl>
-            <div className="bg-background flex items-center justify-between gap-4 rounded-md border p-2">
+            <div className="bg-background dark:bg-input/30 flex items-center justify-between gap-4 rounded-md border p-2">
               <Switch
                 {...field}
                 {...props.fieldProps}

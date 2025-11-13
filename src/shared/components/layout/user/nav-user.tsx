@@ -35,7 +35,7 @@ export function UserDropdown({ user }: { user: User }) {
               src={user?.image ?? ''}
               alt={user?.name ?? ''}
             />
-            <AvatarFallback className="text-primary border-none">{fallbackName}</AvatarFallback>
+            <AvatarFallback className="text-primary bg-background border-none">{fallbackName}</AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>

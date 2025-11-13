@@ -2,8 +2,8 @@ import Link from 'next/link'
 import { Button } from '../../ui/button'
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from '../../ui/card'
 import { slugToTitle } from '@/shared/utils/lib/url.utils'
-import GoBackButton from '../../common/go-back'
 import type { Route } from 'next'
+import { Separator } from '../../ui/separator'
 
 interface SectionProps<T extends string = string> {
   title?: string
@@ -15,14 +15,13 @@ interface SectionProps<T extends string = string> {
 
 export default function DashboardSection({ title, description, action, actionUrl, children }: SectionProps<Route>) {
   return (
-    <Card className="bg-card h-full w-full gap-0 rounded-md pb-0">
+    <Card className="bg-card motion-all h-full w-full gap-0 rounded-md p-0 shadow-none">
       {title && description && (
-        <CardHeader className="flex flex-row items-center justify-between">
-          <div className="flex h-full w-full flex-row items-center justify-end gap-4">
-            <GoBackButton />
+        <CardHeader className="flex flex-row items-center justify-between p-3">
+          <div className="flex h-full w-full flex-row items-center justify-end gap-2">
             <div className="h-full w-full">
-              {title && <CardTitle>{slugToTitle(title)}</CardTitle>}
-              {description && <CardDescription>{description}</CardDescription>}
+              {title && <CardTitle className="text-2xl">{slugToTitle(title)}</CardTitle>}
+              {description && <CardDescription className="">{description}</CardDescription>}
             </div>
             <CardAction>
               {action && (
@@ -37,8 +36,9 @@ export default function DashboardSection({ title, description, action, actionUrl
           </div>
         </CardHeader>
       )}
-      <div className="h-[calc(100vh-10.2rem)] overflow-auto">
-        <CardContent className="px-4">{children}</CardContent>
+      <Separator />
+      <div className="motion-all h-[calc(100vh-8.4rem)] overflow-auto p-2">
+        <CardContent className="bg-muted/30 rounded-md border p-2 pb-20">{children}</CardContent>
       </div>
     </Card>
   )

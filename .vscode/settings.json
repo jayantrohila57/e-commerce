@@ -21,17 +21,30 @@
   "prettier.configPath": ".prettierrc",
   "typescript.tsdk": "node_modules/typescript/lib",
   "typescript.preferences.autoImportSpecifierExcludeRegexes": ["^(node:)?os$"],
-  "cSpell.words": ["arcjet", "ARKJET", "arktype", "cmdk", "googleusercontent", "neondatabase", "nums", "vaul"],
+  "cSpell.words": [
+    "arcjet",
+    "ARKJET",
+    "arktype",
+    "cmdk",
+    "dicebear",
+    "googleusercontent",
+    "ilike",
+    "neondatabase",
+    "nums",
+    "ORPC",
+    "unlazy",
+    "vaul"
+  ],
 
   "editor.dropIntoEditor.preferences": [],
   "search.exclude": {
     "**/node_modules": true,
-    "**/.next": true,
-    "migrations": true
+    "**/.next": true
+    // "migrations": true
   },
   "files.exclude": {
     "**/node_modules": true,
-    "**/.next": true,
-    "migrations": true
+    "**/.next": true
+    // "migrations": true
   }
 }

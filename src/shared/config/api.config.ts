@@ -2,302 +2,503 @@ export const STATUS = {
   SUCCESS: 'success',
   ERROR: 'error',
   FAILED: 'failed',
-}
+} as const
 
-export const API_MESSAGE = {
-  OVERVIEW: {
-    TOP10: {
-      SUCCESS: 'Top 10 fetched successfully',
-      FAILED: 'Failed to fetch top 10 due to a database error.',
-      ERROR: 'Failed to fetch top 10 due to a database error.',
-    },
-    STATS: {
-      SUCCESS: 'Stats fetched successfully',
-      FAILED: 'Failed to fetch stats due to a database error.',
-      ERROR: 'Failed to fetch stats due to a database error.',
-    },
-    OVER_VIEW: {
-      SUCCESS: 'Over view fetched successfully',
-      FAILED: 'Failed to fetch Over view .',
-      ERROR: 'Something went wrong',
-    },
-  },
-  SETTINGS: {
-    GET: {
-      SUCCESS: 'Settings fetched successfully',
-      FAILED: 'Failed to fetch settings due to a database error.',
-      ERROR: 'Failed to fetch settings due to a database error.',
-    },
-    UPDATE: {
-      SUCCESS: 'Settings updated successfully',
-      FAILED: 'Failed to update settings due to a database error.',
-      ERROR: 'Failed to update settings due to a database error.',
-    },
-  },
+export const MESSAGE = {
   USER: {
     CREATE: {
-      SUCCESS: 'User created successfully',
-      FAILED: 'Failed to create user due to a database error.',
-      ERROR: 'Failed to create user due to a database error.',
-    },
-    UPDATE: {
-      SUCCESS: 'User updated successfully',
-      FAILED: 'Failed to update user due to a database error.',
-      ERROR: 'Failed to update user due to a database error.',
-    },
-    OVER_VIEW: {
-      SUCCESS: 'User overview fetched successfully',
-      FAILED: 'Failed to fetch user overview due to a database error.',
-      ERROR: 'Failed to fetch user overview due to a database error.',
-    },
-    DELETE: {
-      SUCCESS: 'User deleted successfully',
-      SUCCESS_PERMANENT: 'User deleted permanently',
-      SUCCESS_SOFT: 'User soft-deleted',
-      FAILED: 'Failed to delete user due to a database error.',
-      ERROR: 'Failed to delete user due to a database error.',
-    },
-    GET_USER: {
-      SUCCESS: 'User fetched successfully',
-      FAILED: 'Failed to fetch user due to a database error.',
-      ERROR: 'Failed to fetch user due to a database error.',
-    },
-    GET_USERS: {
-      SUCCESS: 'Users fetched successfully',
-      FAILED: 'Failed to fetch users due to a database error.',
-      ERROR: 'Failed to fetch users due to a database error.',
-    },
-    USER_ORDER: {
-      SUCCESS: 'Users orders fetched successfully',
-      FAILED: 'Failed to fetch users order.',
-      ERROR: 'Something went wrong.',
-    },
-    OVER_VIEW_S: {
-      SUCCESS: 'Users overview fetched successfully',
-      FAILED: 'Failed to fetch users overview.',
-      ERROR: 'Something went wrong.',
-    },
-    UPDATE_USER_ROLE: {
-      SUCCESS: 'User role updated successfully',
-      FAILED: 'Failed to update user role.',
-      ERROR: 'Something went wrong.',
-      NOT_FOUND: 'User not found',
-      CONFLICT: 'User role already updated or same',
-    },
-    USER_CURRENT_PLAN: {
-      SUCCESS: 'Users current plan fetched successfully',
-      FAILED: 'Failed to fetch users current plan.',
-      ERROR: 'Something went wrong.',
-      PLAN_NOT_FOUND: 'No subscribe any plan',
-    },
-  },
-  LEAD: {
-    CREATE_LEADS: {
-      SUCCESS: 'Leads created successfully',
-      FAILED: 'Failed to create leads',
-      ERROR: 'failed to create leads due to database error',
-    },
-    GET_LEAD_LIST: {
-      SUCCESS: 'Leads fetched successfully',
-      FAILED: 'Failed to fetch user listing',
-      ERROR: 'Something went wrong',
-    },
-    REQUEST_LEAD: {
-      SUCCESS: 'Request Leads  successfully',
-      FAILED: 'Failed to request lead',
-      ERROR: 'Something went wrong',
-      NOT_ACCEPTABLE: 'Some of the lead have not found or already proceed',
-    },
-    OVER_VIEW: {
-      SUCCESS: 'lead overview fetched successfully',
-      FAILED: 'Failed to fetch lead overview.',
-      ERROR: 'Something went wrong.',
-    },
-    UPDATE_LEAD: {
-      SUCCESS: 'lead updated successfully',
-      FAILED: 'Failed to update lead',
-      ERROR: 'Something went wrong.',
-    },
-    DELETE_LEAD: {
-      SUCCESS: 'Lead deleted successfully',
-      FAILED: 'Failed to delete lead',
-      ERROR: 'Something went wrong.',
-    },
-  },
-  WHATSAPP_CAMPAIGN: {
-    CREATE: {
-      SUCCESS: 'WhatsApp campaign created successfully',
-      FAILED: 'Failed to create WhatsApp campaign',
-      ERROR: 'Something went wrong while creating campaign',
-    },
-    GET_LIST: {
-      SUCCESS: 'WhatsApp campaigns fetched successfully',
-      FAILED: 'Failed to fetch WhatsApp campaigns',
-      ERROR: 'Something went wrong while fetching campaigns',
-    },
-    UPDATE: {
-      SUCCESS: 'WhatsApp campaign updated successfully',
-      FAILED: 'Failed to update WhatsApp campaign',
-      ERROR: 'Something went wrong while updating campaign',
-    },
-    DELETE: {
-      SUCCESS: 'WhatsApp campaign deleted successfully',
-      FAILED: 'Failed to delete WhatsApp campaign',
-      ERROR: 'Something went wrong while deleting campaign',
-    },
-    OVERVIEW: {
-      SUCCESS: 'WhatsApp campaign overview fetched successfully',
-      FAILED: 'Failed to fetch WhatsApp campaign overview',
-      ERROR: 'Something went wrong while fetching overview',
-    },
-    START: {
-      SUCCESS: 'WhatsApp campaign started successfully',
-      FAILED: 'Failed to start WhatsApp campaign',
-      ERROR: 'Something went wrong while starting campaign',
-    },
-    PAUSE: {
-      SUCCESS: 'WhatsApp campaign paused successfully',
-      FAILED: 'Failed to pause WhatsApp campaign',
-      ERROR: 'Something went wrong while pausing campaign',
-    },
-    RESUME: {
-      SUCCESS: 'WhatsApp campaign resumed successfully',
-      FAILED: 'Failed to resume WhatsApp campaign',
-      ERROR: 'Something went wrong while resuming campaign',
-    },
-    CANCEL: {
-      SUCCESS: 'WhatsApp campaign cancelled successfully',
-      FAILED: 'Failed to cancel WhatsApp campaign',
-      ERROR: 'Something went wrong while cancelling campaign',
-    },
-  },
-  WHATSAPP_TEMPLATE: {
-    CREATE: {
-      SUCCESS: 'WhatsApp template created successfully',
-      FAILED: 'Failed to create WhatsApp template',
-      ERROR: 'Something went wrong while creating template',
-    },
-    GET_LIST: {
-      SUCCESS: 'WhatsApp templates fetched successfully',
-      FAILED: 'Failed to fetch WhatsApp templates',
-      ERROR: 'Something went wrong while fetching templates',
-    },
-    UPDATE: {
-      SUCCESS: 'WhatsApp template updated successfully',
-      FAILED: 'Failed to update WhatsApp template',
-      ERROR: 'Something went wrong while updating template',
-    },
-    DELETE: {
-      SUCCESS: 'WhatsApp template deleted successfully',
-      FAILED: 'Failed to delete WhatsApp template',
-      ERROR: 'Something went wrong while deleting template',
-    },
-  },
-  WHATSAPP_MESSAGE: {
-    GET_LIST: {
-      SUCCESS: 'WhatsApp messages fetched successfully',
-      FAILED: 'Failed to fetch WhatsApp messages',
-      ERROR: 'Something went wrong while fetching messages',
-    },
-    RESEND: {
-      SUCCESS: 'WhatsApp message resent successfully',
-      FAILED: 'Failed to resend WhatsApp message',
-      ERROR: 'Something went wrong while resending message',
-    },
-    UPDATE_STATUS: {
-      SUCCESS: 'WhatsApp message status updated successfully',
-      FAILED: 'Failed to update WhatsApp message status',
-      ERROR: 'Something went wrong while updating message status',
-    },
-  },
-  WHATSAPP_API_KEY: {
-    CREATE: {
-      SUCCESS: 'WhatsApp API key created successfully',
-      FAILED: 'Failed to create WhatsApp API key',
-      ERROR: 'Something went wrong while creating WhatsApp API key',
-    },
-    UPDATE: {
-      SUCCESS: 'WhatsApp API key updated successfully',
-      FAILED: 'Failed to update WhatsApp API key',
-      ERROR: 'Something went wrong while updating WhatsApp API key',
-    },
-    DELETE: {
-      SUCCESS: 'WhatsApp API key deleted successfully',
-      FAILED: 'Failed to delete WhatsApp API key',
-      ERROR: 'Something went wrong while deleting WhatsApp API key',
+      SUCCESS: 'User created successfully.',
+      FAILED: 'Failed to create user.',
+      ERROR: 'Unexpected error while creating user.',
     },
     GET: {
-      SUCCESS: 'WhatsApp API keys fetched successfully',
-      FAILED: 'Failed to fetch WhatsApp API keys',
-      ERROR: 'Something went wrong while fetching WhatsApp API keys',
+      SUCCESS: 'User retrieved successfully.',
+      FAILED: 'User not found.',
+      ERROR: 'Unexpected error while retrieving user.',
     },
-    GET_BY_ID: {
-      SUCCESS: 'WhatsApp API key fetched successfully',
-      FAILED: 'Failed to fetch WhatsApp API key',
-      ERROR: 'Something went wrong while fetching WhatsApp API key',
+    GET_MANY: {
+      SUCCESS: 'Users retrieved successfully.',
+      FAILED: 'No users found.',
+      ERROR: 'Unexpected error while retrieving users.',
     },
-  },
-  SESSION: {
-    EXPIRED: 'User  session not found',
-  },
-  AUTH: {
-    SIGNUP: {
-      SUCCESS: 'Otp Send Your Mail',
-      FAILED: 'Failed to sign up ',
-      ERROR: 'failed to sign up due to database error',
-      ALREADY_EXITS: 'Email already exits',
-      FAILED_TO_SEND_OTP: 'Failed to send otp',
+    UPDATE: {
+      SUCCESS: 'User updated successfully.',
+      FAILED: 'Failed to update user.',
+      ERROR: 'Unexpected error while updating user.',
     },
-    OTP_VERIFICATION: {
-      SUCCESS: 'OTP successfully verified',
-      ERROR: 'Failed to verified otp',
-      INVALID_OTP_TIMESTAMP: 'Invalid  or expired otp time stamp',
-      INVALID_OTP: 'Invalid  or expired otp ',
-      OTP_EXP: 'Otp Expired',
-      USER_NOT_FOUND: 'User not found',
-      FAILED: 'Failed to otp verification',
-    },
-    RESEND_OTP: {
-      SUCCESS: 'OTP send successfully',
-      FAILED: 'Failed to send otp',
-    },
-    CHANGE_PASSWORD: {
-      SUCCESS: 'Password updated successfully',
-      FAILED: 'Failed to updated password',
-      ERROR: 'Something went wrong ',
-      ONE_INPUT_REQUIRED: 'Token or userId one of them required',
-      OLD_PASSWORD_REQUIRED: 'Old password is required',
-      PASSWORD_NOT_MATCH: 'Old password not match',
-      TOKEN_EXP: 'Session End retry to forgot password',
+    DELETE: {
+      SUCCESS: 'User deleted successfully.',
+      FAILED: 'Failed to delete user.',
+      ERROR: 'Unexpected error while deleting user.',
     },
   },
+  ADDRESS: {
+    CREATE: {
+      SUCCESS: 'Address created successfully.',
+      FAILED: 'Failed to create address.',
+      ERROR: 'Unexpected error while creating address.',
+    },
+    GET: {
+      SUCCESS: 'Address retrieved successfully.',
+      FAILED: 'Address not found.',
+      ERROR: 'Unexpected error while retrieving address.',
+    },
+    GET_MANY: {
+      SUCCESS: 'Addresses retrieved successfully.',
+      FAILED: 'No addresses found.',
+      ERROR: 'Unexpected error while retrieving addresses.',
+    },
+    GET_USER_ADDRESSES: {
+      SUCCESS: 'User addresses retrieved successfully.',
+      FAILED: 'No addresses found for user.',
+      ERROR: 'Unexpected error while retrieving user addresses.',
+    },
+    UPDATE: {
+      SUCCESS: 'Address updated successfully.',
+      FAILED: 'Failed to update address.',
+      ERROR: 'Unexpected error while updating address.',
+    },
+    DELETE: {
+      SUCCESS: 'Address deleted successfully.',
+      FAILED: 'Failed to delete address.',
+      ERROR: 'Unexpected error while deleting address.',
+    },
+  },
+  WISHLIST: {
+    CREATE: {
+      SUCCESS: 'Wishlist created successfully.',
+      FAILED: 'Failed to create wishlist.',
+      ERROR: 'Unexpected error while creating wishlist.',
+    },
+    GET: {
+      SUCCESS: 'Wishlist retrieved successfully.',
+      FAILED: 'Wishlist not found.',
+      ERROR: 'Unexpected error while retrieving wishlist.',
+    },
+    GET_MANY: {
+      SUCCESS: 'Wishlists retrieved successfully.',
+      FAILED: 'No wishlists found.',
+      ERROR: 'Unexpected error while retrieving wishlists.',
+    },
+    GET_USER_WISHLIST: {
+      SUCCESS: 'User wishlist retrieved successfully.',
+      FAILED: 'Wishlist not found for user.',
+      ERROR: 'Unexpected error while retrieving user wishlist.',
+    },
+    ADD_ITEM: {
+      SUCCESS: 'Item added to wishlist successfully.',
+      FAILED: 'Failed to add item to wishlist.',
+      ERROR: 'Unexpected error while adding item to wishlist.',
+    },
+    REMOVE_ITEM: {
+      SUCCESS: 'Item removed from wishlist successfully.',
+      FAILED: 'Failed to remove item from wishlist.',
+      ERROR: 'Unexpected error while removing item from wishlist.',
+    },
+    DELETE: {
+      SUCCESS: 'Wishlist deleted successfully.',
+      FAILED: 'Failed to delete wishlist.',
+      ERROR: 'Unexpected error while deleting wishlist.',
+    },
+  },
+  CART: {
+    CREATE: {
+      SUCCESS: 'Cart created successfully.',
+      FAILED: 'Failed to create cart.',
+      ERROR: 'Unexpected error while creating cart.',
+    },
+    GET: {
+      SUCCESS: 'Cart retrieved successfully.',
+      FAILED: 'Cart not found.',
+      ERROR: 'Unexpected error while retrieving cart.',
+    },
+    GET_MANY: {
+      SUCCESS: 'Carts retrieved successfully.',
+      FAILED: 'No carts found.',
+      ERROR: 'Unexpected error while retrieving carts.',
+    },
+    GET_USER_CART: {
+      SUCCESS: 'User cart retrieved successfully.',
+      FAILED: 'Cart not found for user.',
+      ERROR: 'Unexpected error while retrieving user cart.',
+    },
+    ADD_ITEM: {
+      SUCCESS: 'Item added to cart successfully.',
+      FAILED: 'Failed to add item to cart.',
+      ERROR: 'Unexpected error while adding item to cart.',
+    },
+    UPDATE_ITEM: {
+      SUCCESS: 'Cart item updated successfully.',
+      FAILED: 'Failed to update cart item.',
+      ERROR: 'Unexpected error while updating cart item.',
+    },
+    REMOVE_ITEM: {
+      SUCCESS: 'Item removed from cart successfully.',
+      FAILED: 'Failed to remove item from cart.',
+      ERROR: 'Unexpected error while removing item from cart.',
+    },
+    CLEAR_CART: {
+      SUCCESS: 'Cart cleared successfully.',
+      FAILED: 'Failed to clear cart.',
+      ERROR: 'Unexpected error while clearing cart.',
+    },
+    UPDATE: {
+      SUCCESS: 'Cart updated successfully.',
+      FAILED: 'Failed to update cart.',
+      ERROR: 'Unexpected error while updating cart.',
+    },
+    DELETE: {
+      SUCCESS: 'Cart deleted successfully.',
+      FAILED: 'Failed to delete cart.',
+      ERROR: 'Unexpected error while deleting cart.',
+    },
+  },
+
   ORDER: {
     CREATE: {
-      SUCCESS: 'Order proceed.',
-      FAILED: 'Failed to proceed order',
-      ERROR: 'Something went wrong',
-      USER_PLAN_EXIT: 'Your current plan active . you buy new plan after this expire',
-      EMAIL_NOT_VERIFY: 'First verify you email',
+      SUCCESS: 'Order created successfully.',
+      FAILED: 'Failed to create order.',
+      ERROR: 'Unexpected error while creating order.',
     },
-    VERIFY: {
-      SUCCESS: 'Order placed successfully.',
-      FAILED: 'order failed',
-      ERROR: 'Something went wrong',
+    GET: {
+      SUCCESS: 'Order retrieved successfully.',
+      FAILED: 'Order not found.',
+      ERROR: 'Unexpected error while retrieving order.',
     },
-    SAVE: {
-      SUCCESS: 'Save payment successfully.',
-      FAILED: 'failed to save payment',
-      ERROR: 'Something went wrong',
+    GET_MANY: {
+      SUCCESS: 'Orders retrieved successfully.',
+      FAILED: 'No orders found.',
+      ERROR: 'Unexpected error while retrieving orders.',
     },
-    SUBSCRIPTION_LIST: {
-      SUCCESS: 'Subscription list fetch successfully.',
-      FAILED: 'failed to fetch Subscription list',
-      ERROR: 'Something went wrong',
+    GET_USER_ORDERS: {
+      SUCCESS: 'User orders retrieved successfully.',
+      FAILED: 'No orders found for user.',
+      ERROR: 'Unexpected error while retrieving user orders.',
     },
-    OVER_VIEW: {
-      SUCCESS: 'Order overview fetched successfully',
-      FAILED: 'Failed to fetch Order overview.',
-      ERROR: 'Something went wrong.',
+    GET_ORDER_WITH_ITEMS: {
+      SUCCESS: 'Order with items retrieved successfully.',
+      FAILED: 'Order not found.',
+      ERROR: 'Unexpected error while retrieving order with items.',
+    },
+    UPDATE: {
+      SUCCESS: 'Order updated successfully.',
+      FAILED: 'Failed to update order.',
+      ERROR: 'Unexpected error while updating order.',
+    },
+    CANCEL_ORDER: {
+      SUCCESS: 'Order cancelled successfully.',
+      FAILED: 'Failed to cancel order.',
+      ERROR: 'Unexpected error while cancelling order.',
+    },
+    DELETE: {
+      SUCCESS: 'Order deleted successfully.',
+      FAILED: 'Failed to delete order.',
+      ERROR: 'Unexpected error while deleting order.',
     },
   },
-}
+  SHIPMENT: {
+    CREATE: {
+      SUCCESS: 'Shipment created successfully.',
+      FAILED: 'Failed to create shipment.',
+      ERROR: 'Unexpected error while creating shipment.',
+    },
+    GET: {
+      SUCCESS: 'Shipment retrieved successfully.',
+      FAILED: 'Shipment not found.',
+      ERROR: 'Unexpected error while retrieving shipment.',
+    },
+    GET_MANY: {
+      SUCCESS: 'Shipments retrieved successfully.',
+      FAILED: 'No shipments found.',
+      ERROR: 'Unexpected error while retrieving shipments.',
+    },
+    GET_ORDER_SHIPMENTS: {
+      SUCCESS: 'Order shipments retrieved successfully.',
+      FAILED: 'No shipments found for order.',
+      ERROR: 'Unexpected error while retrieving order shipments.',
+    },
+    UPDATE: {
+      SUCCESS: 'Shipment updated successfully.',
+      FAILED: 'Failed to update shipment.',
+      ERROR: 'Unexpected error while updating shipment.',
+    },
+    UPDATE_TRACKING: {
+      SUCCESS: 'Shipment tracking updated successfully.',
+      FAILED: 'Failed to update shipment tracking.',
+      ERROR: 'Unexpected error while updating shipment tracking.',
+    },
+    DELETE: {
+      SUCCESS: 'Shipment deleted successfully.',
+      FAILED: 'Failed to delete shipment.',
+      ERROR: 'Unexpected error while deleting shipment.',
+    },
+  },
+  CATEGORY: {
+    CREATE: {
+      SUCCESS: 'Category created successfully.',
+      FAILED: 'Failed to create category.',
+      ERROR: 'Unexpected error while creating category.',
+    },
+    GET: {
+      SUCCESS: 'Category retrieved successfully.',
+      FAILED: 'Category not found.',
+      ERROR: 'Unexpected error while retrieving category.',
+    },
+    GET_MANY: {
+      SUCCESS: 'Categories retrieved successfully.',
+      FAILED: 'No categories found.',
+      ERROR: 'Unexpected error while retrieving categories.',
+    },
+    UPDATE: {
+      SUCCESS: 'Category updated successfully.',
+      FAILED: 'Failed to update category.',
+      ERROR: 'Unexpected error while updating category.',
+    },
+    DELETE: {
+      SUCCESS: 'Category deleted successfully.',
+      FAILED: 'Failed to delete category.',
+      ERROR: 'Unexpected error while deleting category.',
+    },
+    RESTORE: {
+      SUCCESS: 'Category restored successfully.',
+      FAILED: 'Failed to restore category.',
+      ERROR: 'Unexpected error while restoring category.',
+    },
+    TOGGLE_VISIBILITY: {
+      SUCCESS: 'Category visibility updated successfully.',
+      FAILED: 'Failed to update category visibility.',
+      ERROR: 'Unexpected error while updating category visibility.',
+    },
+    TOGGLE_FEATURED: {
+      SUCCESS: 'Category featured status updated successfully.',
+      FAILED: 'Failed to update category featured status.',
+      ERROR: 'Unexpected error while updating category featured status.',
+    },
+    REORDER: {
+      SUCCESS: 'Categories reordered successfully.',
+      FAILED: 'Failed to reorder categories.',
+      ERROR: 'Unexpected error while reordering categories.',
+    },
+    SEARCH: {
+      SUCCESS: 'Category search completed successfully.',
+      FAILED: 'No categories matched the search query.',
+      ERROR: 'Unexpected error while searching categories.',
+    },
+  },
+  SUBCATEGORY: {
+    CREATE: {
+      SUCCESS: 'Subcategory created successfully.',
+      FAILED: 'Failed to create subcategory.',
+      ERROR: 'Unexpected error while creating subcategory.',
+    },
+    GET: {
+      SUCCESS: 'Subcategory retrieved successfully.',
+      FAILED: 'Subcategory not found.',
+      ERROR: 'Unexpected error while retrieving subcategory.',
+    },
+    GET_MANY: {
+      SUCCESS: 'Subcategories retrieved successfully.',
+      FAILED: 'No subcategories found.',
+      ERROR: 'Unexpected error while retrieving subcategories.',
+    },
+    UPDATE: {
+      SUCCESS: 'Subcategory updated successfully.',
+      FAILED: 'Failed to update subcategory.',
+      ERROR: 'Unexpected error while updating subcategory.',
+    },
+    DELETE: {
+      SUCCESS: 'Subcategory deleted successfully.',
+      FAILED: 'Failed to delete subcategory.',
+      ERROR: 'Unexpected error while deleting subcategory.',
+    },
+    RESTORE: {
+      SUCCESS: 'Subcategory restored successfully.',
+      FAILED: 'Failed to restore subcategory.',
+      ERROR: 'Unexpected error while restoring subcategory.',
+    },
+    TOGGLE_VISIBILITY: {
+      SUCCESS: 'Subcategory visibility updated successfully.',
+      FAILED: 'Failed to update subcategory visibility.',
+      ERROR: 'Unexpected error while updating subcategory visibility.',
+    },
+    TOGGLE_FEATURED: {
+      SUCCESS: 'Subcategory featured status updated successfully.',
+      FAILED: 'Failed to update subcategory featured status.',
+      ERROR: 'Unexpected error while updating subcategory featured status.',
+    },
+    REORDER: {
+      SUCCESS: 'Subcategories reordered successfully.',
+      FAILED: 'Failed to reorder subcategories.',
+      ERROR: 'Unexpected error while reordering subcategories.',
+    },
+    SEARCH: {
+      SUCCESS: 'Subcategory search completed successfully.',
+      FAILED: 'No subcategories matched the search query.',
+      ERROR: 'Unexpected error while searching subcategories.',
+    },
+  },
+  DISCOUNT: {
+    CREATE: {
+      SUCCESS: 'Discount created successfully.',
+      FAILED: 'Failed to create discount.',
+      ERROR: 'Unexpected error while creating discount.',
+    },
+    GET: {
+      SUCCESS: 'Discount retrieved successfully.',
+      FAILED: 'Discount not found.',
+      ERROR: 'Unexpected error while retrieving discount.',
+    },
+    GET_MANY: {
+      SUCCESS: 'Discounts retrieved successfully.',
+      FAILED: 'No discounts found.',
+      ERROR: 'Unexpected error while retrieving discounts.',
+    },
+    VALIDATE_CODE: {
+      SUCCESS: 'Discount code validated successfully.',
+      FAILED: 'Invalid or expired discount code.',
+      ERROR: 'Unexpected error while validating discount code.',
+    },
+    UPDATE: {
+      SUCCESS: 'Discount updated successfully.',
+      FAILED: 'Failed to update discount.',
+      ERROR: 'Unexpected error while updating discount.',
+    },
+    DELETE: {
+      SUCCESS: 'Discount deleted successfully.',
+      FAILED: 'Failed to delete discount.',
+      ERROR: 'Unexpected error while deleting discount.',
+    },
+  },
+  PRODUCT: {
+    CREATE: {
+      SUCCESS: 'Product created successfully.',
+      FAILED: 'Failed to create product.',
+      ERROR: 'Unexpected error while creating product.',
+    },
+    GET: {
+      SUCCESS: 'Product retrieved successfully.',
+      FAILED: 'Product not found.',
+      ERROR: 'Unexpected error while retrieving product.',
+    },
+    GET_WITH_DETAILS: {
+      SUCCESS: 'Product with details retrieved successfully.',
+      FAILED: 'Product not found.',
+      ERROR: 'Unexpected error while retrieving product with details.',
+    },
+    GET_MANY: {
+      SUCCESS: 'Products retrieved successfully.',
+      FAILED: 'No products found.',
+      ERROR: 'Unexpected error while retrieving products.',
+    },
+    SEARCH_PRODUCTS: {
+      SUCCESS: 'Products searched successfully.',
+      FAILED: 'No products found.',
+      ERROR: 'Unexpected error while searching products.',
+    },
+    GET_PRODUCTS_BY_CATEGORY: {
+      SUCCESS: 'Products by category retrieved successfully.',
+      FAILED: 'No products found in category.',
+      ERROR: 'Unexpected error while retrieving products by category.',
+    },
+    UPDATE: {
+      SUCCESS: 'Product updated successfully.',
+      FAILED: 'Failed to update product.',
+      ERROR: 'Unexpected error while updating product.',
+    },
+    DELETE: {
+      SUCCESS: 'Product deleted successfully.',
+      FAILED: 'Failed to delete product.',
+      ERROR: 'Unexpected error while deleting product.',
+    },
+  },
+  SERIES: {
+    CREATE: {
+      SUCCESS: 'Series created successfully.',
+      FAILED: 'Failed to create series.',
+      ERROR: 'Unexpected error while creating series.',
+    },
+    GET: {
+      SUCCESS: 'Series retrieved successfully.',
+      FAILED: 'Series not found.',
+      ERROR: 'Unexpected error while retrieving series.',
+    },
+    GET_MANY: {
+      SUCCESS: 'Series retrieved successfully.',
+      FAILED: 'No series found.',
+      EMPTY: 'No series found matching the criteria.',
+      ERROR: 'Unexpected error while retrieving series.',
+    },
+    UPDATE: {
+      SUCCESS: 'Series updated successfully.',
+      FAILED: 'Failed to update series.',
+      ERROR: 'Unexpected error while updating series.',
+    },
+    DELETE: {
+      SUCCESS: 'Series deleted successfully.',
+      FAILED: 'Failed to delete series.',
+      ERROR: 'Unexpected error while deleting series.',
+    },
+    RESTORE: {
+      SUCCESS: 'Series restored successfully.',
+      FAILED: 'Failed to restore series.',
+      ERROR: 'Unexpected error while restoring series.',
+    },
+    TOGGLE_VISIBILITY: {
+      SUCCESS: 'Series visibility updated successfully.',
+      FAILED: 'Failed to update series visibility.',
+      ERROR: 'Unexpected error while updating series visibility.',
+    },
+    TOGGLE_FEATURED: {
+      SUCCESS: 'Series featured status updated successfully.',
+      FAILED: 'Failed to update series featured status.',
+      ERROR: 'Unexpected error while updating series featured status.',
+    },
+    REORDER: {
+      SUCCESS: 'Series reordered successfully.',
+      FAILED: 'Failed to reorder series.',
+      ERROR: 'Unexpected error while reordering series.',
+    },
+    SEARCH: {
+      SUCCESS: 'Series search completed successfully.',
+      FAILED: 'No series found matching the search criteria.',
+      ERROR: 'Unexpected error while searching series.',
+    },
+  },
+  REVIEW: {
+    CREATE: {
+      SUCCESS: 'Review created successfully.',
+      FAILED: 'Failed to create review.',
+      ERROR: 'Unexpected error while creating review.',
+    },
+    GET: {
+      SUCCESS: 'Review retrieved successfully.',
+      FAILED: 'Review not found.',
+      ERROR: 'Unexpected error while retrieving review.',
+    },
+    GET_MANY: {
+      SUCCESS: 'Reviews retrieved successfully.',
+      FAILED: 'No reviews found.',
+      ERROR: 'Unexpected error while retrieving reviews.',
+    },
+    GET_PRODUCT_REVIEWS: {
+      SUCCESS: 'Product reviews retrieved successfully.',
+      FAILED: 'No reviews found for product.',
+      ERROR: 'Unexpected error while retrieving product reviews.',
+    },
+    GET_USER_REVIEWS: {
+      SUCCESS: 'User reviews retrieved successfully.',
+      FAILED: 'No reviews found for user.',
+      ERROR: 'Unexpected error while retrieving user reviews.',
+    },
+    UPDATE: {
+      SUCCESS: 'Review updated successfully.',
+      FAILED: 'Failed to update review.',
+      ERROR: 'Unexpected error while updating review.',
+    },
+    DELETE: {
+      SUCCESS: 'Review deleted successfully.',
+      FAILED: 'Failed to delete review.',
+      ERROR: 'Unexpected error while deleting review.',
+    },
+  },
+} as const

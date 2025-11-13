@@ -36,7 +36,6 @@ export function EmailVerification({ email }: { email: string }) {
     startEmailVerificationCountdown()
     void sendVerificationEmail({
       email,
-      callbackURL: '/',
     })
   }
 

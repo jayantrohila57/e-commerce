@@ -1,6 +1,9 @@
 export const env = {
   NODE_ENV: String(process.env.NODE_ENV),
-  NEXT_PUBLIC_APP_URL: String(process.env.NEXT_PUBLIC_APP_URL),
+  PORT: Number(process.env.PORT),
+  VERCEL_URL: String(process.env.VERCEL_URL),
+  NEXT_PUBLIC_BASE_URL: String(process.env.NEXT_PUBLIC_BASE_URL),
+  NEXT_PUBLIC_API_URL: String(process.env.NEXT_PUBLIC_API_URL),
   SKIP_ENV_VALIDATION: Boolean(process.env.SKIP_ENV_VALIDATION),
   USE_DEBUG_LOGS: Boolean(process.env.USE_DEBUG_LOGS),
   BETTER_AUTH_SECRET: String(process.env.BETTER_AUTH_SECRET),

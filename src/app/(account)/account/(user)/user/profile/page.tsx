@@ -1,7 +1,7 @@
 import { getServerSession } from '@/core/auth/auth.server'
 import { AccountSidebar } from '@/module/account/components/account-sidebar'
 import { ProfileUpdateForm } from '@/module/account/components/account.profile'
-import { ProfileCard } from '@/module/user/components/user.profile'
+import { ProfileCard } from '@/module/user/components/component.user.profile'
 
 import Section from '@/shared/components/layout/section/section'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/shared/components/ui/card'
@@ -18,8 +18,11 @@ export default async function ProfilePage() {
   if (!session) return redirect(PATH.ROOT)
 
   return (
-    <Section {...metadata}>
-      <div className="grid h-full w-full grid-cols-12 gap-4">
+    <Section
+      className="bg-muted p-4"
+      {...metadata}
+    >
+      <div className="grid h-full min-h-[800px] w-full grid-cols-12 gap-4 shadow-none">
         <div className="col-span-2 h-full w-full">
           <AccountSidebar />
         </div>

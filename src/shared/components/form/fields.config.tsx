@@ -1,6 +1,13 @@
 import dynamic from 'next/dynamic'
 import { Skeleton } from '@/shared/components/ui/skeleton'
 
+const loadingImageSkeleton = () => (
+  <div className="flex flex-col gap-2 py-1">
+    <Skeleton className="h-2.5 w-20" />
+    <Skeleton className="h-[300px] w-full" />
+    <Skeleton className="h-2.5 w-80" />
+  </div>
+)
 const loadingInputSkeleton = () => (
   <div className="flex flex-col gap-2 py-1">
     <Skeleton className="h-2.5 w-20" />
@@ -57,6 +64,14 @@ export const Fields = {
     loading: () => loadingInputSkeleton(),
   }),
   password: dynamic(() => import('./fields/field.password').then((mod) => mod.InputPassword), {
+    ssr: false,
+    loading: () => loadingInputSkeleton(),
+  }),
+  image: dynamic(() => import('./fields/field.image-upload').then((mod) => mod.ImageUploadText), {
+    ssr: false,
+    loading: () => loadingImageSkeleton(),
+  }),
+  color: dynamic(() => import('./fields/field.color').then((mod) => mod.InputRadio), {
     ssr: false,
     loading: () => loadingInputSkeleton(),
   }),

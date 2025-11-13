@@ -3,11 +3,11 @@
 import dynamic from 'next/dynamic'
 
 import { Skeleton } from '@/shared/components/ui/skeleton'
-import { type User, type Session } from 'better-auth'
 import { Button } from '../../ui/button'
 import Link from 'next/link'
 import { PATH } from '@/shared/config/routes'
 import { UserDropdown } from '../user/nav-user'
+import { useSession } from '@/core/auth/auth.client'
 
 const ModeToggle = dynamic(async () => await import('@/core/theme/theme.selector').then((mod) => mod.ModeToggle), {
   ssr: false,
@@ -30,7 +30,9 @@ const WishListButton = dynamic(
   },
 )
 
-export function HeaderActions({ user, session }: { user: User | undefined; session: Session | undefined }) {
+export function HeaderActions() {
+  const { data: session } = useSession()
+
   if (!session) {
     return (
       <div className="flex flex-row gap-1 sm:gap-2 md:gap-4">
@@ -54,7 +56,7 @@ export function HeaderActions({ user, session }: { user: User | undefined; sessi
         <CartButton />
         <WishListButton />
         <ModeToggle />
-        {user && <UserDropdown user={user} />}
+        {session?.user && <UserDropdown user={session?.user} />}
       </div>
     )
   }

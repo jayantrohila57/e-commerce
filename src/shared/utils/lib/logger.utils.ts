@@ -1,3 +1,4 @@
+import { env } from '@/shared/config/env'
 import { getTimestamp } from './date-time.utils'
 
 type LogType = 'log' | 'warn' | 'error'
@@ -14,7 +15,7 @@ const getColor = (type: LogType): string => {
 const printDebug = (type: LogType, tag: string, ...props: unknown[]) => {
   const timestamp = getTimestamp()
   const isNode = typeof window === 'undefined'
-  const environment = process.env.NODE_ENV || 'unknown'
+  const environment = env.NODE_ENV || 'development'
 
   if (isNode) {
     const typeColor = getColor(type)

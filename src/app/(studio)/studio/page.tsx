@@ -1,34 +1,28 @@
+import { HydrateClient } from '@/core/api/api.server'
 import { getServerSession } from '@/core/auth/auth.server'
-import Section from '@/shared/components/layout/section/section'
+import DashboardSection from '@/shared/components/layout/section/section-dashboard'
 import Shell from '@/shared/components/layout/shell'
+import { PATH } from '@/shared/config/routes'
+import { redirect } from 'next/navigation'
 
 export const metadata = {
   title: 'Studio',
   description: 'Studio Description',
 }
 
-export default async function Home({ params, searchParams }: PageProps<'/studio'>) {
-  const syncParam = await params
-  const syncSearchParams = await searchParams
-  const { session, user } = await getServerSession()
+export default async function Home() {
+  const { session } = await getServerSession()
+  if (!session) return redirect(PATH.ROOT)
 
   return (
-    <Shell>
-      <Shell.Section>
-        <Section
-          {...metadata}
-          action={'Studio Action'}
-        >
-          <div className="">
-            {JSON.stringify({
-              session,
-              user,
-              syncParam,
-              syncSearchParams,
-            })}
-          </div>
-        </Section>
-      </Shell.Section>
-    </Shell>
+    <HydrateClient>
+      <Shell>
+        <Shell.Section variant="dashboard">
+          <DashboardSection {...metadata}>
+            <div className="">Hello</div>
+          </DashboardSection>
+        </Shell.Section>
+      </Shell>
+    </HydrateClient>
   )
 }

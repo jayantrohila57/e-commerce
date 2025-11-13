@@ -4,6 +4,7 @@ import Section from '@/shared/components/layout/section/section'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/shared/components/ui/card'
 import { redirect } from 'next/navigation'
 import { PATH } from '@/shared/config/routes'
+import { CommerceSidebar } from '@/module/account/components/account.commerce.sidebar'
 
 export const metadata = {
   title: 'Order',
@@ -14,9 +15,14 @@ export default async function OrderPage() {
   if (!session) return redirect(PATH.ROOT)
 
   return (
-    <Section {...metadata}>
+    <Section
+      className="bg-muted p-4"
+      {...metadata}
+    >
       <div className="grid h-full w-full grid-cols-12 gap-4">
-        <div className="col-span-2 h-full w-full"></div>
+        <div className="col-span-2 h-full w-full">
+          <CommerceSidebar />
+        </div>
         <div className="col-span-8 h-full w-full">
           <Card>
             <CardHeader>

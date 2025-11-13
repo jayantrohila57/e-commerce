@@ -1,9 +1,9 @@
-import { Poppins as Font, Special_Gothic as SecondaryFont } from 'next/font/google'
+import { Inter as Font, Oswald as SecondaryFont } from 'next/font/google'
 
 const font = Font({
   subsets: ['latin'],
   variable: '--font-geist-sans',
-  weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
+  weight: ['400'],
 })
 
 const secondaryFont = SecondaryFont({
@@ -21,6 +21,6 @@ const viewport = {
   initialScale: 1,
 }
 
-const className = `${secondaryFont.variable} font-oswald antialiased`
+const className = `${font.variable} antialiased`
 
 export { font, viewport, className }

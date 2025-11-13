@@ -5,11 +5,15 @@ import { ShoppingBag } from 'lucide-react'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/shared/components/ui/tooltip'
 import { Badge } from '@/shared/components/ui/badge'
 import { Button } from '@/shared/components/ui/button'
+import { PATH } from '@/shared/config/routes'
+import { useRouter } from 'next/navigation'
 
 export default function CartButton() {
+  const router = useRouter()
   const [count, setCount] = useState(3)
 
   const handleClick = () => {
+    router.push(PATH.ACCOUNT.CART)
     setCount(0)
   }
 

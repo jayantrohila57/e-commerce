@@ -1,10 +1,23 @@
 import { getServerSession } from '@/core/auth/auth.server'
-import AccountRootComponent from '@/module/account/components/account.root'
+import AccountRootComponent from '@/module/account/components/account.layout'
 import { PATH } from '@/shared/config/routes'
 import { redirect } from 'next/navigation'
+import Section from '@/shared/components/layout/section/section'
+
+export const metadata = {
+  title: 'Account',
+  description: 'Account settings',
+}
 
 export default async function AccountPage() {
   const session = await getServerSession()
   if (!session) return redirect(PATH.ROOT)
-  return <AccountRootComponent />
+  return (
+    <Section
+      className="bg-muted p-4"
+      {...metadata}
+    >
+      <AccountRootComponent />
+    </Section>
+  )
 }

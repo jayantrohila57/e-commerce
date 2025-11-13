@@ -11,10 +11,14 @@ import {
   BreadcrumbSeparator,
 } from '@/shared/components/ui/breadcrumb'
 import { cn } from '@/shared/utils/lib/utils'
-import { Slash } from 'lucide-react'
+import { HomeIcon, Slash } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
 import { type Route } from 'next'
+import { PATH } from '@/shared/config/routes'
+import GoBackButton from '../../common/go-back'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/shared/components/ui/tooltip'
+import { slugToTitle } from '@/shared/utils/lib/url.utils'
 
 const generateBreadcrumbs = (pathname: string) => {
   const pathArray = pathname?.split('/')?.filter(Boolean)
@@ -31,22 +35,57 @@ export function Breadcrumbs({ className }: { className?: string }) {
 
   return (
     <Breadcrumb>
-      <BreadcrumbList className={cn('mt-0.5 text-lg', className)}>
+      <BreadcrumbList className={cn('bg-muted/20 rounded-full border px-4 py-[5px] shadow-xs', className)}>
+        <BreadcrumbItem>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <BreadcrumbLink href={PATH.ROOT}>
+                  <HomeIcon
+                    size={16}
+                    aria-hidden="true"
+                  />
+                  <span className="sr-only">Home</span>
+                </BreadcrumbLink>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p id="go-back-tooltip">{'Go to website homepage'}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </BreadcrumbItem>
+
         {breadcrumbs?.map((breadcrumb, index) => (
           <React.Fragment key={index}>
-            <BreadcrumbSeparator className="first:hidden">
-              <Slash className="-rotate-20" />
-            </BreadcrumbSeparator>
+            <BreadcrumbSeparator className="first:hidden" />
             <BreadcrumbItem>
               {index === breadcrumbs?.length - 1 ? (
-                <BreadcrumbPage className="capitalize">{breadcrumb?.label}</BreadcrumbPage>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <BreadcrumbPage className="capitalize">{slugToTitle(breadcrumb?.label)}</BreadcrumbPage>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p id="go-back-tooltip">{'Your current page'}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               ) : (
-                <BreadcrumbLink
-                  asChild
-                  className="capitalize underline-offset-4 hover:underline"
-                >
-                  <Link href={breadcrumb?.href as Route}>{breadcrumb?.label}</Link>
-                </BreadcrumbLink>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <BreadcrumbLink
+                        asChild
+                        className="capitalize underline-offset-4 hover:underline"
+                      >
+                        <Link href={breadcrumb?.href as Route}>{slugToTitle(breadcrumb?.label)}</Link>
+                      </BreadcrumbLink>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p id="go-back-tooltip">{`Go to ${slugToTitle(breadcrumb?.label)}`}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               )}
             </BreadcrumbItem>
           </React.Fragment>

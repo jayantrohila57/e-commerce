@@ -12,9 +12,18 @@ export const PATH = {
   },
   ACCOUNT: {
     ROOT: '/account',
-    PROFILE: '/account/profile',
-    SECURITY: '/account/security',
-    SESSIONS: '/account/sessions',
+    USER: '/account/user' as Route,
+    COMMERCE: '/account/commerce' as Route,
+    PROFILE: '/account/user/profile' as Route,
+    SECURITY: '/account/user/security' as Route,
+    SESSIONS: '/account/user/sessions' as Route,
+    CART: '/account/commerce/cart' as Route,
+    WISHLIST: '/account/commerce/wishlist' as Route,
+    ORDER: '/account/commerce/order' as Route,
+    ADDRESS: '/account/commerce/address' as Route,
+    REVIEW: '/account/commerce/review' as Route,
+    SETTINGS: '/account/user/settings' as Route,
+    SHIPMENT: '/account/commerce/shipment' as Route,
   },
   STORE: {
     ROOT: '/store',
@@ -25,6 +34,78 @@ export const PATH = {
   },
   STUDIO: {
     ROOT: '/studio',
+    PRODUCTS: {
+      ROOT: '/studio/products',
+      NEW: '/studio/products/new',
+      EDIT: (id: string) => `/studio/products/${id}/edit`,
+    },
+    CATEGORIES: {
+      ROOT: '/studio/products/categories',
+      NEW: '/studio/products/categories/new',
+      EDIT: (slug: string, id: string) => `/studio/products/categories/${slug}/edit?id=${id}`,
+    },
+    SUB_CATEGORIES: {
+      ROOT: (categorySlug: string) => `/studio/products/categories/${categorySlug}`,
+      NEW: (categoryId: string, categorySlug: string) =>
+        `/studio/products/categories/${categorySlug}/new?id=${categoryId}`,
+      EDIT: (slug: string, categorySlug: string) => `/studio/products/categories/${categorySlug}/${slug}/edit`,
+    },
+    SERIES: {
+      ROOT: (categorySlug: string, subCategorySlug: string, seriesSlug: string) =>
+        `/studio/products/categories/${categorySlug}/${subCategorySlug}/${seriesSlug}`,
+      NEW: (categorySlug: string, subCategorySlug: string, subCategoryId: string) =>
+        `/studio/products/categories/${categorySlug}/${subCategorySlug}/new?id=${subCategoryId}`,
+      EDIT: (categorySlug: string, subCategorySlug: string, seriesSlug: string) =>
+        `/studio/products/categories/${categorySlug}/${subCategorySlug}/${seriesSlug}/edit`,
+    },
+    INVENTORY: {
+      ROOT: '/studio/products/inventory',
+      NEW: '/studio/products/inventory/new',
+      EDIT: (id: string) => `/studio/products/inventory/${id}/edit`,
+    },
+
+    ORDERS: {
+      ROOT: '/studio/orders',
+      VIEW: (id: string) => `/studio/orders/${id}`,
+    },
+
+    CUSTOMERS: {
+      ROOT: '/studio/customers',
+      VIEW: (id: string) => `/studio/customers/${id}`,
+    },
+
+    DISCOUNTS: {
+      ROOT: '/studio/discounts',
+      NEW: '/studio/discounts/new',
+      EDIT: (id: string) => `/studio/discounts/${id}/edit`,
+    },
+
+    SHIPPING: {
+      ROOT: '/studio/shipping',
+      EDIT: (id: string) => `/studio/shipping/${id}/edit`,
+    },
+
+    PAYMENTS: {
+      ROOT: '/studio/payments',
+      VIEW: (id: string) => `/studio/payments/${id}`,
+    },
+
+    MARKETING: {
+      ROOT: '/studio/marketing',
+      CAMPAIGNS: '/studio/marketing/campaigns',
+    },
+
+    ANALYTICS: {
+      ROOT: '/studio/analytics',
+      SALES: '/studio/analytics/sales',
+      CUSTOMERS: '/studio/analytics/customers',
+    },
+
+    SETTINGS: {
+      ROOT: '/studio/settings',
+      PROFILE: '/studio/settings/profile',
+      TEAM: '/studio/settings/team',
+    },
   },
   BLOG: {
     ROOT: '/blog',
@@ -71,5 +152,3 @@ export const PATH = {
     SITEMAP: '/sitemap.xml',
   },
 } as const
-
-export type AppRoutes = typeof PATH

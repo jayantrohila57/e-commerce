@@ -43,6 +43,16 @@ export const getMetadata = (activeSection: unknown) => {
   }
 }
 export const policyContent: Record<string, PolicyContent> = {
+  legal: {
+    id: 'legal',
+    href: PATH.SITE.LEGAL.ROOT,
+    title: 'Legal',
+    icon: <FileText className="h-6 w-6" />,
+    description: '',
+    sections: [],
+    tableOfContents: [],
+    lastUpdated: '',
+  },
   'terms-of-service': {
     id: 'terms-of-service',
     href: PATH.SITE.LEGAL.TERMS,

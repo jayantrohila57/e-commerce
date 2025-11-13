@@ -29,7 +29,7 @@ export const InputTextArea: React.FC<FormInputProps> = (props) => {
             <Textarea
               {...field}
               {...props.fieldProps}
-              rows={props.textAreaRows}
+              rows={props.textAreaRows ?? 6}
               placeholder={props.placeholder}
               readOnly={props.readonly}
               className={cn(fieldState.error && 'border-destructive focus-visible:ring-destructive')}

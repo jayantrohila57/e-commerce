@@ -9,19 +9,20 @@ interface BlurImageProps extends ComponentProps<typeof Image> {
   fallbackSrc?: string
 }
 
-export function BlurImage({ className, alt, fallbackSrc, ...props }: BlurImageProps) {
+export function BlurImage({ className, alt, fallbackSrc = '/fallback.png', ...props }: BlurImageProps) {
   const [isLoading, setLoading] = React.useState(true)
   const [hasError, setError] = React.useState(false)
-
+  const src = props.src ? props.src : fallbackSrc
+  const errorSrc = hasError && fallbackSrc
   return (
     <Image
       {...props}
       alt={alt}
-      src={hasError && fallbackSrc ? fallbackSrc : props.src}
+      src={errorSrc || src}
       className={cn(
         className,
-        'motion-all',
-        isLoading ? 'animate-shimmer blur-lg' : 'blur-0',
+        'motion-all overflow-hidden',
+        isLoading ? 'animate-shimmer blur-xs' : 'blur-0',
         hasError && 'bg-secondary',
       )}
       onLoad={() => setLoading(false)}

@@ -43,6 +43,7 @@
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
   --animate-cell-ripple: cell-ripple var(--duration, 200ms) ease-out none 1 var(--delay, 0ms);
+  --animation-shimmer: shimmer 0.5s infinite;
 
   @keyframes cell-ripple {
     0% {
@@ -104,6 +105,7 @@
 }
 
 .dark {
+  --animation-shimmer: shimmer 0.8s infinite;
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.15 0 0);

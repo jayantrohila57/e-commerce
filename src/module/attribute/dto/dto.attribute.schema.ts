@@ -7,9 +7,10 @@ export const attribute = pgTable('attribute', {
   seriesSlug: text('series_slug')
     .notNull()
     .references(() => series.slug),
-  key: text('key').notNull(), // e.g. "size", "color", "material"
-  value: text('value').notNull(), // e.g. "XL", "Red", "Cotton"
-  type: text('type').default('text').notNull(), // e.g. "text", "number", "boolean", "select"
+  slug: text('slug').notNull(), 
+  title: text('title').notNull(),  
+  type: text('type').default('text').notNull(),
+  value: text('value').notNull(),
   displayOrder: integer('display_order').default(0).notNull(),
   createdAt: timestamp('created_at').defaultNow(),
   deletedAt: timestamp('deleted_at', { withTimezone: true }),
@@ -24,6 +25,7 @@ export const attributeRelations = relations(attribute, ({ one }) => ({
     references: [series.slug],
   }),
 }))
+
 
 export type Attribute = typeof attribute.$inferSelect
 export type NewAttribute = typeof attribute.$inferInsert

@@ -52,12 +52,15 @@ export const seriesService = {
       const seriesData = await db.query.series.findFirst({
         where: (s, { eq, and }) => and(eq(s.slug, params.slug), isNull(s.deletedAt)),
       })
-      if (!seriesData) return null
-      // const attributeData = await db.query.attribute.findFirst({
-      //   where: (at, { eq, and }) => and(eq(at.seriesSlug, seriesData.slug), isNull(at.deletedAt)),
-      // })
 
-      return seriesData ?? null
+      const attributeData = await db.query.attribute.findMany({
+        where: (at, { eq, and }) => and(eq(at.seriesSlug, String(seriesData?.slug)), isNull(at.deletedAt)),
+      })
+
+      return {
+        seriesData: seriesData ?? null,
+        attributeData: attributeData ?? [],
+      }
     } catch (error) {
       debugError('SERVICE:SERIES:GET_BY_SLUG', error)
       return null

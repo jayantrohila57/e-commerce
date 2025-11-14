@@ -1,6 +1,6 @@
 import { HydrateClient } from '@/core/api/api.server'
 import { getServerSession } from '@/core/auth/auth.server'
-import ProductForm from '@/module/product/components/product-form'
+import ProductForm from '@/module/product/product-form'
 import DashboardSection from '@/shared/components/layout/section/section-dashboard'
 import Shell from '@/shared/components/layout/shell'
 import { PATH } from '@/shared/config/routes'

@@ -1,6 +1,6 @@
 import { apiServer, HydrateClient } from '@/core/api/api.server'
-import { SeriesSection } from '@/module/series/components/series-section'
-import { SubCategoryPreviewCard } from '@/module/subcategory/components/subcategory-preview'
+import { SeriesSection } from '@/module/series/series-section'
+import { SubCategoryPreviewCard } from '@/module/subcategory/subcategory-preview'
 import DashboardSection from '@/shared/components/layout/section/section-dashboard'
 import Shell from '@/shared/components/layout/shell'
 import { Separator } from '@/shared/components/ui/separator'

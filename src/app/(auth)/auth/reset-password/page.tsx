@@ -1,5 +1,5 @@
 import { getServerSession } from '@/core/auth/auth.server'
-import ResetPasswordForm from '@/module/auth/components/auth.reset-password'
+import ResetPasswordForm from '@/module/auth/auth.reset-password'
 import { redirect } from 'next/navigation'
 import Shell from '@/shared/components/layout/shell'
 import { PATH } from '@/shared/config/routes'

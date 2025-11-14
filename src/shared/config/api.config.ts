@@ -249,6 +249,11 @@ export const MESSAGE = {
       FAILED: 'No categories found.',
       ERROR: 'Unexpected error while retrieving categories.',
     },
+    GET_BY_SLUG: {
+      SUCCESS: 'Category retrieved successfully.',
+      FAILED: 'Category not found.',
+      ERROR: 'Unexpected error while retrieving category.',
+    },
     UPDATE: {
       SUCCESS: 'Category updated successfully.',
       FAILED: 'Failed to update category.',
@@ -300,6 +305,11 @@ export const MESSAGE = {
       SUCCESS: 'Subcategories retrieved successfully.',
       FAILED: 'No subcategories found.',
       ERROR: 'Unexpected error while retrieving subcategories.',
+    },
+    GET_BY_SLUG: {
+      SUCCESS: 'Subcategory retrieved successfully.',
+      FAILED: 'Subcategory not found.',
+      ERROR: 'Unexpected error while retrieving subcategory.',
     },
     UPDATE: {
       SUCCESS: 'Subcategory updated successfully.',
@@ -385,6 +395,11 @@ export const MESSAGE = {
       FAILED: 'Product not found.',
       ERROR: 'Unexpected error while retrieving product with details.',
     },
+    GET_BY_SLUG: {
+      SUCCESS: 'Product retrieved successfully.',
+      FAILED: 'Product not found.',
+      ERROR: 'Unexpected error while retrieving product.',
+    },
     GET_MANY: {
       SUCCESS: 'Products retrieved successfully.',
       FAILED: 'No products found.',
@@ -409,6 +424,11 @@ export const MESSAGE = {
       SUCCESS: 'Product deleted successfully.',
       FAILED: 'Failed to delete product.',
       ERROR: 'Unexpected error while deleting product.',
+    },
+    SEARCH: {
+      SUCCESS: 'Product searched successfully.',
+      FAILED: 'No products found.',
+      ERROR: 'Unexpected error while searching products.',
     },
   },
   SERIES: {

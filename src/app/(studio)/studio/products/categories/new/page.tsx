@@ -4,7 +4,7 @@ import DashboardSection from '@/shared/components/layout/section/section-dashboa
 import Shell from '@/shared/components/layout/shell'
 import { PATH } from '@/shared/config/routes'
 import { redirect } from 'next/navigation'
-import CategoryForm from '@/module/category/components/category-form'
+import CategoryForm from '@/module/category/category.component.form'
 
 export const metadata = {
   title: 'Add Category',

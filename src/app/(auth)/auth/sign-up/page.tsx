@@ -1,10 +1,10 @@
 import { getServerSession } from '@/core/auth/auth.server'
-import { SignUpForm } from '@/module/auth/components/auth.sign-up'
+import { SignUpForm } from '@/module/auth/auth.sign-up'
 import { redirect } from 'next/navigation'
 import Shell from '@/shared/components/layout/shell'
 import { PATH } from '@/shared/config/routes'
 import { AuthCard, AuthFooterNote } from '@/shared/components/layout/section/auth.card-layout'
-import { AuthProviders } from '@/module/auth/components/auth.providers'
+import { AuthProviders } from '@/module/auth/auth.providers'
 
 export const metadata = {
   title: 'Sign Up',

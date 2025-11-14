@@ -1,5 +1,5 @@
 import { apiServer, HydrateClient } from '@/core/api/api.server'
-import { CategoriesSection } from '@/module/category/components/category-section'
+import { CategoriesSection } from '@/module/category/category.component.section'
 import DashboardSection from '@/shared/components/layout/section/section-dashboard'
 import Shell from '@/shared/components/layout/shell'
 import { PATH } from '@/shared/config/routes'
@@ -7,10 +7,7 @@ import { Route } from 'next'
 
 export default async function CategoriesPage() {
   const { data } = await apiServer.category.getManyByTypes({
-    query: {
-      limit: 10,
-      offset: 0,
-    },
+    query: {},
   })
   return (
     <HydrateClient>

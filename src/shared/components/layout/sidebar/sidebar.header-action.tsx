@@ -16,7 +16,7 @@ const ModeToggle = dynamic(async () => await import('@/core/theme/theme.selector
 })
 
 const SignOutIcon = dynamic(
-  async () => await import('@/module/auth/components/auth.sign-out-icon').then((mod) => mod.SignOutIcon),
+  async () => await import('@/module/auth/auth.sign-out-icon').then((mod) => mod.SignOutIcon),
   {
     ssr: false,
     loading: () => <Skeleton className="h-9 w-9 rounded-md" />,

@@ -4,7 +4,7 @@ import DashboardSection from '@/shared/components/layout/section/section-dashboa
 import Shell from '@/shared/components/layout/shell'
 import { PATH } from '@/shared/config/routes'
 import { notFound, redirect } from 'next/navigation'
-import SubcategoryForm from '@/module/subcategory/components/subcategory-form'
+import SubcategoryForm from '@/module/subcategory/subcategory-form'
 
 export const metadata = {
   title: 'Add Subcategory',

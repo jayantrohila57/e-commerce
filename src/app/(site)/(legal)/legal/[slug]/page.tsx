@@ -1,9 +1,9 @@
-import { LegalSidebar } from '@/module/legal/components/legal.sidebar'
-import { LegalContent } from '@/module/legal/components/legal.content'
+import { LegalSidebar } from '@/module/legal/legal.sidebar'
+import { LegalContent } from '@/module/legal/legal.content'
 import Section from '@/shared/components/layout/section/section'
 import Shell from '@/shared/components/layout/shell'
-import { TableOfContents } from '@/module/legal/components/legal.toc'
-import { getMetadata } from '@/module/legal/components/policy-content'
+import { TableOfContents } from '@/module/legal/legal.toc'
+import { getMetadata } from '@/module/legal/policy-content'
 
 export async function generateMetadata({ params }: PageProps<'/legal/[slug]'>) {
   const { slug } = await params

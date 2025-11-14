@@ -1,5 +1,5 @@
 import { getServerSession } from '@/core/auth/auth.server'
-import { AuthPageComponent } from '@/module/auth/components/auth.page'
+import { AuthPageComponent } from '@/module/auth/auth.page'
 import { AuthCard } from '@/shared/components/layout/section/auth.card-layout'
 import Shell from '@/shared/components/layout/shell'
 import { PATH } from '@/shared/config/routes'

@@ -1,0 +1,121 @@
+import z from 'zod/v3'
+
+export const detailedResponse = <T extends z.ZodTypeAny>(dataSchema: T) =>
+  z.object({
+    status: z.enum(['success', 'error', 'failed']).default('success'),
+    message: z.string(),
+    data: dataSchema.nullable(),
+    meta: z
+      .object({
+        timestamp: z.date().default(() => new Date()),
+        version: z.string().default('1.0.0'),
+        count: z.number().optional(),
+      })
+      .optional(),
+  })
+
+export const baseProductSchema = z.object({
+  id: z.string().min(1),
+  title: z.string().min(1),
+  description: z.string().nullable().optional(),
+  metaTitle: z.string().nullable().optional(),
+  metaDescription: z.string().nullable().optional(),
+  slug: z.string().min(1),
+  seriesSlug: z.string().min(1),
+  baseImage: z.string().nullable().optional(),
+  isActive: z.boolean().default(true).nullable(),
+  deletedAt: z.date().nullable().optional(),
+  createdAt: z.date().default(() => new Date()),
+  updatedAt: z
+    .date()
+    .default(() => new Date())
+    .nullable(),
+})
+
+export const productSelectSchema = baseProductSchema
+
+export const productInsertSchema = baseProductSchema.omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+  deletedAt: true,
+})
+
+export const productUpdateSchema = baseProductSchema.partial()
+
+const paginationSchema = z.object({
+  limit: z.number().min(1).max(100).default(20),
+  offset: z.number().min(0).default(0),
+})
+
+const searchSchema = z.object({
+  search: z.string().min(2).max(100).optional(),
+  visibility: z.enum(['public', 'private', 'hidden']).optional(),
+  isFeatured: z.boolean().optional(),
+})
+
+export const productContract = {
+  get: {
+    input: z.object({
+      params: z.object({
+        id: z.string().uuid().optional(),
+        slug: z.string().optional(),
+      }),
+    }),
+    output: detailedResponse(productSelectSchema.nullable()),
+  },
+
+  getMany: {
+    input: z.object({
+      query: searchSchema.merge(paginationSchema).optional(),
+    }),
+    output: detailedResponse(z.array(productSelectSchema)),
+  },
+
+  getBySlug: {
+    input: z.object({
+      params: z.object({
+        slug: z.string().min(1),
+      }),
+    }),
+    output: detailedResponse(
+      z
+        .object({
+          product: productSelectSchema,
+        })
+        .nullable(),
+    ),
+  },
+
+  create: {
+    input: z.object({
+      body: productInsertSchema,
+    }),
+    output: detailedResponse(productSelectSchema),
+  },
+
+  update: {
+    input: z.object({
+      params: z.object({ id: z.string() }),
+      body: productUpdateSchema,
+    }),
+    output: detailedResponse(productSelectSchema),
+  },
+
+  delete: {
+    input: z.object({
+      params: z.object({ id: z.string() }),
+    }),
+    output: detailedResponse(productSelectSchema.pick({ id: true }).nullable()),
+  },
+
+  search: {
+    input: z.object({
+      query: z.object({
+        q: z.string().min(2),
+        limit: z.number().max(50).default(10),
+      }),
+    }),
+    output: detailedResponse(z.array(productSelectSchema)),
+  },
+}

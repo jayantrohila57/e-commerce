@@ -5,7 +5,6 @@ import Link from 'next/link'
 import { Route } from 'next'
 import { Button } from '@/shared/components/ui/button'
 import { Separator } from '@/shared/components/ui/separator'
-import type { Series } from '../dto/dto.series.schema'
 import { GetSeriesOutput } from '../dto/types.series'
 
 interface SeriesCardProps {

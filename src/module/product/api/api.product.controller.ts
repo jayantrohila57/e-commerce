@@ -49,7 +49,9 @@ export const productController = {
     }
   },
 
-  getBySlug: async ({ input }: GetProductWithSubcategoriesControllerInput): GetProductWithSubcategoriesControllerOutput => {
+  getBySlug: async ({
+    input,
+  }: GetProductWithSubcategoriesControllerInput): GetProductWithSubcategoriesControllerOutput => {
     try {
       const output = await productService.getBySlug({ params: input.params })
       return API_RESPONSE(
@@ -61,7 +63,7 @@ export const productController = {
       return API_RESPONSE(STATUS.ERROR, MESSAGE.CATEGORY.GET_MANY.ERROR, null, err as Error)
     }
   },
- 
+
   create: async ({ input }: CreateControllerInput): CreateControllerOutput => {
     try {
       const output = await productService.create({ body: input.body })

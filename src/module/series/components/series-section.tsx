@@ -1,7 +1,5 @@
-import { Separator } from '@/shared/components/ui/separator'
 import { SeriesCard } from './series-card'
 import { FormSection } from '@/shared/components/form/form.helper'
-import type { Series } from '../dto/dto.series.schema'
 import { GetManySeriesOutput } from '../dto/types.series'
 
 type SeriesSectionProps = {

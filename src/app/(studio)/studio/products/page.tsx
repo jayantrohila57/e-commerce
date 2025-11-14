@@ -1,6 +1,6 @@
 import { apiServer, HydrateClient } from '@/core/api/api.server'
 import { getServerSession } from '@/core/auth/auth.server'
-import CodePreview from '@/shared/components/common/code-preview'
+import { ProductSection } from '@/module/product/components/product-section'
 import DashboardSection from '@/shared/components/layout/section/section-dashboard'
 import Shell from '@/shared/components/layout/shell'
 import { PATH } from '@/shared/config/routes'
@@ -29,7 +29,12 @@ export default async function Home() {
             action="Add Product"
             actionUrl={PATH.STUDIO.PRODUCTS.NEW as Route}
           >
-            <CodePreview json={data} />
+            <ProductSection
+              title="All Products"
+              description="All products are displayed on the homepage"
+              products={data}
+              emptyMessage="No featured products"
+            />
           </DashboardSection>
         </Shell.Section>
       </Shell>

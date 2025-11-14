@@ -14,7 +14,6 @@ export const detailedResponse = <T extends z.ZodTypeAny>(dataSchema: T) =>
       .optional(),
   })
 
- 
 export const attributeBaseSchema = z.object({
   id: z.string().min(1),
   seriesSlug: z.string().min(1),

@@ -7,10 +7,7 @@ import { Route } from 'next'
 
 export default async function CategoriesPage() {
   const { data } = await apiServer.category.getManyByTypes({
-    query: {
-      limit: 10,
-      offset: 0,
-    },
+    query: {},
   })
   return (
     <HydrateClient>

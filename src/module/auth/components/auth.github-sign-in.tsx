@@ -20,7 +20,7 @@ export function GitHubSignIn() {
       try {
         await signIn.social({
           provider: 'github',
-          callbackURL: PATH.ACCOUNT.ROOT,
+          callbackURL: PATH.STUDIO.ROOT,
         })
         toast.success('Signed in successfully', { id: toastId })
       } catch (error) {
@@ -28,7 +28,7 @@ export function GitHubSignIn() {
         toast.error('Something went wrong', { id: toastId })
       } finally {
         toast.dismiss(toastId)
-        router.push(PATH.ACCOUNT.ROOT)
+        router.push(PATH.STUDIO.ROOT)
       }
     })
   }

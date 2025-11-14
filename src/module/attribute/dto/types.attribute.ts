@@ -73,7 +73,6 @@ export type ReorderControllerOutput = Promise<ReorderAttributesOutput>
 export type SearchControllerInput = { input: SearchAttributeInput }
 export type SearchControllerOutput = Promise<SearchAttributeOutput>
 
-
 export type GetServiceInput = GetAttributeInput['params']
 export type GetServiceOutput = Promise<GetAttributeOutput['data']>
 

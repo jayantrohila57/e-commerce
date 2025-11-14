@@ -1,10 +1,10 @@
-import { GetBySlugControllerOutput } from './types.subcategory'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/shared/components/ui/card'
 import { BlurImage } from '@/shared/components/ui/image'
 import Link from 'next/link'
 import { Separator } from '@/shared/components/ui/separator'
+import { GetSubcategoryBySlugOutput } from './subcategory.types'
 
-export const SubCategoryItem = ({ data }: { data: Awaited<GetBySlugControllerOutput>['data'] }) => {
+export const SubCategoryItem = ({ data }: { data: GetSubcategoryBySlugOutput['data'] }) => {
   return (
     <div className="flex flex-col items-center justify-center">
       <div className="">

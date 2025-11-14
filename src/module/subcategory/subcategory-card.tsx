@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { Route } from 'next'
 import { Button } from '@/shared/components/ui/button'
 import { Separator } from '@/shared/components/ui/separator'
-import { SubcategoryBase } from './dto.subcategory.contract'
+import { SubcategoryBase } from './subcategory.schema'
 import { BlurImage } from '@/shared/components/ui/image'
 
 interface SubCategoryCardProps {

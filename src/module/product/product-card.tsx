@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { Route } from 'next'
 import { Separator } from '@/shared/components/ui/separator'
 import { BlurImage } from '@/shared/components/ui/image'
-import { ProductBase } from './dto.product.contract'
+import { ProductBase } from './product.types'
 
 interface ProductCardProps {
   product: ProductBase

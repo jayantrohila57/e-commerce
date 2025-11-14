@@ -1,4 +1,4 @@
-import { subcategorySelectSchema } from '@/module/subcategory/dto.subcategory.contract'
+import { subcategorySelectSchema } from '@/module/subcategory/subcategory.schema'
 import z from 'zod/v3'
 
 export const displayTypeEnum = z.enum(['grid', 'carousel', 'banner', 'list', 'featured'])

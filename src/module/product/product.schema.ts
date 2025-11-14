@@ -119,8 +119,3 @@ export const productContract = {
     output: detailedResponse(z.array(productSelectSchema)),
   },
 }
-
-export type ProductBase = z.infer<typeof baseProductSchema>
-export type ProductSelect = z.infer<typeof productSelectSchema>
-export type ProductInsert = z.infer<typeof productInsertSchema>
-export type ProductUpdate = z.infer<typeof productUpdateSchema>

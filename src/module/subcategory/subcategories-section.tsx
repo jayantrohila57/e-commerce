@@ -1,7 +1,7 @@
 import { Separator } from '@/shared/components/ui/separator'
 import { SubCategoryCard } from './subcategory-card'
 import { FormSection } from '@/shared/components/form/form.helper'
-import { SubcategoryBase } from './dto.subcategory.contract'
+import { SubcategoryBase } from './subcategory.schema'
 
 type SubCategory = SubcategoryBase
 

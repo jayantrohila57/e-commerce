@@ -13,7 +13,7 @@ import type { z } from 'zod/v3'
 import { env } from '@/shared/config/env'
 import { colorOptions, displayTypeOptions, visibilityOptions } from '@/shared/config/options.config'
 import { useState, useEffect } from 'react'
-import { subcategoryContract } from './dto.subcategory.contract'
+import { subcategoryContract } from './subcategory.schema'
 import { Route } from 'next'
 
 const formSchema = subcategoryContract.create.input

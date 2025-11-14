@@ -128,45 +128,6 @@ export const subcategoryContract = {
     output: detailedResponse(subcategorySelectSchema.pick({ id: true }).nullable()),
   },
 
-  restore: {
-    input: z.object({
-      params: z.object({ id: z.string() }),
-    }),
-    output: detailedResponse(subcategorySelectSchema),
-  },
-
-  toggleVisibility: {
-    input: z.object({
-      params: z.object({ id: z.string() }),
-      body: z.object({
-        visibility: visibilityEnum,
-      }),
-    }),
-    output: detailedResponse(subcategorySelectSchema),
-  },
-
-  toggleFeatured: {
-    input: z.object({
-      params: z.object({ id: z.string() }),
-      body: z.object({
-        isFeatured: z.boolean(),
-      }),
-    }),
-    output: detailedResponse(subcategorySelectSchema),
-  },
-
-  reorder: {
-    input: z.object({
-      body: z.array(
-        z.object({
-          id: z.string(),
-          displayOrder: z.number().int().nonnegative(),
-        }),
-      ),
-    }),
-    output: detailedResponse(z.array(subcategorySelectSchema.pick({ id: true }))),
-  },
-
   search: {
     input: z.object({
       query: z.object({

@@ -1,5 +1,5 @@
 import { Separator } from '@/shared/components/ui/separator'
-import { ProductBase } from './dto.product.contract'
+import { ProductBase } from './product.types'
 import { FormSection } from '@/shared/components/form/form.helper'
 import { ProductCard } from './product-card'
 

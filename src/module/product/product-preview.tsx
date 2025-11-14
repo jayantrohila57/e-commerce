@@ -24,7 +24,7 @@ import { Route } from 'next'
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from '@/shared/components/ui/card'
 import { BlurImage } from '@/shared/components/ui/image'
 import { Separator } from '@/shared/components/ui/separator'
-import { GetProductOutput } from './dto.product.types'
+import { GetProductOutput } from './product.types'
 import { ProductDelete } from './product-delete'
 
 type ProductPreviewCardProps = {

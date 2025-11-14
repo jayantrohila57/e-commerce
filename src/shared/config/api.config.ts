@@ -306,6 +306,11 @@ export const MESSAGE = {
       FAILED: 'No subcategories found.',
       ERROR: 'Unexpected error while retrieving subcategories.',
     },
+    GET_BY_SLUG: {
+      SUCCESS: 'Subcategory retrieved successfully.',
+      FAILED: 'Subcategory not found.',
+      ERROR: 'Unexpected error while retrieving subcategory.',
+    },
     UPDATE: {
       SUCCESS: 'Subcategory updated successfully.',
       FAILED: 'Failed to update subcategory.',

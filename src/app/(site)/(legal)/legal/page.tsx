@@ -1,4 +1,4 @@
-import { LegalSidebar } from '@/module/legal/components/legal.sidebar'
+import { LegalSidebar } from '@/module/legal/legal.sidebar'
 import Section from '@/shared/components/layout/section/section'
 import Shell from '@/shared/components/layout/shell'
 

@@ -1,5 +1,5 @@
 import { apiServer, HydrateClient } from '@/core/api/api.server'
-import { SeriesItem } from '@/module/series/components/series-listing'
+import { SeriesItem } from '@/module/series/series-listing'
 import Section from '@/shared/components/layout/section/section'
 import { env } from '@/shared/config/env'
 import { notFound } from 'next/navigation'

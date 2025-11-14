@@ -1,6 +1,6 @@
 import { getServerSession, getServerSessions } from '@/core/auth/auth.server'
-import { AccountSidebar } from '@/module/account/components/account-sidebar'
-import { SessionManagement } from '@/module/account/components/account.session'
+import { AccountSidebar } from '@/module/account/account-sidebar'
+import { SessionManagement } from '@/module/account/account.session'
 import Section from '@/shared/components/layout/section/section'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/shared/components/ui/card'
 import { PATH } from '@/shared/config/routes'

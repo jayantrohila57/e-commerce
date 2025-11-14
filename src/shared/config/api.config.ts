@@ -249,6 +249,11 @@ export const MESSAGE = {
       FAILED: 'No categories found.',
       ERROR: 'Unexpected error while retrieving categories.',
     },
+    GET_BY_SLUG: {
+      SUCCESS: 'Category retrieved successfully.',
+      FAILED: 'Category not found.',
+      ERROR: 'Unexpected error while retrieving category.',
+    },
     UPDATE: {
       SUCCESS: 'Category updated successfully.',
       FAILED: 'Failed to update category.',

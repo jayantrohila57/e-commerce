@@ -4,7 +4,7 @@ import Section from '@/shared/components/layout/section/section'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/shared/components/ui/card'
 import { redirect } from 'next/navigation'
 import { PATH } from '@/shared/config/routes'
-import { CommerceSidebar } from '@/module/account/components/account.commerce.sidebar'
+import { CommerceSidebar } from '@/module/account/account.commerce.sidebar'
 
 export const metadata = {
   title: 'Review',

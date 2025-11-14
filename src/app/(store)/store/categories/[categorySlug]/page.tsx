@@ -1,18 +1,18 @@
 import { apiServer, HydrateClient } from '@/core/api/api.server'
 import Section from '@/shared/components/layout/section/section'
-import { CategoryItem } from '@/module/category/components/category-listing'
+import { CategoryItem } from '@/module/category/category.component.all'
 import { env } from '@/shared/config/env'
 import { notFound } from 'next/navigation'
 
 export async function generateMetadata({ params }: PageProps<'/store/categories/[categorySlug]'>) {
   const { categorySlug: slug } = await params
-  const { data } = await apiServer.category.getBySlug({
+  const { data } = await apiServer.category.get({
     params: {
       slug,
     },
   })
 
-  const category = data?.category
+  const category = data
   if (!category) return notFound()
   return {
     title: category?.title,
@@ -32,12 +32,12 @@ export async function generateMetadata({ params }: PageProps<'/store/categories/
 
 export default async function CartPage({ params }: PageProps<'/store/categories/[categorySlug]'>) {
   const { categorySlug: slug } = await params
-  const { data } = await apiServer.category.getBySlug({
+  const { data } = await apiServer.category.getManyWithSubCategories({
     params: {
       slug,
     },
   })
-  if (!data?.category) return notFound()
+  if (!data) return notFound()
 
   return (
     <HydrateClient>

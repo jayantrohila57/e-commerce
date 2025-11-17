@@ -75,4 +75,8 @@ export const Fields = {
     ssr: false,
     loading: () => loadingInputSkeleton(),
   }),
+  currency: dynamic(() => import('./fields/field.currency').then((mod) => mod.InputCurrency), {
+    ssr: false,
+    loading: () => loadingInputSkeleton(),
+  }),
 }

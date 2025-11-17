@@ -83,7 +83,7 @@ export function ProductPreviewCard({ data }: ProductPreviewCardProps) {
         <div className="flex flex-row gap-4">
           <CardContent className="flex w-fit items-start justify-start p-0">
             <BlurImage
-              src={String(data.baseImage ?? '')}
+              src={String(data.id ?? '')}
               alt={data.title}
               width={500}
               height={500}

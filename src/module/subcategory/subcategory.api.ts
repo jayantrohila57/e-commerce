@@ -3,7 +3,7 @@ import { createTRPCRouter, protectedProcedure, publicProcedure } from '@/core/ap
 import { STATUS, MESSAGE } from '@/shared/config/api.config'
 import { API_RESPONSE } from '@/shared/config/api.utils'
 import { db } from '@/core/db/db'
-import { subcategory } from '@/core/db/schema'
+import { subcategory } from '@/core/db/db.schema'
 import { eq, and, ilike } from 'drizzle-orm'
 import { v4 as uuidv4 } from 'uuid'
 

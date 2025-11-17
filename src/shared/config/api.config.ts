@@ -249,6 +249,17 @@ export const MESSAGE = {
       FAILED: 'No categories found.',
       ERROR: 'Unexpected error while retrieving categories.',
     },
+    GET_MANY_WITH_SUBCATEGORIES: {
+      SUCCESS: 'Categories with subcategories retrieved successfully.',
+      FAILED: 'No categories with subcategories found.',
+      ERROR: 'Unexpected error while retrieving categories with subcategories.',
+    },
+    GET_ALL_FEATURED: {
+      SUCCESS: 'Featured categories retrieved successfully.',
+      FAILED: 'No featured categories found.',
+      ERROR: 'Unexpected error while retrieving featured categories.',
+    },
+
     GET_BY_SLUG: {
       SUCCESS: 'Category retrieved successfully.',
       FAILED: 'Category not found.',
@@ -446,6 +457,11 @@ export const MESSAGE = {
       SUCCESS: 'Series retrieved successfully.',
       FAILED: 'No series found.',
       EMPTY: 'No series found matching the criteria.',
+      ERROR: 'Unexpected error while retrieving series.',
+    },
+    GET_BY_SLUG: {
+      SUCCESS: 'Series retrieved successfully.',
+      FAILED: 'Series not found.',
       ERROR: 'Unexpected error while retrieving series.',
     },
     UPDATE: {

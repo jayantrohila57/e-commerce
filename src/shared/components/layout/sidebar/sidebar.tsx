@@ -14,7 +14,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarHeader className="py-1 pr-0 pl-1">
         <StudioLogo />
       </SidebarHeader>
-      <SidebarContent className="pl-1">
+      <SidebarContent className="h-full pl-1">
         <NavMain />
       </SidebarContent>
       <SidebarFooter className="py-1 pr-0 pl-1">

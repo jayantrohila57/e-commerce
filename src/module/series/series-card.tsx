@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { Route } from 'next'
 import { Button } from '@/shared/components/ui/button'
 import { Separator } from '@/shared/components/ui/separator'
-import { GetSeriesOutput } from './types.series'
+import { GetSeriesOutput } from './series.types'
 
 interface SeriesCardProps {
   data: GetSeriesOutput['data']

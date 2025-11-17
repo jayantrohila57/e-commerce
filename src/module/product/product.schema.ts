@@ -16,14 +16,33 @@ export const detailedResponse = <T extends z.ZodTypeAny>(dataSchema: T) =>
 
 export const baseProductSchema = z.object({
   id: z.string().min(1),
+
   title: z.string().min(1),
   description: z.string().nullable().optional(),
   metaTitle: z.string().nullable().optional(),
   metaDescription: z.string().nullable().optional(),
   slug: z.string().min(1),
+
+  // RELATIONS
+  categorySlug: z.string().min(1),
+  subcategorySlug: z.string().min(1),
   seriesSlug: z.string().min(1),
-  baseImage: z.string().nullable().optional(),
+
+  // PRICING
+  basePrice: z.number().min(0),
+  baseCurrency: z.string().default('INR').nullable(),
+
+  // FEATURES
+  features: z
+    .array(z.object({ title: z.string() }))
+    .nullable()
+    .optional(),
+
+  // STATE
   isActive: z.boolean().default(true).nullable(),
+  status: z.enum(['draft', 'archive', 'live']).default('draft'),
+
+  // SYSTEM
   deletedAt: z.date().nullable().optional(),
   createdAt: z.date().default(() => new Date()),
   updatedAt: z
@@ -43,6 +62,9 @@ export const productInsertSchema = baseProductSchema.omit({
 
 export const productUpdateSchema = baseProductSchema.partial()
 
+//
+// SEARCH + PAGINATION
+//
 const paginationSchema = z.object({
   limit: z.number().min(1).max(100).default(20),
   offset: z.number().min(0).default(0),
@@ -54,6 +76,9 @@ const searchSchema = z.object({
   isFeatured: z.boolean().optional(),
 })
 
+//
+// CONTRACT — CRUD UNCHAINED
+//
 export const productContract = {
   get: {
     input: z.object({

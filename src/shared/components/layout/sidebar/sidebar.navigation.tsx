@@ -160,7 +160,7 @@ export function NavMain() {
   ]
 
   return (
-    <div className="bg-background rounded-md border p-[2.5px]">
+    <div className="bg-background h-full rounded-md border p-[2.5px]">
       {[
         { title: 'Dashboard', section: onboardItems },
         { title: 'Studio', section: mainItems },

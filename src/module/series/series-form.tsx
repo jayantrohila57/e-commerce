@@ -13,7 +13,7 @@ import type { z } from 'zod/v3'
 import { env } from '@/shared/config/env'
 import { colorOptions, displayTypeOptions, visibilityOptions } from '@/shared/config/options.config'
 import { useState } from 'react'
-import { seriesContract } from './dto.series.contract'
+import { seriesContract } from './series.schema'
 import { Route } from 'next'
 
 const formSchema = seriesContract.create.input

@@ -1,5 +1,5 @@
 import z from 'zod/v3'
-import { attributeSelectSchema } from '../attribute/dto.attribute.contract'
+import { attributeSelectSchema } from '../attribute/attribute.schema'
 
 export const detailedResponse = <T extends z.ZodTypeAny>(dataSchema: T) =>
   z.object({
@@ -127,56 +127,4 @@ export const seriesContract = {
     }),
     output: detailedResponse(seriesSelectSchema.pick({ id: true }).nullable()),
   },
-
-  restore: {
-    input: z.object({
-      params: z.object({ id: z.string() }),
-    }),
-    output: detailedResponse(seriesSelectSchema),
-  },
-
-  toggleVisibility: {
-    input: z.object({
-      params: z.object({ id: z.string() }),
-      body: z.object({
-        isActive: z.boolean().optional(),
-        visibility: visibilityEnum.optional(),
-      }),
-    }),
-    output: detailedResponse(seriesSelectSchema),
-  },
-
-  toggleFeatured: {
-    input: z.object({
-      params: z.object({ id: z.string() }),
-      body: z.object({
-        isFeatured: z.boolean(),
-      }),
-    }),
-    output: detailedResponse(seriesSelectSchema),
-  },
-
-  reorder: {
-    input: z.object({
-      body: z.array(
-        z.object({
-          id: z.string(),
-          displayOrder: z.number(),
-        }),
-      ),
-    }),
-    output: detailedResponse(z.array(seriesSelectSchema)),
-  },
-
-  search: {
-    input: z.object({
-      query: searchSchema.merge(paginationSchema),
-    }),
-    output: detailedResponse(z.array(seriesSelectSchema)),
-  },
 }
-
-export type SeriesBase = z.infer<typeof seriesBaseSchema>
-export type SeriesSelect = z.infer<typeof seriesSelectSchema>
-export type SeriesInsert = z.infer<typeof seriesInsertSchema>
-export type SeriesUpdate = z.infer<typeof seriesUpdateSchema>

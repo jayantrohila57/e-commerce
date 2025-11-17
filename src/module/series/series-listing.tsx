@@ -1,9 +1,9 @@
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/shared/components/ui/card'
 import { Separator } from '@/shared/components/ui/separator'
-import { GetBySlugControllerOutput } from './types.series'
 import CodePreview from '@/shared/components/common/code-preview'
+import { GetSeriesBySlugOutput } from './series.types'
 
-export const SeriesItem = ({ data }: { data: Awaited<GetBySlugControllerOutput>['data'] }) => {
+export const SeriesItem = ({ data }: { data: GetSeriesBySlugOutput['data'] }) => {
   return (
     <div className="flex flex-col items-center justify-center">
       <div className="">

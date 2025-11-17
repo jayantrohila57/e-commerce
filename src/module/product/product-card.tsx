@@ -14,7 +14,7 @@ export function ProductCard({ product, href }: ProductCardProps) {
   const content = (
     <div className="bg-secondary flex flex-row items-center justify-start rounded-md border p-2 shadow-xs">
       <BlurImage
-        src={String(product?.baseImage ?? '')}
+        src={String(product?.id ?? '')}
         alt={product?.title}
         width={500}
         height={500}

@@ -10,7 +10,7 @@ import { SubCategorySection } from '@/module/subcategory/subcategories-section'
 
 export default async function CategoryPage({ params }: PageProps<'/studio/products/categories/[categorySlug]'>) {
   const { categorySlug: slug } = await params
-  const { data } = await apiServer.category.getManyWithSubCategories({
+  const { data } = await apiServer.category.getCategoryWithSubCategories({
     params: {
       slug,
     },

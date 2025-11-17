@@ -110,51 +110,6 @@ export const attributeContract = {
     output: detailedResponse(z.null()),
   },
 
-  restore: {
-    input: z.object({
-      params: z.object({
-        id: z.string(),
-      }),
-    }),
-    output: detailedResponse(attributeSelectSchema.nullable()),
-  },
-
-  toggleVisibility: {
-    input: z.object({
-      params: z.object({
-        id: z.string(),
-      }),
-      body: z.object({
-        visibility: z.enum(['visible', 'hidden']),
-      }),
-    }),
-    output: detailedResponse(attributeSelectSchema.nullable()),
-  },
-
-  toggleFeatured: {
-    input: z.object({
-      params: z.object({
-        id: z.string(),
-      }),
-      body: z.object({
-        isFeatured: z.boolean(),
-      }),
-    }),
-    output: detailedResponse(attributeSelectSchema.nullable()),
-  },
-
-  reorder: {
-    input: z.object({
-      body: z.array(
-        z.object({
-          id: z.string(),
-          displayOrder: z.number(),
-        }),
-      ),
-    }),
-    output: detailedResponse(z.void()),
-  },
-
   search: {
     input: z.object({
       query: searchSchema.merge(paginationSchema),

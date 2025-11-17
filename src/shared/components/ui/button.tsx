@@ -38,12 +38,15 @@ function Button({
   className,
   variant,
   size,
+  hidden = false,
   asChild = false,
   ...props
 }: React.ComponentProps<'button'> &
   VariantProps<typeof buttonVariants> & {
     asChild?: boolean
+    hidden?: boolean
   }) {
+  if (hidden) return null
   const Comp = asChild ? Slot : 'button'
 
   return (

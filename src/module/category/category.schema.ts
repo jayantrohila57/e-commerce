@@ -79,6 +79,22 @@ export const categoryContract = {
     }),
     output: detailedResponse(z.array(categorySelectSchema)),
   },
+  getAllFeaturedCategories: {
+    input: z.object({}).optional(),
+    output: detailedResponse(z.array(categorySelectSchema)),
+  },
+  getManyWithSubcategories: {
+    input: z.object({
+      query: searchSchema.merge(paginationSchema).optional(),
+    }),
+    output: detailedResponse(
+      z.array(
+        categorySelectSchema.extend({
+          subcategories: z.array(subcategorySelectSchema).optional(),
+        }),
+      ),
+    ),
+  },
 
   getManyByTypes: {
     input: z.object({

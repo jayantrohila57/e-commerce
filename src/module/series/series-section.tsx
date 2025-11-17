@@ -1,6 +1,6 @@
 import { SeriesCard } from './series-card'
 import { FormSection } from '@/shared/components/form/form.helper'
-import { GetManySeriesOutput } from './types.series'
+import { GetManySeriesOutput } from './series.types'
 
 type SeriesSectionProps = {
   categorySlug: string

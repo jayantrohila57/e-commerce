@@ -31,6 +31,15 @@ export const PATH = {
       ROOT: '/store/products',
       PRODUCT: (productId: string) => `/store/products/${productId}`,
     },
+    CATEGORIES: {
+      ROOT: '/store/categories',
+      CATEGORY: (categorySlug: string) => `/store/categories/${categorySlug}`,
+    },
+    SUB_CATEGORIES: {
+      ROOT: (categorySlug: string) => `/store/categories/${categorySlug}`,
+      SUBCATEGORY: (subcategorySlug: string, categorySlug: string) =>
+        `/store/categories/${categorySlug}/${subcategorySlug}`,
+    },
   },
   STUDIO: {
     ROOT: '/studio',

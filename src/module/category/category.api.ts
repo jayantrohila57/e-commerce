@@ -3,7 +3,7 @@ import { createTRPCRouter, protectedProcedure, publicProcedure } from '@/core/ap
 import { debugError } from '@/shared/utils/lib/logger.utils'
 import { db } from '@/core/db/db'
 import { eq, and, ilike } from 'drizzle-orm'
-import { category } from '@/core/db/schema'
+import { category } from '@/core/db/db.schema'
 import { v4 as uuidv4 } from 'uuid'
 import { MESSAGE, STATUS } from '@/shared/config/api.config'
 import { API_RESPONSE } from '@/shared/config/api.utils'
@@ -55,7 +55,59 @@ export const categoryRouter = createTRPCRouter({
         return API_RESPONSE(STATUS.ERROR, MESSAGE.CATEGORY.GET_MANY.ERROR, null, err as Error)
       }
     }),
+  getAllFeaturedCategories: publicProcedure
+    .input(categoryContract.getAllFeaturedCategories.input)
+    .output(categoryContract.getAllFeaturedCategories.output)
+    .query(async () => {
+      try {
+        const output = await db.query.category.findMany({
+          where: (c, { eq, and, isNull }) => and(eq(c.isFeatured, true), isNull(c.deletedAt)),
+          orderBy: (c, { asc }) => [asc(c.displayOrder)],
+        })
 
+        return API_RESPONSE(
+          output?.length ? STATUS.SUCCESS : STATUS.FAILED,
+          output?.length ? MESSAGE.CATEGORY.GET_ALL_FEATURED.SUCCESS : MESSAGE.CATEGORY.GET_ALL_FEATURED.FAILED,
+          output,
+        )
+      } catch (err) {
+        return API_RESPONSE(STATUS.ERROR, MESSAGE.CATEGORY.GET_ALL_FEATURED.ERROR, null, err as Error)
+      }
+    }),
+
+  getManyWithSubcategories: publicProcedure
+    .input(categoryContract.getManyWithSubcategories.input)
+    .output(categoryContract.getManyWithSubcategories.output)
+    .query(async ({ input }) => {
+      try {
+        const conditions = []
+        if (input.query?.search) conditions.push(ilike(category.title, `%${input.query.search}%`))
+        if (input.query?.visibility) conditions.push(eq(category.visibility, input.query.visibility))
+        if (input.query?.isFeatured !== undefined) conditions.push(eq(category.isFeatured, input.query.isFeatured))
+        const output = await db.query.category.findMany({
+          where: conditions.length ? and(...conditions) : undefined,
+          limit: input.query?.limit ?? 50,
+          offset: input.query?.offset ?? 0,
+          orderBy: (c, { asc }) => [asc(c.displayOrder)],
+          with: {
+            subcategories: {
+              limit: 4,
+              orderBy: (sc, { asc }) => [asc(sc.displayOrder)],
+            },
+          },
+        })
+
+        return API_RESPONSE(
+          output?.length ? STATUS.SUCCESS : STATUS.FAILED,
+          output?.length
+            ? MESSAGE.CATEGORY.GET_MANY_WITH_SUBCATEGORIES.SUCCESS
+            : MESSAGE.CATEGORY.GET_MANY_WITH_SUBCATEGORIES.FAILED,
+          output,
+        )
+      } catch (err) {
+        return API_RESPONSE(STATUS.ERROR, MESSAGE.CATEGORY.GET_MANY_WITH_SUBCATEGORIES.ERROR, null, err as Error)
+      }
+    }),
   getManyByTypes: publicProcedure
     .input(categoryContract.getManyByTypes.input)
     .output(categoryContract.getManyByTypes.output)
@@ -104,7 +156,7 @@ export const categoryRouter = createTRPCRouter({
       }
     }),
 
-  getManyWithSubCategories: publicProcedure
+  getCategoryWithSubCategories: publicProcedure
     .input(categoryContract.getBySlug.input)
     .output(categoryContract.getBySlug.output)
     .query(async ({ input }) => {

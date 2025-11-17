@@ -1,14 +1,13 @@
 import { createTRPCRouter, protectedProcedure, publicProcedure } from '@/core/api/api.methods'
-import { debugError, debugLog } from '@/shared/utils/lib/logger.utils'
+import { debugError } from '@/shared/utils/lib/logger.utils'
 import { API_RESPONSE } from '@/shared/config/api.utils'
 import { MESSAGE, STATUS } from '@/shared/config/api.config'
 
 import { db } from '@/core/db/db'
-import { product } from '@/core/db/schema'
-import { eq, and, or, ilike, isNull } from 'drizzle-orm'
+import { product } from '@/core/db/db.schema'
+import { eq, and, isNull, ilike } from 'drizzle-orm'
 import { v4 as uuidv4 } from 'uuid'
 import { productContract } from './product.schema'
-import { ProductUpdate } from './product.types'
 
 export const productRouter = createTRPCRouter({
   get: publicProcedure
@@ -25,8 +24,8 @@ export const productRouter = createTRPCRouter({
         const output = await db.query.product.findFirst({
           where: (p, { eq, and, isNull }) => {
             const conditions = []
-            if (id) conditions.push(eq(p.id, String(id)))
-            if (slug) conditions.push(eq(p.slug, String(slug)))
+            if (id) conditions.push(eq(p.id, id))
+            if (slug) conditions.push(eq(p.slug, slug))
             conditions.push(isNull(p.deletedAt))
             return and(...conditions)
           },
@@ -41,32 +40,25 @@ export const productRouter = createTRPCRouter({
         return API_RESPONSE(STATUS.ERROR, MESSAGE.PRODUCT.GET.ERROR, null, err as Error)
       }
     }),
-
   getMany: publicProcedure
     .input(productContract.getMany.input)
     .output(productContract.getMany.output)
     .query(async ({ input }) => {
       try {
-        const { search, limit = 50, offset = 0, isFeatured, visibility } = input.query ?? {}
+        const { limit = 20, offset = 0 } = input.query ?? {}
 
-        const conditions = []
-
-        if (search) {
-          conditions.push(or(ilike(product.title, `%${search}%`), ilike(product.description, `%${search}%`)))
-        }
-
-        conditions.push(isNull(product.deletedAt))
+        const conditions = [isNull(product.deletedAt)]
 
         const output = await db.query.product.findMany({
-          where: conditions.length ? and(...conditions) : undefined,
+          where: and(...conditions),
           limit: Math.min(limit, 100),
           offset,
           orderBy: (p, { desc }) => [desc(p.createdAt)],
         })
 
         return API_RESPONSE(
-          output?.length ? STATUS.SUCCESS : STATUS.FAILED,
-          output?.length ? MESSAGE.PRODUCT.GET_MANY.SUCCESS : MESSAGE.PRODUCT.GET_MANY.FAILED,
+          output.length ? STATUS.SUCCESS : STATUS.FAILED,
+          output.length ? MESSAGE.PRODUCT.GET_MANY.SUCCESS : MESSAGE.PRODUCT.GET_MANY.FAILED,
           output,
         )
       } catch (err) {
@@ -74,7 +66,6 @@ export const productRouter = createTRPCRouter({
         return API_RESPONSE(STATUS.ERROR, MESSAGE.PRODUCT.GET_MANY.ERROR, null, err as Error)
       }
     }),
-
   getBySlug: publicProcedure
     .input(productContract.getBySlug.input)
     .output(productContract.getBySlug.output)
@@ -100,28 +91,39 @@ export const productRouter = createTRPCRouter({
         return API_RESPONSE(STATUS.ERROR, MESSAGE.PRODUCT.GET_BY_SLUG.ERROR, null, err as Error)
       }
     }),
-
   create: protectedProcedure
     .input(productContract.create.input)
     .output(productContract.create.output)
     .mutation(async ({ input }) => {
       try {
         const now = new Date()
+        const body = input.body
 
-        const slug = input.body.slug ?? input.body.title.toLowerCase().replace(/[^a-z0-9]+/g, '-')
+        const slug = body.slug ?? body.title.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-' + Date.now()
 
         const [output] = await db
           .insert(product)
           .values({
             id: uuidv4(),
-            title: input.body.title,
-            description: input.body.description ?? null,
-            metaTitle: input.body.metaTitle ?? null,
-            metaDescription: input.body.metaDescription ?? null,
+            title: body.title,
+            description: body.description ?? null,
+            metaTitle: body.metaTitle ?? null,
+            metaDescription: body.metaDescription ?? null,
             slug,
-            seriesSlug: input.body.seriesSlug,
-            baseImage: input.body.baseImage ?? null,
-            isActive: input.body.isActive ?? true,
+
+            // new required fields
+            categorySlug: body.categorySlug,
+            subcategorySlug: body.subcategorySlug,
+            seriesSlug: body.seriesSlug,
+
+            basePrice: body.basePrice,
+            baseCurrency: body.baseCurrency ?? 'INR',
+
+            features: body.features ?? null,
+
+            status: body.status ?? 'draft',
+            isActive: body.isActive ?? true,
+
             deletedAt: null,
             createdAt: now,
             updatedAt: now,
@@ -137,7 +139,6 @@ export const productRouter = createTRPCRouter({
         return API_RESPONSE(STATUS.ERROR, MESSAGE.PRODUCT.CREATE.ERROR, null, err as Error)
       }
     }),
-
   update: protectedProcedure
     .input(productContract.update.input)
     .output(productContract.update.output)
@@ -167,17 +168,12 @@ export const productRouter = createTRPCRouter({
           }
         }
 
-        const updateData: Partial<Pick<ProductUpdate, keyof ProductUpdate>> & { updatedAt: Date } = {
-          updatedAt: new Date(),
-        }
+        // Build update object dynamically
+        const updateData: Record<string, any> = { updatedAt: new Date() }
 
         for (const key in body) {
-          if (key in updateData) {
-            const value = body[key as keyof typeof body]
-            if (value !== undefined) {
-              ;(updateData as any)[key] = value
-            }
-          }
+          const value = body[key as keyof typeof body]
+          if (value !== undefined) updateData[key] = value
         }
 
         const [updatedProduct] = await db.update(product).set(updateData).where(eq(product.id, params.id)).returning()
@@ -192,7 +188,6 @@ export const productRouter = createTRPCRouter({
         return API_RESPONSE(STATUS.ERROR, MESSAGE.PRODUCT.UPDATE.ERROR, null, err as Error)
       }
     }),
-
   delete: protectedProcedure
     .input(productContract.delete.input)
     .output(productContract.delete.output)
@@ -230,8 +225,7 @@ export const productRouter = createTRPCRouter({
         return API_RESPONSE(STATUS.ERROR, MESSAGE.PRODUCT.DELETE.ERROR, null, err as Error)
       }
     }),
-
-  search: protectedProcedure
+  search: publicProcedure
     .input(productContract.search.input)
     .output(productContract.search.output)
     .query(async ({ input }) => {
@@ -243,9 +237,9 @@ export const productRouter = createTRPCRouter({
         })
 
         return API_RESPONSE(
-          output?.length ? STATUS.SUCCESS : STATUS.FAILED,
-          output?.length ? MESSAGE.PRODUCT.SEARCH.SUCCESS : MESSAGE.PRODUCT.SEARCH.FAILED,
-          output ?? [],
+          output.length ? STATUS.SUCCESS : STATUS.FAILED,
+          output.length ? MESSAGE.PRODUCT.SEARCH.SUCCESS : MESSAGE.PRODUCT.SEARCH.FAILED,
+          output,
         )
       } catch (err) {
         return API_RESPONSE(STATUS.ERROR, MESSAGE.PRODUCT.SEARCH.ERROR, [], err as Error)

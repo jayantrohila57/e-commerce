@@ -32,7 +32,7 @@ export async function generateMetadata({ params }: PageProps<'/store/categories/
 
 export default async function CartPage({ params }: PageProps<'/store/categories/[categorySlug]'>) {
   const { categorySlug: slug } = await params
-  const { data } = await apiServer.category.getManyWithSubCategories({
+  const { data } = await apiServer.category.getCategoryWithSubCategories({
     params: {
       slug,
     },

@@ -69,7 +69,7 @@ Shell.Aside = Aside
 const FooterVariants = cva('', {
   variants: {
     variant: {
-      default: '',
+      default: 'p-4',
     },
   },
   defaultVariants: {
@@ -100,7 +100,7 @@ Shell.Footer = Footer
 const MainVariants = cva('', {
   variants: {
     variant: {
-      default: 'min-h-screen',
+      default: 'min-h-screen p-4',
       dashboard: 'flex flex-1 h-screen overflow-hidden flex-col',
     },
   },

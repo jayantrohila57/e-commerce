@@ -8,6 +8,13 @@
       "when": 1763062189601,
       "tag": "0000_outgoing_talkback",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1763348451301,
+      "tag": "0001_wild_jack_murdock",
+      "breakpoints": true
     }
   ]
 }

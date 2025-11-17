@@ -1,15 +1,16 @@
 'use client'
 
-import { FormProvider, useForm, useFormContext, useFormState, type FieldValues } from 'react-hook-form'
+import { FormProvider, Path, useForm, useFormContext, useFormState, useWatch, type FieldValues } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { cn } from '@/shared/utils/lib/utils'
 import type z from 'zod/v3'
 
-import { Fragment, JSX, memo, useEffect, useMemo } from 'react'
+import { Children, Fragment, JSX, memo, useEffect, useMemo } from 'react'
 import { Fields } from './fields.config'
 import type {
   FieldsWrapperProps,
   FormContextProps,
+  FormGroupType,
   FormInputProps,
   FormProps,
   FormWatchErrorProps,
@@ -92,10 +93,17 @@ const FieldsWrapper = memo(({ fieldsConfig = [] }: FieldsWrapperProps) => {
 
 FieldsWrapper.displayName = 'FieldsWrapper'
 
-const FormWatch = memo(<TFieldValues extends FieldValues>({ value, children }: FormWatchProps<TFieldValues>) => {
-  const { watch } = useFormContext<TFieldValues>()
-  const watching = watch(value)
-  return <>{children(watching)}</>
+const FormWatch = memo(<TFieldValues extends FieldValues>({ name, children }: FormWatchProps<TFieldValues>) => {
+  const form = useFormContext<TFieldValues>()
+  const value = useWatch({ control: form.control, name })
+  return (
+    <>
+      {children({
+        value,
+        form,
+      })}
+    </>
+  )
 })
 
 FormWatch.displayName = 'FormWatch'
@@ -111,6 +119,20 @@ const FormWatchError = memo(
 )
 
 FormWatchError.displayName = 'FormWatchError'
+
+const FormGroup = memo(({ children, name, hidden }: FormGroupType) => {
+  const { setValue, getValues, control } = useFormContext()
+  const watch = useWatch({ name, control })
+  const add = (value: unknown) => setValue(name, [...getValues(name), value])
+  const remove = (index: number) =>
+    setValue(
+      name,
+      (getValues(name) as [])?.filter((_, i) => i !== index),
+    )
+  const length = (watch as [])?.length
+  if (hidden) return null
+  return ((watch as []) ?? [])?.map((_, index) => Children?.toArray(children({ add, index, remove, length })))
+})
 
 const renderErrors = (obj: Record<string, any>, parentKey = ''): JSX.Element | null => {
   if (!obj || typeof obj !== 'object') return null
@@ -235,5 +257,6 @@ Form.FormWatchError = FormWatchError
 Form.FieldsWrapper = FieldsWrapper
 Form.FormContext = FormContext
 Form.StatusBadge = StatusBadge
+Form.FormGroup = FormGroup
 
 export default Form

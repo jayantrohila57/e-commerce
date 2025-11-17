@@ -1,10 +1,6 @@
 import { relations } from 'drizzle-orm'
-import { pgEnum } from 'drizzle-orm/pg-core'
+import { json, pgEnum } from 'drizzle-orm/pg-core'
 import { pgTable, text, timestamp, boolean, numeric, integer, bigint, decimal } from 'drizzle-orm/pg-core'
-
-// -----------------------------------------------------
-// ENUMS
-// -----------------------------------------------------
 
 export const discountTypeEnum = pgEnum('discount_type', ['flat', 'percent'])
 export const orderStatusEnum = pgEnum('order_status', ['pending', 'paid', 'shipped', 'delivered', 'cancelled'])
@@ -14,9 +10,6 @@ export const shipmentStatusEnum = pgEnum('shipment_status', ['pending', 'in_tran
 export const displayTypeEnum = pgEnum('display_type', ['grid', 'carousel', 'banner', 'list', 'featured'])
 export const visibilityEnum = pgEnum('visibility', ['public', 'private', 'hidden'])
 
-// -----------------------------------------------------
-// AUTH + USER
-// -----------------------------------------------------
 export const account = pgTable('account', {
   id: text('id').primaryKey(),
   accountId: text('account_id').notNull(),
@@ -112,9 +105,7 @@ export const rateLimit = pgTable('rate_limit', {
   count: integer('count'),
   lastRequest: bigint('last_request', { mode: 'number' }),
 })
-// -----------------------------------------------------
-// CATALOG (Category, Subcategory, Series, Attributes)
-// -----------------------------------------------------
+
 export const category = pgTable('category', {
   id: text('id').primaryKey(),
   slug: text('slug').notNull().unique(),
@@ -188,7 +179,7 @@ export const attribute = pgTable('attribute', {
   seriesSlug: text('series_slug')
     .notNull()
     .references(() => series.slug),
-  slug: text('slug').notNull(),
+  slug: text('slug').notNull().unique(),
   title: text('title').notNull(),
   type: text('type').default('text').notNull(),
   value: text('value').notNull(),
@@ -199,9 +190,15 @@ export const attribute = pgTable('attribute', {
     .defaultNow()
     .$onUpdate(() => new Date()),
 })
-// -----------------------------------------------------
-// PRODUCT + VARIANTS
-// -----------------------------------------------------
+
+export const media = pgTable('media', {
+  id: text('id').primaryKey(),
+  url: text('url').notNull(),
+  alt: text('alt'),
+  type: text('type').$type<'image' | 'video' | 'model' | 'file'>().default('image'),
+  createdAt: timestamp('created_at').defaultNow(),
+})
+
 export const product = pgTable('product', {
   id: text('id').primaryKey(),
   title: text('title').notNull(),
@@ -209,11 +206,20 @@ export const product = pgTable('product', {
   metaTitle: text('meta_title'),
   metaDescription: text('meta_description'),
   slug: text('slug').notNull().unique(),
+  categorySlug: text('category_slug')
+    .notNull()
+    .references(() => category.slug),
+  subcategorySlug: text('subcategory_slug')
+    .notNull()
+    .references(() => subcategory.slug),
   seriesSlug: text('series_slug')
     .notNull()
     .references(() => series.slug),
-  baseImage: text('base_image'),
+  basePrice: integer('base_price').notNull(),
+  baseCurrency: text('base_currency').default('INR'),
+  features: json('features').$type<{ title: string }[]>(),
   isActive: boolean('is_active').default(true),
+  status: text('status').$type<'draft' | 'archive' | 'live'>().default('draft').notNull(),
   deletedAt: timestamp('deleted_at', { withTimezone: true }),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp('updated_at', { withTimezone: true })
@@ -223,200 +229,50 @@ export const product = pgTable('product', {
 
 export const productVariant = pgTable('product_variant', {
   id: text('id').primaryKey(),
+  slug: text('slug').notNull().unique(),
   productId: text('product_id')
     .notNull()
     .references(() => product.id),
-  sku: text('sku').unique().notNull(),
-  stock: integer('stock').default(0),
-  price: numeric('price', { precision: 10, scale: 2 }),
-  isDefault: boolean('is_default').default(false),
-  images: text('images'),
+  title: text('title').notNull(),
+  priceModifierType: text('price_modifier_type')
+    .$type<'flat_increase' | 'flat_decrease' | 'percent_increase' | 'percent_decrease'>()
+    .notNull(),
+  priceModifierValue: numeric('price_modifier_value', { precision: 10, scale: 2 }).notNull(),
   createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow(),
 })
 
-export const productImage = pgTable('product_image', {
-  id: text('id').primaryKey(),
-  productId: text('product_id').references(() => product.id),
-  url: text('url').notNull(),
-  alt: text('alt'),
-  position: integer('position').default(0),
-})
-
-export const variantAttributeValue = pgTable('variant_attribute_value', {
+export const productVariantAttribute = pgTable('product_variant_attribute', {
   id: text('id').primaryKey(),
   variantId: text('variant_id')
     .notNull()
     .references(() => productVariant.id),
-  key: text('key').notNull(),
-  value: text('value').notNull(),
-})
-
-// -----------------------------------------------------
-// CART + ORDER + PAYMENT + SHIPMENT
-// -----------------------------------------------------
-export const cart = pgTable('cart', {
-  id: text('id').primaryKey(),
-  userId: text('user_id').references(() => user.id),
-  status: text('status').$type<'active' | 'ordered' | 'abandoned'>().default('active').notNull(),
-  createdAt: timestamp('created_at').defaultNow(),
-  updatedAt: timestamp('updated_at').defaultNow(),
-})
-
-export const cartItem = pgTable('cart_item', {
-  id: text('id').primaryKey(),
-  cartId: text('cart_id').references(() => cart.id),
-  productId: text('product_id').references(() => product.id),
-  variantId: text('variant_id').references(() => productVariant.id),
-  quantity: integer('quantity').default(1),
-  priceAtAdd: numeric('price_at_add', { precision: 10, scale: 2 }),
-  createdAt: timestamp('created_at').defaultNow(),
-  updatedAt: timestamp('updated_at').defaultNow(),
-})
-
-export const order = pgTable('order', {
-  id: text('id').primaryKey(),
-  userId: text('user_id').$type<string>(),
-  status: orderStatusEnum('status').default('pending').notNull(),
-  total: numeric('total', { precision: 10, scale: 2 }),
-  currency: text('currency').default('INR'),
-  paymentId: text('payment_id').$type<string>(),
-  addressId: text('address_id').$type<string>(),
+  attributeId: text('attribute_id')
+    .notNull()
+    .references(() => attribute.id),
   createdAt: timestamp('created_at').defaultNow(),
 })
 
-export const orderItem = pgTable('order_item', {
-  id: text('id').primaryKey(),
-  orderId: text('order_id').$type<string>(),
-  productId: text('product_id').$type<string>(),
-  variantId: text('variant_id').$type<string>(),
-  quantity: integer('quantity').notNull(),
-  price: numeric('price', { precision: 10, scale: 2 }),
-  createdAt: timestamp('created_at').defaultNow(),
-})
-
-export const payment = pgTable('payment', {
-  id: text('id').primaryKey(),
-  orderId: text('order_id').references(() => order.id),
-  provider: paymentProviderEnum('provider').notNull(),
-  status: paymentStatusEnum('status').default('pending').notNull(),
-  amount: numeric('amount', { precision: 10, scale: 2 }),
-  transactionId: text('transaction_id'),
-  createdAt: timestamp('created_at').defaultNow(),
-})
-
-export const shipment = pgTable('shipment', {
-  id: text('id').primaryKey(),
-  orderId: text('order_id').references(() => order.id),
-  carrier: text('carrier'),
-  trackingNumber: text('tracking_number'),
-  status: shipmentStatusEnum('status').default('pending').notNull(),
-  estimatedDelivery: timestamp('estimated_delivery'),
-  createdAt: timestamp('created_at').defaultNow(),
-})
-// -----------------------------------------------------
-// CUSTOMER (Address, Wishlist, Review)
-// -----------------------------------------------------
-
-export const address = pgTable('address', {
-  id: text('id').primaryKey(),
-  userId: text('user_id')
-    .references(() => user.id, { onDelete: 'cascade' })
-    .notNull(),
-  type: text('type', { enum: ['home', 'work', 'other'] })
-    .default('home')
-    .notNull(),
-  addressLine1: text('address_line1').notNull(),
-  addressLine2: text('address_line2'),
-  landmark: text('landmark'),
-  city: text('city').notNull(),
-  state: text('state').notNull(),
-  postalCode: text('postal_code').notNull(),
-  isDefault: boolean('is_default').default(false),
-  country: text('country').default('IN'),
-  zoneId: text('zone_id').references(() => deliveryZones.id),
-  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
-  updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow(),
-})
-
-export const wishlist = pgTable('wishlist', {
-  id: text('id').primaryKey(),
-  userId: text('user_id').references(() => user.id),
-  createdAt: timestamp('created_at').defaultNow(),
-})
-
-export const wishlistItem = pgTable('wishlist_item', {
-  id: text('id').primaryKey(),
-  wishlistId: text('wishlist_id').references(() => wishlist.id),
-  productId: text('product_id').references(() => product.id),
-  variantId: text('variant_id').references(() => productVariant.id),
-  createdAt: timestamp('created_at').defaultNow(),
-})
-
-export const review = pgTable('review', {
-  id: text('id').primaryKey(),
-  userId: text('user_id').references(() => user.id),
-  productId: text('product_id').references(() => product.id),
-  rating: integer('rating').notNull(),
-  comment: text('comment'),
-  createdAt: timestamp('created_at').defaultNow(),
-})
-
-// -----------------------------------------------------
-// OPERATIONS (Warehouse, Inventory, Zones, Discount)
-// -----------------------------------------------------
-
-export const deliveryZones = pgTable('delivery_zones', {
-  id: text('id').primaryKey(),
-  postalCode: text('postal_code').notNull().unique(),
-  city: text('city').notNull(),
-  state: text('state').notNull(),
-  isServiceable: boolean('is_serviceable').default(true),
-  deliveryDays: integer('delivery_days').default(3),
-  freeDeliveryThreshold: decimal('free_delivery_threshold', { precision: 10, scale: 2 }).default('500.00'),
-  deliveryFee: decimal('delivery_fee', { precision: 10, scale: 2 }).default('50.00'),
-  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
-  updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow(),
-})
-export const discount = pgTable('discount', {
-  id: text('id').primaryKey(),
-  code: text('code').unique(),
-  type: discountTypeEnum('type').notNull(),
-  value: numeric('value', { precision: 10, scale: 2 }),
-  expiresAt: timestamp('expires_at'),
-  isActive: boolean('is_active').default(true),
-})
-
-export const warehouse = pgTable('warehouse', {
-  id: text('id').primaryKey(),
-  name: text('name').notNull(),
-  location: text('location'),
-  createdAt: timestamp('created_at').defaultNow(),
-})
-
-export const inventory = pgTable('inventory', {
+export const productVariantMedia = pgTable('product_variant_media', {
   id: text('id').primaryKey(),
   variantId: text('variant_id')
     .notNull()
-    .references(() => productVariant.id, { onDelete: 'cascade' }),
-  warehouseId: text('warehouse_id')
+    .references(() => productVariant.id),
+  mediaId: text('media_id')
     .notNull()
-    .references(() => warehouse.id, { onDelete: 'cascade' }),
-
-  quantity: integer('quantity').notNull().default(0),
-  reserved: integer('reserved').notNull().default(0),
-
-  updatedAt: timestamp('updated_at').defaultNow(),
+    .references(() => media.id),
+  displayOrder: integer('display_order').default(0),
+  createdAt: timestamp('created_at').defaultNow(),
 })
 
-// -----------------------------------------------------
-// RELATIONS (all)
-// -----------------------------------------------------
-
-export const productRelations = relations(product, ({ one, many }) => ({
+export const attributeRelations = relations(attribute, ({ one }) => ({
   series: one(series, {
-    fields: [product.seriesSlug],
+    fields: [attribute.seriesSlug],
     references: [series.slug],
   }),
+}))
+
+export const productRelations = relations(product, ({ many }) => ({
   variants: many(productVariant),
 }))
 
@@ -425,21 +281,35 @@ export const productVariantRelations = relations(productVariant, ({ one, many })
     fields: [productVariant.productId],
     references: [product.id],
   }),
-  attributes: many(variantAttributeValue),
+
+  attributes: many(productVariantAttribute),
+  media: many(productVariantMedia),
 }))
 
-export const variantAttributeRelations = relations(variantAttributeValue, ({ one }) => ({
+export const productVariantAttributeRelations = relations(productVariantAttribute, ({ one }) => ({
   variant: one(productVariant, {
-    fields: [variantAttributeValue.variantId],
+    fields: [productVariantAttribute.variantId],
     references: [productVariant.id],
   }),
+  attribute: one(attribute, {
+    fields: [productVariantAttribute.attributeId],
+    references: [attribute.id],
+  }),
 }))
 
-export const attributeRelations = relations(attribute, ({ one }) => ({
-  series: one(series, {
-    fields: [attribute.seriesSlug],
-    references: [series.slug],
+export const productVariantMediaRelations = relations(productVariantMedia, ({ one }) => ({
+  variant: one(productVariant, {
+    fields: [productVariantMedia.variantId],
+    references: [productVariant.id],
   }),
+
+  media: one(media, {
+    fields: [productVariantMedia.mediaId],
+    references: [media.id],
+  }),
+}))
+export const mediaRelations = relations(media, ({ many }) => ({
+  variants: many(productVariantMedia),
 }))
 
 export const categoryRelations = relations(category, ({ many }) => ({

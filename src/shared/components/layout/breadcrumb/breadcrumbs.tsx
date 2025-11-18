@@ -4,38 +4,93 @@ import React from 'react'
 
 import {
   Breadcrumb,
+  BreadcrumbEllipsis,
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@/shared/components/ui/breadcrumb'
+
 import { cn } from '@/shared/utils/lib/utils'
-import { HomeIcon, Slash } from 'lucide-react'
+import { HomeIcon } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
 import { type Route } from 'next'
 import { PATH } from '@/shared/config/routes'
-import GoBackButton from '../../common/go-back'
+
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/shared/components/ui/tooltip'
+
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from '@/shared/components/ui/dropdown-menu'
+
 import { slugToTitle } from '@/shared/utils/lib/url.utils'
 
-const generateBreadcrumbs = (pathname: string) => {
-  const pathArray = pathname?.split('/')?.filter(Boolean)
-  const breadcrumbs = pathArray.map((path, index) => {
-    const href = `/${pathArray?.slice(0, index + 1)?.join('/')}`
-    return { href, label: path }
-  })
-  return breadcrumbs
+type BreadcrumbItem = {
+  href: string
+  label: string
 }
 
+type BreadcrumbWithHidden = BreadcrumbItem & {
+  hidden: BreadcrumbItem[]
+}
+
+type BreadcrumbNode = BreadcrumbItem | BreadcrumbWithHidden
+
+const hasHidden = (node: BreadcrumbNode): node is BreadcrumbWithHidden => {
+  return 'hidden' in node
+}
+
+// -------------------------------------------------------
+// Break path into breadcrumb objects
+// -------------------------------------------------------
+const generateBreadcrumbs = (pathname: string) => {
+  const arr = pathname?.split('/')?.filter(Boolean)
+  return arr.map((segment, index) => {
+    const href = `/${arr.slice(0, index + 1).join('/')}`
+    return { href, label: segment }
+  })
+}
+
+// -------------------------------------------------------
+// Compress: first / ... / second-last / last
+// Return hidden list too
+// -------------------------------------------------------
+const compressBreadcrumbs = (items: BreadcrumbItem[]): { visible: BreadcrumbNode[]; hidden: BreadcrumbItem[] } => {
+  if (items.length <= 3) return { visible: items, hidden: [] }
+
+  const first = items[0]
+  const last = items[items.length - 1]
+  const secondLast = items[items.length - 2]
+
+  const hidden = items.slice(1, items.length - 2)
+
+  const visible = [
+    first,
+    { href: '', label: '...', hidden }, // clickable ellipses with hidden data
+    secondLast,
+    last,
+  ]
+
+  return { visible, hidden }
+}
+
+// -------------------------------------------------------
+// Component
+// -------------------------------------------------------
 export function Breadcrumbs({ className }: { className?: string }) {
   const pathname = usePathname()
-  const breadcrumbs = generateBreadcrumbs(pathname)
+  const raw = generateBreadcrumbs(pathname)
+  const { visible: breadcrumbs } = compressBreadcrumbs(raw)
 
   return (
-    <Breadcrumb>
-      <BreadcrumbList className={cn('bg-muted/20 rounded-full border px-4 py-[5px] shadow-xs', className)}>
+    <Breadcrumb className="flex w-full flex-row">
+      <BreadcrumbList className={cn('', className)}>
+        {/* Home */}
         <BreadcrumbItem>
           <TooltipProvider>
             <Tooltip>
@@ -48,29 +103,61 @@ export function Breadcrumbs({ className }: { className?: string }) {
                   <span className="sr-only">Home</span>
                 </BreadcrumbLink>
               </TooltipTrigger>
-              <TooltipContent>
-                <p id="go-back-tooltip">{'Go to website homepage'}</p>
-              </TooltipContent>
+              <TooltipContent>Go to website homepage</TooltipContent>
             </Tooltip>
           </TooltipProvider>
         </BreadcrumbItem>
 
-        {breadcrumbs?.map((breadcrumb, index) => (
+        {/* Dynamic nodes */}
+        {breadcrumbs.map((node, index) => (
           <React.Fragment key={index}>
-            <BreadcrumbSeparator className="first:hidden" />
+            <BreadcrumbSeparator className="first:hidden">/</BreadcrumbSeparator>
+
             <BreadcrumbItem>
-              {index === breadcrumbs?.length - 1 ? (
+              {/* Ellipses dropdown node */}
+              {node.label === '...' && (
+                <DropdownMenu>
+                  <DropdownMenuTrigger className="cursor-pointer rounded">
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <BreadcrumbEllipsis />
+                        </TooltipTrigger>
+                        <TooltipContent>Hidden Links</TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent
+                    align="start"
+                    className="min-w-[180px]"
+                  >
+                    {hasHidden(node) &&
+                      node.hidden.map((h, i) => (
+                        <DropdownMenuItem
+                          key={i}
+                          asChild
+                        >
+                          <Link href={h.href as Route}>{slugToTitle(h.label)}</Link>
+                        </DropdownMenuItem>
+                      ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )}
+
+              {/* Last node (active page) */}
+              {node.label !== '...' && index === breadcrumbs.length - 1 && (
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <BreadcrumbPage className="capitalize">{slugToTitle(breadcrumb?.label)}</BreadcrumbPage>
+                      <BreadcrumbPage className="capitalize">{slugToTitle(node.label)}</BreadcrumbPage>
                     </TooltipTrigger>
-                    <TooltipContent>
-                      <p id="go-back-tooltip">{'Your current page'}</p>
-                    </TooltipContent>
+                    <TooltipContent>Your current page</TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
-              ) : (
+              )}
+
+              {/* Regular nodes */}
+              {node.label !== '...' && index !== breadcrumbs.length - 1 && (
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -78,12 +165,10 @@ export function Breadcrumbs({ className }: { className?: string }) {
                         asChild
                         className="capitalize underline-offset-4 hover:underline"
                       >
-                        <Link href={breadcrumb?.href as Route}>{slugToTitle(breadcrumb?.label)}</Link>
+                        <Link href={node.href as Route}>{slugToTitle(node.label)}</Link>
                       </BreadcrumbLink>
                     </TooltipTrigger>
-                    <TooltipContent>
-                      <p id="go-back-tooltip">{`Go to ${slugToTitle(breadcrumb?.label)}`}</p>
-                    </TooltipContent>
+                    <TooltipContent>Go to {slugToTitle(node.label)}</TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
               )}

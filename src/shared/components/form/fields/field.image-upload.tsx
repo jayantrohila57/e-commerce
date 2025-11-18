@@ -85,7 +85,7 @@ export const ImageUploadText: React.FC<FormInputProps> = (props) => {
                     <BlurImage
                       src={(field.value as string) ?? files[0]?.preview ?? ''}
                       alt={files[0]?.file?.name || 'Uploaded image'}
-                      className="aspect-video size-full w-full object-cover"
+                      className="aspect-video size-full border rounded-md w-full object-cover"
                       width={1920}
                       height={1080}
                     />

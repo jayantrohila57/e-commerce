@@ -1,4 +1,5 @@
 import { apiServer, HydrateClient } from '@/core/api/api.server'
+import { ProductVariantSection } from '@/module/product-variant/product-variant-section'
 import { ProductPreviewCard } from '@/module/product/product-preview'
 import DashboardSection from '@/shared/components/layout/section/section-dashboard'
 import Shell from '@/shared/components/layout/shell'
@@ -9,7 +10,7 @@ import { Route } from 'next'
 
 export default async function ProductPage({ params }: PageProps<'/studio/products/[productSlug]'>) {
   const { productSlug: slug } = await params
-  const { data } = await apiServer.product.getBySlug({
+  const { data } = await apiServer.product.getProductWithProductVariants({
     params: {
       slug,
     },
@@ -23,24 +24,22 @@ export default async function ProductPage({ params }: PageProps<'/studio/product
             title={slugToTitle(slug)}
             description="Manage your product categories and subcategories"
             action="Add Variants"
-            actionUrl={PATH.STUDIO.SUB_CATEGORIES.NEW(String(data?.product?.id), slug) as Route}
+            actionUrl={PATH.STUDIO.PRODUCTS.VARIANTS.NEW(String(data?.product?.id), slug) as Route}
           >
             <div className="grid h-full w-full grid-cols-6 gap-2">
               <div className="col-span-6 h-full w-full rounded-md">
                 {data?.product && <ProductPreviewCard data={data?.product} />}
               </div>
-              {/* <div className="col-span-6 h-full w-full rounded-md">
+              <div className="col-span-6 h-full w-full rounded-md">
                 <Separator className="my-2" />
-                {data?.subcategories && (
-                  <SubProductSection
-                    slug={slug}
-                    title="SubCategories"
-                    description="Sub categories are displayed on the homepage"
-                    categories={data?.subcategories}
-                    emptyMessage="No SubCategories"
-                  />
-                )}
-              </div> */}
+                <ProductVariantSection
+                  emptyMessage="No variants found"
+                  title="Product Variants"
+                  description="Manage your product variants"
+                  products={data?.product?.variants}
+                  productSlug = {slug}
+                />
+              </div>
             </div>
           </DashboardSection>
         </Shell.Section>

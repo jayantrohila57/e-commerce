@@ -217,6 +217,7 @@ export const product = pgTable('product', {
     .references(() => series.slug),
   basePrice: integer('base_price').notNull(),
   baseCurrency: text('base_currency').default('INR'),
+  baseImage: text('base_image'),
   features: json('features').$type<{ title: string }[]>(),
   isActive: boolean('is_active').default(true),
   status: text('status').$type<'draft' | 'archive' | 'live'>().default('draft').notNull(),
@@ -238,31 +239,13 @@ export const productVariant = pgTable('product_variant', {
     .$type<'flat_increase' | 'flat_decrease' | 'percent_increase' | 'percent_decrease'>()
     .notNull(),
   priceModifierValue: numeric('price_modifier_value', { precision: 10, scale: 2 }).notNull(),
-  createdAt: timestamp('created_at').defaultNow(),
-  updatedAt: timestamp('updated_at').defaultNow(),
-})
-
-export const productVariantAttribute = pgTable('product_variant_attribute', {
-  id: text('id').primaryKey(),
-  variantId: text('variant_id')
-    .notNull()
-    .references(() => productVariant.id),
-  attributeId: text('attribute_id')
-    .notNull()
-    .references(() => attribute.id),
-  createdAt: timestamp('created_at').defaultNow(),
-})
-
-export const productVariantMedia = pgTable('product_variant_media', {
-  id: text('id').primaryKey(),
-  variantId: text('variant_id')
-    .notNull()
-    .references(() => productVariant.id),
-  mediaId: text('media_id')
-    .notNull()
-    .references(() => media.id),
-  displayOrder: integer('display_order').default(0),
-  createdAt: timestamp('created_at').defaultNow(),
+  attributes: json('attributes').$type<{ title: string; type: string; value: string }[]>(),
+  media: json('media').$type<{ url: string }[]>(),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  deletedAt: timestamp('deleted_at', { withTimezone: true }),
+  updatedAt: timestamp('updated_at', { withTimezone: true })
+    .defaultNow()
+    .$onUpdate(() => new Date()),
 })
 
 export const attributeRelations = relations(attribute, ({ one }) => ({
@@ -275,42 +258,13 @@ export const attributeRelations = relations(attribute, ({ one }) => ({
 export const productRelations = relations(product, ({ many }) => ({
   variants: many(productVariant),
 }))
-
-export const productVariantRelations = relations(productVariant, ({ one, many }) => ({
+export const productVariantRelations = relations(productVariant, ({ one }) => ({
   product: one(product, {
     fields: [productVariant.productId],
     references: [product.id],
   }),
-
-  attributes: many(productVariantAttribute),
-  media: many(productVariantMedia),
 }))
 
-export const productVariantAttributeRelations = relations(productVariantAttribute, ({ one }) => ({
-  variant: one(productVariant, {
-    fields: [productVariantAttribute.variantId],
-    references: [productVariant.id],
-  }),
-  attribute: one(attribute, {
-    fields: [productVariantAttribute.attributeId],
-    references: [attribute.id],
-  }),
-}))
-
-export const productVariantMediaRelations = relations(productVariantMedia, ({ one }) => ({
-  variant: one(productVariant, {
-    fields: [productVariantMedia.variantId],
-    references: [productVariant.id],
-  }),
-
-  media: one(media, {
-    fields: [productVariantMedia.mediaId],
-    references: [media.id],
-  }),
-}))
-export const mediaRelations = relations(media, ({ many }) => ({
-  variants: many(productVariantMedia),
-}))
 
 export const categoryRelations = relations(category, ({ many }) => ({
   subcategories: many(subcategory),

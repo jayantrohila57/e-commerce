@@ -3,33 +3,37 @@
 import { type Route } from 'next'
 import type { z } from 'zod/v3'
 import { useRouter } from 'next/navigation'
+import { useState } from 'react'
+
 import Form from '@/shared/components/form/form'
 import { FormSection } from '@/shared/components/form/form.helper'
-import { toast } from 'sonner'
 import { Button } from '@/shared/components/ui/button'
 import { Separator } from '@/shared/components/ui/separator'
+import { toast } from 'sonner'
+
 import { apiClient } from '@/core/api/api.client'
 import { STATUS } from '@/shared/config/api.config'
-import { productContract } from './product.schema'
 import { PATH } from '@/shared/config/routes'
 import { env } from '@/shared/config/env'
-import { useState } from 'react'
+
 import { CategorySelect } from './product-form.category'
 import { SubCategorySelect } from './product-form.subcategory'
 import { SeriesSelect } from './product-form.series'
 import { statusOptions } from '@/shared/config/options.config'
 import { FormItem } from '@/shared/components/ui/form'
+
+import { productContract } from './product.schema'
+import type { ProductUpdate } from './product.types'
 import { Minus, Plus } from 'lucide-react'
 
-const formSchema = productContract.create.input
-
+const formSchema = productContract.update.input
 type FormValues = z.infer<typeof formSchema>
 
-export default function ProductForm() {
+export default function ProductEditForm({ product }: { product: ProductUpdate | null }) {
   const router = useRouter()
   const [toastId, setToastId] = useState<string | number>('')
 
-  const createProduct = apiClient.product.create.useMutation({
+  const updateProduct = apiClient.product.update.useMutation({
     onSuccess: async ({ status, message }) => {
       if (status === STATUS.SUCCESS) {
         toast.success(message, { id: toastId })
@@ -41,16 +45,25 @@ export default function ProductForm() {
       }
     },
     onError: ({ message }) => {
-      toast.error(message || 'An error occurred while creating the product', { id: toastId })
+      toast.error(message || 'An error occurred while updating the product', { id: toastId })
       setToastId('')
     },
   })
 
   function onSubmit(data: FormValues) {
+    if (!product) {
+      toast.error('Product not found')
+      return
+    }
+
     setToastId('')
-    const id = toast.loading('Creating product...')
+    const id = toast.loading('Updating product...')
     setToastId(id)
-    createProduct.mutate({
+
+    updateProduct.mutate({
+      params: {
+        id: String(product?.id),
+      },
       body: {
         title: data.body.title,
         slug: data.body.slug,
@@ -58,7 +71,7 @@ export default function ProductForm() {
         metaTitle: data.body.title || undefined,
         metaDescription: data.body.description || undefined,
         seriesSlug: data.body.seriesSlug,
-        isActive: data.body.isActive ?? true,
+        isActive: data.body.isActive,
         basePrice: data.body.basePrice,
         baseCurrency: data.body.baseCurrency,
         features: data.body.features,
@@ -73,25 +86,26 @@ export default function ProductForm() {
   return (
     <Form
       defaultValues={{
+        params: {
+          id: String(product?.id),
+        },
         body: {
-          title: '',
-          slug: '',
-          description: '',
-          metaTitle: '',
-          metaDescription: '',
-          seriesSlug: 'phone-cases-series-1',
-          categorySlug: '',
-          subcategorySlug: '',
-          isActive: true,
-          basePrice: 0,
-          baseCurrency: 'INR',
-          baseImage: '',
-          features: [
-            {
-              title: '',
-            },
-          ],
-          status: 'draft',
+          title: product?.title ?? '',
+          slug: product?.slug ?? '',
+          description: product?.description ?? '',
+          metaTitle: product?.metaTitle ?? '',
+          metaDescription: product?.metaDescription ?? '',
+          seriesSlug: product?.seriesSlug ?? '',
+          categorySlug: product?.categorySlug ?? '',
+          subcategorySlug: product?.subcategorySlug ?? '',
+          isActive: product?.isActive ?? true,
+          basePrice: product?.basePrice ?? 0,
+          baseCurrency: product?.baseCurrency ?? 'INR',
+          baseImage: product?.baseImage ?? '',
+          features: product?.features?.length
+            ? product.features
+            : [{ title: '' }],
+          status: product?.status ?? 'draft',
         },
       }}
       schema={formSchema}
@@ -101,7 +115,7 @@ export default function ProductForm() {
       <div className="col-span-4 h-full w-full">
         <FormSection
           title="Product Details"
-          description="Enter product information"
+          description="Update product information"
         >
           <Form.Field
             {...{
@@ -112,19 +126,19 @@ export default function ProductForm() {
               required: true,
             }}
           />
+
           <Form.Field
             {...{
               name: 'body.slug',
               label: 'Slug',
               type: 'slug',
               slugField: 'body.title',
-              description: 'Enter the slug of the product',
-              helperText: 'The slug is used to generate the URL of the product',
               inlinePrefix: `${env.NEXT_PUBLIC_BASE_URL}/product/`,
               required: true,
               placeholder: 'Enter slug',
             }}
           />
+
           <Form.Field
             {...{
               name: 'body.description',
@@ -134,30 +148,26 @@ export default function ProductForm() {
             }}
           />
         </FormSection>
+
         <FormSection
           title="Image"
-          description="Upload the image of the category"
+          description="Upload product image"
         >
           <Form.Field
             {...{
               name: 'body.baseImage',
               label: 'Image',
               type: 'image',
-              description: 'Upload the image of the category',
-              helperText:
-                'After selecting, click the upload icon to attach the imageThe image is used to generate the meta image of the category',
               required: true,
-              placeholder: 'Upload image',
             }}
           />
         </FormSection>
 
         <Separator className="my-4" />
-        <Separator className="my-4" />
 
         <FormSection
           title="Product Category, Subcategory and Series"
-          description="Select the category, subcategory and series of the product"
+          description="Select how this product is organised"
         >
           <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
             <CategorySelect />
@@ -167,10 +177,10 @@ export default function ProductForm() {
         </FormSection>
 
         <Separator className="my-4" />
+
         <FormSection
           title="Product Price"
-          description="Enter product price"
-          className="space-y-4"
+          description="Enter product pricing"
         >
           <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
             <Form.Field
@@ -186,12 +196,12 @@ export default function ProductForm() {
             />
           </div>
         </FormSection>
+
         <Separator className="my-4" />
 
         <FormSection
           title="Status"
           description="Control product visibility"
-          className="space-y-4"
         >
           <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
             <Form.Field
@@ -199,10 +209,6 @@ export default function ProductForm() {
                 name: 'body.status',
                 label: 'Status',
                 type: 'select',
-                description: 'Select the status of the post',
-                helperText: 'The status is used to generate status of the post',
-                required: true,
-                placeholder: 'Select type',
                 options: [
                   { label: 'Select type...', value: 'select-type', disabled: true },
                   ...statusOptions.map((t) => ({
@@ -213,22 +219,22 @@ export default function ProductForm() {
                 ],
               }}
             />
+
             <Form.Field
               {...{
                 name: 'body.isActive',
                 label: 'Active',
                 type: 'switch',
-                description: 'Set product visibility',
-                helperText: 'Inactive products will not be visible to customers',
               }}
             />
           </div>
         </FormSection>
+
         <Separator className="my-4" />
+
         <FormSection
           title="Product Features"
-          description="Enter product features"
-          className="space-y-4"
+          description="Add product features"
         >
           <Form.FormGroup name="body.features">
             {({ index, add, remove, length }) => (
@@ -238,58 +244,57 @@ export default function ProductForm() {
               >
                 <div className="w-full">
                   <Form.Field
-                    key={`body.features.${index}.title`}
                     {...{
                       name: `body.features.${index}.title`,
                       label: 'Title',
                       type: 'text',
-                      placeholder: 'Enter feature title',
+                      placeholder: 'Feature title',
                     }}
                   />
                 </div>
+
                 <div className="flex gap-2 pt-5">
                   <Button
-                    key={`body.features.${index}.remove`}
-                    disabled={index === length - 1}
-                    hidden={index === length - 1}
                     type="button"
                     variant={'destructive'}
                     size={'icon'}
                     onClick={() => remove(index)}
+                    hidden={length === 1}
                     children={<Minus />}
                   />
-                  <Button
-                    key={`body.features.${index}.add`}
-                    type="button"
-                    disabled={index !== length - 1}
-                    hidden={index !== length - 1}
-                    size={'icon'}
-                    onClick={() =>
-                      add({
-                        title: '',
-                      })
-                    }
-                    children={<Plus />}
-                  />
+
+                  {index === length - 1 && (
+                    <Button
+                      type="button"
+                      size={'icon'}
+                      onClick={() =>
+                        add({
+                          title: '',
+                        })
+                      }
+                      children={<Plus />}
+                    />
+                  )}
                 </div>
               </FormItem>
             )}
           </Form.FormGroup>
         </FormSection>
       </div>
+
       <Separator className="col-span-4 mt-4" />
+
       <div className="col-span-4 flex h-auto w-full flex-row items-center justify-between gap-x-4 p-0 py-4">
         <Form.StatusBadge />
+
         <div className="flex flex-row items-center gap-2">
-          <Button
-            variant="outline"
-            type="button"
-          >
-            {'Save Draft'}
+          <Button variant="outline" type="button">
+            Save Draft
           </Button>
+
           <Form.Submit
-            disabled={createProduct.isPending}
-            isLoading={createProduct.isPending}
+            disabled={updateProduct.isPending}
+            isLoading={updateProduct.isPending}
           />
         </div>
       </div>

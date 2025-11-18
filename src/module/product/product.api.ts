@@ -91,6 +91,33 @@ export const productRouter = createTRPCRouter({
         return API_RESPONSE(STATUS.ERROR, MESSAGE.PRODUCT.GET_BY_SLUG.ERROR, null, err as Error)
       }
     }),
+  getProductWithProductVariants: publicProcedure
+    .input(productContract.getProductWithProductVariants.input)
+    .output(productContract.getProductWithProductVariants.output)
+    .query(async ({ input }) => {
+      try {
+        const output = await db.query.product.findFirst({
+          where: (c, { eq }) => eq(c.slug, input.params.slug),
+          with: {
+            variants: {
+              orderBy: (s, { asc }) => [asc(s.createdAt)],
+            },
+          },
+        })
+
+        const row = output ?? null
+
+        return API_RESPONSE(
+          row ? STATUS.SUCCESS : STATUS.FAILED,
+          row ? MESSAGE.PRODUCT.GET_BY_SLUG.SUCCESS : MESSAGE.PRODUCT.GET_BY_SLUG.FAILED,
+          row ? { product: row } : null,
+        )
+      } catch (err) {
+        debugError('PRODUCT:GET_BY_SLUG:ERROR', err)
+        return API_RESPONSE(STATUS.ERROR, MESSAGE.PRODUCT.GET_BY_SLUG.ERROR, null, err as Error)
+      }
+    }),
+
   create: protectedProcedure
     .input(productContract.create.input)
     .output(productContract.create.output)

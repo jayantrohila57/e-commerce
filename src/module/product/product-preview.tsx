@@ -83,7 +83,7 @@ export function ProductPreviewCard({ data }: ProductPreviewCardProps) {
         <div className="flex flex-row gap-4">
           <CardContent className="flex w-fit items-start justify-start p-0">
             <BlurImage
-              src={String(data.id ?? '')}
+              src={String(data?.baseImage)}
               alt={data.title}
               width={500}
               height={500}
@@ -101,7 +101,7 @@ export function ProductPreviewCard({ data }: ProductPreviewCardProps) {
             </CardDescription>
             <CardAction>
               <div className="col-span-1 flex h-full w-full flex-row items-end justify-start gap-2">
-                <Link href={PATH.STUDIO.CATEGORIES.EDIT(String(data?.slug), String(data?.id)) as Route}>
+                <Link href={PATH.STUDIO.PRODUCTS.EDIT(String(data?.slug), String(data?.id)) as Route}>
                   <Button
                     variant={'default'}
                     size={'icon'}

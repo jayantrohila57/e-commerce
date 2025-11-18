@@ -1,4 +1,5 @@
 import z from 'zod/v3'
+import { productVariantBaseSchema } from '../product-variant/product-variant.schema'
 
 export const detailedResponse = <T extends z.ZodTypeAny>(dataSchema: T) =>
   z.object({
@@ -31,6 +32,7 @@ export const baseProductSchema = z.object({
   // PRICING
   basePrice: z.number().min(0),
   baseCurrency: z.string().default('INR').nullable(),
+  baseImage: z.string().nullable().optional(),
 
   // FEATURES
   features: z
@@ -109,6 +111,34 @@ export const productContract = {
           product: productSelectSchema,
         })
         .nullable(),
+    ),
+  },
+  getProductWithProductVariants: {
+    input: z.object({
+      params: z.object({
+        slug: z.string().min(1),
+      }),
+    }),
+    output: detailedResponse(
+      z.object({
+        product: productSelectSchema.extend({
+          variants: z.array(
+            productVariantBaseSchema.pick({
+              id: true,
+              slug: true,
+              title: true,
+              productId: true,
+              priceModifierType: true,
+              priceModifierValue: true,
+              attributes: true,
+              media: true,
+              createdAt: true,
+              updatedAt: true,
+              deletedAt: true,
+            }),
+          ),
+        }),
+      }),
     ),
   },
 

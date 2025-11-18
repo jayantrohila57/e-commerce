@@ -442,6 +442,48 @@ export const MESSAGE = {
       ERROR: 'Unexpected error while searching products.',
     },
   },
+  PRODUCT_VARIANT: {
+    GET: {
+      SUCCESS: 'Product variant retrieved successfully.',
+      FAILED: 'Product variant not found.',
+      ERROR: 'Unexpected error while retrieving product variant.',
+    },
+    GET_MANY: {
+      SUCCESS: 'Product variants retrieved successfully.',
+      FAILED: 'No product variants found.',
+      ERROR: 'Unexpected error while retrieving product variants.',
+    },
+    GET_BY_SLUG: {
+      SUCCESS: 'Product variant retrieved successfully by slug.',
+      FAILED: 'Product variant not found with the given slug.',
+      ERROR: 'Unexpected error while retrieving product variant by slug.',
+    },
+    GET_BY_IDS: {
+      SUCCESS: 'Product variants retrieved successfully by IDs.',
+      FAILED: 'No product variants found with the given IDs.',
+      ERROR: 'Unexpected error while retrieving product variants by IDs.',
+    },
+    CREATE: {
+      SUCCESS: 'Product variant created successfully.',
+      FAILED: 'Failed to create product variant.',
+      ERROR: 'Unexpected error while creating product variant.',
+    },
+    UPDATE: {
+      SUCCESS: 'Product variant updated successfully.',
+      FAILED: 'Failed to update product variant.',
+      ERROR: 'Unexpected error while updating product variant.',
+    },
+    DELETE: {
+      SUCCESS: 'Product variant deleted successfully.',
+      FAILED: 'Failed to delete product variant.',
+      ERROR: 'Unexpected error while deleting product variant.',
+    },
+    SEARCH: {
+      SUCCESS: 'Product variants searched successfully.',
+      FAILED: 'No product variants found matching the search criteria.',
+      ERROR: 'Unexpected error while searching product variants.',
+    },
+  },
   SERIES: {
     CREATE: {
       SUCCESS: 'Series created successfully.',

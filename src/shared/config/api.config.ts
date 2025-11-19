@@ -401,10 +401,21 @@ export const MESSAGE = {
       FAILED: 'Product not found.',
       ERROR: 'Unexpected error while retrieving product.',
     },
+    GET_BY_SERIES: {
+      SUCCESS: 'Products fetched for series successfully',
+      FAILED: 'No products found for this series',
+      ERROR: 'Unable to fetch products for series',
+    },
     GET_WITH_DETAILS: {
       SUCCESS: 'Product with details retrieved successfully.',
       FAILED: 'Product not found.',
       ERROR: 'Unexpected error while retrieving product with details.',
+    },
+    GET_PDP_PRODUCT: {
+      SUCCESS: 'Product retrieved successfully.',
+      FAILED: 'Product not found.',
+      ERROR: 'Unexpected error while retrieving product.',
+      NOT_FOUND: 'Product not found.',
     },
     GET_BY_SLUG: {
       SUCCESS: 'Product retrieved successfully.',

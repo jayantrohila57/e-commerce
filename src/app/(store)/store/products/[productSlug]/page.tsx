@@ -1,25 +1,22 @@
 import { apiServer, HydrateClient } from '@/core/api/api.server'
-import { VariantCardList } from '@/module/product/product-series-cards'
-import CodePreview from '@/shared/components/common/code-preview'
 import Section from '@/shared/components/layout/section/section'
+import { env } from '@/shared/config/env'
 import { notFound } from 'next/navigation'
+import CodePreview from '@/shared/components/common/code-preview'
 
-export default async function SeriesPage({
-  params,
-}: PageProps<'/store/categories/[categorySlug]/[subCategorySlug]/[seriesSlug]'>) {
-  const { seriesSlug: slug } = await params
+export default async function ProductPage({ params }: PageProps<'/store/products/[productSlug]'>) {
+  const { productSlug } = await params
   const { data } = await apiServer.product.getProductsBySeriesSlug({
     params: {
-      slug,
+      slug: productSlug,
     },
   })
-
   if (!data) return notFound()
 
   return (
     <HydrateClient>
       <Section>
-        <VariantCardList data={data} />
+        <CodePreview json={data} />
       </Section>
     </HydrateClient>
   )

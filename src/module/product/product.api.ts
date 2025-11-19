@@ -91,6 +91,79 @@ export const productRouter = createTRPCRouter({
         return API_RESPONSE(STATUS.ERROR, MESSAGE.PRODUCT.GET_BY_SLUG.ERROR, null, err as Error)
       }
     }),
+  getProductsBySeriesSlug: publicProcedure
+    .input(productContract.getProductsBySeriesSlug.input)
+    .output(productContract.getProductsBySeriesSlug.output)
+    .query(async ({ input }) => {
+      try {
+        const { slug } = input.params
+
+        const products = await db.query.product.findMany({
+          where: (p, { eq, and, isNull }) => and(eq(p.seriesSlug, slug), isNull(p.deletedAt), eq(p.isActive, true)),
+          with: {
+            variants: {
+              where: (pv, { isNull }) => isNull(pv.deletedAt),
+              orderBy: (pv, { asc }) => [asc(pv.createdAt)],
+            },
+          },
+          orderBy: (p, { desc }) => [desc(p.createdAt)],
+        })
+
+        if (!products.length) {
+          return API_RESPONSE(STATUS.FAILED, MESSAGE.PRODUCT.GET_BY_SERIES.FAILED, [])
+        }
+
+        const flattened = products.flatMap((p) =>
+          p.variants.map((v) => ({
+            ...p,
+            variant: v,
+          })),
+        )
+
+        return API_RESPONSE(STATUS.SUCCESS, MESSAGE.PRODUCT.GET_BY_SERIES.SUCCESS, flattened)
+      } catch (err) {
+        debugError('PRODUCT:GET_BY_SERIES:ERROR', err)
+        return API_RESPONSE(STATUS.ERROR, MESSAGE.PRODUCT.GET_BY_SERIES.ERROR, null, err as Error)
+      }
+    }),
+  getPDPProductByVariant: publicProcedure
+    .input(productContract.getPDPProduct.input)
+    .output(productContract.getPDPProduct.output)
+    .query(async ({ input }) => {
+      try {
+        const { slug } = input.params
+        const variant = await db.query.productVariant.findFirst({
+          where: (pv, { eq, and, isNull: isNullFn }) => and(eq(pv.slug, slug), isNullFn(pv.deletedAt)),
+        })
+
+        if (!variant) {
+          return API_RESPONSE(STATUS.FAILED, MESSAGE.PRODUCT.GET_PDP_PRODUCT.NOT_FOUND, null)
+        }
+        const product = await db.query.product.findFirst({
+          where: (p, { eq, and, isNull: isNullFn }) =>
+            and(eq(p.id, variant.productId), isNullFn(p.deletedAt)),
+          with: {
+            variants: {
+              where: (pv, { eq, and, isNull: isNullFn }) => and(eq(pv.id, variant.id), isNullFn(pv.deletedAt)),
+            },
+          },
+        })
+
+        if (!product) {
+          return API_RESPONSE(STATUS.FAILED, MESSAGE.PRODUCT.GET_PDP_PRODUCT.FAILED, null)
+        }
+        const singleVariant = product.variants[0] || null
+        return API_RESPONSE(STATUS.SUCCESS, MESSAGE.PRODUCT.GET_PDP_PRODUCT.SUCCESS, {
+          product: {
+            ...product,
+            variant: singleVariant,
+          },
+        })
+      } catch (err) {
+        debugError('PRODUCT:GET_PDP_PRODUCT:ERROR', err)
+        return API_RESPONSE(STATUS.ERROR, MESSAGE.PRODUCT.GET_PDP_PRODUCT.ERROR, null, err as Error)
+      }
+    }),
   getProductWithProductVariants: publicProcedure
     .input(productContract.getProductWithProductVariants.input)
     .output(productContract.getProductWithProductVariants.output)

@@ -78,9 +78,6 @@ const searchSchema = z.object({
   isFeatured: z.boolean().optional(),
 })
 
-//
-// CONTRACT — CRUD UNCHAINED
-//
 export const productContract = {
   get: {
     input: z.object({
@@ -111,6 +108,36 @@ export const productContract = {
           product: productSelectSchema,
         })
         .nullable(),
+    ),
+  },
+  getPDPProduct: {
+    input: z.object({
+      params: z.object({
+        slug: z.string().min(1),
+      }),
+    }),
+    output: detailedResponse(
+      z
+        .object({
+          product: productSelectSchema.extend({
+            variant: productVariantBaseSchema.nullable(),
+          }),
+        })
+        .nullable(),
+    ),
+  },
+  getProductsBySeriesSlug: {
+    input: z.object({
+      params: z.object({
+        slug: z.string().min(1),
+      }),
+    }),
+    output: detailedResponse(
+      z.array(
+        productSelectSchema.extend({
+          variant: productVariantBaseSchema,
+        }),
+      ),
     ),
   },
   getProductWithProductVariants: {

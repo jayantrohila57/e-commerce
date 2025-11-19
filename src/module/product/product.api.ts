@@ -132,19 +132,22 @@ export const productRouter = createTRPCRouter({
     .query(async ({ input }) => {
       try {
         const { slug } = input.params
+
+        // Step 1: locate the variant by its slug
         const variant = await db.query.productVariant.findFirst({
-          where: (pv, { eq, and, isNull: isNullFn }) => and(eq(pv.slug, slug), isNullFn(pv.deletedAt)),
+          where: (pv, { eq, and, isNull }) => and(eq(pv.slug, slug), isNull(pv.deletedAt)),
         })
 
         if (!variant) {
           return API_RESPONSE(STATUS.FAILED, MESSAGE.PRODUCT.GET_PDP_PRODUCT.NOT_FOUND, null)
         }
+
+        // Step 2: fetch the product AND all its variants
         const product = await db.query.product.findFirst({
-          where: (p, { eq, and, isNull: isNullFn }) =>
-            and(eq(p.id, variant.productId), isNullFn(p.deletedAt)),
+          where: (p, { eq, and, isNull }) => and(eq(p.id, variant.productId), isNull(p.deletedAt)),
           with: {
             variants: {
-              where: (pv, { eq, and, isNull: isNullFn }) => and(eq(pv.id, variant.id), isNullFn(pv.deletedAt)),
+              where: (pv, { eq, isNull }) => isNull(pv.deletedAt), // fetch ALL alive variants
             },
           },
         })
@@ -152,11 +155,11 @@ export const productRouter = createTRPCRouter({
         if (!product) {
           return API_RESPONSE(STATUS.FAILED, MESSAGE.PRODUCT.GET_PDP_PRODUCT.FAILED, null)
         }
-        const singleVariant = product.variants[0] || null
+
         return API_RESPONSE(STATUS.SUCCESS, MESSAGE.PRODUCT.GET_PDP_PRODUCT.SUCCESS, {
           product: {
             ...product,
-            variant: singleVariant,
+            variants: product.variants, // full squad
           },
         })
       } catch (err) {

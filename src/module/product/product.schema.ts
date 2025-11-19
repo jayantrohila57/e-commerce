@@ -120,7 +120,7 @@ export const productContract = {
       z
         .object({
           product: productSelectSchema.extend({
-            variant: productVariantBaseSchema.nullable(),
+            variants: z.array(productVariantBaseSchema),
           }),
         })
         .nullable(),

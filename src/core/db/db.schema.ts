@@ -1,6 +1,6 @@
 import { relations } from 'drizzle-orm'
 import { json, pgEnum } from 'drizzle-orm/pg-core'
-import { pgTable, text, timestamp, boolean, numeric, integer, bigint, decimal } from 'drizzle-orm/pg-core'
+import { pgTable, text, timestamp, boolean, numeric, integer, bigint, decimal, index } from 'drizzle-orm/pg-core'
 
 export const discountTypeEnum = pgEnum('discount_type', ['flat', 'percent'])
 export const orderStatusEnum = pgEnum('order_status', ['pending', 'paid', 'shipped', 'delivered', 'cancelled'])
@@ -9,6 +9,7 @@ export const paymentProviderEnum = pgEnum('payment_provider', ['stripe', 'razorp
 export const shipmentStatusEnum = pgEnum('shipment_status', ['pending', 'in_transit', 'delivered'])
 export const displayTypeEnum = pgEnum('display_type', ['grid', 'carousel', 'banner', 'list', 'featured'])
 export const visibilityEnum = pgEnum('visibility', ['public', 'private', 'hidden'])
+export const productStatusEnum = pgEnum('product_status', ['draft', 'archive', 'live'])
 
 export const account = pgTable('account', {
   id: text('id').primaryKey(),
@@ -106,73 +107,97 @@ export const rateLimit = pgTable('rate_limit', {
   lastRequest: bigint('last_request', { mode: 'number' }),
 })
 
-export const category = pgTable('category', {
-  id: text('id').primaryKey(),
-  slug: text('slug').notNull().unique(),
-  icon: text('icon'),
-  title: text('title').notNull(),
-  description: text('description'),
-  metaTitle: text('meta_title'),
-  metaDescription: text('meta_description'),
-  displayType: displayTypeEnum('display_type').default('grid').notNull(),
-  color: text('color').default('#FFFFFF'),
-  visibility: visibilityEnum('visibility').default('public').notNull(),
-  displayOrder: integer('display_order').default(0).notNull(),
-  image: text('image'),
-  isFeatured: boolean('is_featured').default(false).notNull(),
-  deletedAt: timestamp('deleted_at', { withTimezone: true }),
-  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
-  updatedAt: timestamp('updated_at', { withTimezone: true })
-    .defaultNow()
-    .$onUpdate(() => new Date()),
-})
+export const category = pgTable(
+  'category',
+  {
+    id: text('id').primaryKey(),
+    slug: text('slug').notNull().unique(),
+    icon: text('icon'),
+    title: text('title').notNull(),
+    description: text('description'),
+    metaTitle: text('meta_title'),
+    metaDescription: text('meta_description'),
+    displayType: displayTypeEnum('display_type').default('grid').notNull(),
+    color: text('color').default('#FFFFFF'),
+    visibility: visibilityEnum('visibility').default('public').notNull(),
+    displayOrder: integer('display_order').default(0).notNull(),
+    image: text('image'),
+    isFeatured: boolean('is_featured').default(false).notNull(),
+    deletedAt: timestamp('deleted_at', { withTimezone: true }),
+    createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp('updated_at', { withTimezone: true })
+      .defaultNow()
+      .$onUpdate(() => new Date()),
+  },
+  (table) => ({
+    visibilityIdx: index('category_visibility_idx').on(table.visibility),
+    isFeaturedIdx: index('category_is_featured_idx').on(table.isFeatured),
+    displayOrderIdx: index('category_display_order_idx').on(table.displayOrder),
+  }),
+)
 
-export const subcategory = pgTable('subcategory', {
-  id: text('id').primaryKey(),
-  categorySlug: text('category_slug')
-    .notNull()
-    .references(() => category.slug),
-  slug: text('slug').notNull().unique(),
-  icon: text('icon'),
-  title: text('title').notNull(),
-  description: text('description'),
-  metaTitle: text('meta_title'),
-  metaDescription: text('meta_description'),
-  displayType: displayTypeEnum('display_type').default('grid').notNull(),
-  color: text('color').default('#FFFFFF'),
-  visibility: visibilityEnum('visibility').default('public').notNull(),
-  displayOrder: integer('display_order').default(0).notNull(),
-  image: text('image'),
-  isFeatured: boolean('is_featured').default(false).notNull(),
-  createdAt: timestamp('created_at').defaultNow(),
-  deletedAt: timestamp('deleted_at', { withTimezone: true }),
-  updatedAt: timestamp('updated_at')
-    .defaultNow()
-    .$onUpdate(() => new Date()),
-})
-export const series = pgTable('series', {
-  id: text('id').primaryKey(),
-  subcategorySlug: text('subcategory_slug')
-    .notNull()
-    .references(() => subcategory.slug),
-  slug: text('slug').notNull().unique(),
-  icon: text('icon'),
-  title: text('title').notNull(),
-  description: text('description'),
-  metaTitle: text('meta_title'),
-  metaDescription: text('meta_description'),
-  displayType: displayTypeEnum('display_type').default('grid').notNull(),
-  color: text('color').default('#FFFFFF'),
-  visibility: visibilityEnum('visibility').default('public').notNull(),
-  displayOrder: integer('display_order').default(0).notNull(),
-  image: text('image'),
-  isFeatured: boolean('is_featured').default(false).notNull(),
-  createdAt: timestamp('created_at').defaultNow(),
-  deletedAt: timestamp('deleted_at', { withTimezone: true }),
-  updatedAt: timestamp('updated_at')
-    .defaultNow()
-    .$onUpdate(() => new Date()),
-})
+export const subcategory = pgTable(
+  'subcategory',
+  {
+    id: text('id').primaryKey(),
+    categorySlug: text('category_slug')
+      .notNull()
+      .references(() => category.slug),
+    slug: text('slug').notNull().unique(),
+    icon: text('icon'),
+    title: text('title').notNull(),
+    description: text('description'),
+    metaTitle: text('meta_title'),
+    metaDescription: text('meta_description'),
+    displayType: displayTypeEnum('display_type').default('grid').notNull(),
+    color: text('color').default('#FFFFFF'),
+    visibility: visibilityEnum('visibility').default('public').notNull(),
+    displayOrder: integer('display_order').default(0).notNull(),
+    image: text('image'),
+    isFeatured: boolean('is_featured').default(false).notNull(),
+    createdAt: timestamp('created_at').defaultNow(),
+    deletedAt: timestamp('deleted_at', { withTimezone: true }),
+    updatedAt: timestamp('updated_at')
+      .defaultNow()
+      .$onUpdate(() => new Date()),
+  },
+  (table) => ({
+    categorySlugIdx: index('subcategory_category_slug_idx').on(table.categorySlug),
+    visibilityIdx: index('subcategory_visibility_idx').on(table.visibility),
+    isFeaturedIdx: index('subcategory_is_featured_idx').on(table.isFeatured),
+  }),
+)
+export const series = pgTable(
+  'series',
+  {
+    id: text('id').primaryKey(),
+    subcategorySlug: text('subcategory_slug')
+      .notNull()
+      .references(() => subcategory.slug),
+    slug: text('slug').notNull().unique(),
+    icon: text('icon'),
+    title: text('title').notNull(),
+    description: text('description'),
+    metaTitle: text('meta_title'),
+    metaDescription: text('meta_description'),
+    displayType: displayTypeEnum('display_type').default('grid').notNull(),
+    color: text('color').default('#FFFFFF'),
+    visibility: visibilityEnum('visibility').default('public').notNull(),
+    displayOrder: integer('display_order').default(0).notNull(),
+    image: text('image'),
+    isFeatured: boolean('is_featured').default(false).notNull(),
+    createdAt: timestamp('created_at').defaultNow(),
+    deletedAt: timestamp('deleted_at', { withTimezone: true }),
+    updatedAt: timestamp('updated_at')
+      .defaultNow()
+      .$onUpdate(() => new Date()),
+  },
+  (table) => ({
+    subcategorySlugIdx: index('series_subcategory_slug_idx').on(table.subcategorySlug),
+    visibilityIdx: index('series_visibility_idx').on(table.visibility),
+    isFeaturedIdx: index('series_is_featured_idx').on(table.isFeatured),
+  }),
+)
 
 export const attribute = pgTable('attribute', {
   id: text('id').primaryKey(),
@@ -199,54 +224,70 @@ export const media = pgTable('media', {
   createdAt: timestamp('created_at').defaultNow(),
 })
 
-export const product = pgTable('product', {
-  id: text('id').primaryKey(),
-  title: text('title').notNull(),
-  description: text('description'),
-  metaTitle: text('meta_title'),
-  metaDescription: text('meta_description'),
-  slug: text('slug').notNull().unique(),
-  categorySlug: text('category_slug')
-    .notNull()
-    .references(() => category.slug),
-  subcategorySlug: text('subcategory_slug')
-    .notNull()
-    .references(() => subcategory.slug),
-  seriesSlug: text('series_slug')
-    .notNull()
-    .references(() => series.slug),
-  basePrice: integer('base_price').notNull(),
-  baseCurrency: text('base_currency').default('INR'),
-  baseImage: text('base_image'),
-  features: json('features').$type<{ title: string }[]>(),
-  isActive: boolean('is_active').default(true),
-  status: text('status').$type<'draft' | 'archive' | 'live'>().default('draft').notNull(),
-  deletedAt: timestamp('deleted_at', { withTimezone: true }),
-  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
-  updatedAt: timestamp('updated_at', { withTimezone: true })
-    .defaultNow()
-    .$onUpdate(() => new Date()),
-})
+export const product = pgTable(
+  'product',
+  {
+    id: text('id').primaryKey(),
+    title: text('title').notNull(),
+    description: text('description'),
+    metaTitle: text('meta_title'),
+    metaDescription: text('meta_description'),
+    slug: text('slug').notNull().unique(),
+    categorySlug: text('category_slug')
+      .notNull()
+      .references(() => category.slug),
+    subcategorySlug: text('subcategory_slug')
+      .notNull()
+      .references(() => subcategory.slug),
+    seriesSlug: text('series_slug')
+      .notNull()
+      .references(() => series.slug),
+    basePrice: integer('base_price').notNull(),
+    baseCurrency: text('base_currency').default('INR'),
+    baseImage: text('base_image'),
+    features: json('features').$type<{ title: string }[]>(),
+    isActive: boolean('is_active').default(true),
+    status: productStatusEnum('status').default('draft').notNull(),
+    deletedAt: timestamp('deleted_at', { withTimezone: true }),
+    createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp('updated_at', { withTimezone: true })
+      .defaultNow()
+      .$onUpdate(() => new Date()),
+  },
+  (table) => ({
+    categorySlugIdx: index('product_category_slug_idx').on(table.categorySlug),
+    subcategorySlugIdx: index('product_subcategory_slug_idx').on(table.subcategorySlug),
+    seriesSlugIdx: index('product_series_slug_idx').on(table.seriesSlug),
+    statusIdx: index('product_status_idx').on(table.status),
+    isActiveIdx: index('product_is_active_idx').on(table.isActive),
+  }),
+)
 
-export const productVariant = pgTable('product_variant', {
-  id: text('id').primaryKey(),
-  slug: text('slug').notNull().unique(),
-  productId: text('product_id')
-    .notNull()
-    .references(() => product.id),
-  title: text('title').notNull(),
-  priceModifierType: text('price_modifier_type')
-    .$type<'flat_increase' | 'flat_decrease' | 'percent_increase' | 'percent_decrease'>()
-    .notNull(),
-  priceModifierValue: numeric('price_modifier_value', { precision: 10, scale: 2 }).notNull(),
-  attributes: json('attributes').$type<{ title: string; type: string; value: string }[]>(),
-  media: json('media').$type<{ url: string }[]>(),
-  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
-  deletedAt: timestamp('deleted_at', { withTimezone: true }),
-  updatedAt: timestamp('updated_at', { withTimezone: true })
-    .defaultNow()
-    .$onUpdate(() => new Date()),
-})
+export const productVariant = pgTable(
+  'product_variant',
+  {
+    id: text('id').primaryKey(),
+    slug: text('slug').notNull().unique(),
+    productId: text('product_id')
+      .notNull()
+      .references(() => product.id),
+    title: text('title').notNull(),
+    priceModifierType: text('price_modifier_type')
+      .$type<'flat_increase' | 'flat_decrease' | 'percent_increase' | 'percent_decrease'>()
+      .notNull(),
+    priceModifierValue: numeric('price_modifier_value', { precision: 10, scale: 2 }).notNull(),
+    attributes: json('attributes').$type<{ title: string; type: string; value: string }[]>(),
+    media: json('media').$type<{ url: string }[]>(),
+    createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+    deletedAt: timestamp('deleted_at', { withTimezone: true }),
+    updatedAt: timestamp('updated_at', { withTimezone: true })
+      .defaultNow()
+      .$onUpdate(() => new Date()),
+  },
+  (table) => ({
+    productIdIdx: index('product_variant_product_id_idx').on(table.productId),
+  }),
+)
 
 export const attributeRelations = relations(attribute, ({ one }) => ({
   series: one(series, {
@@ -264,7 +305,6 @@ export const productVariantRelations = relations(productVariant, ({ one }) => ({
     references: [product.id],
   }),
 }))
-
 
 export const categoryRelations = relations(category, ({ many }) => ({
   subcategories: many(subcategory),

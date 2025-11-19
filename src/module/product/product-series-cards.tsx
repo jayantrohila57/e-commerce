@@ -28,7 +28,10 @@ export const VariantCardList = ({ data }: { data: GetProductsBySeriesSlugOutput[
         const href = `/store/${product?.categorySlug}/${product?.subcategorySlug}/${product?.seriesSlug}/${product?.variant.slug}`
 
         return (
-          <Link key={product?.variant.slug} href={href as Route}>
+          <Link
+            key={product?.variant.slug}
+            href={href as Route}
+          >
             <Card className="pt-0">
               <CardHeader className="p-0">
                 {product?.variant?.media?.map((media) => (

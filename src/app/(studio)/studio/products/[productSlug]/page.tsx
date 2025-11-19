@@ -37,7 +37,7 @@ export default async function ProductPage({ params }: PageProps<'/studio/product
                   title="Product Variants"
                   description="Manage your product variants"
                   products={data?.product?.variants}
-                  productSlug = {slug}
+                  productSlug={slug}
                 />
               </div>
             </div>

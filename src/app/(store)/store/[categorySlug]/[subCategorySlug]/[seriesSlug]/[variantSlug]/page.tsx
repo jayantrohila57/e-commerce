@@ -17,7 +17,10 @@ export default async function ProductVariantPage({
   return (
     <HydrateClient>
       <Section>
-        <PDPProduct data={data} slug={variantSlug} />
+        <PDPProduct
+          data={data}
+          slug={variantSlug}
+        />
       </Section>
     </HydrateClient>
   )

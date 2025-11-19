@@ -1,6 +1,6 @@
 {
-  "id": "85aec0bc-c63e-423c-a079-7789d068f1dd",
-  "prevId": "7573eea8-9de9-48c5-8b68-ccb7d459b348",
+  "id": "83d5a85c-4be3-4fa7-9027-52e4c0dc5d6f",
+  "prevId": "7f841b00-fb34-4e33-9861-9fb5dbb58ae8",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -309,7 +309,53 @@
           "default": "now()"
         }
       },
-      "indexes": {},
+      "indexes": {
+        "category_visibility_idx": {
+          "name": "category_visibility_idx",
+          "columns": [
+            {
+              "expression": "visibility",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "category_is_featured_idx": {
+          "name": "category_is_featured_idx",
+          "columns": [
+            {
+              "expression": "is_featured",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "category_display_order_idx": {
+          "name": "category_display_order_idx",
+          "columns": [
+            {
+              "expression": "display_order",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
@@ -528,6 +574,12 @@
           "notNull": false,
           "default": "'INR'"
         },
+        "base_image": {
+          "name": "base_image",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
         "features": {
           "name": "features",
           "type": "json",
@@ -543,7 +595,8 @@
         },
         "status": {
           "name": "status",
-          "type": "text",
+          "type": "product_status",
+          "typeSchema": "public",
           "primaryKey": false,
           "notNull": true,
           "default": "'draft'"
@@ -569,7 +622,83 @@
           "default": "now()"
         }
       },
-      "indexes": {},
+      "indexes": {
+        "product_category_slug_idx": {
+          "name": "product_category_slug_idx",
+          "columns": [
+            {
+              "expression": "category_slug",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "product_subcategory_slug_idx": {
+          "name": "product_subcategory_slug_idx",
+          "columns": [
+            {
+              "expression": "subcategory_slug",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "product_series_slug_idx": {
+          "name": "product_series_slug_idx",
+          "columns": [
+            {
+              "expression": "series_slug",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "product_status_idx": {
+          "name": "product_status_idx",
+          "columns": [
+            {
+              "expression": "status",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "product_is_active_idx": {
+          "name": "product_is_active_idx",
+          "columns": [
+            {
+              "expression": "is_active",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
       "foreignKeys": {
         "product_category_slug_category_slug_fk": {
           "name": "product_category_slug_category_slug_fk",
@@ -651,22 +780,56 @@
           "primaryKey": false,
           "notNull": true
         },
+        "attributes": {
+          "name": "attributes",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "media": {
+          "name": "media",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": false
+        },
         "created_at": {
           "name": "created_at",
-          "type": "timestamp",
+          "type": "timestamp with time zone",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "default": "now()"
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
         },
         "updated_at": {
           "name": "updated_at",
-          "type": "timestamp",
+          "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": false,
           "default": "now()"
         }
       },
-      "indexes": {},
+      "indexes": {
+        "product_variant_product_id_idx": {
+          "name": "product_variant_product_id_idx",
+          "columns": [
+            {
+              "expression": "product_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
       "foreignKeys": {
         "product_variant_product_id_product_id_fk": {
           "name": "product_variant_product_id_product_id_fk",
@@ -686,127 +849,6 @@
           "columns": ["slug"]
         }
       },
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.product_variant_attribute": {
-      "name": "product_variant_attribute",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "text",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "variant_id": {
-          "name": "variant_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "attribute_id": {
-          "name": "attribute_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "now()"
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "product_variant_attribute_variant_id_product_variant_id_fk": {
-          "name": "product_variant_attribute_variant_id_product_variant_id_fk",
-          "tableFrom": "product_variant_attribute",
-          "tableTo": "product_variant",
-          "columnsFrom": ["variant_id"],
-          "columnsTo": ["id"],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        },
-        "product_variant_attribute_attribute_id_attribute_id_fk": {
-          "name": "product_variant_attribute_attribute_id_attribute_id_fk",
-          "tableFrom": "product_variant_attribute",
-          "tableTo": "attribute",
-          "columnsFrom": ["attribute_id"],
-          "columnsTo": ["id"],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.product_variant_media": {
-      "name": "product_variant_media",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "text",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "variant_id": {
-          "name": "variant_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "media_id": {
-          "name": "media_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "display_order": {
-          "name": "display_order",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "default": 0
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "now()"
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "product_variant_media_variant_id_product_variant_id_fk": {
-          "name": "product_variant_media_variant_id_product_variant_id_fk",
-          "tableFrom": "product_variant_media",
-          "tableTo": "product_variant",
-          "columnsFrom": ["variant_id"],
-          "columnsTo": ["id"],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        },
-        "product_variant_media_media_id_media_id_fk": {
-          "name": "product_variant_media_media_id_media_id_fk",
-          "tableFrom": "product_variant_media",
-          "tableTo": "media",
-          "columnsFrom": ["media_id"],
-          "columnsTo": ["id"],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
@@ -964,7 +1006,53 @@
           "default": "now()"
         }
       },
-      "indexes": {},
+      "indexes": {
+        "series_subcategory_slug_idx": {
+          "name": "series_subcategory_slug_idx",
+          "columns": [
+            {
+              "expression": "subcategory_slug",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "series_visibility_idx": {
+          "name": "series_visibility_idx",
+          "columns": [
+            {
+              "expression": "visibility",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "series_is_featured_idx": {
+          "name": "series_is_featured_idx",
+          "columns": [
+            {
+              "expression": "is_featured",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
       "foreignKeys": {
         "series_subcategory_slug_subcategory_slug_fk": {
           "name": "series_subcategory_slug_subcategory_slug_fk",
@@ -1188,7 +1276,53 @@
           "default": "now()"
         }
       },
-      "indexes": {},
+      "indexes": {
+        "subcategory_category_slug_idx": {
+          "name": "subcategory_category_slug_idx",
+          "columns": [
+            {
+              "expression": "category_slug",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "subcategory_visibility_idx": {
+          "name": "subcategory_visibility_idx",
+          "columns": [
+            {
+              "expression": "visibility",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "subcategory_is_featured_idx": {
+          "name": "subcategory_is_featured_idx",
+          "columns": [
+            {
+              "expression": "is_featured",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
       "foreignKeys": {
         "subcategory_category_slug_category_slug_fk": {
           "name": "subcategory_category_slug_category_slug_fk",
@@ -1432,6 +1566,11 @@
       "name": "payment_status",
       "schema": "public",
       "values": ["pending", "completed", "failed", "refunded"]
+    },
+    "public.product_status": {
+      "name": "product_status",
+      "schema": "public",
+      "values": ["draft", "archive", "live"]
     },
     "public.shipment_status": {
       "name": "shipment_status",

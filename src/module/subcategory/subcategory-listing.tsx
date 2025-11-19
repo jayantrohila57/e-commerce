@@ -19,7 +19,9 @@ export const SubCategoryItem = ({ data }: { data: GetSubcategoryBySlugOutput['da
             className="group col-span-1"
           >
             <Link
-              href={`/store/${data?.subcategoryData?.categorySlug}/${data?.subcategoryData?.slug}/${series?.slug}` as Route}
+              href={
+                `/store/${data?.subcategoryData?.categorySlug}/${data?.subcategoryData?.slug}/${series?.slug}` as Route
+              }
             >
               <Card className="border-none bg-transparent shadow-none">
                 <CardContent className="flex w-full items-center justify-center">

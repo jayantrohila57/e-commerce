@@ -37,8 +37,7 @@ export const PATH = {
     },
     SUB_CATEGORIES: {
       ROOT: (categorySlug: string) => `/store/${categorySlug}`,
-      SUBCATEGORY: (subcategorySlug: string, categorySlug: string) =>
-        `/store/${categorySlug}/${subcategorySlug}`,
+      SUBCATEGORY: (subcategorySlug: string, categorySlug: string) => `/store/${categorySlug}/${subcategorySlug}`,
     },
   },
   STUDIO: {

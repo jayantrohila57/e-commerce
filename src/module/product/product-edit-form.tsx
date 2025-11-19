@@ -102,9 +102,7 @@ export default function ProductEditForm({ product }: { product: ProductUpdate | 
           basePrice: product?.basePrice ?? 0,
           baseCurrency: product?.baseCurrency ?? 'INR',
           baseImage: product?.baseImage ?? '',
-          features: product?.features?.length
-            ? product.features
-            : [{ title: '' }],
+          features: product?.features?.length ? product.features : [{ title: '' }],
           status: product?.status ?? 'draft',
         },
       }}
@@ -288,7 +286,10 @@ export default function ProductEditForm({ product }: { product: ProductUpdate | 
         <Form.StatusBadge />
 
         <div className="flex flex-row items-center gap-2">
-          <Button variant="outline" type="button">
+          <Button
+            variant="outline"
+            type="button"
+          >
             Save Draft
           </Button>
 

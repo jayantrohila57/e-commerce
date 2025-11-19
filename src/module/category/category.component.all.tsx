@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { BlurImage } from '@/shared/components/ui/image'
 import Link from 'next/link'
 import { Separator } from '@/shared/components/ui/separator'
+import { Route } from 'next'
 
 export const CategoryItem = ({ data }: { data: GetCategoryWithSubcategoriesOutput['data'] }) => {
   return (
@@ -17,7 +18,7 @@ export const CategoryItem = ({ data }: { data: GetCategoryWithSubcategoriesOutpu
             key={subcategories?.id}
             className="group col-span-1"
           >
-            <Link href={`/store/categories/${data?.slug}/${subcategories?.slug}`}>
+            <Link href={`/store/${data?.slug}/${subcategories?.slug}` as Route}>
               <Card className="border-none bg-transparent shadow-none">
                 <CardContent className="flex w-full items-center justify-center">
                   <BlurImage

@@ -4,7 +4,7 @@ import { env } from '@/shared/config/env'
 import { notFound } from 'next/navigation'
 import { SubCategoryItem } from '@/module/subcategory/subcategory-listing'
 
-export async function generateMetadata({ params }: PageProps<'/store/categories/[categorySlug]/[subCategorySlug]'>) {
+export async function generateMetadata({ params }: PageProps<'/store/[categorySlug]/[subCategorySlug]'>) {
   const { categorySlug, subCategorySlug: slug } = await params
   const { data } = await apiServer.subcategory.getBySlug({
     params: {
@@ -21,7 +21,7 @@ export async function generateMetadata({ params }: PageProps<'/store/categories/
     openGraph: {
       title: subCategory?.title,
       description: subCategory?.description,
-      url: `${env.NEXT_PUBLIC_BASE_URL}/store/categories/${slug}`,
+      url: `${env.NEXT_PUBLIC_BASE_URL}/store/${slug}`,
       images: [
         {
           url: subCategory?.image,
@@ -31,7 +31,7 @@ export async function generateMetadata({ params }: PageProps<'/store/categories/
   }
 }
 
-export default async function CartPage({ params }: PageProps<'/store/categories/[categorySlug]/[subCategorySlug]'>) {
+export default async function CartPage({ params }: PageProps<'/store/[categorySlug]/[subCategorySlug]'>) {
   const { categorySlug, subCategorySlug: slug } = await params
   const { data } = await apiServer.subcategory.getBySlug({
     params: {

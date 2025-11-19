@@ -4,7 +4,7 @@ import { CategoryItem } from '@/module/category/category.component.all'
 import { env } from '@/shared/config/env'
 import { notFound } from 'next/navigation'
 
-export async function generateMetadata({ params }: PageProps<'/store/categories/[categorySlug]'>) {
+export async function generateMetadata({ params }: PageProps<'/store/[categorySlug]'>) {
   const { categorySlug: slug } = await params
   const { data } = await apiServer.category.get({
     params: {
@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: PageProps<'/store/categories/
     openGraph: {
       title: category?.title,
       description: category?.description,
-      url: `${env.NEXT_PUBLIC_BASE_URL}/store/categories/${slug}`,
+      url: `${env.NEXT_PUBLIC_BASE_URL}/store/${slug}`,
       images: [
         {
           url: category?.image,
@@ -30,7 +30,7 @@ export async function generateMetadata({ params }: PageProps<'/store/categories/
   }
 }
 
-export default async function CartPage({ params }: PageProps<'/store/categories/[categorySlug]'>) {
+export default async function CartPage({ params }: PageProps<'/store/[categorySlug]'>) {
   const { categorySlug: slug } = await params
   const { data } = await apiServer.category.getCategoryWithSubCategories({
     params: {

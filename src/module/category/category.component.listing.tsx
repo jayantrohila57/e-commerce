@@ -4,6 +4,7 @@ import { BlurImage } from '@/shared/components/ui/image'
 import Link from 'next/link'
 import { Separator } from '@/shared/components/ui/separator'
 import { truncateString } from '@/shared/utils/lib/utils'
+import { Route } from 'next'
 
 export default function CategoriesListing({ data }: { data: GetCategoriesOutput['data'] }) {
   return (
@@ -18,7 +19,7 @@ export default function CategoriesListing({ data }: { data: GetCategoriesOutput[
             key={category.id}
             className="group col-span-1"
           >
-            <Link href={`/store/categories/${category.slug}`}>
+            <Link href={`/store/${category.slug} ` as Route}>
               <Card className="border-none bg-transparent shadow-none">
                 <CardContent className="flex w-full items-center justify-center">
                   <BlurImage

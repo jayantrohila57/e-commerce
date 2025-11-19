@@ -3,7 +3,9 @@ import Section from '@/shared/components/layout/section/section'
 import { notFound } from 'next/navigation'
 import { PDPProduct } from '@/module/product/product-pdp'
 
-export default async function ProductVariantPage({ params }: PageProps<'/store/products/[productSlug]/[variantSlug]'>) {
+export default async function ProductVariantPage({
+  params,
+}: PageProps<'/store/[categorySlug]/[subCategorySlug]/[seriesSlug]/[variantSlug]'>) {
   const { variantSlug } = await params
   const { data } = await apiServer.product.getPDPProductByVariant({
     params: {

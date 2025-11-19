@@ -3,6 +3,7 @@ import { BlurImage } from '@/shared/components/ui/image'
 import Link from 'next/link'
 import { Separator } from '@/shared/components/ui/separator'
 import { GetSubcategoryBySlugOutput } from './subcategory.types'
+import { Route } from 'next'
 
 export const SubCategoryItem = ({ data }: { data: GetSubcategoryBySlugOutput['data'] }) => {
   return (
@@ -18,7 +19,7 @@ export const SubCategoryItem = ({ data }: { data: GetSubcategoryBySlugOutput['da
             className="group col-span-1"
           >
             <Link
-              href={`/store/categories/${data?.subcategoryData?.categorySlug}/${data?.subcategoryData?.slug}/${series?.slug}`}
+              href={`/store/${data?.subcategoryData?.categorySlug}/${data?.subcategoryData?.slug}/${series?.slug}` as Route}
             >
               <Card className="border-none bg-transparent shadow-none">
                 <CardContent className="flex w-full items-center justify-center">

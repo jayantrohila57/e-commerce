@@ -1,6 +1,6 @@
 import { relations } from 'drizzle-orm'
 import { json, pgEnum } from 'drizzle-orm/pg-core'
-import { pgTable, text, timestamp, boolean, numeric, integer, bigint, decimal, index } from 'drizzle-orm/pg-core'
+import { pgTable, text, timestamp, boolean, numeric, integer, bigint, index } from 'drizzle-orm/pg-core'
 
 export const discountTypeEnum = pgEnum('discount_type', ['flat', 'percent'])
 export const orderStatusEnum = pgEnum('order_status', ['pending', 'paid', 'shipped', 'delivered', 'cancelled'])
@@ -289,6 +289,61 @@ export const productVariant = pgTable(
   }),
 )
 
+export const inventoryItem = pgTable('inventory_item', {
+  id: text('id').primaryKey(),
+  variantId: text('variant_id')
+    .notNull()
+    .references(() => productVariant.id),
+  sku: text('sku').notNull().unique(),
+  barcode: text('barcode'),
+  quantity: integer('quantity').notNull().default(0),
+  incoming: integer('incoming').notNull().default(0),
+  reserved: integer('reserved').notNull().default(0),
+  updatedAt: timestamp('updated_at')
+    .defaultNow()
+    .$onUpdate(() => new Date()),
+})
+
+export const inventoryReservation = pgTable('inventory_reservation', {
+  id: text('id').primaryKey(),
+  inventoryId: text('inventory_id')
+    .notNull()
+    .references(() => inventoryItem.id),
+  userId: text('user_id'),
+  quantity: integer('quantity').notNull(),
+  expiresAt: timestamp('expires_at').notNull(),
+  createdAt: timestamp('created_at').defaultNow(),
+})
+
+export const cart = pgTable('cart', {
+  id: text('id').primaryKey(),
+  userId: text('user_id'),
+  sessionId: text('session_id'),
+  updatedAt: timestamp('updated_at')
+    .defaultNow()
+    .$onUpdate(() => new Date()),
+})
+
+export const cartLine = pgTable('cart_line', {
+  id: text('id').primaryKey(),
+  cartId: text('cart_id')
+    .notNull()
+    .references(() => cart.id),
+  variantId: text('variant_id').notNull(),
+  quantity: integer('quantity').notNull(),
+  price: integer('price_snapshot').notNull(),
+})
+
+export const wishlist = pgTable('wishlist', {
+  id: text('id').primaryKey(),
+  userId: text('user_id')
+    .notNull()
+    .references(() => user.id),
+  variantId: text('variant_id').notNull(),
+})
+
+/////////////////////////////////////////////////
+
 export const attributeRelations = relations(attribute, ({ one }) => ({
   series: one(series, {
     fields: [attribute.seriesSlug],
@@ -325,4 +380,62 @@ export const seriesRelations = relations(series, ({ one, many }) => ({
   }),
   attributes: many(attribute),
   products: many(product),
+}))
+
+export const inventoryItemRelations = relations(inventoryItem, ({ one, many }) => ({
+  variant: one(productVariant, {
+    fields: [inventoryItem.variantId],
+    references: [productVariant.id],
+  }),
+  reservations: many(inventoryReservation),
+}))
+
+export const inventoryReservationRelations = relations(inventoryReservation, ({ one }) => ({
+  inventory: one(inventoryItem, {
+    fields: [inventoryReservation.inventoryId],
+    references: [inventoryItem.id],
+  }),
+}))
+
+export const cartRelations = relations(cart, ({ one, many }) => ({
+  user: one(user, {
+    fields: [cart.userId],
+    references: [user.id],
+  }),
+  lines: many(cartLine),
+}))
+
+export const cartLineRelations = relations(cartLine, ({ one }) => ({
+  cart: one(cart, {
+    fields: [cartLine.cartId],
+    references: [cart.id],
+  }),
+  variant: one(productVariant, {
+    fields: [cartLine.variantId],
+    references: [productVariant.id],
+  }),
+}))
+
+export const wishlistRelations = relations(wishlist, ({ one }) => ({
+  user: one(user, {
+    fields: [wishlist.userId],
+    references: [user.id],
+  }),
+  variant: one(productVariant, {
+    fields: [wishlist.variantId],
+    references: [productVariant.id],
+  }),
+}))
+
+export const productVariantFullRelations = relations(productVariant, ({ one, many }) => ({
+  product: one(product, {
+    fields: [productVariant.productId],
+    references: [product.id],
+  }),
+  inventory: one(inventoryItem, {
+    fields: [productVariant.id],
+    references: [inventoryItem.variantId],
+  }),
+  cartLines: many(cartLine),
+  wishlists: many(wishlist),
 }))

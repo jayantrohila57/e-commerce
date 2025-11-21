@@ -36,7 +36,7 @@ export function FormSection({ title, description, children, className, required 
         </h2>
         {description ? <p className="text-muted-foreground text-xs">{description}</p> : null}
       </div>
-      <div className="space-y-4 py-1 pr-0.5">{children}</div>
+      <div className="h-full w-full space-y-4 py-1 pr-0.5">{children}</div>
     </div>
   )
 }

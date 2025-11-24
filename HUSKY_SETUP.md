@@ -68,3 +68,4 @@ pnpm run prepare
 
 - `pnpm run prepare` (or `pnpm exec husky install`) creates the Husky helper files (`.husky/_/husky.sh`) and sets Git's `core.hooksPath` so hooks actually run.
 - If you commit `.husky/*` before running `pnpm install`, Git won't run the hooks until `prepare`/`husky install` has been executed locally.
+\n\n# test: hooks compatibility update

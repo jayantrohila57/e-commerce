@@ -13,7 +13,7 @@ export const appRouter = createTRPCRouter({
   series: seriesRouter,
   product: productRouter,
   productVariant: productVariantRouter,
-  inventory: inventoryRouter,  
+  inventory: inventoryRouter,
 })
 
 export type AppRouter = typeof appRouter

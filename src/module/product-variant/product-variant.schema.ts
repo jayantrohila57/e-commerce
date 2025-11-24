@@ -86,47 +86,10 @@ const paginationSchema = z.object({
   offset: z.number().min(0).default(0),
 })
 
-const searchSchema = z.object({
-  search: z.string().min(2).max(100).optional(),
-  priceModifierType: priceModifierTypeEnum.optional(),
-})
-
 // =========================
 // CONTRACT
 // =========================
 export const productVariantContract = {
-  get: {
-    input: z.object({
-      params: z.object({
-        id: z.string().uuid().optional(),
-        slug: z.string().optional(),
-      }),
-    }),
-    output: detailedResponse(productVariantSelectSchema.nullable()),
-  },
-
-  getMany: {
-    input: z.object({
-      query: searchSchema.merge(paginationSchema).optional(),
-    }),
-    output: detailedResponse(z.array(productVariantSelectSchema)),
-  },
-
-  getBySlug: {
-    input: z.object({
-      params: z.object({
-        slug: z.string().min(1),
-      }),
-    }),
-    output: detailedResponse(productVariantSelectSchema.nullable()),
-  },
-  getByIds: {
-    input: z.object({
-      ids: z.array(z.string().uuid()).min(1),
-    }),
-    output: detailedResponse(z.array(productVariantSelectSchema)),
-  },
-
   create: {
     input: z.object({
       body: productVariantInsertSchema,
@@ -147,15 +110,5 @@ export const productVariantContract = {
       params: z.object({ id: z.string() }),
     }),
     output: detailedResponse(productVariantSelectSchema.pick({ id: true }).nullable()),
-  },
-
-  search: {
-    input: z.object({
-      query: z.object({
-        q: z.string().min(2),
-        limit: z.number().max(50).default(10),
-      }),
-    }),
-    output: detailedResponse(z.array(productVariantSelectSchema)),
   },
 }

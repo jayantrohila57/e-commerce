@@ -71,15 +71,11 @@ const searchSchema = z.object({
 
 // --- Contract ---
 export const subcategoryContract = {
-  get: {
+  getMany: {
     input: z.object({
-      params: z.object({
-        id: z.string().uuid().optional(),
-        slug: z.string().optional(),
-        categorySlug: z.string().optional(),
-      }),
+      query: searchSchema.merge(paginationSchema).optional(),
     }),
-    output: detailedResponse(subcategorySelectSchema.nullable()),
+    output: detailedResponse(z.array(subcategorySelectSchema)),
   },
 
   getBySlug: {
@@ -97,13 +93,6 @@ export const subcategoryContract = {
         })
         .nullable(),
     ),
-  },
-
-  getMany: {
-    input: z.object({
-      query: searchSchema.merge(paginationSchema).optional(),
-    }),
-    output: detailedResponse(z.array(subcategorySelectSchema)),
   },
 
   create: {
@@ -126,16 +115,6 @@ export const subcategoryContract = {
       params: z.object({ id: z.string() }),
     }),
     output: detailedResponse(subcategorySelectSchema.pick({ id: true }).nullable()),
-  },
-
-  search: {
-    input: z.object({
-      query: z.object({
-        q: z.string().min(2),
-        limit: z.number().max(50).default(10),
-      }),
-    }),
-    output: detailedResponse(z.array(subcategorySelectSchema)),
   },
 }
 

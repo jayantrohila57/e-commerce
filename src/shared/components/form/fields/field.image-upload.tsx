@@ -53,7 +53,7 @@ export const ImageUploadText: React.FC<FormInputProps> = (props) => {
         >
           <FormLabel required={props.required}>{props.label}</FormLabel>
           <FormControl>
-            <div className="h-full w-full relative">
+            <div className="relative h-full w-full">
               <div
                 role="button"
                 onClick={openFileDialog}
@@ -63,7 +63,7 @@ export const ImageUploadText: React.FC<FormInputProps> = (props) => {
                 onDrop={handleDrop}
                 data-dragging={isDragging || undefined}
                 className={cn(
-                  'hover:bg-background dark:bg-input/30 data-[dragging=true]:bg-background has-[input:focus]:border-ring has-[input:focus]:ring-ring/50 bg-background border-input relative flex aspect-video max-h-80  flex-col items-center justify-center overflow-hidden rounded-md border p-4 shadow-xs transition-colors has-disabled:pointer-events-none has-disabled:opacity-50 has-[img]:border-none has-[input:focus]:ring-[3px]',
+                  'hover:bg-background dark:bg-input/30 data-[dragging=true]:bg-background has-[input:focus]:border-ring has-[input:focus]:ring-ring/50 bg-background border-input relative flex aspect-video max-h-80 flex-col items-center justify-center overflow-hidden rounded-md border p-4 shadow-xs transition-colors has-disabled:pointer-events-none has-disabled:opacity-50 has-[img]:border-none has-[input:focus]:ring-[3px]',
                   fieldState.error && 'border-destructive focus-visible:ring-destructive',
                 )}
               >

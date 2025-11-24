@@ -94,12 +94,8 @@
           "name": "account_user_id_user_id_fk",
           "tableFrom": "account",
           "tableTo": "user",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -185,12 +181,8 @@
           "name": "attribute_series_slug_series_slug_fk",
           "tableFrom": "attribute",
           "tableTo": "series",
-          "columnsFrom": [
-            "series_slug"
-          ],
-          "columnsTo": [
-            "slug"
-          ],
+          "columnsFrom": ["series_slug"],
+          "columnsTo": ["slug"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -200,9 +192,7 @@
         "attribute_slug_unique": {
           "name": "attribute_slug_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "slug"
-          ]
+          "columns": ["slug"]
         }
       },
       "policies": {},
@@ -288,12 +278,8 @@
           "name": "cart_line_cart_id_cart_id_fk",
           "tableFrom": "cart_line",
           "tableTo": "cart",
-          "columnsFrom": [
-            "cart_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["cart_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -467,9 +453,7 @@
         "category_slug_unique": {
           "name": "category_slug_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "slug"
-          ]
+          "columns": ["slug"]
         }
       },
       "policies": {},
@@ -539,12 +523,8 @@
           "name": "inventory_item_variant_id_product_variant_id_fk",
           "tableFrom": "inventory_item",
           "tableTo": "product_variant",
-          "columnsFrom": [
-            "variant_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["variant_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -554,9 +534,7 @@
         "inventory_item_sku_unique": {
           "name": "inventory_item_sku_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "sku"
-          ]
+          "columns": ["sku"]
         }
       },
       "policies": {},
@@ -611,12 +589,8 @@
           "name": "inventory_reservation_inventory_id_inventory_item_id_fk",
           "tableFrom": "inventory_reservation",
           "tableTo": "inventory_item",
-          "columnsFrom": [
-            "inventory_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["inventory_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -749,12 +723,8 @@
           "name": "passkey_user_id_user_id_fk",
           "tableFrom": "passkey",
           "tableTo": "user",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -966,12 +936,8 @@
           "name": "product_category_slug_category_slug_fk",
           "tableFrom": "product",
           "tableTo": "category",
-          "columnsFrom": [
-            "category_slug"
-          ],
-          "columnsTo": [
-            "slug"
-          ],
+          "columnsFrom": ["category_slug"],
+          "columnsTo": ["slug"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -979,12 +945,8 @@
           "name": "product_subcategory_slug_subcategory_slug_fk",
           "tableFrom": "product",
           "tableTo": "subcategory",
-          "columnsFrom": [
-            "subcategory_slug"
-          ],
-          "columnsTo": [
-            "slug"
-          ],
+          "columnsFrom": ["subcategory_slug"],
+          "columnsTo": ["slug"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -992,12 +954,8 @@
           "name": "product_series_slug_series_slug_fk",
           "tableFrom": "product",
           "tableTo": "series",
-          "columnsFrom": [
-            "series_slug"
-          ],
-          "columnsTo": [
-            "slug"
-          ],
+          "columnsFrom": ["series_slug"],
+          "columnsTo": ["slug"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -1007,9 +965,7 @@
         "product_slug_unique": {
           "name": "product_slug_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "slug"
-          ]
+          "columns": ["slug"]
         }
       },
       "policies": {},
@@ -1111,12 +1067,8 @@
           "name": "product_variant_product_id_product_id_fk",
           "tableFrom": "product_variant",
           "tableTo": "product",
-          "columnsFrom": [
-            "product_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["product_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -1126,9 +1078,7 @@
         "product_variant_slug_unique": {
           "name": "product_variant_slug_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "slug"
-          ]
+          "columns": ["slug"]
         }
       },
       "policies": {},
@@ -1340,12 +1290,8 @@
           "name": "series_subcategory_slug_subcategory_slug_fk",
           "tableFrom": "series",
           "tableTo": "subcategory",
-          "columnsFrom": [
-            "subcategory_slug"
-          ],
-          "columnsTo": [
-            "slug"
-          ],
+          "columnsFrom": ["subcategory_slug"],
+          "columnsTo": ["slug"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -1355,9 +1301,7 @@
         "series_slug_unique": {
           "name": "series_slug_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "slug"
-          ]
+          "columns": ["slug"]
         }
       },
       "policies": {},
@@ -1430,12 +1374,8 @@
           "name": "session_user_id_user_id_fk",
           "tableFrom": "session",
           "tableTo": "user",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1445,9 +1385,7 @@
         "session_token_unique": {
           "name": "session_token_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "token"
-          ]
+          "columns": ["token"]
         }
       },
       "policies": {},
@@ -1622,12 +1560,8 @@
           "name": "subcategory_category_slug_category_slug_fk",
           "tableFrom": "subcategory",
           "tableTo": "category",
-          "columnsFrom": [
-            "category_slug"
-          ],
-          "columnsTo": [
-            "slug"
-          ],
+          "columnsFrom": ["category_slug"],
+          "columnsTo": ["slug"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -1637,9 +1571,7 @@
         "subcategory_slug_unique": {
           "name": "subcategory_slug_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "slug"
-          ]
+          "columns": ["slug"]
         }
       },
       "policies": {},
@@ -1681,12 +1613,8 @@
           "name": "two_factor_user_id_user_id_fk",
           "tableFrom": "two_factor",
           "tableTo": "user",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1786,9 +1714,7 @@
         "user_email_unique": {
           "name": "user_email_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "email"
-          ]
+          "columns": ["email"]
         }
       },
       "policies": {},
@@ -1875,12 +1801,8 @@
           "name": "wishlist_user_id_user_id_fk",
           "tableFrom": "wishlist",
           "tableTo": "user",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -1896,79 +1818,42 @@
     "public.discount_type": {
       "name": "discount_type",
       "schema": "public",
-      "values": [
-        "flat",
-        "percent"
-      ]
+      "values": ["flat", "percent"]
     },
     "public.display_type": {
       "name": "display_type",
       "schema": "public",
-      "values": [
-        "grid",
-        "carousel",
-        "banner",
-        "list",
-        "featured"
-      ]
+      "values": ["grid", "carousel", "banner", "list", "featured"]
     },
     "public.order_status": {
       "name": "order_status",
       "schema": "public",
-      "values": [
-        "pending",
-        "paid",
-        "shipped",
-        "delivered",
-        "cancelled"
-      ]
+      "values": ["pending", "paid", "shipped", "delivered", "cancelled"]
     },
     "public.payment_provider": {
       "name": "payment_provider",
       "schema": "public",
-      "values": [
-        "stripe",
-        "razorpay",
-        "paypal",
-        "cod"
-      ]
+      "values": ["stripe", "razorpay", "paypal", "cod"]
     },
     "public.payment_status": {
       "name": "payment_status",
       "schema": "public",
-      "values": [
-        "pending",
-        "completed",
-        "failed",
-        "refunded"
-      ]
+      "values": ["pending", "completed", "failed", "refunded"]
     },
     "public.product_status": {
       "name": "product_status",
       "schema": "public",
-      "values": [
-        "draft",
-        "archive",
-        "live"
-      ]
+      "values": ["draft", "archive", "live"]
     },
     "public.shipment_status": {
       "name": "shipment_status",
       "schema": "public",
-      "values": [
-        "pending",
-        "in_transit",
-        "delivered"
-      ]
+      "values": ["pending", "in_transit", "delivered"]
     },
     "public.visibility": {
       "name": "visibility",
       "schema": "public",
-      "values": [
-        "public",
-        "private",
-        "hidden"
-      ]
+      "values": ["public", "private", "hidden"]
     }
   },
   "schemas": {},

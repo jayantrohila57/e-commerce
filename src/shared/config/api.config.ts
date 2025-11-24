@@ -275,42 +275,12 @@ export const MESSAGE = {
       FAILED: 'Failed to delete category.',
       ERROR: 'Unexpected error while deleting category.',
     },
-    RESTORE: {
-      SUCCESS: 'Category restored successfully.',
-      FAILED: 'Failed to restore category.',
-      ERROR: 'Unexpected error while restoring category.',
-    },
-    TOGGLE_VISIBILITY: {
-      SUCCESS: 'Category visibility updated successfully.',
-      FAILED: 'Failed to update category visibility.',
-      ERROR: 'Unexpected error while updating category visibility.',
-    },
-    TOGGLE_FEATURED: {
-      SUCCESS: 'Category featured status updated successfully.',
-      FAILED: 'Failed to update category featured status.',
-      ERROR: 'Unexpected error while updating category featured status.',
-    },
-    REORDER: {
-      SUCCESS: 'Categories reordered successfully.',
-      FAILED: 'Failed to reorder categories.',
-      ERROR: 'Unexpected error while reordering categories.',
-    },
-    SEARCH: {
-      SUCCESS: 'Category search completed successfully.',
-      FAILED: 'No categories matched the search query.',
-      ERROR: 'Unexpected error while searching categories.',
-    },
   },
   SUBCATEGORY: {
     CREATE: {
       SUCCESS: 'Subcategory created successfully.',
       FAILED: 'Failed to create subcategory.',
       ERROR: 'Unexpected error while creating subcategory.',
-    },
-    GET: {
-      SUCCESS: 'Subcategory retrieved successfully.',
-      FAILED: 'Subcategory not found.',
-      ERROR: 'Unexpected error while retrieving subcategory.',
     },
     GET_MANY: {
       SUCCESS: 'Subcategories retrieved successfully.',
@@ -331,31 +301,6 @@ export const MESSAGE = {
       SUCCESS: 'Subcategory deleted successfully.',
       FAILED: 'Failed to delete subcategory.',
       ERROR: 'Unexpected error while deleting subcategory.',
-    },
-    RESTORE: {
-      SUCCESS: 'Subcategory restored successfully.',
-      FAILED: 'Failed to restore subcategory.',
-      ERROR: 'Unexpected error while restoring subcategory.',
-    },
-    TOGGLE_VISIBILITY: {
-      SUCCESS: 'Subcategory visibility updated successfully.',
-      FAILED: 'Failed to update subcategory visibility.',
-      ERROR: 'Unexpected error while updating subcategory visibility.',
-    },
-    TOGGLE_FEATURED: {
-      SUCCESS: 'Subcategory featured status updated successfully.',
-      FAILED: 'Failed to update subcategory featured status.',
-      ERROR: 'Unexpected error while updating subcategory featured status.',
-    },
-    REORDER: {
-      SUCCESS: 'Subcategories reordered successfully.',
-      FAILED: 'Failed to reorder subcategories.',
-      ERROR: 'Unexpected error while reordering subcategories.',
-    },
-    SEARCH: {
-      SUCCESS: 'Subcategory search completed successfully.',
-      FAILED: 'No subcategories matched the search query.',
-      ERROR: 'Unexpected error while searching subcategories.',
     },
   },
   DISCOUNT: {
@@ -422,21 +367,6 @@ export const MESSAGE = {
       FAILED: 'Product not found.',
       ERROR: 'Unexpected error while retrieving product.',
     },
-    GET_MANY: {
-      SUCCESS: 'Products retrieved successfully.',
-      FAILED: 'No products found.',
-      ERROR: 'Unexpected error while retrieving products.',
-    },
-    SEARCH_PRODUCTS: {
-      SUCCESS: 'Products searched successfully.',
-      FAILED: 'No products found.',
-      ERROR: 'Unexpected error while searching products.',
-    },
-    GET_PRODUCTS_BY_CATEGORY: {
-      SUCCESS: 'Products by category retrieved successfully.',
-      FAILED: 'No products found in category.',
-      ERROR: 'Unexpected error while retrieving products by category.',
-    },
     UPDATE: {
       SUCCESS: 'Product updated successfully.',
       FAILED: 'Failed to update product.',
@@ -454,26 +384,6 @@ export const MESSAGE = {
     },
   },
   PRODUCT_VARIANT: {
-    GET: {
-      SUCCESS: 'Product variant retrieved successfully.',
-      FAILED: 'Product variant not found.',
-      ERROR: 'Unexpected error while retrieving product variant.',
-    },
-    GET_MANY: {
-      SUCCESS: 'Product variants retrieved successfully.',
-      FAILED: 'No product variants found.',
-      ERROR: 'Unexpected error while retrieving product variants.',
-    },
-    GET_BY_SLUG: {
-      SUCCESS: 'Product variant retrieved successfully by slug.',
-      FAILED: 'Product variant not found with the given slug.',
-      ERROR: 'Unexpected error while retrieving product variant by slug.',
-    },
-    GET_BY_IDS: {
-      SUCCESS: 'Product variants retrieved successfully by IDs.',
-      FAILED: 'No product variants found with the given IDs.',
-      ERROR: 'Unexpected error while retrieving product variants by IDs.',
-    },
     CREATE: {
       SUCCESS: 'Product variant created successfully.',
       FAILED: 'Failed to create product variant.',
@@ -489,33 +399,12 @@ export const MESSAGE = {
       FAILED: 'Failed to delete product variant.',
       ERROR: 'Unexpected error while deleting product variant.',
     },
-    SEARCH: {
-      SUCCESS: 'Product variants searched successfully.',
-      FAILED: 'No product variants found matching the search criteria.',
-      ERROR: 'Unexpected error while searching product variants.',
-    },
   },
   SERIES: {
     CREATE: {
       SUCCESS: 'Series created successfully.',
       FAILED: 'Failed to create series.',
       ERROR: 'Unexpected error while creating series.',
-    },
-    GET: {
-      SUCCESS: 'Series retrieved successfully.',
-      FAILED: 'Series not found.',
-      ERROR: 'Unexpected error while retrieving series.',
-    },
-    GET_MANY: {
-      SUCCESS: 'Series retrieved successfully.',
-      FAILED: 'No series found.',
-      EMPTY: 'No series found matching the criteria.',
-      ERROR: 'Unexpected error while retrieving series.',
-    },
-    GET_BY_SLUG: {
-      SUCCESS: 'Series retrieved successfully.',
-      FAILED: 'Series not found.',
-      ERROR: 'Unexpected error while retrieving series.',
     },
     UPDATE: {
       SUCCESS: 'Series updated successfully.',
@@ -526,31 +415,6 @@ export const MESSAGE = {
       SUCCESS: 'Series deleted successfully.',
       FAILED: 'Failed to delete series.',
       ERROR: 'Unexpected error while deleting series.',
-    },
-    RESTORE: {
-      SUCCESS: 'Series restored successfully.',
-      FAILED: 'Failed to restore series.',
-      ERROR: 'Unexpected error while restoring series.',
-    },
-    TOGGLE_VISIBILITY: {
-      SUCCESS: 'Series visibility updated successfully.',
-      FAILED: 'Failed to update series visibility.',
-      ERROR: 'Unexpected error while updating series visibility.',
-    },
-    TOGGLE_FEATURED: {
-      SUCCESS: 'Series featured status updated successfully.',
-      FAILED: 'Failed to update series featured status.',
-      ERROR: 'Unexpected error while updating series featured status.',
-    },
-    REORDER: {
-      SUCCESS: 'Series reordered successfully.',
-      FAILED: 'Failed to reorder series.',
-      ERROR: 'Unexpected error while reordering series.',
-    },
-    SEARCH: {
-      SUCCESS: 'Series search completed successfully.',
-      FAILED: 'No series found matching the search criteria.',
-      ERROR: 'Unexpected error while searching series.',
     },
   },
   REVIEW: {

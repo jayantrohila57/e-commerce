@@ -222,9 +222,9 @@ export default function VariantForm({ productSlug, productId }: VariantFormProps
             {({ index, add, remove, length }) => (
               <FormItem
                 key={index}
-                className="flex flex-row border p-2 rounded-md bg-input/30 items-center justify-center gap-4"
+                className="bg-input/30 flex flex-row items-center justify-center gap-4 rounded-md border p-2"
               >
-                <div className="grid grid-cols-1 gap-4 p-4 md:grid-cols-2 w-full justify-start items-center">
+                <div className="grid w-full grid-cols-1 items-center justify-start gap-4 p-4 md:grid-cols-2">
                   <Form.Field
                     {...{
                       name: `body.attributes.${index}.title`,

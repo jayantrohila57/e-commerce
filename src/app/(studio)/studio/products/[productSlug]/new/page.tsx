@@ -32,7 +32,10 @@ export default async function NewVariantPage({
             title="Create New Variant"
             description="Add a new variant to organize your products"
           >
-            <VariantForm productSlug={slug} productId={id as string} />
+            <VariantForm
+              productSlug={slug}
+              productId={id as string}
+            />
           </DashboardSection>
         </Shell.Section>
       </Shell>

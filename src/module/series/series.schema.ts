@@ -1,5 +1,4 @@
 import z from 'zod/v3'
-import { attributeSelectSchema } from '../attribute/attribute.schema'
 
 export const detailedResponse = <T extends z.ZodTypeAny>(dataSchema: T) =>
   z.object({
@@ -49,11 +48,6 @@ const paginationSchema = z.object({
   offset: z.number().min(0).default(0),
 })
 
-const searchSchema = z.object({
-  search: z.string().min(2).max(100).optional(),
-  subcategorySlug: z.string().min(1).optional(),
-})
-
 export const seriesSelectSchema = seriesBaseSchema
 
 export const seriesInsertSchema = seriesBaseSchema.omit({
@@ -66,46 +60,6 @@ export const seriesInsertSchema = seriesBaseSchema.omit({
 export const seriesUpdateSchema = seriesBaseSchema.partial()
 
 export const seriesContract = {
-  get: {
-    input: z.object({
-      params: z.object({
-        id: z.string(),
-      }),
-    }),
-    output: detailedResponse(seriesSelectSchema.nullable()),
-  },
-
-  getBySlug: {
-    input: z.object({
-      params: z.object({
-        slug: z.string(),
-      }),
-    }),
-    output: detailedResponse(
-      z.object({
-        seriesData: seriesSelectSchema.nullable(),
-        attributeData: z.array(attributeSelectSchema).nullable(),
-      }),
-    ),
-  },
-
-  getMany: {
-    input: z.object({
-      query: searchSchema.merge(paginationSchema).optional(),
-    }),
-    output: detailedResponse(z.array(seriesSelectSchema)),
-  },
-
-  getBySubcategory: {
-    input: z.object({
-      params: z.object({
-        subcategorySlug: z.string().min(1),
-      }),
-      query: paginationSchema.optional(),
-    }),
-    output: detailedResponse(z.array(seriesSelectSchema)),
-  },
-
   create: {
     input: z.object({
       body: seriesInsertSchema,

@@ -1,71 +1,15 @@
 import { createTRPCRouter, protectedProcedure, publicProcedure } from '@/core/api/api.methods'
-import { debugError } from '@/shared/utils/lib/logger.utils'
-import { API_RESPONSE } from '@/shared/config/api.utils'
 import { MESSAGE, STATUS } from '@/shared/config/api.config'
+import { API_RESPONSE } from '@/shared/config/api.utils'
+import { debugError } from '@/shared/utils/lib/logger.utils'
 
 import { db } from '@/core/db/db'
 import { product } from '@/core/db/db.schema'
-import { eq, and, isNull, ilike } from 'drizzle-orm'
+import { and, eq, ilike, isNull } from 'drizzle-orm'
 import { v4 as uuidv4 } from 'uuid'
 import { productContract } from './product.schema'
 
 export const productRouter = createTRPCRouter({
-  get: publicProcedure
-    .input(productContract.get.input)
-    .output(productContract.get.output)
-    .query(async ({ input }) => {
-      try {
-        const { id, slug } = input.params
-
-        if (!id && !slug) {
-          return API_RESPONSE(STATUS.FAILED, MESSAGE.PRODUCT.GET.FAILED, null)
-        }
-
-        const output = await db.query.product.findFirst({
-          where: (p, { eq, and, isNull }) => {
-            const conditions = []
-            if (id) conditions.push(eq(p.id, id))
-            if (slug) conditions.push(eq(p.slug, slug))
-            conditions.push(isNull(p.deletedAt))
-            return and(...conditions)
-          },
-        })
-
-        return API_RESPONSE(
-          output ? STATUS.SUCCESS : STATUS.FAILED,
-          output ? MESSAGE.PRODUCT.GET.SUCCESS : MESSAGE.PRODUCT.GET.FAILED,
-          output ?? null,
-        )
-      } catch (err) {
-        return API_RESPONSE(STATUS.ERROR, MESSAGE.PRODUCT.GET.ERROR, null, err as Error)
-      }
-    }),
-  getMany: publicProcedure
-    .input(productContract.getMany.input)
-    .output(productContract.getMany.output)
-    .query(async ({ input }) => {
-      try {
-        const { limit = 20, offset = 0 } = input.query ?? {}
-
-        const conditions = [isNull(product.deletedAt)]
-
-        const output = await db.query.product.findMany({
-          where: and(...conditions),
-          limit: Math.min(limit, 100),
-          offset,
-          orderBy: (p, { desc }) => [desc(p.createdAt)],
-        })
-
-        return API_RESPONSE(
-          output.length ? STATUS.SUCCESS : STATUS.FAILED,
-          output.length ? MESSAGE.PRODUCT.GET_MANY.SUCCESS : MESSAGE.PRODUCT.GET_MANY.FAILED,
-          output,
-        )
-      } catch (err) {
-        debugError('PRODUCT:GET_MANY:ERROR', err)
-        return API_RESPONSE(STATUS.ERROR, MESSAGE.PRODUCT.GET_MANY.ERROR, null, err as Error)
-      }
-    }),
   getBySlug: publicProcedure
     .input(productContract.getBySlug.input)
     .output(productContract.getBySlug.output)

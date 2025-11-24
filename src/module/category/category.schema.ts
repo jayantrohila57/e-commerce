@@ -114,7 +114,7 @@ export const categoryContract = {
     ),
   },
 
-  getBySlug: {
+  getCategoryWithSubCategories: {
     input: z.object({
       params: z.object({
         slug: z.string().min(1),
@@ -149,15 +149,5 @@ export const categoryContract = {
       params: z.object({ id: z.string() }),
     }),
     output: detailedResponse(categorySelectSchema.pick({ id: true }).nullable()),
-  },
-
-  search: {
-    input: z.object({
-      query: z.object({
-        q: z.string().min(2),
-        limit: z.number().max(50).default(10),
-      }),
-    }),
-    output: detailedResponse(z.array(categorySelectSchema)),
   },
 }

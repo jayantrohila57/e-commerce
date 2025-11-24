@@ -1,12 +1,12 @@
-import { categoryContract } from './category.schema'
 import { createTRPCRouter, protectedProcedure, publicProcedure } from '@/core/api/api.methods'
-import { debugError } from '@/shared/utils/lib/logger.utils'
 import { db } from '@/core/db/db'
-import { eq, and, ilike } from 'drizzle-orm'
 import { category } from '@/core/db/db.schema'
-import { v4 as uuidv4 } from 'uuid'
 import { MESSAGE, STATUS } from '@/shared/config/api.config'
 import { API_RESPONSE } from '@/shared/config/api.utils'
+import { debugError } from '@/shared/utils/lib/logger.utils'
+import { and, eq, ilike } from 'drizzle-orm'
+import { v4 as uuidv4 } from 'uuid'
+import { categoryContract } from './category.schema'
 
 export const categoryRouter = createTRPCRouter({
   get: publicProcedure
@@ -108,6 +108,7 @@ export const categoryRouter = createTRPCRouter({
         return API_RESPONSE(STATUS.ERROR, MESSAGE.CATEGORY.GET_MANY_WITH_SUBCATEGORIES.ERROR, null, err as Error)
       }
     }),
+
   getManyByTypes: publicProcedure
     .input(categoryContract.getManyByTypes.input)
     .output(categoryContract.getManyByTypes.output)
@@ -157,8 +158,8 @@ export const categoryRouter = createTRPCRouter({
     }),
 
   getCategoryWithSubCategories: publicProcedure
-    .input(categoryContract.getBySlug.input)
-    .output(categoryContract.getBySlug.output)
+    .input(categoryContract.getCategoryWithSubCategories.input)
+    .output(categoryContract.getCategoryWithSubCategories.output)
     .query(async ({ input }) => {
       try {
         const responseData = await db.query.category.findFirst({
@@ -287,26 +288,6 @@ export const categoryRouter = createTRPCRouter({
         )
       } catch (err) {
         return API_RESPONSE(STATUS.ERROR, MESSAGE.CATEGORY.DELETE.ERROR, null, err as Error)
-      }
-    }),
-
-  search: protectedProcedure
-    .input(categoryContract.search.input)
-    .output(categoryContract.search.output)
-    .query(async ({ input }) => {
-      try {
-        const output = await db.query.category.findMany({
-          where: ilike(category.title, `%${input.query.q}%`),
-          limit: input.query.limit ?? 10,
-          orderBy: (c, { asc }) => [asc(c.displayOrder)],
-        })
-        return API_RESPONSE(
-          output?.length ? STATUS.SUCCESS : STATUS.FAILED,
-          output?.length ? MESSAGE.CATEGORY.SEARCH.SUCCESS : MESSAGE.CATEGORY.SEARCH.FAILED,
-          output ?? [],
-        )
-      } catch (err) {
-        return API_RESPONSE(STATUS.ERROR, MESSAGE.CATEGORY.SEARCH.ERROR, [], err as Error)
       }
     }),
 })

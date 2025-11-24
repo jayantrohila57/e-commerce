@@ -1,37 +1,13 @@
-import { subcategoryContract } from './subcategory.schema'
 import { createTRPCRouter, protectedProcedure, publicProcedure } from '@/core/api/api.methods'
-import { STATUS, MESSAGE } from '@/shared/config/api.config'
-import { API_RESPONSE } from '@/shared/config/api.utils'
 import { db } from '@/core/db/db'
 import { subcategory } from '@/core/db/db.schema'
-import { eq, and, ilike } from 'drizzle-orm'
+import { MESSAGE, STATUS } from '@/shared/config/api.config'
+import { API_RESPONSE } from '@/shared/config/api.utils'
+import { and, eq, ilike } from 'drizzle-orm'
 import { v4 as uuidv4 } from 'uuid'
+import { subcategoryContract } from './subcategory.schema'
 
 export const subcategoryRouter = createTRPCRouter({
-  get: publicProcedure
-    .input(subcategoryContract.get.input)
-    .output(subcategoryContract.get.output)
-    .query(async ({ input }) => {
-      try {
-        const output =
-          (await db.query.subcategory.findFirst({
-            where: (s, { eq }) => {
-              if (input.params?.id) return eq(s.id, String(input.params.id))
-              if (input.params?.slug) return eq(s.slug, String(input.params.slug))
-              return undefined
-            },
-          })) ?? null
-
-        return API_RESPONSE(
-          output ? STATUS.SUCCESS : STATUS.FAILED,
-          output ? MESSAGE.SUBCATEGORY.GET.SUCCESS : MESSAGE.SUBCATEGORY.GET.FAILED,
-          output,
-        )
-      } catch (err) {
-        return API_RESPONSE(STATUS.ERROR, MESSAGE.SUBCATEGORY.GET.ERROR, null, err as Error)
-      }
-    }),
-
   getMany: publicProcedure
     .input(subcategoryContract.getMany.input)
     .output(subcategoryContract.getMany.output)
@@ -174,27 +150,6 @@ export const subcategoryRouter = createTRPCRouter({
         )
       } catch (err) {
         return API_RESPONSE(STATUS.ERROR, MESSAGE.SUBCATEGORY.DELETE.ERROR, null, err as Error)
-      }
-    }),
-
-  search: protectedProcedure
-    .input(subcategoryContract.search.input)
-    .output(subcategoryContract.search.output)
-    .query(async ({ input }) => {
-      try {
-        const output = await db.query.subcategory.findMany({
-          where: ilike(subcategory.title, `%${input.query.q}%`),
-          limit: input.query.limit ?? 10,
-          orderBy: (s, { asc }) => [asc(s.displayOrder)],
-        })
-
-        return API_RESPONSE(
-          output?.length ? STATUS.SUCCESS : STATUS.FAILED,
-          output?.length ? MESSAGE.SUBCATEGORY.SEARCH.SUCCESS : MESSAGE.SUBCATEGORY.SEARCH.FAILED,
-          output ?? [],
-        )
-      } catch (err) {
-        return API_RESPONSE(STATUS.ERROR, MESSAGE.SUBCATEGORY.SEARCH.ERROR, [], err as Error)
       }
     }),
 })

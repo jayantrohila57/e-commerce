@@ -1,8 +1,5 @@
 import z from 'zod/v3'
 
-// =========================
-// BASE SCHEMA
-// =========================
 export const inventoryBaseSchema = z.object({
   id: z.string().min(1),
   variantId: z.string().min(1),
@@ -17,9 +14,6 @@ export const inventoryBaseSchema = z.object({
     .nullable(),
 })
 
-// =========================
-// SELECT / INSERT / UPDATE
-// =========================
 export const inventorySelectSchema = inventoryBaseSchema
 
 export const inventoryInsertSchema = inventoryBaseSchema.omit({
@@ -29,9 +23,6 @@ export const inventoryInsertSchema = inventoryBaseSchema.omit({
 
 export const inventoryUpdateSchema = inventoryBaseSchema.partial()
 
-// =========================
-// DETAILED RESPONSE WRAPPER
-// =========================
 export const detailedResponse = <T extends z.ZodTypeAny>(dataSchema: T) =>
   z.object({
     status: z.enum(['success', 'error', 'failed']).default('success'),
@@ -46,9 +37,6 @@ export const detailedResponse = <T extends z.ZodTypeAny>(dataSchema: T) =>
       .optional(),
   })
 
-// =========================
-// PAGINATION + SEARCH
-// =========================
 const paginationSchema = z.object({
   limit: z.number().min(1).max(100).default(20),
   offset: z.number().min(0).default(0),
@@ -58,11 +46,7 @@ const searchSchema = z.object({
   search: z.string().min(2).max(100).optional(),
 })
 
-// =========================
-// CONTRACTS
-// =========================
 export const inventoryContract = {
-  // GET ONE
   get: {
     input: z.object({
       params: z.object({
@@ -73,7 +57,6 @@ export const inventoryContract = {
     output: detailedResponse(inventorySelectSchema.nullable()),
   },
 
-  // GET MANY
   getMany: {
     input: z.object({
       query: searchSchema.merge(paginationSchema).optional(),
@@ -81,7 +64,6 @@ export const inventoryContract = {
     output: detailedResponse(z.array(inventorySelectSchema)),
   },
 
-  // GET BY VARIANT ID
   getByVariantId: {
     input: z.object({
       params: z.object({
@@ -91,7 +73,6 @@ export const inventoryContract = {
     output: detailedResponse(inventorySelectSchema.nullable()),
   },
 
-  // GET BY SKU
   getBySku: {
     input: z.object({
       params: z.object({
@@ -101,7 +82,6 @@ export const inventoryContract = {
     output: detailedResponse(inventorySelectSchema.nullable()),
   },
 
-  // CREATE
   create: {
     input: z.object({
       data: inventoryInsertSchema,
@@ -109,7 +89,6 @@ export const inventoryContract = {
     output: detailedResponse(inventorySelectSchema),
   },
 
-  // UPDATE
   update: {
     input: z.object({
       params: z.object({
@@ -120,7 +99,6 @@ export const inventoryContract = {
     output: detailedResponse(inventorySelectSchema),
   },
 
-  // DELETE
   delete: {
     input: z.object({
       params: z.object({
@@ -130,7 +108,6 @@ export const inventoryContract = {
     output: detailedResponse(z.object({ deleted: z.boolean() })),
   },
 
-  // UPDATE STOCK
   updateStock: {
     input: z.object({
       params: z.object({
@@ -145,7 +122,6 @@ export const inventoryContract = {
     output: detailedResponse(inventorySelectSchema),
   },
 
-  // SEARCH
   search: {
     input: z.object({
       query: searchSchema.merge(paginationSchema).optional(),

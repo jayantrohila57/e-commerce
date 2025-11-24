@@ -74,6 +74,7 @@ export const PATH = {
     INVENTORY: {
       ROOT: '/studio/products/inventory',
       NEW: '/studio/products/inventory/new',
+      SLUG: (id: string) => `/studio/products/inventory/${id}`,
       EDIT: (id: string) => `/studio/products/inventory/${id}/edit`,
     },
 

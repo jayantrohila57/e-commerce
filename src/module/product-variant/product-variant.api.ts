@@ -1,12 +1,11 @@
 // src/module/product-variant/product-variant.api.ts
 import { createTRPCRouter, protectedProcedure, publicProcedure } from '@/core/api/api.methods'
-import { debugError } from '@/shared/utils/lib/logger.utils'
-import { API_RESPONSE } from '@/shared/config/api.utils'
 import { MESSAGE, STATUS } from '@/shared/config/api.config'
+import { API_RESPONSE } from '@/shared/config/api.utils'
 
 import { db } from '@/core/db/db'
 import { productVariant } from '@/core/db/db.schema'
-import { eq, and, isNull, ilike, inArray } from 'drizzle-orm'
+import { and, eq, ilike, isNull } from 'drizzle-orm'
 import { v4 as uuidv4 } from 'uuid'
 import { productVariantContract } from './product-variant.schema'
 

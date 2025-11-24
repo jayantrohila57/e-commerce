@@ -1,6 +1,5 @@
 import { relations } from 'drizzle-orm'
-import { json, pgEnum } from 'drizzle-orm/pg-core'
-import { pgTable, text, timestamp, boolean, numeric, integer, bigint, index } from 'drizzle-orm/pg-core'
+import { bigint, boolean, index, integer, json, numeric, pgEnum, pgTable, text, timestamp } from 'drizzle-orm/pg-core'
 
 export const discountTypeEnum = pgEnum('discount_type', ['flat', 'percent'])
 export const orderStatusEnum = pgEnum('order_status', ['pending', 'paid', 'shipped', 'delivered', 'cancelled'])

@@ -60,6 +60,17 @@ export const seriesInsertSchema = seriesBaseSchema.omit({
 export const seriesUpdateSchema = seriesBaseSchema.partial()
 
 export const seriesContract = {
+  getMany: {
+    input: z.object({
+      query: paginationSchema
+        .extend({
+          subcategorySlug: z.string().optional(),
+        })
+        .optional(),
+    }),
+    output: detailedResponse(z.array(seriesSelectSchema)),
+  },
+
   create: {
     input: z.object({
       body: seriesInsertSchema,

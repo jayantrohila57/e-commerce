@@ -79,6 +79,15 @@ const searchSchema = z.object({
 })
 
 export const productContract = {
+  get: {
+    input: z.object({
+      params: z.object({
+        id: z.string().optional(),
+        slug: z.string().optional(),
+      }),
+    }),
+    output: detailedResponse(productSelectSchema.nullable()),
+  },
   getBySlug: {
     input: z.object({
       params: z.object({

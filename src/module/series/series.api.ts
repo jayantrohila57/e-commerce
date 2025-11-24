@@ -9,6 +9,32 @@ import { v4 as uuidv4 } from 'uuid'
 import { seriesContract } from './series.schema'
 
 export const seriesRouter = createTRPCRouter({
+  getMany: protectedProcedure
+    .input(seriesContract.getMany.input)
+    .output(seriesContract.getMany.output)
+    .query(async ({ input }) => {
+      try {
+        const query = input?.query
+        const { limit = 20, offset = 0, subcategorySlug } = query || {}
+
+        const allSeries = await db.query.series.findMany({
+          limit,
+          offset,
+          where: (s, { eq, and, isNull }) => {
+            const conditions = [isNull(s.deletedAt)]
+            if (subcategorySlug) conditions.push(eq(s.subcategorySlug, subcategorySlug))
+            return and(...conditions)
+          },
+          orderBy: (s, { desc }) => [desc(s.createdAt)],
+        })
+
+        return API_RESPONSE(STATUS.SUCCESS, MESSAGE.SERIES.GET_MANY.SUCCESS, allSeries)
+      } catch (err) {
+        debugError('SERIES:GET_MANY', err)
+        return API_RESPONSE(STATUS.ERROR, MESSAGE.SERIES.GET_MANY.ERROR, null, err as Error)
+      }
+    }),
+
   create: protectedProcedure
     .input(seriesContract.create.input)
     .output(seriesContract.create.output)

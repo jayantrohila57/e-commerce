@@ -421,6 +421,11 @@ export const MESSAGE = {
     },
   },
   SERIES: {
+    GET_MANY: {
+      SUCCESS: 'Series retrieved successfully.',
+      FAILED: 'No series found.',
+      ERROR: 'Unexpected error while retrieving series.',
+    },
     CREATE: {
       SUCCESS: 'Series created successfully.',
       FAILED: 'Failed to create series.',

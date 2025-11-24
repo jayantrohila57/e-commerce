@@ -18,7 +18,7 @@ import { FormSection } from '@/shared/components/form/form.helper'
 import { Table, TableBody, TableCell, TableRow } from '@/shared/components/ui/table'
 import { format } from 'date-fns'
 import { Button } from '@/shared/components/ui/button'
-import { GetSubcategoryOutput } from './subcategory.types'
+import type { SubcategorySelect } from './subcategory.schema'
 import { SubCategoryDelete } from './subcategory-delete'
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from '@/shared/components/ui/card'
 import { BlurImage } from '@/shared/components/ui/image'
@@ -28,7 +28,7 @@ import { PATH } from '@/shared/config/routes'
 import { Route } from 'next'
 
 type SubCategoryPreviewCardProps = {
-  data: GetSubcategoryOutput['data']
+  data: SubcategorySelect | null
   className?: string
 }
 

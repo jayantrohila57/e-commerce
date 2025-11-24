@@ -91,34 +91,34 @@ export function NavMain() {
         { title: 'Inventory', url: PATH.STUDIO.INVENTORY.ROOT, icon: Package },
       ],
     },
-    {
-      title: 'Orders',
-      url: PATH.STUDIO.ORDERS.ROOT,
-      icon: ShoppingBag,
-      items: [
-        { title: 'All Orders', url: PATH.STUDIO.ORDERS.ROOT, icon: ShoppingBag },
-        { title: 'Pending', url: `${PATH.STUDIO.ORDERS.ROOT}?status=pending`, icon: ShoppingBag },
-        { title: 'Completed', url: `${PATH.STUDIO.ORDERS.ROOT}?status=completed`, icon: ShoppingBag },
-      ],
-    },
-    {
-      title: 'Customers',
-      url: PATH.STUDIO.CUSTOMERS.ROOT,
-      icon: Users,
-      items: [
-        { title: 'All Customers', url: PATH.STUDIO.CUSTOMERS.ROOT, icon: Users },
-        { title: 'Segments', url: `${PATH.STUDIO.CUSTOMERS.ROOT}/segments`, icon: Users },
-      ],
-    },
-    {
-      title: 'Payments & Finance',
-      url: PATH.STUDIO.PAYMENTS.ROOT,
-      icon: DollarSign,
-      items: [
-        { title: 'Transactions', url: PATH.STUDIO.PAYMENTS.ROOT, icon: DollarSign },
-        { title: 'Shipping', url: PATH.STUDIO.SHIPPING.ROOT, icon: Truck },
-      ],
-    },
+    // {
+    //   title: 'Orders',
+    //   url: PATH.STUDIO.ORDERS.ROOT,
+    //   icon: ShoppingBag,
+    //   items: [
+    //     { title: 'All Orders', url: PATH.STUDIO.ORDERS.ROOT, icon: ShoppingBag },
+    //     { title: 'Pending', url: `${PATH.STUDIO.ORDERS.ROOT}?status=pending`, icon: ShoppingBag },
+    //     { title: 'Completed', url: `${PATH.STUDIO.ORDERS.ROOT}?status=completed`, icon: ShoppingBag },
+    //   ],
+    // },
+    // {
+    //   title: 'Customers',
+    //   url: PATH.STUDIO.CUSTOMERS.ROOT,
+    //   icon: Users,
+    //   items: [
+    //     { title: 'All Customers', url: PATH.STUDIO.CUSTOMERS.ROOT, icon: Users },
+    //     { title: 'Segments', url: `${PATH.STUDIO.CUSTOMERS.ROOT}/segments`, icon: Users },
+    //   ],
+    // },
+    // {
+    //   title: 'Payments & Finance',
+    //   url: PATH.STUDIO.PAYMENTS.ROOT,
+    //   icon: DollarSign,
+    //   items: [
+    //     { title: 'Transactions', url: PATH.STUDIO.PAYMENTS.ROOT, icon: DollarSign },
+    //     { title: 'Shipping', url: PATH.STUDIO.SHIPPING.ROOT, icon: Truck },
+    //   ],
+    // },
   ]
 
   const marketingItems: NavItem[] = [
@@ -164,8 +164,8 @@ export function NavMain() {
       {[
         { title: 'Dashboard', section: onboardItems },
         { title: 'Studio', section: mainItems },
-        { title: 'Marketing', section: marketingItems },
-        { title: 'Settings', section: setting },
+        // { title: 'Marketing', section: marketingItems },
+        // { title: 'Settings', section: setting },
       ].map((section, sectionIndex) => (
         <SidebarGroup
           className="p-0"

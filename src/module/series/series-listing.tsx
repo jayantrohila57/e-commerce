@@ -1,9 +1,13 @@
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/shared/components/ui/card'
-import { Separator } from '@/shared/components/ui/separator'
 import CodePreview from '@/shared/components/common/code-preview'
-import { GetSeriesBySlugOutput } from './series.types'
+import { Separator } from '@/shared/components/ui/separator'
+import type { SeriesSelect } from './series.types'
 
-export const SeriesItem = ({ data }: { data: GetSeriesBySlugOutput['data'] }) => {
+type SeriesItemData = {
+  seriesData?: SeriesSelect | null
+  [key: string]: unknown
+} | null
+
+export const SeriesItem = ({ data }: { data: SeriesItemData }) => {
   return (
     <div className="flex flex-col items-center justify-center">
       <div className="">

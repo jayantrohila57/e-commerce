@@ -31,6 +31,3 @@ export type UpdateProductVariantOutput = z.output<typeof productVariantContract.
 
 export type DeleteProductVariantInput = z.input<typeof productVariantContract.delete.input>
 export type DeleteProductVariantOutput = z.output<typeof productVariantContract.delete.output>
-
-export type SearchProductVariantInput = z.input<typeof productVariantContract.search.input>
-export type SearchProductVariantOutput = z.output<typeof productVariantContract.search.output>

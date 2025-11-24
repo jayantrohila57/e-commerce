@@ -22,8 +22,8 @@ export type GetCategoriesOutput = z.output<typeof categoryContract.getMany.outpu
 export type GetManyByTypesInput = z.input<typeof categoryContract.getManyByTypes.input>
 export type GetManyByTypesOutput = z.output<typeof categoryContract.getManyByTypes.output>
 
-export type GetCategoryWithSubcategoriesInput = z.infer<typeof categoryContract.getBySlug.input>
-export type GetCategoryWithSubcategoriesOutput = z.infer<typeof categoryContract.getBySlug.output>
+export type GetCategoryWithSubcategoriesInput = z.infer<typeof categoryContract.getCategoryWithSubCategories.input>
+export type GetCategoryWithSubcategoriesOutput = z.infer<typeof categoryContract.getCategoryWithSubCategories.output>
 
 export type CreateCategoryInput = z.input<typeof categoryContract.create.input>
 export type CreateCategoryOutput = z.output<typeof categoryContract.create.output>
@@ -33,6 +33,3 @@ export type UpdateCategoryOutput = z.output<typeof categoryContract.update.outpu
 
 export type DeleteCategoryInput = z.input<typeof categoryContract.delete.input>
 export type DeleteCategoryOutput = z.output<typeof categoryContract.delete.output>
-
-export type SearchCategoryInput = z.input<typeof categoryContract.search.input>
-export type SearchCategoryOutput = z.output<typeof categoryContract.search.output>

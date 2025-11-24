@@ -1,14 +1,14 @@
 import { Badge } from '@/shared/components/ui/badge'
-import { ChevronRight, GripVertical } from 'lucide-react'
-import { cn } from '@/shared/utils/lib/utils'
-import Link from 'next/link'
-import { Route } from 'next'
 import { Button } from '@/shared/components/ui/button'
 import { Separator } from '@/shared/components/ui/separator'
-import { GetSeriesOutput } from './series.types'
+import { cn } from '@/shared/utils/lib/utils'
+import { ChevronRight, GripVertical } from 'lucide-react'
+import { Route } from 'next'
+import Link from 'next/link'
+import { GetManySeriesOutput } from './series.types'
 
 interface SeriesCardProps {
-  data: GetSeriesOutput['data']
+  data: NonNullable<GetManySeriesOutput['data']>[number]
   href?: string
   className?: string
 }

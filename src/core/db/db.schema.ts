@@ -353,10 +353,14 @@ export const attributeRelations = relations(attribute, ({ one }) => ({
 export const productRelations = relations(product, ({ many }) => ({
   variants: many(productVariant),
 }))
-export const productVariantRelations = relations(productVariant, ({ one }) => ({
+export const productVariantRelations = relations(productVariant, ({ one, many }) => ({
   product: one(product, {
     fields: [productVariant.productId],
     references: [product.id],
+  }),
+  inventory: one(inventoryItem, {
+    fields: [productVariant.id],
+    references: [inventoryItem.variantId],
   }),
 }))
 

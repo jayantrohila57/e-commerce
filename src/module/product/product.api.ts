@@ -10,6 +10,45 @@ import { v4 as uuidv4 } from 'uuid'
 import { productContract } from './product.schema'
 
 export const productRouter = createTRPCRouter({
+  get: protectedProcedure
+    .input(productContract.get.input)
+    .output(productContract.get.output)
+    .query(async ({ input }) => {
+      try {
+        const { id, slug } = input.params
+
+        if (!id && !slug) {
+          return API_RESPONSE(STATUS.FAILED, MESSAGE.PRODUCT.GET.FAILED, null)
+        }
+
+        let row: typeof product.$inferSelect | undefined
+
+        if (id) {
+          const output = await db
+            .select()
+            .from(product)
+            .where(and(eq(product.id, id), isNull(product.deletedAt)))
+            .limit(1)
+          row = output?.[0]
+        } else if (slug) {
+          const output = await db
+            .select()
+            .from(product)
+            .where(and(eq(product.slug, slug), isNull(product.deletedAt)))
+            .limit(1)
+          row = output?.[0]
+        }
+
+        return API_RESPONSE(
+          row ? STATUS.SUCCESS : STATUS.FAILED,
+          row ? MESSAGE.PRODUCT.GET.SUCCESS : MESSAGE.PRODUCT.GET.FAILED,
+          row ?? null,
+        )
+      } catch (err) {
+        debugError('PRODUCT:GET:ERROR', err)
+        return API_RESPONSE(STATUS.ERROR, MESSAGE.PRODUCT.GET.ERROR, null, err as Error)
+      }
+    }),
   getBySlug: publicProcedure
     .input(productContract.getBySlug.input)
     .output(productContract.getBySlug.output)

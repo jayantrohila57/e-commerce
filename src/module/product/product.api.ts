@@ -282,7 +282,7 @@ export const productRouter = createTRPCRouter({
         }
 
         // Build update object dynamically
-        const updateData: Record<string, any> = { updatedAt: new Date() }
+        const updateData: Record<string, unknown> = { updatedAt: new Date() }
 
         for (const key in body) {
           const value = body[key as keyof typeof body]

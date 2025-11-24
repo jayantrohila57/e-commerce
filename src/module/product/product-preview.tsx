@@ -1,43 +1,44 @@
-import {
-  Globe,
-  Star,
-  LayoutGrid,
-  Clock,
-  Calendar,
-  Tag,
-  Eye,
-  Trash2,
-  ExternalLink,
-  ImageIcon,
-  PencilIcon,
-  Hash,
-  Box,
-} from 'lucide-react'
-import { cn, truncateString } from '@/shared/utils/lib/utils'
 import { FormSection } from '@/shared/components/form/form.helper'
-import { Table, TableBody, TableCell, TableRow } from '@/shared/components/ui/table'
-import { format } from 'date-fns'
 import { Button } from '@/shared/components/ui/button'
-import Link from 'next/link'
-import { PATH } from '@/shared/config/routes'
-import { Route } from 'next'
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from '@/shared/components/ui/card'
 import { BlurImage } from '@/shared/components/ui/image'
 import { Separator } from '@/shared/components/ui/separator'
-import { GetProductOutput } from './product.types'
+import { Table, TableBody, TableCell, TableRow } from '@/shared/components/ui/table'
+import { PATH } from '@/shared/config/routes'
+import { cn, truncateString } from '@/shared/utils/lib/utils'
+import { format } from 'date-fns'
+import {
+  Box,
+  Calendar,
+  Clock,
+  ExternalLink,
+  Eye,
+  Globe,
+  Hash,
+  ImageIcon,
+  LayoutGrid,
+  PencilIcon,
+  Star,
+  Tag,
+  Trash2,
+} from 'lucide-react'
+import { Route } from 'next'
+import Link from 'next/link'
 import { ProductDelete } from './product-delete'
+import { GetProductOutput } from './product.types'
 
 type ProductPreviewCardProps = {
   data: GetProductOutput['data']
   className?: string
 }
 
-const formatValue = (key: string, value: any) => {
+const formatValue = (key: string, value: unknown) => {
   if (value === null || value === undefined) return 'N/A'
 
   // Format dates
   if (['createdAt', 'updatedAt', 'deletedAt'].includes(key) && value) {
-    return format(new Date(value), 'PPPpp')
+    // value can be unknown — coerce to string/number to avoid TypeScript error
+    return format(new Date(String(value)), 'PPPpp')
   }
 
   // Format boolean values

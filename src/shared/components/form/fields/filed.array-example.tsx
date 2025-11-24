@@ -1,11 +1,11 @@
 'use client'
 
-import { z } from 'zod'
-import { Minus, Plus } from 'lucide-react'
 import { Button } from '@/shared/components/ui/button'
 import { FormItem } from '@/shared/components/ui/form'
-import Form from '../form'
 import { debugLog } from '@/shared/utils/lib/logger.utils'
+import { Minus, Plus } from 'lucide-react'
+import { z } from 'zod'
+import Form from '../form'
 
 export const signinValidation = z.object({
   items: z
@@ -111,16 +111,18 @@ export default function FormDemo() {
                 type="button"
                 size={'icon'}
                 onClick={() => add(defaultArrayValue)}
-                children={<Plus />}
-              />
+              >
+                <Plus />
+              </Button>
               <Button
                 key={`items.${index}.remove`}
                 disabled={index === 0}
                 type="button"
                 size={'icon'}
                 onClick={() => remove(index)}
-                children={<Minus />}
-              />
+              >
+                <Minus />
+              </Button>
             </div>
           </FormItem>
         )}

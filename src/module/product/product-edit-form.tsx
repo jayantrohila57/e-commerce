@@ -1,30 +1,28 @@
 'use client'
-
-import { type Route } from 'next'
-import type { z } from 'zod/v3'
-import { useRouter } from 'next/navigation'
-import { useState } from 'react'
-
 import Form from '@/shared/components/form/form'
 import { FormSection } from '@/shared/components/form/form.helper'
 import { Button } from '@/shared/components/ui/button'
 import { Separator } from '@/shared/components/ui/separator'
+import { type Route } from 'next'
+import { useRouter } from 'next/navigation'
+import { useState } from 'react'
 import { toast } from 'sonner'
+import type { z } from 'zod/v3'
 
 import { apiClient } from '@/core/api/api.client'
 import { STATUS } from '@/shared/config/api.config'
-import { PATH } from '@/shared/config/routes'
 import { env } from '@/shared/config/env'
+import { PATH } from '@/shared/config/routes'
 
-import { CategorySelect } from './product-form.category'
-import { SubCategorySelect } from './product-form.subcategory'
-import { SeriesSelect } from './product-form.series'
-import { statusOptions } from '@/shared/config/options.config'
 import { FormItem } from '@/shared/components/ui/form'
+import { statusOptions } from '@/shared/config/options.config'
+import { CategorySelect } from './product-form.category'
+import { SeriesSelect } from './product-form.series'
+import { SubCategorySelect } from './product-form.subcategory'
 
+import { Minus, Plus } from 'lucide-react'
 import { productContract } from './product.schema'
 import type { ProductUpdate } from './product.types'
-import { Minus, Plus } from 'lucide-react'
 
 const formSchema = productContract.update.input
 type FormValues = z.infer<typeof formSchema>
@@ -258,8 +256,9 @@ export default function ProductEditForm({ product }: { product: ProductUpdate | 
                     size={'icon'}
                     onClick={() => remove(index)}
                     hidden={length === 1}
-                    children={<Minus />}
-                  />
+                  >
+                    <Minus />
+                  </Button>
 
                   {index === length - 1 && (
                     <Button
@@ -270,8 +269,9 @@ export default function ProductEditForm({ product }: { product: ProductUpdate | 
                           title: '',
                         })
                       }
-                      children={<Plus />}
-                    />
+                    >
+                      <Plus />
+                    </Button>
                   )}
                 </div>
               </FormItem>

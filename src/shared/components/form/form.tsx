@@ -1,11 +1,17 @@
 'use client'
 
-import { FormProvider, Path, useForm, useFormContext, useFormState, useWatch, type FieldValues } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
 import { cn } from '@/shared/utils/lib/utils'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { FormProvider, useForm, useFormContext, useFormState, useWatch, type FieldValues } from 'react-hook-form'
 import type z from 'zod/v3'
 
+import { debugLog } from '@/shared/utils/lib/logger.utils'
+import { Dot, Info, Loader } from 'lucide-react'
 import { Children, Fragment, JSX, memo, useEffect, useMemo } from 'react'
+import { Badge } from '../ui/badge'
+import { Button } from '../ui/button'
+import { HoverCard, HoverCardContent, HoverCardTrigger } from '../ui/hover-card'
+import { Separator } from '../ui/separator'
 import { Fields } from './fields.config'
 import type {
   FieldsWrapperProps,
@@ -17,12 +23,6 @@ import type {
   FormWatchProps,
   SubmitButtonProps,
 } from './form.types'
-import { Button } from '../ui/button'
-import { Dot, Info, Loader } from 'lucide-react'
-import { HoverCard, HoverCardContent, HoverCardTrigger } from '../ui/hover-card'
-import { Separator } from '../ui/separator'
-import { Badge } from '../ui/badge'
-import { debugLog } from '@/shared/utils/lib/logger.utils'
 
 export const Form = <T extends z.ZodTypeAny>(props: FormProps<T>) => {
   const { onSubmitAction, className, children, schema, defaultValues } = props
@@ -134,14 +134,16 @@ const FormGroup = memo(({ children, name, hidden }: FormGroupType) => {
   return ((watch as []) ?? [])?.map((_, index) => Children?.toArray(children({ add, index, remove, length })))
 })
 
-const renderErrors = (obj: Record<string, any>, parentKey = ''): JSX.Element | null => {
+FormGroup.displayName = 'FormGroup'
+
+const renderErrors = (obj: Record<string, unknown>, parentKey = ''): JSX.Element | null => {
   if (!obj || typeof obj !== 'object') return null
 
   return (
     <ul className="border-muted space-y-1 border-l pl-3">
       {Object.entries(obj).map(([key, value]) => {
         const path = parentKey ? `${parentKey}.${key}` : key
-        const hasNested = value && typeof value === 'object' && !value?.message
+        const hasNested = typeof value === 'object' && value !== null && !('message' in (value as object))
 
         return (
           <li
@@ -152,15 +154,15 @@ const renderErrors = (obj: Record<string, any>, parentKey = ''): JSX.Element | n
               <Dot className="text-muted-foreground mt-1 h-3 w-3 shrink-0" />
               <span className="text-xs">
                 <strong className="capitalize">{key}</strong>
-                {value?.message && (
+                {typeof value === 'object' && value !== null && 'message' in value && (
                   <>
                     {' : '}
-                    <span className="text-destructive">{value.message.toString()}</span>
+                    <span className="text-destructive">{String((value as { message?: unknown }).message)}</span>
                   </>
                 )}
               </span>
             </div>
-            {hasNested && <div className="ml-3">{renderErrors(value, path)}</div>}
+            {hasNested && <div className="ml-3">{renderErrors(value as Record<string, unknown>, path)}</div>}
           </li>
         )
       })}
@@ -250,6 +252,8 @@ const SubmitButton = ({ variant, label = 'Submit', isLoading, className, disable
 
 SubmitButton.displayName = 'FormSubmitButton'
 
+// Add explicit displayName to top-level component so lint doesn't complain
+Form.displayName = 'Form'
 Form.Field = Field
 Form.Submit = SubmitButton
 Form.FormWatch = FormWatch

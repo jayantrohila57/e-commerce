@@ -205,8 +205,9 @@ export default function VariantForm({ productSlug, productId }: VariantFormProps
                       variant={'destructive'}
                       size={'icon'}
                       onClick={() => remove(index)}
-                      children={<Minus />}
-                    />
+                    >
+                      <Minus />
+                    </Button>
                     <Button
                       key={`body.media.${index}.add`}
                       type="button"
@@ -218,8 +219,9 @@ export default function VariantForm({ productSlug, productId }: VariantFormProps
                           title: '',
                         })
                       }
-                      children={<Plus />}
-                    />
+                    >
+                      <Plus />
+                    </Button>
                   </div>
                 </FormItem>
               )}
@@ -281,8 +283,9 @@ export default function VariantForm({ productSlug, productId }: VariantFormProps
                     variant={'destructive'}
                     size={'icon'}
                     onClick={() => remove(index)}
-                    children={<Minus />}
-                  />
+                  >
+                    <Minus />
+                  </Button>
                   <Button
                     key={`body.attributes.${index}.add`}
                     type="button"
@@ -294,8 +297,9 @@ export default function VariantForm({ productSlug, productId }: VariantFormProps
                         title: '',
                       })
                     }
-                    children={<Plus />}
-                  />
+                  >
+                    <Plus />
+                  </Button>
                 </div>
               </FormItem>
             )}

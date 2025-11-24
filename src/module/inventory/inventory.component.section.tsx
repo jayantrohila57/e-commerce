@@ -42,7 +42,7 @@ const InventoryGroup = ({
   </FormSection>
 )
 
-export function InventorySection({ data }: { data: any[] | null }) {
+export function InventorySection({ data }: { data: Inventory[] | null }) {
   const inventories = data ?? []
 
   return (

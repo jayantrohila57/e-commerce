@@ -1,25 +1,25 @@
 'use client'
 
-import { type Route } from 'next'
-import type { z } from 'zod/v3'
-import { useRouter } from 'next/navigation'
+import { apiClient } from '@/core/api/api.client'
 import Form from '@/shared/components/form/form'
 import { FormSection } from '@/shared/components/form/form.helper'
-import { toast } from 'sonner'
 import { Button } from '@/shared/components/ui/button'
-import { Separator } from '@/shared/components/ui/separator'
-import { apiClient } from '@/core/api/api.client'
-import { STATUS } from '@/shared/config/api.config'
-import { productContract } from './product.schema'
-import { PATH } from '@/shared/config/routes'
-import { env } from '@/shared/config/env'
-import { useState } from 'react'
-import { CategorySelect } from './product-form.category'
-import { SubCategorySelect } from './product-form.subcategory'
-import { SeriesSelect } from './product-form.series'
-import { statusOptions } from '@/shared/config/options.config'
 import { FormItem } from '@/shared/components/ui/form'
+import { Separator } from '@/shared/components/ui/separator'
+import { STATUS } from '@/shared/config/api.config'
+import { env } from '@/shared/config/env'
+import { statusOptions } from '@/shared/config/options.config'
+import { PATH } from '@/shared/config/routes'
 import { Minus, Plus } from 'lucide-react'
+import { type Route } from 'next'
+import { useRouter } from 'next/navigation'
+import { useState } from 'react'
+import { toast } from 'sonner'
+import type { z } from 'zod/v3'
+import { CategorySelect } from './product-form.category'
+import { SeriesSelect } from './product-form.series'
+import { SubCategorySelect } from './product-form.subcategory'
+import { productContract } from './product.schema'
 
 const formSchema = productContract.create.input
 
@@ -256,8 +256,9 @@ export default function ProductForm() {
                     variant={'destructive'}
                     size={'icon'}
                     onClick={() => remove(index)}
-                    children={<Minus />}
-                  />
+                  >
+                    <Minus />
+                  </Button>
                   <Button
                     key={`body.features.${index}.add`}
                     type="button"
@@ -269,8 +270,9 @@ export default function ProductForm() {
                         title: '',
                       })
                     }
-                    children={<Plus />}
-                  />
+                  >
+                    <Plus />
+                  </Button>
                 </div>
               </FormItem>
             )}

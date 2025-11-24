@@ -4,7 +4,7 @@ import { API_RESPONSE } from '@/shared/config/api.utils'
 
 import { db } from '@/core/db/db'
 import { inventoryItem } from '@/core/db/db.schema'
-import { and, eq, ilike } from 'drizzle-orm'
+import { eq, ilike } from 'drizzle-orm'
 import { v4 as uuidv4 } from 'uuid'
 import { inventoryContract } from './inventory.schema'
 
@@ -25,10 +25,11 @@ export const inventoryRouter = createTRPCRouter({
 
         const output = await db.query.inventoryItem.findFirst({
           where: (inv, { eq, and }) => {
-            const conditions: any[] = []
-            if (id) conditions.push(eq(inv.id, id))
-            if (sku) conditions.push(eq(inv.sku, sku))
-            return conditions.length ? and(...conditions) : undefined
+            // use local eq / and helpers directly so types match
+            if (id && sku) return and(eq(inv.id, id), eq(inv.sku, sku))
+            if (id) return eq(inv.id, id)
+            if (sku) return eq(inv.sku, sku)
+            return undefined
           },
         })
 
@@ -54,14 +55,9 @@ export const inventoryRouter = createTRPCRouter({
         const limit = query?.limit ?? 20
         const offset = query?.offset ?? 0
 
-        const conditions: any[] = []
-
-        if (query?.search) {
-          conditions.push(ilike(inventoryItem.sku, `%${query.search}%`))
-        }
-
+        // build where clause inline so we don't need a typed array
         const output = await db.query.inventoryItem.findMany({
-          where: conditions.length ? and(...conditions) : undefined,
+          where: query?.search ? ilike(inventoryItem.sku, `%${query.search}%`) : undefined,
           limit: Math.min(limit, 100),
           offset,
           orderBy: (inv, { desc }) => [desc(inv.updatedAt)],
@@ -170,7 +166,7 @@ export const inventoryRouter = createTRPCRouter({
         const { id } = input.params
         const { data } = input
 
-        const updateData: any = {}
+        const updateData: Record<string, unknown> = {}
         if (data.sku !== undefined) updateData.sku = data.sku
         if (data.barcode !== undefined) updateData.barcode = data.barcode
         if (data.quantity !== undefined) updateData.quantity = data.quantity
@@ -278,14 +274,9 @@ export const inventoryRouter = createTRPCRouter({
         const limit = query?.limit ?? 20
         const offset = query?.offset ?? 0
 
-        const conditions: any[] = []
-
-        if (query?.search) {
-          conditions.push(ilike(inventoryItem.sku, `%${query.search}%`))
-        }
-
+        // build where clause inline so we don't need a typed array
         const output = await db.query.inventoryItem.findMany({
-          where: conditions.length ? and(...conditions) : undefined,
+          where: query?.search ? ilike(inventoryItem.sku, `%${query.search}%`) : undefined,
           limit: Math.min(limit, 100),
           offset,
           orderBy: (inv, { desc }) => [desc(inv.updatedAt)],

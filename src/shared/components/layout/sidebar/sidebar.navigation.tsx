@@ -1,25 +1,22 @@
 'use client'
 
-import {
-  ChevronRight,
-  type LucideIcon,
-  LayoutDashboard,
-  ShoppingBag,
-  Package,
-  Users,
-  DollarSign,
-  BarChart3,
-  Settings2,
-  LifeBuoy,
-  Truck,
-  MessageSquare,
-  Rocket,
-} from 'lucide-react'
-import { cn } from '@/shared/utils/lib/utils'
-import { usePathname, useSearchParams } from 'next/navigation'
-import Link from 'next/link'
-import { useId, useState } from 'react'
 import { PATH } from '@/shared/config/routes'
+import { cn } from '@/shared/utils/lib/utils'
+import {
+  BarChart3,
+  ChevronRight,
+  DollarSign,
+  LayoutDashboard,
+  LifeBuoy,
+  MessageSquare,
+  Package,
+  Settings2,
+  Users,
+  type LucideIcon,
+} from 'lucide-react'
+import Link from 'next/link'
+import { usePathname, useSearchParams } from 'next/navigation'
+import { useId, useState } from 'react'
 
 import {
   SidebarGroup,
@@ -32,8 +29,8 @@ import {
   SidebarMenuSubItem,
 } from '@/shared/components/ui/sidebar'
 import { type Route } from 'next'
-import { Separator } from '../../ui/separator'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '../../ui/collapsible'
+import { Separator } from '../../ui/separator'
 
 interface NavItem {
   title: string
@@ -159,14 +156,29 @@ export function NavMain() {
     },
   ]
 
+  const sections = [
+    { title: 'Dashboard', section: onboardItems },
+    { title: 'Studio', section: mainItems },
+    // { title: 'Marketing', section: marketingItems },
+    // { title: 'Settings', section: setting },
+  ]
+
+  const [openStates, setOpenStates] = useState<Record<string, boolean>>(() => {
+    const initial: Record<string, boolean> = {}
+    sections.forEach((section, sectionIndex) => {
+      section.section.forEach((item, itemIndex) => {
+        const itemId = `${collapsibleId}-${sectionIndex}-${itemIndex}`
+        const hasActiveChild = item.items?.some((sub) => isActive(sub.url, true)) || false
+        const isItemActive = isActive(item.url, true) || hasActiveChild
+        initial[itemId] = !!isItemActive
+      })
+    })
+    return initial
+  })
+
   return (
     <div className="bg-background h-full rounded-md border p-[2.5px]">
-      {[
-        { title: 'Dashboard', section: onboardItems },
-        { title: 'Studio', section: mainItems },
-        // { title: 'Marketing', section: marketingItems },
-        // { title: 'Settings', section: setting },
-      ].map((section, sectionIndex) => (
+      {sections.map((section, sectionIndex) => (
         <SidebarGroup
           className="p-0"
           key={sectionIndex}
@@ -200,14 +212,14 @@ export function NavMain() {
                 )
               }
 
-              const [open, setOpen] = useState(isItemActive)
+              const open = !!openStates[itemId]
 
               return (
                 <Collapsible
                   key={item.title}
                   asChild
                   open={open}
-                  onOpenChange={setOpen}
+                  onOpenChange={(next) => setOpenStates((prev) => ({ ...prev, [itemId]: next }))}
                   id={itemId}
                 >
                   <SidebarMenuItem>

@@ -1,43 +1,44 @@
-import {
-  Globe,
-  Star,
-  LayoutGrid,
-  Clock,
-  Calendar,
-  Tag,
-  Eye,
-  Trash2,
-  ExternalLink,
-  ImageIcon,
-  PencilIcon,
-  Hash,
-  Box,
-} from 'lucide-react'
-import { cn, truncateString } from '@/shared/utils/lib/utils'
-import { GetCategoryOutput } from './category.types'
 import { FormSection } from '@/shared/components/form/form.helper'
-import { Table, TableBody, TableCell, TableRow } from '@/shared/components/ui/table'
-import { format } from 'date-fns'
 import { Button } from '@/shared/components/ui/button'
-import Link from 'next/link'
-import { PATH } from '@/shared/config/routes'
-import { Route } from 'next'
-import { CategoryDelete } from './category.component.delete'
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from '@/shared/components/ui/card'
 import { BlurImage } from '@/shared/components/ui/image'
 import { Separator } from '@/shared/components/ui/separator'
+import { Table, TableBody, TableCell, TableRow } from '@/shared/components/ui/table'
+import { PATH } from '@/shared/config/routes'
+import { cn, truncateString } from '@/shared/utils/lib/utils'
+import { format } from 'date-fns'
+import {
+  Box,
+  Calendar,
+  Clock,
+  ExternalLink,
+  Eye,
+  Globe,
+  Hash,
+  ImageIcon,
+  LayoutGrid,
+  PencilIcon,
+  Star,
+  Tag,
+  Trash2,
+} from 'lucide-react'
+import { Route } from 'next'
+import Link from 'next/link'
+import { CategoryDelete } from './category.component.delete'
+import { GetCategoryOutput } from './category.types'
 
 type CategoryPreviewCardProps = {
   data: GetCategoryOutput['data']
   className?: string
 }
 
-const formatValue = (key: string, value: any) => {
+const formatValue = (key: string, value: unknown) => {
   if (value === null || value === undefined) return 'N/A'
 
   // Format dates
   if (['createdAt', 'updatedAt', 'deletedAt'].includes(key) && value) {
-    return format(new Date(value), 'PPPpp')
+    // coerce unknown into string for the Date constructor so types check passes
+    return format(new Date(String(value)), 'PPPpp')
   }
 
   // Format boolean values

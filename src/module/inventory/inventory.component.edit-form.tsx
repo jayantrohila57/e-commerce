@@ -17,7 +17,7 @@ import { inventoryContract } from './inventory.schema'
 const formSchema = inventoryContract.update.input
 type FormValues = z.infer<typeof formSchema>
 
-export default function InventoryEditForm({ inventory }: { inventory: any | null }) {
+export default function InventoryEditForm({ inventory }: { inventory: Record<string, unknown> | null }) {
   const router = useRouter()
   const [toastId, setToastId] = useState<string | number>('')
 

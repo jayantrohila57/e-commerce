@@ -1,31 +1,20 @@
 'use client'
 
-import { Controller, useFormContext } from 'react-hook-form'
-import { Input } from '@/shared/components/ui/input'
 import { FormControl, FormDescription, FormItem, FormLabel, FormMessage } from '@/shared/components/ui/form'
+import { Input } from '@/shared/components/ui/input'
 import { cn } from '@/shared/utils/lib/utils'
+import { useId } from 'react'
+import { Controller, useFormContext } from 'react-hook-form'
 import type { FormInputProps } from '../form.types'
-import { useEffect, useId, useState } from 'react'
 
 export const InputCurrency: React.FC<FormInputProps> = (props) => {
   const reactId = useId()
   const stableId = props.name ? `${props.name}-${reactId}` : reactId
-  const [display, setDisplay] = useState('')
+  // we'll compute display from the current field value inside Controller render
 
   const { control, register, setValue, getValues, formState } = useFormContext()
 
-  // Sync formatted display whenever form value changes
-  useEffect(() => {
-    const val = getValues(props.name)
-
-    if (val === '' || val === null || val === undefined) {
-      setDisplay('')
-      return
-    }
-
-    const num = Number(val)
-    setDisplay(num.toLocaleString('en-IN'))
-  }, [getValues(props.name)]) // reacts to external changes (reset, defaultValues, watch)
+  // Using Controller's render we will compute formatted display without calling setState in an effect.
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const raw = e.target.value.replace(/,/g, '')
@@ -33,14 +22,12 @@ export const InputCurrency: React.FC<FormInputProps> = (props) => {
     // Allow blank
     if (raw === '') {
       setValue(props.name, '')
-      setDisplay('')
       return
     }
 
     const num = Number(raw)
     if (!Number.isNaN(num)) {
       setValue(props.name, num) // raw numeric user data
-      setDisplay(num.toLocaleString('en-IN')) // pretty UI string
     }
   }
   if (props?.hidden) return null
@@ -63,12 +50,17 @@ export const InputCurrency: React.FC<FormInputProps> = (props) => {
           <FormControl className={cn(props?.className)}>
             <div className="*:not-first:mt-2">
               <div className="relative">
+                {/* derive display from raw value */}
                 <Input
                   className="peer ps-6 pe-12"
                   {...field}
                   {...props?.fieldProps}
                   {...inputConfig}
-                  value={display}
+                  value={
+                    field.value === '' || field.value === null || field.value === undefined
+                      ? ''
+                      : Number(field.value).toLocaleString('en-IN')
+                  }
                   onChange={handleChange}
                   type="text"
                 />

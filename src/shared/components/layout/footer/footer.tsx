@@ -1,8 +1,8 @@
-import { ModeToggle } from '@/core/theme/theme.selector'
 import Social from '@/shared/components/common/social'
 import { Icons } from '@/shared/components/common/icons'
 import { Input } from '@/shared/components/ui/input'
 import { Button } from '@/shared/components/ui/button'
+import { ThemeToggle } from '@/shared/components/theme/theme-toggle'
 import RSS from '@/shared/components/common/rss'
 import { Separator } from '@/shared/components/ui/separator'
 import Link from 'next/link'
@@ -156,7 +156,7 @@ export default function Footer() {
         <div className="flex h-full w-full items-center justify-between">
           <AppBrand />
           <div className="flex h-full w-auto items-center justify-start gap-4">
-            <ModeToggle />
+            <ThemeToggle />
             <RSS />
           </div>
         </div>

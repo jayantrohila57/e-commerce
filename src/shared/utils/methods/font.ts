@@ -1,15 +1,9 @@
-import { Inter as Font, Oswald as SecondaryFont } from 'next/font/google'
+import { Oswald as Font } from 'next/font/google'
 
 const font = Font({
   subsets: ['latin'],
-  variable: '--font-geist-sans',
-  weight: ['400'],
-})
-
-const secondaryFont = SecondaryFont({
-  subsets: ['latin'],
   variable: '--font-oswald-sans',
-  weight: ['400', '500', '600', '700'],
+  weight: ['400'],
 })
 
 const viewport = {

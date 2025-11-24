@@ -31,13 +31,25 @@ export const PATH = {
       ROOT: '/store/products',
       PRODUCT: (productId: string) => `/store/products/${productId}`,
     },
+    CATEGORIES: {
+      ROOT: '/store/categories',
+      CATEGORY: (categorySlug: string) => `/store/${categorySlug}`,
+    },
+    SUB_CATEGORIES: {
+      ROOT: (categorySlug: string) => `/store/${categorySlug}`,
+      SUBCATEGORY: (subcategorySlug: string, categorySlug: string) => `/store/${categorySlug}/${subcategorySlug}`,
+    },
   },
   STUDIO: {
     ROOT: '/studio',
     PRODUCTS: {
       ROOT: '/studio/products',
       NEW: '/studio/products/new',
-      EDIT: (id: string) => `/studio/products/${id}/edit`,
+      VIEW: (slug: string) => `/studio/products/${slug}`,
+      EDIT: (slug: string, id: string) => `/studio/products/${slug}/edit?id=${id}`,
+      VARIANTS: {
+        NEW: (productId: string, slug: string) => `/studio/products/${slug}/new?id=${productId}`,
+      },
     },
     CATEGORIES: {
       ROOT: '/studio/products/categories',
@@ -62,6 +74,7 @@ export const PATH = {
     INVENTORY: {
       ROOT: '/studio/products/inventory',
       NEW: '/studio/products/inventory/new',
+      SLUG: (id: string) => `/studio/products/inventory/${id}`,
       EDIT: (id: string) => `/studio/products/inventory/${id}/edit`,
     },
 

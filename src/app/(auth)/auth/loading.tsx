@@ -1,4 +1,4 @@
-import AuthPageLoading from '@/module/auth/components/auth.page-loading'
+import AuthPageLoading from '@/module/auth/auth.page-loading'
 import { AuthCard } from '@/shared/components/layout/section/auth.card-layout'
 import Shell from '@/shared/components/layout/shell'
 

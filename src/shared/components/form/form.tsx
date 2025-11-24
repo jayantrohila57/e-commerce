@@ -1,27 +1,28 @@
 'use client'
 
-import { FormProvider, useForm, useFormContext, useFormState, type FieldValues } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
 import { cn } from '@/shared/utils/lib/utils'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { FormProvider, useForm, useFormContext, useFormState, useWatch, type FieldValues } from 'react-hook-form'
 import type z from 'zod/v3'
 
-import { Fragment, JSX, memo, useEffect, useMemo } from 'react'
+import { debugLog } from '@/shared/utils/lib/logger.utils'
+import { Dot, Info, Loader } from 'lucide-react'
+import { Children, Fragment, JSX, memo, useEffect, useMemo } from 'react'
+import { Badge } from '../ui/badge'
+import { Button } from '../ui/button'
+import { HoverCard, HoverCardContent, HoverCardTrigger } from '../ui/hover-card'
+import { Separator } from '../ui/separator'
 import { Fields } from './fields.config'
 import type {
   FieldsWrapperProps,
   FormContextProps,
+  FormGroupType,
   FormInputProps,
   FormProps,
   FormWatchErrorProps,
   FormWatchProps,
   SubmitButtonProps,
 } from './form.types'
-import { Button } from '../ui/button'
-import { Dot, Info, Loader } from 'lucide-react'
-import { HoverCard, HoverCardContent, HoverCardTrigger } from '../ui/hover-card'
-import { Separator } from '../ui/separator'
-import { Badge } from '../ui/badge'
-import { debugLog } from '@/shared/utils/lib/logger.utils'
 
 export const Form = <T extends z.ZodTypeAny>(props: FormProps<T>) => {
   const { onSubmitAction, className, children, schema, defaultValues } = props
@@ -92,10 +93,17 @@ const FieldsWrapper = memo(({ fieldsConfig = [] }: FieldsWrapperProps) => {
 
 FieldsWrapper.displayName = 'FieldsWrapper'
 
-const FormWatch = memo(<TFieldValues extends FieldValues>({ value, children }: FormWatchProps<TFieldValues>) => {
-  const { watch } = useFormContext<TFieldValues>()
-  const watching = watch(value)
-  return <>{children(watching)}</>
+const FormWatch = memo(<TFieldValues extends FieldValues>({ name, children }: FormWatchProps<TFieldValues>) => {
+  const form = useFormContext<TFieldValues>()
+  const value = useWatch({ control: form.control, name })
+  return (
+    <>
+      {children({
+        value,
+        form,
+      })}
+    </>
+  )
 })
 
 FormWatch.displayName = 'FormWatch'
@@ -112,14 +120,30 @@ const FormWatchError = memo(
 
 FormWatchError.displayName = 'FormWatchError'
 
-const renderErrors = (obj: Record<string, any>, parentKey = ''): JSX.Element | null => {
+const FormGroup = memo(({ children, name, hidden }: FormGroupType) => {
+  const { setValue, getValues, control } = useFormContext()
+  const watch = useWatch({ name, control })
+  const add = (value: unknown) => setValue(name, [...getValues(name), value])
+  const remove = (index: number) =>
+    setValue(
+      name,
+      (getValues(name) as [])?.filter((_, i) => i !== index),
+    )
+  const length = (watch as [])?.length
+  if (hidden) return null
+  return ((watch as []) ?? [])?.map((_, index) => Children?.toArray(children({ add, index, remove, length })))
+})
+
+FormGroup.displayName = 'FormGroup'
+
+const renderErrors = (obj: Record<string, unknown>, parentKey = ''): JSX.Element | null => {
   if (!obj || typeof obj !== 'object') return null
 
   return (
     <ul className="border-muted space-y-1 border-l pl-3">
       {Object.entries(obj).map(([key, value]) => {
         const path = parentKey ? `${parentKey}.${key}` : key
-        const hasNested = value && typeof value === 'object' && !value?.message
+        const hasNested = typeof value === 'object' && value !== null && !('message' in (value as object))
 
         return (
           <li
@@ -130,15 +154,15 @@ const renderErrors = (obj: Record<string, any>, parentKey = ''): JSX.Element | n
               <Dot className="text-muted-foreground mt-1 h-3 w-3 shrink-0" />
               <span className="text-xs">
                 <strong className="capitalize">{key}</strong>
-                {value?.message && (
+                {typeof value === 'object' && value !== null && 'message' in value && (
                   <>
                     {' : '}
-                    <span className="text-destructive">{value.message.toString()}</span>
+                    <span className="text-destructive">{String((value as { message?: unknown }).message)}</span>
                   </>
                 )}
               </span>
             </div>
-            {hasNested && <div className="ml-3">{renderErrors(value, path)}</div>}
+            {hasNested && <div className="ml-3">{renderErrors(value as Record<string, unknown>, path)}</div>}
           </li>
         )
       })}
@@ -228,6 +252,8 @@ const SubmitButton = ({ variant, label = 'Submit', isLoading, className, disable
 
 SubmitButton.displayName = 'FormSubmitButton'
 
+// Add explicit displayName to top-level component so lint doesn't complain
+Form.displayName = 'Form'
 Form.Field = Field
 Form.Submit = SubmitButton
 Form.FormWatch = FormWatch
@@ -235,5 +261,6 @@ Form.FormWatchError = FormWatchError
 Form.FieldsWrapper = FieldsWrapper
 Form.FormContext = FormContext
 Form.StatusBadge = StatusBadge
+Form.FormGroup = FormGroup
 
 export default Form

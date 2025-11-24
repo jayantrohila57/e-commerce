@@ -23,7 +23,7 @@ export function BlurImage({ className, alt, fallbackSrc = '/fallback.png', ...pr
         className,
         'motion-all',
         isLoading ? 'animate-shimmer blur-xs' : 'blur-0',
-        errorSrc && 'bg-secondary',
+        errorSrc && 'bg-input/30',
       )}
       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
       onLoad={() => setLoading(false)}

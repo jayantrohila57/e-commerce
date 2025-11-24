@@ -31,7 +31,7 @@ export function API_RESPONSE<T>(
   message: string
   data: T | null
 } {
-  if (status === 'success') debugLog(`API:RESPONSE:${status}`, [message], { data })
+  if (status === 'success') debugLog(`API:RESPONSE:${status}`, [message], JSON.stringify(data, null, 2))
   if (status === 'failed') debugWarn(`API:RESPONSE:${status}`, [message], { data })
   if (status === 'error') debugError(`API:RESPONSE:${status}`, [message], { error })
   return {

@@ -9,9 +9,7 @@ import Section from '@/shared/components/layout/section/section'
 
 import { Alert, AlertDescription, AlertTitle } from '@/shared/components/ui/alert'
 import { Button } from '@/shared/components/ui/button'
-import { AlertTriangle, Check, ChevronDown, ChevronUp, Copy, RefreshCw } from 'lucide-react'
-import { Card } from '@/shared/components/ui/card'
-import Header from '@/shared/components/layout/header/header'
+import { AlertTriangle, Check, Copy, RefreshCw } from 'lucide-react'
 
 export default function Error({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
   const [copied, setCopied] = useState(false)

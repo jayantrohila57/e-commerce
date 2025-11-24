@@ -1,8 +1,7 @@
-import { defineConfig, globalIgnores } from 'eslint/config'
 import nextVitals from 'eslint-config-next/core-web-vitals'
 import nextTs from 'eslint-config-next/typescript'
 import prettierPlugin from 'eslint-plugin-prettier'
-import tseslint from 'typescript-eslint'
+import { defineConfig, globalIgnores } from 'eslint/config'
 
 const eslintConfig = defineConfig([
   ...nextVitals,
@@ -11,11 +10,7 @@ const eslintConfig = defineConfig([
     plugins: {
       prettier: prettierPlugin,
     },
-    extends: [
-      ...tseslint.configs.recommended,
-      ...tseslint.configs.recommendedTypeChecked,
-      ...tseslint.configs.stylisticTypeChecked,
-    ],
+    extends: [],
     rules: {
       'prettier/prettier': 'error',
       '@typescript-eslint/array-type': 'off',
@@ -28,7 +23,6 @@ const eslintConfig = defineConfig([
       '@typescript-eslint/prefer-nullish-coalescing': 'off',
       '@typescript-eslint/no-unsafe-assignment': 'off',
       '@typescript-eslint/no-unsafe-call': 'off',
-      // '@typescript-eslint/no-misused-promises': ['error', { checksVoidReturn: { attributes: false } }],
       '@typescript-eslint/naming-convention': [
         'error',
         {

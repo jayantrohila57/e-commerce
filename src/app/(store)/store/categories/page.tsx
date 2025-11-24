@@ -1,5 +1,5 @@
 import { apiServer, HydrateClient } from '@/core/api/api.server'
-import CategoriesListing from '@/module/category/components/categories-listing'
+import CategoriesListing from '@/module/category/category.component.listing'
 import Section from '@/shared/components/layout/section/section'
 
 export const metadata = {

@@ -47,10 +47,18 @@ export interface StandardInputProps extends BaseFormInputProps {
     | 'password'
     | 'image'
     | 'color'
+    | 'currency'
   >
 }
 export interface NumberInputProps extends BaseFormInputProps {
   type: 'number'
+  max?: number
+  min?: number
+}
+export interface CurrencyInputProps extends BaseFormInputProps {
+  type: 'currency'
+  prefixCurrency?: string
+  postfixCurrency?: string
   max?: number
   min?: number
 }
@@ -105,6 +113,7 @@ export type FormInputProps =
   | PasswordInputProps
   | ImageInputProps
   | ColorInputProps
+  | CurrencyInputProps
 
 export interface FormProps<T extends z.ZodTypeAny> {
   className?: string
@@ -120,14 +129,30 @@ export interface FieldsWrapperProps {
   fieldsConfig: FormInputProps[]
 }
 
+export interface FormWatchPayload<TFieldValues extends FieldValues, TName extends Path<TFieldValues>> {
+  value: TFieldValues[TName]
+  form: UseFormReturn<TFieldValues>
+}
+
 export interface FormWatchProps<TFieldValues extends FieldValues> {
-  value: Path<TFieldValues>
-  children: (value: TFieldValues[Path<TFieldValues>]) => React.ReactNode
+  name: Path<TFieldValues>
+  children: <TName extends Path<TFieldValues>>(payload: FormWatchPayload<TFieldValues, TName>) => React.ReactNode
 }
 
 export interface FormWatchErrorProps<TFieldValues extends FieldValues> {
   name: Path<TFieldValues>
   children: (error: FieldErrors<TFieldValues>[Path<TFieldValues>]) => React.ReactNode
+}
+
+export interface FormGroupType {
+  children: (props: {
+    add: (value: unknown) => void
+    index: number
+    remove: (index: number) => void
+    length: number
+  }) => ReactNode
+  name: string
+  hidden?: boolean
 }
 
 export interface SubmitButtonProps extends VariantProps<typeof buttonVariants> {

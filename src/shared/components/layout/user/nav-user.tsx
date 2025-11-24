@@ -16,7 +16,7 @@ import Link from 'next/link'
 import { Button } from '@/shared/components/ui/button'
 import { type User } from 'better-auth'
 import { PATH } from '@/shared/config/routes'
-import { SignOutDropdownMenuItem } from '@/module/auth/components/auth.sign-out-dropdown'
+import { SignOutDropdownMenuItem } from '@/module/auth/auth.sign-out-dropdown'
 
 export function UserDropdown({ user }: { user: User }) {
   const fallbackName = user?.name

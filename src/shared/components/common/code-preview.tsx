@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui
 import { Button } from '@/shared/components/ui/button'
 
 export default function CodePreview({ json }: { json: unknown }) {
-  const code = JSON.stringify(json, null, 2)
+  const code = JSON.stringify(json, null, 6)
 
   async function handleCopy() {
     await navigator.clipboard.writeText(code)

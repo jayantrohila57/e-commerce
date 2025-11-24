@@ -53,7 +53,7 @@ export const ImageUploadText: React.FC<FormInputProps> = (props) => {
         >
           <FormLabel required={props.required}>{props.label}</FormLabel>
           <FormControl>
-            <div className="relative">
+            <div className="relative h-full w-full">
               <div
                 role="button"
                 onClick={openFileDialog}
@@ -63,7 +63,7 @@ export const ImageUploadText: React.FC<FormInputProps> = (props) => {
                 onDrop={handleDrop}
                 data-dragging={isDragging || undefined}
                 className={cn(
-                  'hover:bg-background dark:bg-input/30 data-[dragging=true]:bg-background has-[input:focus]:border-ring has-[input:focus]:ring-ring/50 bg-background border-input relative flex aspect-video max-h-80 min-h-60 flex-col items-center justify-center overflow-hidden rounded-md border p-4 shadow-xs transition-colors has-disabled:pointer-events-none has-disabled:opacity-50 has-[img]:border-none has-[input:focus]:ring-[3px]',
+                  'hover:bg-background dark:bg-input/30 data-[dragging=true]:bg-background has-[input:focus]:border-ring has-[input:focus]:ring-ring/50 bg-background border-input relative flex aspect-video max-h-80 flex-col items-center justify-center overflow-hidden rounded-md border p-4 shadow-xs transition-colors has-disabled:pointer-events-none has-disabled:opacity-50 has-[img]:border-none has-[input:focus]:ring-[3px]',
                   fieldState.error && 'border-destructive focus-visible:ring-destructive',
                 )}
               >
@@ -85,7 +85,7 @@ export const ImageUploadText: React.FC<FormInputProps> = (props) => {
                     <BlurImage
                       src={(field.value as string) ?? files[0]?.preview ?? ''}
                       alt={files[0]?.file?.name || 'Uploaded image'}
-                      className="aspect-video size-full w-full object-cover"
+                      className="aspect-video size-full w-full rounded-md border object-cover"
                       width={1920}
                       height={1080}
                     />

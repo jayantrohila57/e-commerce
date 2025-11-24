@@ -45,6 +45,18 @@ export const visibilityOptions: FilterOption<Visibility>[] = [
   { value: Visibility.HIDDEN, label: 'Hidden', icon: EyeOffIcon, color: '' },
 ]
 
+export enum Status {
+  DRAFT = 'draft',
+  ARCHIVE = 'archive',
+  LIVE = 'live',
+}
+
+export const statusOptions: FilterOption<Status>[] = [
+  { value: Status.DRAFT, label: 'Draft', icon: CheckIcon, color: '' },
+  { value: Status.ARCHIVE, label: 'Archive', icon: CheckIcon, color: '' },
+  { value: Status.LIVE, label: 'Live', icon: CheckIcon, color: '' },
+]
+
 export const colorClass = {
   RED: 'border border-red-500 bg-red-500 text-red-500 data-[state=checked]:bg-red-500 data-[state=checked]:text-white',
   ORANGE:

@@ -1,9 +1,9 @@
 import { getServerSession } from '@/core/auth/auth.server'
-import { SignInForm } from '@/module/auth/components/auth.sign-in'
+import { SignInForm } from '@/module/auth/auth.sign-in'
 import Shell from '@/shared/components/layout/shell'
 import { redirect } from 'next/navigation'
 import { PATH } from '@/shared/config/routes'
-import { AuthProviders } from '@/module/auth/components/auth.providers'
+import { AuthProviders } from '@/module/auth/auth.providers'
 import { Separator } from '@/shared/components/ui/separator'
 import { AuthCard, AuthFooterNote } from '@/shared/components/layout/section/auth.card-layout'
 

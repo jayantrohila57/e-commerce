@@ -1,5 +1,5 @@
 import { getServerSession } from '@/core/auth/auth.server'
-import { EmailVerification } from '@/module/auth/components/auth.verify-email'
+import { EmailVerification } from '@/module/auth/auth.verify-email'
 import { redirect } from 'next/navigation'
 import Shell from '@/shared/components/layout/shell'
 import { PATH } from '@/shared/config/routes'

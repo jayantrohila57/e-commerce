@@ -15,9 +15,9 @@ export const SidebarHeader = () => {
             orientation="vertical"
             className="mr-2 data-[orientation=vertical]:h-4"
           />
-          <Breadcrumbs className="text-md" />
+          <Breadcrumbs className="text-md w-full" />
         </div>
-        <div className="flex w-full flex-row items-center justify-end gap-4 px-2">
+        <div className="flex flex-row items-center justify-end gap-4 px-2">
           <Separator
             orientation="vertical"
             className="mr-2 data-[orientation=vertical]:h-4"

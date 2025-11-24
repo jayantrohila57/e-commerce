@@ -4,14 +4,14 @@ import { MESSAGE, STATUS } from '@/shared/config/api.config'
 import { API_RESPONSE } from '@/shared/config/api.utils'
 
 import { db } from '@/core/db/db'
-import { productVariant } from '@/core/db/db.schema'
+import { inventoryItem, productVariant } from '@/core/db/db.schema'
 import { eq } from 'drizzle-orm'
 import { v4 as uuidv4 } from 'uuid'
 import { productVariantContract } from './product-variant.schema'
 
 export const productVariantRouter = createTRPCRouter({
   // =========================
-  // CREATE
+  // CREATE (with inventory in atomic transaction)
   // =========================
   create: protectedProcedure
     .input(productVariantContract.create.input)
@@ -19,26 +19,151 @@ export const productVariantRouter = createTRPCRouter({
     .mutation(async ({ input }) => {
       try {
         const { body } = input
-        const id = uuidv4()
+        const variantId = uuidv4()
+        const inventoryId = uuidv4()
 
         const cleanMedia = body.media?.filter(Boolean) ?? []
         const cleanAttributes = body.attributes ?? []
 
-        const [output] = await db
-          .insert(productVariant)
-          .values({
-            ...body,
-            id,
-            media: cleanMedia,
-            attributes: cleanAttributes,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-          })
-          .returning()
+        // Atomic transaction: insert variant and inventory together
+        const result = await db.transaction(async (tx) => {
+          // 1. Insert variant
+          const [createdVariant] = await tx
+            .insert(productVariant)
+            .values({
+              id: variantId,
+              slug: body.slug,
+              productId: body.productId,
+              title: body.title,
+              priceModifierType: body.priceModifierType,
+              priceModifierValue: body.priceModifierValue,
+              media: cleanMedia,
+              attributes: cleanAttributes,
+              createdAt: new Date(),
+              updatedAt: new Date(),
+            })
+            .returning()
 
-        return API_RESPONSE(STATUS.SUCCESS, MESSAGE.PRODUCT_VARIANT.CREATE.SUCCESS, output)
+          // 2. Insert inventory using the variant ID
+          const [createdInventory] = await tx
+            .insert(inventoryItem)
+            .values({
+              id: inventoryId,
+              variantId,
+              sku: body.inventory.sku,
+              barcode: body.inventory.barcode,
+              quantity: body.inventory.quantity,
+              incoming: body.inventory.incoming,
+              reserved: body.inventory.reserved,
+              updatedAt: new Date(),
+            })
+            .returning()
+
+          return {
+            variant: createdVariant,
+            inventory: createdInventory,
+          }
+        })
+
+        // Return variant with inventory nested
+        return API_RESPONSE(STATUS.SUCCESS, MESSAGE.PRODUCT_VARIANT.CREATE.SUCCESS, {
+          ...result.variant,
+          inventory: result.inventory,
+        })
       } catch (err) {
         return API_RESPONSE(STATUS.ERROR, MESSAGE.PRODUCT_VARIANT.CREATE.ERROR, null, err as Error)
+      }
+    }),
+
+  // =========================
+  // GET (single by ID with inventory)
+  // =========================
+  get: protectedProcedure
+    .input(productVariantContract.get.input)
+    .output(productVariantContract.get.output)
+    .query(async ({ input }) => {
+      try {
+        const { params } = input
+
+        const result = await db.query.productVariant.findFirst({
+          where: eq(productVariant.id, params.id),
+          with: {
+            inventory: true,
+          },
+        })
+
+        return API_RESPONSE(
+          result ? STATUS.SUCCESS : STATUS.FAILED,
+          result ? MESSAGE.PRODUCT_VARIANT.GET.SUCCESS : MESSAGE.PRODUCT_VARIANT.GET.FAILED,
+          result ?? null,
+        )
+      } catch (err) {
+        return API_RESPONSE(STATUS.ERROR, MESSAGE.PRODUCT_VARIANT.GET.ERROR, null, err as Error)
+      }
+    }),
+
+  // =========================
+  // GET MANY (with pagination and optional productId filter)
+  // =========================
+  getMany: protectedProcedure
+    .input(productVariantContract.getMany.input)
+    .output(productVariantContract.getMany.output)
+    .query(async ({ input }) => {
+      try {
+        const { query } = input
+        const { limit, offset, productId } = query
+
+        let queryBuilder = db.query.productVariant.findMany({
+          limit,
+          offset,
+          with: {
+            inventory: true,
+          },
+        })
+
+        if (productId) {
+          queryBuilder = db.query.productVariant.findMany({
+            where: eq(productVariant.productId, productId),
+            limit,
+            offset,
+            with: {
+              inventory: true,
+            },
+          })
+        }
+
+        const results = await queryBuilder
+
+        return API_RESPONSE(STATUS.SUCCESS, MESSAGE.PRODUCT_VARIANT.GET_MANY.SUCCESS, results)
+      } catch (err) {
+        return API_RESPONSE(STATUS.ERROR, MESSAGE.PRODUCT_VARIANT.GET_MANY.ERROR, null, err as Error)
+      }
+    }),
+
+  // =========================
+  // GET BY SLUG
+  // =========================
+  getBySlug: protectedProcedure
+    .input(productVariantContract.getBySlug.input)
+    .output(productVariantContract.getBySlug.output)
+    .query(async ({ input }) => {
+      try {
+        const { params } = input
+
+        const result = await db.query.productVariant.findFirst({
+          where: eq(productVariant.slug, params.slug),
+          with: {
+            inventory: true,
+          },
+        })
+
+        return API_RESPONSE(
+          result ? STATUS.SUCCESS : STATUS.FAILED,
+          result ? MESSAGE.PRODUCT_VARIANT.GET_BY_SLUG.SUCCESS : MESSAGE.PRODUCT_VARIANT.GET_BY_SLUG.FAILED,
+          result ?? null,
+        )
+      } catch (err) {
+        return API_RESPONSE(STATUS.ERROR, MESSAGE.PRODUCT_VARIANT.GET_BY_SLUG.ERROR, null, err as Error)
       }
     }),
 

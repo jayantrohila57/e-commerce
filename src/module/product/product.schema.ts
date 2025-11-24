@@ -93,6 +93,16 @@ export const productContract = {
         .nullable(),
     ),
   },
+  getMany: {
+    input: z.object({
+      query: paginationSchema.extend({
+        categorySlug: z.string().optional(),
+        seriesSlug: z.string().optional(),
+        isActive: z.boolean().optional(),
+      }),
+    }),
+    output: detailedResponse(z.array(productSelectSchema)),
+  },
   getPDPProduct: {
     input: z.object({
       params: z.object({

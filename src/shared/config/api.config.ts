@@ -367,6 +367,11 @@ export const MESSAGE = {
       FAILED: 'Product not found.',
       ERROR: 'Unexpected error while retrieving product.',
     },
+    GET_MANY: {
+      SUCCESS: 'Products retrieved successfully.',
+      FAILED: 'No products found.',
+      ERROR: 'Unexpected error while retrieving products.',
+    },
     UPDATE: {
       SUCCESS: 'Product updated successfully.',
       FAILED: 'Failed to update product.',
@@ -388,6 +393,21 @@ export const MESSAGE = {
       SUCCESS: 'Product variant created successfully.',
       FAILED: 'Failed to create product variant.',
       ERROR: 'Unexpected error while creating product variant.',
+    },
+    GET: {
+      SUCCESS: 'Product variant retrieved successfully.',
+      FAILED: 'Product variant not found.',
+      ERROR: 'Unexpected error while retrieving product variant.',
+    },
+    GET_MANY: {
+      SUCCESS: 'Product variants retrieved successfully.',
+      FAILED: 'No product variants found.',
+      ERROR: 'Unexpected error while retrieving product variants.',
+    },
+    GET_BY_SLUG: {
+      SUCCESS: 'Product variant retrieved successfully.',
+      FAILED: 'Product variant not found.',
+      ERROR: 'Unexpected error while retrieving product variant by slug.',
     },
     UPDATE: {
       SUCCESS: 'Product variant updated successfully.',

@@ -51,7 +51,7 @@ export default function VariantForm({ productSlug, productId }: VariantFormProps
   })
 
   function onSubmit(data: FormValues) {
-    const id = toast.loading('Creating variant...')
+    const id = toast.loading('Creating variant with inventory...')
     setToastId(id)
     setIsLoading(true)
 
@@ -64,6 +64,13 @@ export default function VariantForm({ productSlug, productId }: VariantFormProps
         priceModifierValue: data.body.priceModifierValue,
         attributes: data.body.attributes,
         media: data.body.media,
+        inventory: {
+          sku: data.body.inventory.sku,
+          barcode: data.body.inventory.barcode,
+          quantity: data.body.inventory.quantity,
+          incoming: data.body.inventory.incoming,
+          reserved: data.body.inventory.reserved,
+        },
       },
     })
   }
@@ -89,6 +96,13 @@ export default function VariantForm({ productSlug, productId }: VariantFormProps
               url: '',
             },
           ],
+          inventory: {
+            sku: '',
+            barcode: '',
+            quantity: 0,
+            incoming: 0,
+            reserved: 0,
+          },
         },
       }}
       schema={formSchema}
@@ -286,6 +300,68 @@ export default function VariantForm({ productSlug, productId }: VariantFormProps
               </FormItem>
             )}
           </Form.FormGroup>
+        </FormSection>
+        <Separator className="my-4" />
+
+        <FormSection
+          title="Inventory"
+          description="Manage stock levels, SKU, and barcode"
+        >
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <Form.Field
+              {...{
+                name: 'body.inventory.sku',
+                label: 'SKU',
+                type: 'text',
+                required: true,
+                placeholder: 'e.g. SKU-001-BLK-128GB',
+                description: 'Unique stock keeping unit identifier',
+              }}
+            />
+
+            <Form.Field
+              {...{
+                name: 'body.inventory.barcode',
+                label: 'Barcode',
+                type: 'text',
+                placeholder: 'e.g. 123456789012',
+                description: 'Optional barcode for scanning',
+              }}
+            />
+
+            <Form.Field
+              {...{
+                name: 'body.inventory.quantity',
+                label: 'Available Quantity',
+                type: 'number',
+                required: true,
+                placeholder: '0',
+                description: 'Current stock available for sale',
+              }}
+            />
+
+            <Form.Field
+              {...{
+                name: 'body.inventory.incoming',
+                label: 'Incoming Quantity',
+                type: 'number',
+                required: true,
+                placeholder: '0',
+                description: 'Stock on order/in transit',
+              }}
+            />
+
+            <Form.Field
+              {...{
+                name: 'body.inventory.reserved',
+                label: 'Reserved Quantity',
+                type: 'number',
+                required: true,
+                placeholder: '0',
+                description: 'Stock reserved for orders',
+              }}
+            />
+          </div>
         </FormSection>
       </div>
 

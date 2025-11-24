@@ -8,7 +8,7 @@ export default async function ProductVariantPage({
   params,
 }: PageProps<'/studio/products/[productSlug]/[variantSlug]'>) {
   const { variantSlug: slug } = await params
-  const { data } = await apiServer.productVariant.get({
+  const { data } = await apiServer.productVariant.getBySlug({
     params: {
       slug,
     },

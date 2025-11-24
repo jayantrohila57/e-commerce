@@ -35,6 +35,33 @@ export const productRouter = createTRPCRouter({
         return API_RESPONSE(STATUS.ERROR, MESSAGE.PRODUCT.GET_BY_SLUG.ERROR, null, err as Error)
       }
     }),
+  getMany: protectedProcedure
+    .input(productContract.getMany.input)
+    .output(productContract.getMany.output)
+    .query(async ({ input }) => {
+      try {
+        const { query } = input
+        const { limit, offset, categorySlug, seriesSlug, isActive } = query
+
+        const products = await db.query.product.findMany({
+          limit,
+          offset,
+          where: (p, { and, eq, isNull }) => {
+            const conditions = [isNull(p.deletedAt)]
+            if (categorySlug) conditions.push(eq(p.categorySlug, categorySlug))
+            if (seriesSlug) conditions.push(eq(p.seriesSlug, seriesSlug))
+            if (isActive !== undefined) conditions.push(eq(p.isActive, isActive))
+            return and(...conditions)
+          },
+          orderBy: (p, { desc }) => [desc(p.createdAt)],
+        })
+
+        return API_RESPONSE(STATUS.SUCCESS, MESSAGE.PRODUCT.GET_MANY.SUCCESS, products)
+      } catch (err) {
+        debugError('PRODUCT:GET_MANY:ERROR', err)
+        return API_RESPONSE(STATUS.ERROR, MESSAGE.PRODUCT.GET_MANY.ERROR, null, err as Error)
+      }
+    }),
   getProductsBySeriesSlug: publicProcedure
     .input(productContract.getProductsBySeriesSlug.input)
     .output(productContract.getProductsBySeriesSlug.output)

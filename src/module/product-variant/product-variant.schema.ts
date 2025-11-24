@@ -1,9 +1,21 @@
+import { inventoryBaseSchema } from '@/module/inventory/inventory.schema'
 import z from 'zod/v3'
 
 // =========================
 // ENUMS
 // =========================
 export const priceModifierTypeEnum = z.enum(['flat_increase', 'flat_decrease', 'percent_increase', 'percent_decrease'])
+
+// =========================
+// INVENTORY FOR VARIANT CREATION
+// =========================
+// When creating a variant with inventory, we don't include variantId (it's generated)
+// or updatedAt (it's set automatically)
+export const inventoryForVariantSchema = inventoryBaseSchema.omit({
+  id: true,
+  variantId: true,
+  updatedAt: true,
+})
 
 // =========================
 // BASE SCHEMA
@@ -62,7 +74,6 @@ export const productVariantUpdateSchema = productVariantBaseSchema.partial()
 
 // =========================
 // DETAILED RESPONSE WRAPPER
-// (same shared util)
 // =========================
 export const detailedResponse = <T extends z.ZodTypeAny>(dataSchema: T) =>
   z.object({
@@ -87,14 +98,56 @@ const paginationSchema = z.object({
 })
 
 // =========================
+// COMBINED RESPONSE (variant + inventory)
+// =========================
+export const variantWithInventorySchema = productVariantSelectSchema.extend({
+  inventory: z
+    .object({
+      id: z.string(),
+      sku: z.string(),
+      barcode: z.string().nullable().optional(),
+      quantity: z.number().int(),
+      incoming: z.number().int(),
+      reserved: z.number().int(),
+    })
+    .nullable()
+    .optional(),
+})
+
+// =========================
 // CONTRACT
 // =========================
 export const productVariantContract = {
   create: {
     input: z.object({
-      body: productVariantInsertSchema,
+      body: productVariantInsertSchema.extend({
+        inventory: inventoryForVariantSchema,
+      }),
     }),
-    output: detailedResponse(productVariantSelectSchema),
+    output: detailedResponse(variantWithInventorySchema),
+  },
+
+  get: {
+    input: z.object({
+      params: z.object({ id: z.string() }),
+    }),
+    output: detailedResponse(variantWithInventorySchema),
+  },
+
+  getMany: {
+    input: z.object({
+      query: paginationSchema.extend({
+        productId: z.string().optional(),
+      }),
+    }),
+    output: detailedResponse(z.array(variantWithInventorySchema)),
+  },
+
+  getBySlug: {
+    input: z.object({
+      params: z.object({ slug: z.string() }),
+    }),
+    output: detailedResponse(variantWithInventorySchema),
   },
 
   update: {

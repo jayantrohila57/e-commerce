@@ -1,0 +1,28 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+# Only operate on staged files (no lint-staged) — fast and uses pure Husky + git
+# Supports js/jsx/ts/tsx/json/css/md/html
+STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(js|jsx|ts|tsx|json|css|md|html)$' || true)
+
+if [ -z "$STAGED_FILES" ]; then
+	echo "No staged JS/TS/HTML/CSS/JSON/MD files to format or lint"
+	exit 0
+fi
+
+echo "Staged files to process:"
+echo "$STAGED_FILES"
+
+echo "Running Prettier on staged files..."
+echo "$STAGED_FILES" | xargs pnpm exec prettier --write || true
+
+echo "Running ESLint --fix on staged files..."
+echo "$STAGED_FILES" | xargs pnpm exec eslint --fix --ext .js,.jsx,.ts,.tsx || true
+
+# Re-add possibly modified files back to the index
+echo "$STAGED_FILES" | xargs git add -- || true
+
+# Run eslint (no --fix) on staged files to ensure there are no lint errors.
+# If there are errors, the commit will be aborted.
+echo "Running ESLint check on staged files..."
+echo "$STAGED_FILES" | xargs pnpm exec eslint --ext .js,.jsx,.ts,.tsx

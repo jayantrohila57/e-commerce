@@ -2,17 +2,8 @@
 
 import * as React from 'react'
 import Autoplay from 'embla-carousel-autoplay'
-import {
-  Card,
-  CardAction,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/shared/components/ui/card'
-import { Button } from '@/shared/components/ui/button'
-import { ChevronRight, ChevronRightCircle, InfoIcon, Squircle } from 'lucide-react'
+import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from '@/shared/components/ui/card'
+import { ChevronRightCircle, Squircle } from 'lucide-react'
 import {
   Carousel,
   CarouselContent,
@@ -56,7 +47,6 @@ export function CategoryBanner({ data }: { data: CategoryBase[] | null }) {
       <div className="">
         <CarouselContent className="py-4">
           {data?.map((category, i) => {
-            const Icon = category?.icon ? category?.icon : InfoIcon
             return (
               <CarouselItem
                 key={i}

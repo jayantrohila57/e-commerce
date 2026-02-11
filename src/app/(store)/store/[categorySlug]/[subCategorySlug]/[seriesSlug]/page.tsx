@@ -1,5 +1,6 @@
 import { apiServer, HydrateClient } from '@/core/api/api.server'
 import { VariantCardList } from '@/module/product/product-series-cards'
+import CodePreview from '@/shared/components/common/code-preview'
 import Section from '@/shared/components/layout/section/section'
 import { notFound } from 'next/navigation'
 

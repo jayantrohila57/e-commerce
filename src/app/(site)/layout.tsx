@@ -4,7 +4,6 @@ import Footer from '@/shared/components/layout/footer/footer'
 import ScrollToTopButton from '@/shared/components/common/scroll-to-top'
 
 import { ScrollProgress } from '@/shared/components/common/scroll-progress'
-import NavigationMenuComponent from '@/shared/components/layout/nav-menu/site.nav'
 
 export default async function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -15,7 +14,6 @@ export default async function Layout({ children }: { children: React.ReactNode }
       {/* <CookieConsent /> */}
       <Shell.Header>
         <Header />
-        <NavigationMenuComponent />
       </Shell.Header>
       <Shell.Main>{children}</Shell.Main>
       <Shell.Footer>

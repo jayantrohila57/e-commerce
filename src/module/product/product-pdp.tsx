@@ -1,17 +1,12 @@
-import { apiServer } from '@/core/api/api.server'
-import { getServerSession } from '@/core/auth/auth.server'
-import WishListButton from '@/module/wishlist/wishlist-button'
-import AddToCartButton from '@/shared/components/common/add-to-cart-button'
-import { Badge } from '@/shared/components/ui/badge'
 import { Button } from '@/shared/components/ui/button'
-import { type Route } from 'next'
+import { Badge } from '@/shared/components/ui/badge'
 import Image from 'next/image'
 import Link from 'next/link'
-import { type ProductVariantBase } from '../product-variant/product-variant.types'
-import { extractAttributeGroups, isOptionAvailable, resolveNextVariant } from './product-utility'
 import { type GetPDPProductOutput } from './product.types'
+import { type Route } from 'next'
+import { extractAttributeGroups, isOptionAvailable, resolveNextVariant } from './product-utility'
 
-export const PDPProduct = async ({ data, slug }: { data: GetPDPProductOutput['data']; slug: string }) => {
+export const PDPProduct = ({ data, slug }: { data: GetPDPProductOutput['data']; slug: string }) => {
   if (!data?.product) return <div>Product not found</div>
 
   const product = data.product
@@ -132,17 +127,18 @@ export const PDPProduct = async ({ data, slug }: { data: GetPDPProductOutput['da
           </div>
 
           <div className="flex gap-4 pt-4">
-            <AddToCartButton variantId={selectedVariant?.id ?? ''} />
-            <div className="flex items-center gap-2">
-              {/* compute initialInWishlist server-side when possible */}
-              <AsyncWishlistButton selectedVariant={selectedVariant} />
-              <Button
-                size="lg"
-                variant="outline"
-              >
-                Buy Now
-              </Button>
-            </div>
+            <Button
+              size="lg"
+              className="flex-1"
+            >
+              Add to Cart
+            </Button>
+            <Button
+              size="lg"
+              variant="outline"
+            >
+              Buy Now
+            </Button>
           </div>
 
           <div className="space-y-4 pt-6">
@@ -163,28 +159,5 @@ export const PDPProduct = async ({ data, slug }: { data: GetPDPProductOutput['da
         </div>
       </div>
     </div>
-  )
-}
-
-async function AsyncWishlistButton({ selectedVariant }: { selectedVariant: ProductVariantBase }) {
-  let initialInWishlist = false
-
-  try {
-    const session = await getServerSession()
-    if (session && selectedVariant?.id) {
-      const { data: wishlistData } = await apiServer.wishlist.getUserWishlist({ query: { limit: 100 } })
-      const items = wishlistData ?? []
-      if (items.some((it) => it.variantId === selectedVariant.id)) initialInWishlist = true
-    }
-  } catch {
-    // ignore errors
-  }
-
-  return (
-    <WishListButton
-      variantId={selectedVariant?.id ?? undefined}
-      initialInWishlist={initialInWishlist}
-      ariaLabel="Add to wishlist"
-    />
   )
 }

@@ -2,12 +2,12 @@
 
 import dynamic from 'next/dynamic'
 
-import { useSession } from '@/core/auth/auth.client'
 import { Skeleton } from '@/shared/components/ui/skeleton'
-import { PATH } from '@/shared/config/routes'
-import Link from 'next/link'
 import { Button } from '../../ui/button'
+import Link from 'next/link'
+import { PATH } from '@/shared/config/routes'
 import { UserDropdown } from '../user/nav-user'
+import { useSession } from '@/core/auth/auth.client'
 
 const ModeToggle = dynamic(async () => await import('@/core/theme/theme.selector').then((mod) => mod.ModeToggle), {
   ssr: false,
@@ -23,7 +23,7 @@ const CartButton = dynamic(
 )
 
 const WishListButton = dynamic(
-  async () => await import('@/module/wishlist/wishlist-button').then((mod) => mod.default),
+  async () => await import('@/shared/components/common/wishlist-button').then((mod) => mod.default),
   {
     ssr: false,
     loading: () => <Skeleton className="h-9 w-9 rounded-md" />,

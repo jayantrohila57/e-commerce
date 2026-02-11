@@ -6,7 +6,6 @@ import Footer from '@/shared/components/layout/footer/footer'
 import { ScrollProgress } from '@/shared/components/common/scroll-progress'
 import ScrollToTopButton from '@/shared/components/common/scroll-to-top'
 import { SubNavHeader } from '@/shared/components/layout/section/section.header'
-import NavigationMenuComponent from '@/shared/components/layout/nav-menu/site.nav'
 
 export default async function AccountLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -15,7 +14,6 @@ export default async function AccountLayout({ children }: { children: React.Reac
       <ScrollToTopButton />
       <Shell.Header>
         <Header />
-        <NavigationMenuComponent />
       </Shell.Header>
       <Shell.Main>
         <Shell.Section>

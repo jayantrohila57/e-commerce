@@ -62,45 +62,6 @@ const searchSchema = z.object({
   isFeatured: z.boolean().optional(),
 })
 
-// Base series schema for nested structure (avoiding circular dependency)
-const seriesBaseSchema = z.object({
-  id: z.string().min(1),
-  subcategorySlug: z.string().min(1),
-  slug: z.string().min(1),
-  icon: z.string().nullable().optional(),
-  title: z.string().min(1),
-  description: z.string().nullable().optional(),
-  metaTitle: z.string().nullable().optional(),
-  metaDescription: z.string().nullable().optional(),
-  displayType: displayTypeEnum.default('grid'),
-  color: z.string().default('#FFFFFF').nullable(),
-  visibility: visibilityEnum.default('public'),
-  displayOrder: z.number().int().default(0),
-  image: z.string().nullable(),
-  isFeatured: z.boolean().default(false),
-  deletedAt: z.date().nullable().optional(),
-  createdAt: z
-    .date()
-    .default(() => new Date())
-    .nullable(),
-  updatedAt: z
-    .date()
-    .default(() => new Date())
-    .nullable(),
-})
-
-const seriesSelectSchema = seriesBaseSchema
-
-// Extended subcategory schema with nested series
-const subcategoryWithSeriesSchema = subcategorySelectSchema.extend({
-  series: z.array(seriesSelectSchema).optional(),
-})
-
-// Extended category schema with nested subcategories and series
-const categoryWithFullHierarchySchema = categorySelectSchema.extend({
-  subcategories: z.array(subcategoryWithSeriesSchema).optional(),
-})
-
 export const categoryContract = {
   get: {
     input: z.object({
@@ -188,12 +149,5 @@ export const categoryContract = {
       params: z.object({ id: z.string() }),
     }),
     output: detailedResponse(categorySelectSchema.pick({ id: true }).nullable()),
-  },
-
-  getNestedHierarchy: {
-    input: z.object({
-      query: searchSchema.merge(paginationSchema).optional(),
-    }),
-    output: detailedResponse(z.array(categoryWithFullHierarchySchema)),
   },
 }

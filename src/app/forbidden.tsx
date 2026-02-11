@@ -1,11 +1,11 @@
+import Link from 'next/link'
 import Header from '@/shared/components/layout/header/header'
 import { Shell } from '@/shared/components/layout/shell'
 import { PATH } from '@/shared/config/routes'
-import Link from 'next/link'
 
 export const metadata = {
   title: 'Forbidden',
-  description: 'You are not authorized to access this resource.',
+  description: 'Forbidden...',
 }
 
 export default function Forbidden() {

@@ -1,10 +1,10 @@
-import { apiServer, HydrateClient } from '@/core/api/api.server'
-import Section from '@/shared/components/layout/section/section'
+import Link from 'next/link'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/shared/components/ui/card'
-import { BlurImage } from '@/shared/components/ui/image'
+import { apiServer, HydrateClient } from '@/core/api/api.server'
 import { PATH } from '@/shared/config/routes'
 import { type Route } from 'next'
-import Link from 'next/link'
+import Section from '@/shared/components/layout/section/section'
+import { BlurImage } from '@/shared/components/ui/image'
 
 export default async function ShopByCategoryGrid() {
   const { data: categories } = await apiServer.category.getMany({

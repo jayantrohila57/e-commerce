@@ -1,6 +1,6 @@
-import Header from '@/shared/components/layout/header/header'
-import Section from '@/shared/components/layout/section/section'
 import { Shell } from '@/shared/components/layout/shell'
+import Section from '@/shared/components/layout/section/section'
+import Header from '@/shared/components/layout/header/header'
 
 export const metadata = {
   title: 'Not Found',

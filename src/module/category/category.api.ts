@@ -1,10 +1,10 @@
 import { createTRPCRouter, protectedProcedure, publicProcedure } from '@/core/api/api.methods'
 import { db } from '@/core/db/db'
-import { category, subcategory, series } from '@/core/db/db.schema'
+import { category } from '@/core/db/db.schema'
 import { MESSAGE, STATUS } from '@/shared/config/api.config'
 import { API_RESPONSE } from '@/shared/config/api.utils'
 import { debugError } from '@/shared/utils/lib/logger.utils'
-import { and, eq, ilike, isNull } from 'drizzle-orm'
+import { and, eq, ilike } from 'drizzle-orm'
 import { v4 as uuidv4 } from 'uuid'
 import { categoryContract } from './category.schema'
 
@@ -112,7 +112,7 @@ export const categoryRouter = createTRPCRouter({
   getManyByTypes: publicProcedure
     .input(categoryContract.getManyByTypes.input)
     .output(categoryContract.getManyByTypes.output)
-    .query(async () => {
+    .query(async ({}) => {
       try {
         const featuredCategories = await db.query.category.findMany({
           where: (c, { eq, and, isNull }) => and(eq(c.isFeatured, true), isNull(c.deletedAt)),
@@ -288,49 +288,6 @@ export const categoryRouter = createTRPCRouter({
         )
       } catch (err) {
         return API_RESPONSE(STATUS.ERROR, MESSAGE.CATEGORY.DELETE.ERROR, null, err as Error)
-      }
-    }),
-
-  getNestedHierarchy: publicProcedure
-    .input(categoryContract.getNestedHierarchy.input)
-    .output(categoryContract.getNestedHierarchy.output)
-    .query(async ({ input }) => {
-      try {
-        const conditions = []
-        if (input.query?.search) conditions.push(ilike(category.title, `%${input.query.search}%`))
-        if (input.query?.visibility) conditions.push(eq(category.visibility, input.query.visibility))
-        if (input.query?.isFeatured !== undefined) conditions.push(eq(category.isFeatured, input.query.isFeatured))
-
-        // Filter out deleted categories
-        conditions.push(isNull(category.deletedAt))
-
-        const output = await db.query.category.findMany({
-          where: conditions.length ? and(...conditions) : isNull(category.deletedAt),
-          limit: input.query?.limit ?? 50,
-          offset: input.query?.offset ?? 0,
-          orderBy: (c, { asc }) => [asc(c.displayOrder)],
-          with: {
-            subcategories: {
-              where: isNull(subcategory.deletedAt),
-              orderBy: (sc, { asc }) => [asc(sc.displayOrder)],
-              with: {
-                series: {
-                  where: isNull(series.deletedAt),
-                  orderBy: (s, { asc }) => [asc(s.displayOrder)],
-                },
-              },
-            },
-          },
-        })
-
-        return API_RESPONSE(
-          output?.length ? STATUS.SUCCESS : STATUS.FAILED,
-          output?.length ? MESSAGE.CATEGORY.GET_MANY.SUCCESS : MESSAGE.CATEGORY.GET_MANY.FAILED,
-          output,
-        )
-      } catch (err) {
-        debugError('CATEGORY:GET_NESTED_HIERARCHY:ERROR', err)
-        return API_RESPONSE(STATUS.ERROR, MESSAGE.CATEGORY.GET_MANY.ERROR, null, err as Error)
       }
     }),
 })

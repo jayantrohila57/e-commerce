@@ -17,7 +17,6 @@
   "eslint.options": {
     "overrideConfigFile": "eslint.config.mjs"
   },
-  "files.eol": "\r\n",
   "prettier.requireConfig": true,
   "prettier.configPath": ".prettierrc",
   "typescript.tsdk": "node_modules/typescript/lib",
@@ -42,18 +41,12 @@
   "editor.dropIntoEditor.preferences": [],
   "search.exclude": {
     "**/node_modules": true,
-    "**/.next": true,
-    "**/.husky": true,
-    "**/migrations": true,
-    "**/scripts": true,
-    "**/.github": true
+    "**/.next": true
+    // "migrations": true
   },
   "files.exclude": {
     "**/node_modules": true,
-    "**/.next": true,
-    "**/.husky": true,
-    "**/migrations": true,
-    "**/scripts": true,
-    "**/.github": true
+    "**/.next": true
+    // "migrations": true
   }
 }

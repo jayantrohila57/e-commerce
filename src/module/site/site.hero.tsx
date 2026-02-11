@@ -7,7 +7,7 @@ export default async function SiteHero() {
     query: {},
   })
   return (
-    <Section variant="full">
+    <Section>
       <CategoryBanner data={data} />
     </Section>
   )

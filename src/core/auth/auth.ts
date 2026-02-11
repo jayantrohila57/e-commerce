@@ -4,7 +4,7 @@ import { twoFactor } from 'better-auth/plugins/two-factor'
 import { passkey } from 'better-auth/plugins/passkey'
 import { admin as adminPlugin } from 'better-auth/plugins/admin'
 import { db } from '@/core/db/db'
-import { env } from '@/shared/config/env'
+import { serverEnv } from '@/shared/config/env.server'
 import { site } from '@/shared/config/site'
 import {
   sendDeleteAccountEmail,
@@ -75,8 +75,8 @@ export const auth = betterAuth({
   },
   socialProviders: {
     github: {
-      clientId: env.GITHUB_CLIENT_ID,
-      clientSecret: env.GITHUB_CLIENT_SECRET,
+      clientId: serverEnv.GITHUB_CLIENT_ID,
+      clientSecret: serverEnv.GITHUB_CLIENT_SECRET,
     },
   },
   hooks: {

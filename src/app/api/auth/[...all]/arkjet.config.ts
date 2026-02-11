@@ -7,16 +7,16 @@ import arcjet, {
   type SlidingWindowRateLimitOptions,
 } from '@arcjet/next'
 import { findIp } from '@arcjet/ip'
-import { env } from '@/shared/config/env'
+import { serverEnv } from '@/shared/config/env.server'
 import { getServerSession } from '@/core/auth/auth.server'
 
 const aj = arcjet({
-  key: env.ARKJET_API_KEY,
+  key: serverEnv.ARKJET_API_KEY,
   log: {
-    debug: env.USE_DEBUG_LOGS ? console.debug : () => null,
-    info: env.USE_DEBUG_LOGS ? console.info : () => null,
-    warn: env.USE_DEBUG_LOGS ? console.warn : () => null,
-    error: env.USE_DEBUG_LOGS ? console.error : () => null,
+    debug: serverEnv.USE_DEBUG_LOGS ? console.debug : () => null,
+    info: serverEnv.USE_DEBUG_LOGS ? console.info : () => null,
+    warn: serverEnv.USE_DEBUG_LOGS ? console.warn : () => null,
+    error: serverEnv.USE_DEBUG_LOGS ? console.error : () => null,
   },
   characteristics: ['userIdOrIp'],
   rules: [shield({ mode: 'LIVE' })],

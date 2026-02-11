@@ -1,7 +1,7 @@
 import { apiServer, HydrateClient } from '@/core/api/api.server'
 import Section from '@/shared/components/layout/section/section'
 import { CategoryItem } from '@/module/category/category.component.all'
-import { env } from '@/shared/config/env'
+import { clientEnv } from '@/shared/config/env.client'
 import { notFound } from 'next/navigation'
 
 export async function generateMetadata({ params }: PageProps<'/store/[categorySlug]'>) {
@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: PageProps<'/store/[categorySl
     openGraph: {
       title: category?.title,
       description: category?.description,
-      url: `${env.NEXT_PUBLIC_BASE_URL}/store/${slug}`,
+      url: `${clientEnv.NEXT_PUBLIC_BASE_URL}/store/${slug}`,
       images: [
         {
           url: category?.image,

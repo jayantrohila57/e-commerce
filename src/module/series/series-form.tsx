@@ -10,11 +10,11 @@ import { apiClient } from '@/core/api/api.client'
 import { STATUS } from '@/shared/config/api.config'
 import { PATH } from '@/shared/config/routes'
 import type { z } from 'zod/v3'
-import { env } from '@/shared/config/env'
+import { clientEnv } from '@/shared/config/env.client'
 import { colorOptions, displayTypeOptions, visibilityOptions } from '@/shared/config/options.config'
 import { useState } from 'react'
 import { seriesContract } from './series.schema'
-import { Route } from 'next'
+import type { Route } from 'next'
 
 const formSchema = seriesContract.create.input
 
@@ -120,7 +120,7 @@ export default function SeriesForm({ subcategorySlug, categorySlug, subcategoryI
               slugField: 'body.title',
               description: 'URL-friendly version of the title',
               helperText: 'The slug is used in the URL',
-              inlinePrefix: `${env.NEXT_PUBLIC_BASE_URL}/category/${categorySlug}/${subcategorySlug}/`,
+              inlinePrefix: `${clientEnv.NEXT_PUBLIC_BASE_URL}/category/${categorySlug}/${subcategorySlug}/`,
               required: true,
               placeholder: 'series-name',
             }}

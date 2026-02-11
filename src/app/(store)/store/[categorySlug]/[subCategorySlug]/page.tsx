@@ -1,6 +1,6 @@
 import { apiServer, HydrateClient } from '@/core/api/api.server'
 import Section from '@/shared/components/layout/section/section'
-import { env } from '@/shared/config/env'
+import { clientEnv } from '@/shared/config/env.client'
 import { notFound } from 'next/navigation'
 import { SubCategoryItem } from '@/module/subcategory/subcategory-listing'
 
@@ -21,7 +21,7 @@ export async function generateMetadata({ params }: PageProps<'/store/[categorySl
     openGraph: {
       title: subCategory?.title,
       description: subCategory?.description,
-      url: `${env.NEXT_PUBLIC_BASE_URL}/store/${slug}`,
+      url: `${clientEnv.NEXT_PUBLIC_BASE_URL}/store/${slug}`,
       images: [
         {
           url: subCategory?.image,

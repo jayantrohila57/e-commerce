@@ -7,7 +7,7 @@ import { Button } from '@/shared/components/ui/button'
 import { FormItem } from '@/shared/components/ui/form'
 import { Separator } from '@/shared/components/ui/separator'
 import { STATUS } from '@/shared/config/api.config'
-import { env } from '@/shared/config/env'
+import { clientEnv } from '@/shared/config/env.client'
 import { statusOptions } from '@/shared/config/options.config'
 import { PATH } from '@/shared/config/routes'
 import { Minus, Plus } from 'lucide-react'
@@ -120,7 +120,7 @@ export default function ProductForm() {
               slugField: 'body.title',
               description: 'Enter the slug of the product',
               helperText: 'The slug is used to generate the URL of the product',
-              inlinePrefix: `${env.NEXT_PUBLIC_BASE_URL}/product/`,
+              inlinePrefix: `${clientEnv.NEXT_PUBLIC_BASE_URL}/product/`,
               required: true,
               placeholder: 'Enter slug',
             }}

@@ -11,7 +11,7 @@ import type { z } from 'zod/v3'
 
 import { apiClient } from '@/core/api/api.client'
 import { STATUS } from '@/shared/config/api.config'
-import { env } from '@/shared/config/env'
+import { clientEnv } from '@/shared/config/env.client'
 import { PATH } from '@/shared/config/routes'
 
 import { FormItem } from '@/shared/components/ui/form'
@@ -129,7 +129,7 @@ export default function ProductEditForm({ product }: { product: ProductUpdate | 
               label: 'Slug',
               type: 'slug',
               slugField: 'body.title',
-              inlinePrefix: `${env.NEXT_PUBLIC_BASE_URL}/product/`,
+              inlinePrefix: `${clientEnv.NEXT_PUBLIC_BASE_URL}/product/`,
               required: true,
               placeholder: 'Enter slug',
             }}

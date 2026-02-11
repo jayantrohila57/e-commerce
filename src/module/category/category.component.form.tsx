@@ -12,9 +12,8 @@ import { categoryContract } from './category.schema'
 import { PATH } from '@/shared/config/routes'
 import { type Route } from 'next'
 import type { z } from 'zod/v3'
-import { env } from '@/shared/config/env'
+import { clientEnv } from '@/shared/config/env.client'
 import { colorOptions, displayTypeOptions, visibilityOptions } from '@/shared/config/options.config'
-import { CategoryPreviewCard } from './category.component.preview'
 import { useState } from 'react'
 
 const formSchema = categoryContract.create.input
@@ -107,7 +106,7 @@ export default function CategoryForm() {
               slugField: 'body.title',
               description: 'Enter the slug of the post',
               helperText: 'The slug is used to generate the URL of the post',
-              inlinePrefix: `${env.NEXT_PUBLIC_BASE_URL}/category/`,
+              inlinePrefix: `${clientEnv.NEXT_PUBLIC_BASE_URL}/category/`,
               required: true,
               placeholder: 'Enter slug',
             }}

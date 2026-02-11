@@ -1,4 +1,4 @@
-import { env } from './env'
+import { clientEnv } from './env.client'
 
 export const site = {
   name: 'Logo',
@@ -6,7 +6,7 @@ export const site = {
   phone: '+1 514-288-2666',
   email: 'hello@example.com',
   description: 'Logo is a leading e-commerce company based in Montreal, Canada.',
-  url: env.NEXT_PUBLIC_BASE_URL,
+  url: clientEnv.NEXT_PUBLIC_BASE_URL,
   legalUpdate: 'Last updated: October 2025',
   apiTitle: 'Logo API',
   apiVersion: '1.0.0',

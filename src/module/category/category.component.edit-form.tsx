@@ -11,10 +11,10 @@ import { STATUS } from '@/shared/config/api.config'
 import { PATH } from '@/shared/config/routes'
 import { type Route } from 'next'
 import type { z } from 'zod/v3'
-import { env } from '@/shared/config/env'
+import { clientEnv } from '@/shared/config/env.client'
 import { colorOptions, displayTypeOptions, visibilityOptions } from '@/shared/config/options.config'
 import { useState } from 'react'
-import { CategoryUpdate } from './category.types'
+import type { CategoryUpdate } from './category.types'
 import { categoryContract } from './category.schema'
 
 const formSchema = categoryContract.update.input
@@ -108,7 +108,7 @@ export default function CategoryEditForm({ category }: { category: CategoryUpdat
               slugField: 'body.title',
               description: 'Enter the slug of the post',
               helperText: 'The slug is used to generate the URL of the post',
-              inlinePrefix: `${env.NEXT_PUBLIC_BASE_URL}/category/`,
+              inlinePrefix: `${clientEnv.NEXT_PUBLIC_BASE_URL}/category/`,
               required: true,
               placeholder: 'Enter slug',
             }}

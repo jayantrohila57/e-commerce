@@ -4,7 +4,7 @@ import { Loader } from 'lucide-react'
 
 export const metadata = {
   title: 'Loading',
-  description: 'Loading...',
+  description: 'Please wait while the content is loading...',
 }
 
 export default async function Loading() {

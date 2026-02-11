@@ -10,6 +10,24 @@ export const displayTypeEnum = pgEnum('display_type', ['grid', 'carousel', 'bann
 export const visibilityEnum = pgEnum('visibility', ['public', 'private', 'hidden'])
 export const productStatusEnum = pgEnum('product_status', ['draft', 'archive', 'live'])
 
+export const user = pgTable('user', {
+  id: text('id').primaryKey(),
+  name: text('name').notNull(),
+  email: text('email').notNull().unique(),
+  emailVerified: boolean('email_verified').default(false).notNull(),
+  image: text('image'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at')
+    .defaultNow()
+    .$onUpdate(() => /* @__PURE__ */ new Date())
+    .notNull(),
+  twoFactorEnabled: boolean('two_factor_enabled').default(false),
+  role: text('role'),
+  banned: boolean('banned').default(false),
+  banReason: text('ban_reason'),
+  banExpires: timestamp('ban_expires'),
+})
+
 export const account = pgTable('account', {
   id: text('id').primaryKey(),
   accountId: text('account_id').notNull(),
@@ -45,23 +63,7 @@ export const session = pgTable('session', {
     .references(() => user.id, { onDelete: 'cascade' }),
   impersonatedBy: text('impersonated_by'),
 })
-export const user = pgTable('user', {
-  id: text('id').primaryKey(),
-  name: text('name').notNull(),
-  email: text('email').notNull().unique(),
-  emailVerified: boolean('email_verified').default(false).notNull(),
-  image: text('image'),
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-  updatedAt: timestamp('updated_at')
-    .defaultNow()
-    .$onUpdate(() => /* @__PURE__ */ new Date())
-    .notNull(),
-  twoFactorEnabled: boolean('two_factor_enabled').default(false),
-  role: text('role'),
-  banned: boolean('banned').default(false),
-  banReason: text('ban_reason'),
-  banExpires: timestamp('ban_expires'),
-})
+
 export const verification = pgTable('verification', {
   id: text('id').primaryKey(),
   identifier: text('identifier').notNull(),
@@ -341,6 +343,185 @@ export const wishlist = pgTable('wishlist', {
   variantId: text('variant_id').notNull(),
 })
 
+export const coupon = pgTable('coupon', {
+  id: text('id').primaryKey(),
+  code: text('code').notNull().unique(),
+  type: text('type').$type<'flat' | 'percent'>().notNull(),
+  value: integer('value').notNull(),
+  minPurchase: integer('min_purchase'),
+  startsAt: timestamp('starts_at', { withTimezone: true }).notNull(),
+  endsAt: timestamp('ends_at', { withTimezone: true }).notNull(),
+  isActive: boolean('is_active').default(true).notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true })
+    .defaultNow()
+    .$onUpdate(() => new Date()),
+})
+
+export const cartCoupon = pgTable('cart_coupon', {
+  id: text('id').primaryKey(),
+  cartId: text('cart_id').references(() => cart.id, { onDelete: 'cascade' }),
+  couponId: text('coupon_id')
+    .notNull()
+    .references(() => coupon.id, { onDelete: 'cascade' }),
+  discountAmount: integer('discount_amount').notNull(),
+  appliedAt: timestamp('applied_at', { withTimezone: true }).defaultNow().notNull(),
+})
+
+export const shippingAddress = pgTable('shipping_address', {
+  id: text('id').primaryKey(),
+  userId: text('user_id').references(() => user.id, { onDelete: 'set null' }),
+  name: text('name').notNull(),
+  phone: text('phone').notNull(),
+  street: text('street').notNull(),
+  city: text('city').notNull(),
+  state: text('state').notNull(),
+  postalCode: text('postalCode').notNull(),
+  country: text('country').notNull(),
+  isDefault: boolean('is_default').default(false).notNull(),
+  deletedAt: timestamp('deleted_at', { withTimezone: true }),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+})
+
+export const order = pgTable('order', {
+  id: text('id').primaryKey(),
+  userId: text('user_id').references(() => user.id, { onDelete: 'set null' }),
+  status: orderStatusEnum('status').default('pending').notNull(),
+  paymentStatus: paymentStatusEnum('payment_status').default('pending').notNull(),
+  subtotal: integer('subtotal').notNull(),
+  discountTotal: integer('discount_total').default(0).notNull(),
+  shippingTotal: integer('shipping_total').default(0).notNull(),
+  taxTotal: integer('tax_total').default(0).notNull(),
+  grandTotal: integer('grand_total').notNull(),
+  couponCode: text('coupon_code'),
+  couponValue: integer('coupon_value'),
+  notes: text('notes'),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  placedAt: timestamp('placed_at', { withTimezone: true }),
+})
+
+export const orderItem = pgTable('order_item', {
+  id: text('id').primaryKey(),
+  orderId: text('order_id')
+    .notNull()
+    .references(() => order.id, { onDelete: 'cascade' }),
+
+  variantId: text('variant_id').notNull(),
+  productId: text('product_id').notNull(),
+  sku: text('sku'),
+  barcode: text('barcode'),
+  attributes: json('attributes').$type<{ title: string; value: string }[]>(),
+  image: text('image'),
+  currency: text('currency').default('INR'),
+  title: text('title').notNull(),
+  variantTitle: text('variant_title'),
+  quantity: integer('quantity').notNull(),
+  unitPrice: integer('unit_price').notNull(),
+  subtotal: integer('subtotal').notNull(),
+})
+export const orderAddress = pgTable('order_address', {
+  id: text('id').primaryKey(),
+  orderId: text('order_id')
+    .notNull()
+    .references(() => order.id, { onDelete: 'cascade' }),
+
+  name: text('name').notNull(),
+  phone: text('phone').notNull(),
+  street: text('street').notNull(),
+  city: text('city').notNull(),
+  state: text('state').notNull(),
+  postalCode: text('postal_code').notNull(),
+  country: text('country').notNull(),
+})
+
+export const paymentIntent = pgTable('payment_intent', {
+  id: text('id').primaryKey(),
+  orderId: text('order_id')
+    .notNull()
+    .references(() => order.id, { onDelete: 'cascade' }),
+
+  provider: paymentProviderEnum('provider').notNull(),
+  providerPaymentId: text('provider_payment_id'), // razorpay_payment_id, stripe_charge_id, etc.
+
+  amount: integer('amount').notNull(),
+  currency: text('currency').default('INR'),
+
+  status: paymentStatusEnum('status').default('pending').notNull(),
+  errorMessage: text('error_message'),
+
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true })
+    .defaultNow()
+    .$onUpdate(() => new Date()),
+})
+
+export const paymentRefund = pgTable('payment_refund', {
+  id: text('id').primaryKey(),
+  paymentIntentId: text('payment_intent_id')
+    .notNull()
+    .references(() => paymentIntent.id, { onDelete: 'cascade' }),
+
+  providerRefundId: text('provider_refund_id'),
+  amount: integer('amount').notNull(),
+  reason: text('reason'),
+
+  refundedAt: timestamp('refunded_at', { withTimezone: true }).defaultNow(),
+})
+
+export const shipment = pgTable('shipment', {
+  id: text('id').primaryKey(),
+  orderId: text('order_id')
+    .notNull()
+    .references(() => order.id, { onDelete: 'cascade' }),
+
+  provider: text('provider'),
+  trackingNumber: text('tracking_number'),
+  status: shipmentStatusEnum('status').default('pending'),
+
+  shippedAt: timestamp('shipped_at', { withTimezone: true }),
+  deliveredAt: timestamp('delivered_at', { withTimezone: true }),
+  expectedDeliveryAt: timestamp('expected_delivery_at', { withTimezone: true }),
+})
+export const shipmentEvent = pgTable('shipment_event', {
+  id: text('id').primaryKey(),
+  shipmentId: text('shipment_id')
+    .notNull()
+    .references(() => shipment.id, { onDelete: 'cascade' }),
+
+  status: text('status').notNull(),
+  description: text('description'),
+  location: text('location'),
+
+  occurredAt: timestamp('occurred_at', { withTimezone: true }).defaultNow(),
+})
+
+export const promotion = pgTable('promotion', {
+  id: text('id').primaryKey(),
+  title: text('title').notNull(),
+  type: discountTypeEnum('type').notNull(), // flat | percent
+  value: integer('value').notNull(),
+
+  minPurchase: integer('min_purchase'),
+  startAt: timestamp('start_at', { withTimezone: true }),
+  endAt: timestamp('end_at', { withTimezone: true }),
+
+  isActive: boolean('is_active').default(true).notNull(),
+})
+
+export const inventoryLog = pgTable('inventory_log', {
+  id: text('id').primaryKey(),
+  inventoryId: text('inventory_id')
+    .notNull()
+    .references(() => inventoryItem.id, { onDelete: 'cascade' }),
+
+  type: text('type').$type<'reserve' | 'release' | 'sale' | 'restock' | 'adjust'>().notNull(),
+  quantity: integer('quantity').notNull(),
+
+  referenceId: text('reference_id'), // orderId, reservationId, etc.
+
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+})
+
 /////////////////////////////////////////////////
 
 export const attributeRelations = relations(attribute, ({ one }) => ({
@@ -353,7 +534,7 @@ export const attributeRelations = relations(attribute, ({ one }) => ({
 export const productRelations = relations(product, ({ many }) => ({
   variants: many(productVariant),
 }))
-export const productVariantRelations = relations(productVariant, ({ one, many }) => ({
+export const productVariantRelations = relations(productVariant, ({ one }) => ({
   product: one(product, {
     fields: [productVariant.productId],
     references: [product.id],
@@ -441,4 +622,66 @@ export const productVariantFullRelations = relations(productVariant, ({ one, man
   }),
   cartLines: many(cartLine),
   wishlists: many(wishlist),
+}))
+
+export const couponRelations = relations(coupon, ({ many }) => ({
+  cartCoupons: many(cartCoupon),
+}))
+
+export const cartCouponRelations = relations(cartCoupon, ({ one }) => ({
+  cart: one(cart, {
+    fields: [cartCoupon.cartId],
+    references: [cart.id],
+  }),
+  coupon: one(coupon, {
+    fields: [cartCoupon.couponId],
+    references: [coupon.id],
+  }),
+}))
+
+export const shippingAddressRelations = relations(shippingAddress, ({ one }) => ({
+  user: one(user, {
+    fields: [shippingAddress.userId],
+    references: [user.id],
+  }),
+}))
+
+export const orderRelations = relations(order, ({ many, one }) => ({
+  items: many(orderItem),
+  address: one(orderAddress, {
+    fields: [order.id],
+    references: [orderAddress.orderId],
+  }),
+  paymentIntents: many(paymentIntent),
+  shipments: many(shipment),
+}))
+
+export const orderItemRelations = relations(orderItem, ({ one }) => ({
+  order: one(order, {
+    fields: [orderItem.orderId],
+    references: [order.id],
+  }),
+}))
+
+export const orderAddressRelations = relations(orderAddress, ({ one }) => ({
+  order: one(order, {
+    fields: [orderAddress.orderId],
+    references: [order.id],
+  }),
+}))
+
+export const paymentIntentRelations = relations(paymentIntent, ({ one, many }) => ({
+  order: one(order, {
+    fields: [paymentIntent.orderId],
+    references: [order.id],
+  }),
+  refunds: many(paymentRefund),
+}))
+
+export const shipmentRelations = relations(shipment, ({ one, many }) => ({
+  order: one(order, {
+    fields: [shipment.orderId],
+    references: [order.id],
+  }),
+  events: many(shipmentEvent),
 }))

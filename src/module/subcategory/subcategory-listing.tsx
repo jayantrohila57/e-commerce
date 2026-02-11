@@ -1,9 +1,9 @@
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/shared/components/ui/card'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/shared/components/ui/card'
 import { BlurImage } from '@/shared/components/ui/image'
-import Link from 'next/link'
 import { Separator } from '@/shared/components/ui/separator'
-import { GetSubcategoryBySlugOutput } from './subcategory.types'
-import { Route } from 'next'
+import { type Route } from 'next'
+import Link from 'next/link'
+import { type GetSubcategoryBySlugOutput } from './subcategory.types'
 
 export const SubCategoryItem = ({ data }: { data: GetSubcategoryBySlugOutput['data'] }) => {
   return (

@@ -1,0 +1,1 @@
+ALTER TABLE "cart_coupon" ALTER COLUMN "cart_id" DROP NOT NULL;

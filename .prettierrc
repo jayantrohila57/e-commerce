@@ -7,11 +7,11 @@
   "objectWrap": "preserve",
   "proseWrap": "preserve",
   "quoteProps": "as-needed",
+  "endOfLine": "crlf",
   "bracketSameLine": false,
   "tabWidth": 2,
   "useTabs": false,
   "bracketSpacing": true,
   "arrowParens": "always",
-  "endOfLine": "auto",
   "plugins": ["prettier-plugin-tailwindcss"]
 }

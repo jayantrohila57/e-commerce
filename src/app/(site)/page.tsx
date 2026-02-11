@@ -11,7 +11,7 @@ export const metadata = {
 export default async function Home({}: PageProps<'/'>) {
   return (
     <Shell>
-      <Shell.Section>
+      <Shell.Section variant={'full'}>
         <SiteHero />
       </Shell.Section>
       <Shell.Section>

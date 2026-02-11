@@ -2,17 +2,8 @@
 
 import * as React from 'react'
 import Autoplay from 'embla-carousel-autoplay'
-import {
-  Card,
-  CardAction,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/shared/components/ui/card'
-import { Button } from '@/shared/components/ui/button'
-import { ChevronRight, ChevronRightCircle, InfoIcon, Squircle } from 'lucide-react'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/shared/components/ui/card'
+import { Squircle } from 'lucide-react'
 import {
   Carousel,
   CarouselContent,
@@ -23,7 +14,7 @@ import {
 } from '@/shared/components/ui/carousel'
 import { cn } from '@/shared/utils/lib/utils'
 import { BlurImage } from '@/shared/components/ui/image'
-import { CategoryBase } from './category.types'
+import { type CategoryBase } from './category.types'
 
 export function CategoryBanner({ data }: { data: CategoryBase[] | null }) {
   const [api, setApi] = React.useState<CarouselApi>()
@@ -49,22 +40,21 @@ export function CategoryBanner({ data }: { data: CategoryBase[] | null }) {
   return (
     <Carousel
       className="w-full"
-      opts={{ loop: true, align: 'start', dragFree: false }}
+      opts={{ loop: true, align: 'center', dragFree: false }}
       plugins={[autoplay.current]}
       setApi={setApi}
     >
-      <div className="">
-        <CarouselContent className="py-4">
+      <div className="mt-20">
+        <CarouselContent className="h-full py-4">
           {data?.map((category, i) => {
-            const Icon = category?.icon ? category?.icon : InfoIcon
             return (
               <CarouselItem
                 key={i}
-                className="aspect-21/9"
+                className="h-full w-full basis-82/100"
               >
                 <Card
                   key={category?.title}
-                  className="bg-secondary group aspect-21/9 text-balance"
+                  className="bg-secondary group text-balance"
                 >
                   <CardContent className="flex h-auto w-full items-center justify-center overflow-hidden">
                     <BlurImage
@@ -80,9 +70,6 @@ export function CategoryBanner({ data }: { data: CategoryBase[] | null }) {
                       <CardTitle className="text-3xl font-semibold">{category?.title}</CardTitle>
                     </div>
                     <CardDescription className="text-base">{category?.description}</CardDescription>
-                    <CardAction>
-                      <ChevronRightCircle className="text-primary" />
-                    </CardAction>
                   </CardHeader>
                 </Card>
               </CarouselItem>
@@ -90,7 +77,7 @@ export function CategoryBanner({ data }: { data: CategoryBase[] | null }) {
           })}
         </CarouselContent>
       </div>
-      <div className="container mx-auto flex w-full flex-row justify-between">
+      <div className="container mx-auto flex h-full w-full flex-row items-center justify-between">
         <div className="flex h-8 w-full items-center justify-start gap-2">
           {data?.map((_, i) => (
             <Squircle

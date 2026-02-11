@@ -1,11 +1,11 @@
 import type z from 'zod/v3'
 import {
   type productVariantContract,
-  priceModifierTypeEnum,
-  productVariantBaseSchema,
-  productVariantInsertSchema,
-  productVariantSelectSchema,
-  productVariantUpdateSchema,
+  type priceModifierTypeEnum,
+  type productVariantBaseSchema,
+  type productVariantInsertSchema,
+  type productVariantSelectSchema,
+  type productVariantUpdateSchema,
 } from './product-variant.schema'
 
 export type ProductVariantBase = z.infer<typeof productVariantBaseSchema>

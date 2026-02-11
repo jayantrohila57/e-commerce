@@ -1,8 +1,8 @@
-import { BlurImage } from '@/shared/components/ui/image'
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/card'
+import { BlurImage } from '@/shared/components/ui/image'
+import { type Route } from 'next'
 import Link from 'next/link'
-import { Route } from 'next'
-import { GetProductsBySeriesSlugOutput } from './product.types'
+import { type GetProductsBySeriesSlugOutput } from './product.types'
 
 const computePrice = (basePrice: number, priceModifierValue: number, priceModifierType: string): number => {
   const base = basePrice

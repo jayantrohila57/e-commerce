@@ -1,16 +1,16 @@
-import Link from 'next/link'
-import { Button } from '../../ui/button'
-import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from '../../ui/card'
-import { slugToTitle } from '@/shared/utils/lib/url.utils'
-import type { Route } from 'next'
-import { Separator } from '../../ui/separator'
+import Link from "next/link";
+import { Button } from "../../ui/button";
+import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "../../ui/card";
+import { slugToTitle } from "@/shared/utils/lib/url.utils";
+import type { Route } from "next";
+import { Separator } from "../../ui/separator";
 
 interface SectionProps<T extends string = string> {
-  title?: string
-  description?: string
-  action?: string
-  actionUrl?: T
-  children: React.ReactNode
+  title?: string;
+  description?: string;
+  action?: string;
+  actionUrl?: T;
+  children: React.ReactNode;
 }
 
 export default function DashboardSection({ title, description, action, actionUrl, children }: SectionProps<Route>) {
@@ -25,10 +25,7 @@ export default function DashboardSection({ title, description, action, actionUrl
             </div>
             <CardAction>
               {action && (
-                <Button
-                  variant={'default'}
-                  asChild={actionUrl ? true : false}
-                >
+                <Button variant={"default"} asChild={actionUrl ? true : false}>
                   {actionUrl && <Link href={actionUrl}>{action}</Link>}
                 </Button>
               )}
@@ -42,5 +39,5 @@ export default function DashboardSection({ title, description, action, actionUrl
         </CardContent>
       </div>
     </Card>
-  )
+  );
 }

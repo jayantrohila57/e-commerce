@@ -1,46 +1,40 @@
-'use client'
+"use client";
 
-import Image from 'next/image'
-import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/shared/components/ui/card'
-import { Badge } from '@/shared/components/ui/badge'
-import { Mail, Shield, Ban, Calendar, User as UserIcon } from 'lucide-react'
-import { Separator } from '@/shared/components/ui/separator'
+import Image from "next/image";
+import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/shared/components/ui/card";
+import { Badge } from "@/shared/components/ui/badge";
+import { Mail, Shield, Ban, Calendar, User as UserIcon } from "lucide-react";
+import { Separator } from "@/shared/components/ui/separator";
 
 interface UserProfileProps {
   user?: {
-    name?: string
-    email?: string
-    emailVerified?: boolean
-    image?: string | null
-    createdAt?: Date
-    twoFactorEnabled?: boolean
-    role?: string
-    banned?: boolean
-    banReason?: string | null
-  }
+    name?: string;
+    email?: string;
+    emailVerified?: boolean;
+    image?: string | null;
+    createdAt?: Date;
+    twoFactorEnabled?: boolean;
+    role?: string;
+    banned?: boolean;
+    banReason?: string | null;
+  };
 }
 
 export function ProfileCard({ user }: UserProfileProps) {
-  const name = user?.name ?? 'Anonymous User'
-  const email = user?.email ?? 'No email provided'
-  const avatar = user?.image ?? 'https://api.dicebear.com/9.x/identicon/svg?seed=default'
-  const created = user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'Unknown date'
-  const verified = user?.emailVerified
-  const role = user?.role ?? 'guest'
-  const banned = user?.banned ?? false
-  const reason = user?.banReason ?? 'No reason provided'
+  const name = user?.name ?? "Anonymous User";
+  const email = user?.email ?? "No email provided";
+  const avatar = user?.image ?? "https://api.dicebear.com/9.x/identicon/svg?seed=default";
+  const created = user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : "Unknown date";
+  const verified = user?.emailVerified;
+  const role = user?.role ?? "guest";
+  const banned = user?.banned ?? false;
+  const reason = user?.banReason ?? "No reason provided";
 
   return (
     <Card>
       <CardHeader>
         <div className="border-border relative h-20 w-20 overflow-hidden rounded-full border">
-          <Image
-            src={avatar}
-            alt={`${name}'s avatar`}
-            fill
-            sizes="80px"
-            className="object-cover"
-          />
+          <Image src={avatar} alt={`${name}'s avatar`} fill sizes="80px" className="object-cover" />
         </div>
         <CardTitle className="text-lg font-semibold">{name}</CardTitle>
         <CardDescription className="text-muted-foreground flex items-center gap-2 text-sm">
@@ -52,10 +46,7 @@ export function ProfileCard({ user }: UserProfileProps) {
       <CardContent className="space-y-2 text-sm">
         <div className="flex items-center justify-between">
           <span className="text-muted-foreground">Type</span>
-          <Badge
-            variant="secondary"
-            className="capitalize"
-          >
+          <Badge variant="secondary" className="capitalize">
             {role}
           </Badge>
         </div>
@@ -63,14 +54,14 @@ export function ProfileCard({ user }: UserProfileProps) {
 
         <div className="flex items-center justify-between">
           <span className="text-muted-foreground">Email Verified</span>
-          <Badge variant={verified ? 'default' : 'destructive'}>{verified ? 'Yes' : 'No'}</Badge>
+          <Badge variant={verified ? "default" : "destructive"}>{verified ? "Yes" : "No"}</Badge>
         </div>
         <Separator />
 
         <div className="flex items-center justify-between">
           <span className="text-muted-foreground">2FA</span>
-          <Badge variant={user?.twoFactorEnabled ? 'default' : 'secondary'}>
-            {user?.twoFactorEnabled ? 'Enabled' : 'Disabled'}
+          <Badge variant={user?.twoFactorEnabled ? "default" : "secondary"}>
+            {user?.twoFactorEnabled ? "Enabled" : "Disabled"}
           </Badge>
         </div>
         <Separator />
@@ -89,17 +80,11 @@ export function ProfileCard({ user }: UserProfileProps) {
           </span>
           <div className="flex justify-start">
             {banned ? (
-              <Badge
-                variant="destructive"
-                className="flex items-center gap-1"
-              >
+              <Badge variant="destructive" className="flex items-center gap-1">
                 <Shield size={14} /> Access Restricted
               </Badge>
             ) : (
-              <Badge
-                variant="default"
-                className="flex items-center gap-1"
-              >
+              <Badge variant="default" className="flex items-center gap-1">
                 <UserIcon size={14} /> Active User
               </Badge>
             )}
@@ -108,10 +93,7 @@ export function ProfileCard({ user }: UserProfileProps) {
         <Separator />
         {banned && (
           <div className="border-destructive/40 bg-destructive/10 flex items-start gap-2 rounded-md border p-3">
-            <Ban
-              size={16}
-              className="text-destructive shrink-0"
-            />
+            <Ban size={16} className="text-destructive shrink-0" />
             <div>
               <p className="text-destructive text-sm font-medium">Banned</p>
               <p className="text-muted-foreground text-xs">{reason}</p>
@@ -120,5 +102,5 @@ export function ProfileCard({ user }: UserProfileProps) {
         )}
       </CardContent>
     </Card>
-  )
+  );
 }

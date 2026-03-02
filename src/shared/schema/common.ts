@@ -1,5 +1,5 @@
-import z from 'zod/v3'
-import { STATUS } from '../config/api.config'
+import z from "zod/v3";
+import { STATUS } from "../config/api.config";
 
 export const baseFilterSchema = z.object({
   search: z.string().optional(),
@@ -8,11 +8,11 @@ export const baseFilterSchema = z.object({
   sort: z
     .object({
       column: z.string(),
-      order: z.enum(['asc', 'desc']),
+      order: z.enum(["asc", "desc"]),
     })
     .optional(),
   filters: z.object({}).optional(),
-})
+});
 
 export const BaseResponseSchema = <T extends z.ZodTypeAny>(dataSchema: T) =>
   z.object({
@@ -20,9 +20,9 @@ export const BaseResponseSchema = <T extends z.ZodTypeAny>(dataSchema: T) =>
     message: z.string(),
     data: dataSchema.nullable().optional(),
     code: z.number().nullable().optional(),
-  })
+  });
 
 export const updateBaseSchema = z.object({
   id: z.number(),
   data: z.object({}),
-})
+});

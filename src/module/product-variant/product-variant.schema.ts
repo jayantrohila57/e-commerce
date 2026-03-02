@@ -1,10 +1,10 @@
-import { inventoryBaseSchema } from '@/module/inventory/inventory.schema'
-import z from 'zod/v3'
+import { inventoryBaseSchema } from "@/module/inventory/inventory.schema";
+import z from "zod/v3";
 
 // =========================
 // ENUMS
 // =========================
-export const priceModifierTypeEnum = z.enum(['flat_increase', 'flat_decrease', 'percent_increase', 'percent_decrease'])
+export const priceModifierTypeEnum = z.enum(["flat_increase", "flat_decrease", "percent_increase", "percent_decrease"]);
 
 // =========================
 // INVENTORY FOR VARIANT CREATION
@@ -15,7 +15,7 @@ export const inventoryForVariantSchema = inventoryBaseSchema.omit({
   id: true,
   variantId: true,
   updatedAt: true,
-})
+});
 
 // =========================
 // BASE SCHEMA
@@ -27,8 +27,8 @@ export const productVariantBaseSchema = z.object({
 
   title: z.string().min(1),
 
-  priceModifierType: priceModifierTypeEnum.default('flat_decrease'),
-  priceModifierValue: z.string().default('0'),
+  priceModifierType: priceModifierTypeEnum.default("flat_decrease"),
+  priceModifierValue: z.string().default("0"),
 
   attributes: z
     .array(
@@ -56,38 +56,38 @@ export const productVariantBaseSchema = z.object({
     .default(() => new Date())
     .nullable(),
   deletedAt: z.date().nullable().optional(),
-})
+});
 
 // =========================
 // SELECT / INSERT / UPDATE
 // =========================
-export const productVariantSelectSchema = productVariantBaseSchema
+export const productVariantSelectSchema = productVariantBaseSchema;
 
 export const productVariantInsertSchema = productVariantBaseSchema.omit({
   id: true,
   createdAt: true,
   updatedAt: true,
   deletedAt: true,
-})
+});
 
-export const productVariantUpdateSchema = productVariantBaseSchema.partial()
+export const productVariantUpdateSchema = productVariantBaseSchema.partial();
 
 // =========================
 // DETAILED RESPONSE WRAPPER
 // =========================
 export const detailedResponse = <T extends z.ZodTypeAny>(dataSchema: T) =>
   z.object({
-    status: z.enum(['success', 'error', 'failed']).default('success'),
+    status: z.enum(["success", "error", "failed"]).default("success"),
     message: z.string(),
     data: dataSchema.nullable(),
     meta: z
       .object({
         timestamp: z.date().default(() => new Date()),
-        version: z.string().default('1.0.0'),
+        version: z.string().default("1.0.0"),
         count: z.number().optional(),
       })
       .optional(),
-  })
+  });
 
 // =========================
 // PAGINATION + SEARCH
@@ -95,7 +95,7 @@ export const detailedResponse = <T extends z.ZodTypeAny>(dataSchema: T) =>
 const paginationSchema = z.object({
   limit: z.number().min(1).max(100).default(20),
   offset: z.number().min(0).default(0),
-})
+});
 
 // =========================
 // COMBINED RESPONSE (variant + inventory)
@@ -112,7 +112,7 @@ export const variantWithInventorySchema = productVariantSelectSchema.extend({
     })
     .nullable()
     .optional(),
-})
+});
 
 // =========================
 // CONTRACT
@@ -164,4 +164,4 @@ export const productVariantContract = {
     }),
     output: detailedResponse(productVariantSelectSchema.pick({ id: true }).nullable()),
   },
-}
+};

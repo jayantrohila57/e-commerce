@@ -1,20 +1,20 @@
-import { apiServer, HydrateClient } from '@/core/api/api.server'
-import { ProductVariantSection } from '@/module/product-variant/product-variant-section'
-import { ProductPreviewCard } from '@/module/product/product-preview'
-import DashboardSection from '@/shared/components/layout/section/section-dashboard'
-import Shell from '@/shared/components/layout/shell'
-import { Separator } from '@/shared/components/ui/separator'
-import { PATH } from '@/shared/config/routes'
-import { slugToTitle } from '@/shared/utils/lib/url.utils'
-import { Route } from 'next'
+import { apiServer, HydrateClient } from "@/core/api/api.server";
+import { ProductVariantSection } from "@/module/product-variant/product-variant-section";
+import { ProductPreviewCard } from "@/module/product/product-preview";
+import DashboardSection from "@/shared/components/layout/section/section-dashboard";
+import Shell from "@/shared/components/layout/shell";
+import { Separator } from "@/shared/components/ui/separator";
+import { PATH } from "@/shared/config/routes";
+import { slugToTitle } from "@/shared/utils/lib/url.utils";
+import type { Route } from "next";
 
-export default async function ProductPage({ params }: PageProps<'/studio/products/[productSlug]'>) {
-  const { productSlug: slug } = await params
+export default async function ProductPage({ params }: PageProps<"/studio/products/[productSlug]">) {
+  const { productSlug: slug } = await params;
   const { data } = await apiServer.product.getProductWithProductVariants({
     params: {
       slug,
     },
-  })
+  });
 
   return (
     <HydrateClient>
@@ -45,5 +45,5 @@ export default async function ProductPage({ params }: PageProps<'/studio/product
         </Shell.Section>
       </Shell>
     </HydrateClient>
-  )
+  );
 }

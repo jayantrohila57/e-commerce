@@ -1,45 +1,45 @@
-'use client'
+"use client";
 
-import { useState, useEffect } from 'react'
-import { Button } from '@/shared/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/card'
-import { Bell, X } from 'lucide-react'
-import { debugError } from '@/shared/utils/lib/logger.utils'
+import { useState, useEffect } from "react";
+import { Button } from "@/shared/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/card";
+import { Bell, X } from "lucide-react";
+import { debugError } from "@/shared/utils/lib/logger.utils";
 
 export function PushNotificationPrompt() {
-  const [isVisible, setIsVisible] = useState(false)
+  const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
     // Show after 10 seconds if notifications are supported and not already granted
     const timer = setTimeout(() => {
-      if ('Notification' in window && Notification.permission === 'default') {
-        setIsVisible(true)
+      if ("Notification" in window && Notification.permission === "default") {
+        setIsVisible(true);
       }
-    }, 10000)
+    }, 10000);
 
-    return () => clearTimeout(timer)
-  }, [])
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleAllow = async () => {
     try {
-      const permission = await Notification.requestPermission()
-      if (permission === 'granted') {
-        new Notification('Thanks!', {
+      const permission = await Notification.requestPermission();
+      if (permission === "granted") {
+        new Notification("Thanks!", {
           body: "You'll now receive updates about new posts.",
-          icon: '/favicon.ico',
-        })
+          icon: "/favicon.ico",
+        });
       }
     } catch (error) {
-      debugError('Notification permission error:', error)
+      debugError("Notification permission error:", error);
     }
-    setIsVisible(false)
-  }
+    setIsVisible(false);
+  };
 
   const handleDeny = () => {
-    setIsVisible(false)
-  }
+    setIsVisible(false);
+  };
 
-  if (!isVisible) return null
+  if (!isVisible) return null;
 
   return (
     <Card className="fixed bottom-5 left-5 z-50 w-80 shadow-xl">
@@ -47,39 +47,26 @@ export function PushNotificationPrompt() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Bell className="text-primary h-5 w-5" />
-            <CardTitle className="text-lg">{'Stay Updated'}</CardTitle>
+            <CardTitle className="text-lg">{"Stay Updated"}</CardTitle>
           </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleDeny}
-          >
+          <Button variant="ghost" size="sm" onClick={handleDeny}>
             <X className="h-4 w-4" />
           </Button>
         </div>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          <p className="text-muted-foreground text-sm">{'Get notified when we publish new articles and updates.'}</p>
+          <p className="text-muted-foreground text-sm">{"Get notified when we publish new articles and updates."}</p>
           <div className="flex gap-2">
-            <Button
-              onClick={void handleAllow}
-              size={'sm'}
-              className="flex-1"
-            >
-              {'Allow'}
+            <Button onClick={void handleAllow} size={"sm"} className="flex-1">
+              {"Allow"}
             </Button>
-            <Button
-              variant="outline"
-              size={'sm'}
-              onClick={handleDeny}
-              className="flex-1 bg-transparent"
-            >
-              {'Not Now'}
+            <Button variant="outline" size={"sm"} onClick={handleDeny} className="flex-1 bg-transparent">
+              {"Not Now"}
             </Button>
           </div>
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }

@@ -1,4 +1,4 @@
-import z from 'zod/v3'
+import z from "zod/v3";
 
 export const inventoryBaseSchema = z.object({
   id: z.string().min(1),
@@ -12,39 +12,39 @@ export const inventoryBaseSchema = z.object({
     .date()
     .default(() => new Date())
     .nullable(),
-})
+});
 
-export const inventorySelectSchema = inventoryBaseSchema
+export const inventorySelectSchema = inventoryBaseSchema;
 
 export const inventoryInsertSchema = inventoryBaseSchema.omit({
   id: true,
   updatedAt: true,
-})
+});
 
-export const inventoryUpdateSchema = inventoryBaseSchema.partial()
+export const inventoryUpdateSchema = inventoryBaseSchema.partial();
 
 export const detailedResponse = <T extends z.ZodTypeAny>(dataSchema: T) =>
   z.object({
-    status: z.enum(['success', 'error', 'failed']).default('success'),
+    status: z.enum(["success", "error", "failed"]).default("success"),
     message: z.string(),
     data: dataSchema.nullable(),
     meta: z
       .object({
         timestamp: z.date().default(() => new Date()),
-        version: z.string().default('1.0.0'),
+        version: z.string().default("1.0.0"),
         count: z.number().optional(),
       })
       .optional(),
-  })
+  });
 
 const paginationSchema = z.object({
   limit: z.number().min(1).max(100).default(20),
   offset: z.number().min(0).default(0),
-})
+});
 
 const searchSchema = z.object({
   search: z.string().min(2).max(100).optional(),
-})
+});
 
 export const inventoryContract = {
   get: {
@@ -115,7 +115,7 @@ export const inventoryContract = {
       }),
       data: z.object({
         quantity: z.number().int(),
-        type: z.enum(['add', 'subtract', 'set']),
+        type: z.enum(["add", "subtract", "set"]),
         incoming: z.number().int().optional(),
       }),
     }),
@@ -128,4 +128,4 @@ export const inventoryContract = {
     }),
     output: detailedResponse(z.array(inventorySelectSchema)),
   },
-}
+};

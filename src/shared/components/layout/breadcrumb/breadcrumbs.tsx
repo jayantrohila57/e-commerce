@@ -1,6 +1,6 @@
-'use client'
+"use client";
 
-import React from 'react'
+import React from "react";
 
 import {
   Breadcrumb,
@@ -10,96 +10,93 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from '@/shared/components/ui/breadcrumb'
+} from "@/shared/components/ui/breadcrumb";
 
-import { cn } from '@/shared/utils/lib/utils'
-import { HomeIcon } from 'lucide-react'
-import { usePathname } from 'next/navigation'
-import Link from 'next/link'
-import { type Route } from 'next'
-import { PATH } from '@/shared/config/routes'
+import { cn } from "@/shared/utils/lib/utils";
+import { HomeIcon } from "lucide-react";
+import { usePathname } from "next/navigation";
+import Link from "next/link";
+import type { Route } from "next";
+import { PATH } from "@/shared/config/routes";
 
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/shared/components/ui/tooltip'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/shared/components/ui/tooltip";
 
 import {
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
-} from '@/shared/components/ui/dropdown-menu'
+} from "@/shared/components/ui/dropdown-menu";
 
-import { slugToTitle } from '@/shared/utils/lib/url.utils'
+import { slugToTitle } from "@/shared/utils/lib/url.utils";
 
 type BreadcrumbItem = {
-  href: string
-  label: string
-}
+  href: string;
+  label: string;
+};
 
 type BreadcrumbWithHidden = BreadcrumbItem & {
-  hidden: BreadcrumbItem[]
-}
+  hidden: BreadcrumbItem[];
+};
 
-type BreadcrumbNode = BreadcrumbItem | BreadcrumbWithHidden
+type BreadcrumbNode = BreadcrumbItem | BreadcrumbWithHidden;
 
 const hasHidden = (node: BreadcrumbNode): node is BreadcrumbWithHidden => {
-  return 'hidden' in node
-}
+  return "hidden" in node;
+};
 
 // -------------------------------------------------------
 // Break path into breadcrumb objects
 // -------------------------------------------------------
 const generateBreadcrumbs = (pathname: string) => {
-  const arr = pathname?.split('/')?.filter(Boolean)
+  const arr = pathname?.split("/")?.filter(Boolean);
   return arr.map((segment, index) => {
-    const href = `/${arr.slice(0, index + 1).join('/')}`
-    return { href, label: segment }
-  })
-}
+    const href = `/${arr.slice(0, index + 1).join("/")}`;
+    return { href, label: segment };
+  });
+};
 
 // -------------------------------------------------------
 // Compress: first / ... / second-last / last
 // Return hidden list too
 // -------------------------------------------------------
 const compressBreadcrumbs = (items: BreadcrumbItem[]): { visible: BreadcrumbNode[]; hidden: BreadcrumbItem[] } => {
-  if (items.length <= 3) return { visible: items, hidden: [] }
+  if (items.length <= 3) return { visible: items, hidden: [] };
 
-  const first = items[0]
-  const last = items[items.length - 1]
-  const secondLast = items[items.length - 2]
+  const first = items[0];
+  const last = items[items.length - 1];
+  const secondLast = items[items.length - 2];
 
-  const hidden = items.slice(1, items.length - 2)
+  const hidden = items.slice(1, items.length - 2);
 
   const visible = [
     first,
-    { href: '', label: '...', hidden }, // clickable ellipses with hidden data
+    { href: "", label: "...", hidden }, // clickable ellipses with hidden data
     secondLast,
     last,
-  ]
+  ];
 
-  return { visible, hidden }
-}
+  return { visible, hidden };
+};
 
 // -------------------------------------------------------
 // Component
 // -------------------------------------------------------
 export function Breadcrumbs({ className }: { className?: string }) {
-  const pathname = usePathname()
-  const raw = generateBreadcrumbs(pathname)
-  const { visible: breadcrumbs } = compressBreadcrumbs(raw)
+  const pathname = usePathname();
+  const raw = generateBreadcrumbs(pathname);
+  const { visible: breadcrumbs } = compressBreadcrumbs(raw);
 
   return (
     <Breadcrumb className="flex w-full flex-row">
-      <BreadcrumbList className={cn('', className)}>
+      <BreadcrumbList className={cn("", className)}>
         {/* Home */}
         <BreadcrumbItem>
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
                 <BreadcrumbLink href={PATH.ROOT}>
-                  <HomeIcon
-                    size={16}
-                    aria-hidden="true"
-                  />
+                  <HomeIcon size={16} aria-hidden="true" />
                   <span className="sr-only">Home</span>
                 </BreadcrumbLink>
               </TooltipTrigger>
@@ -115,7 +112,7 @@ export function Breadcrumbs({ className }: { className?: string }) {
 
             <BreadcrumbItem>
               {/* Ellipses dropdown node */}
-              {node.label === '...' && (
+              {node.label === "..." && (
                 <DropdownMenu>
                   <DropdownMenuTrigger className="cursor-pointer rounded">
                     <TooltipProvider>
@@ -127,16 +124,10 @@ export function Breadcrumbs({ className }: { className?: string }) {
                       </Tooltip>
                     </TooltipProvider>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent
-                    align="start"
-                    className="min-w-[180px]"
-                  >
+                  <DropdownMenuContent align="start" className="min-w-[180px]">
                     {hasHidden(node) &&
                       node.hidden.map((h, i) => (
-                        <DropdownMenuItem
-                          key={i}
-                          asChild
-                        >
+                        <DropdownMenuItem key={i} asChild>
                           <Link href={h.href as Route}>{slugToTitle(h.label)}</Link>
                         </DropdownMenuItem>
                       ))}
@@ -145,7 +136,7 @@ export function Breadcrumbs({ className }: { className?: string }) {
               )}
 
               {/* Last node (active page) */}
-              {node.label !== '...' && index === breadcrumbs.length - 1 && (
+              {node.label !== "..." && index === breadcrumbs.length - 1 && (
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -157,14 +148,11 @@ export function Breadcrumbs({ className }: { className?: string }) {
               )}
 
               {/* Regular nodes */}
-              {node.label !== '...' && index !== breadcrumbs.length - 1 && (
+              {node.label !== "..." && index !== breadcrumbs.length - 1 && (
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <BreadcrumbLink
-                        asChild
-                        className="capitalize underline-offset-4 hover:underline"
-                      >
+                      <BreadcrumbLink asChild className="capitalize underline-offset-4 hover:underline">
                         <Link href={node.href as Route}>{slugToTitle(node.label)}</Link>
                       </BreadcrumbLink>
                     </TooltipTrigger>
@@ -177,5 +165,5 @@ export function Breadcrumbs({ className }: { className?: string }) {
         ))}
       </BreadcrumbList>
     </Breadcrumb>
-  )
+  );
 }

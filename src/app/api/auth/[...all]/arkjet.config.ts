@@ -5,10 +5,10 @@ import arcjet, {
   shield,
   slidingWindow,
   type SlidingWindowRateLimitOptions,
-} from '@arcjet/next'
-import { findIp } from '@arcjet/ip'
-import { serverEnv } from '@/shared/config/env.server'
-import { getServerSession } from '@/core/auth/auth.server'
+} from "@arcjet/next";
+import { findIp } from "@arcjet/ip";
+import { serverEnv } from "@/shared/config/env.server";
+import { getServerSession } from "@/core/auth/auth.server";
 
 const aj = arcjet({
   key: serverEnv.ARKJET_API_KEY,
@@ -18,53 +18,53 @@ const aj = arcjet({
     warn: serverEnv.USE_DEBUG_LOGS ? console.warn : () => null,
     error: serverEnv.USE_DEBUG_LOGS ? console.error : () => null,
   },
-  characteristics: ['userIdOrIp'],
-  rules: [shield({ mode: 'LIVE' })],
-})
+  characteristics: ["userIdOrIp"],
+  rules: [shield({ mode: "LIVE" })],
+});
 
 const botSettings = {
-  mode: 'LIVE',
-  allow: ['STRIPE_WEBHOOK'],
-} satisfies BotOptions
+  mode: "LIVE",
+  allow: ["STRIPE_WEBHOOK"],
+} satisfies BotOptions;
 
 const restrictiveRateLimitSettings = {
-  mode: 'LIVE',
+  mode: "LIVE",
   max: 10,
-  interval: '10m',
-} satisfies SlidingWindowRateLimitOptions<[]>
+  interval: "10m",
+} satisfies SlidingWindowRateLimitOptions<[]>;
 
 const laxRateLimitSettings = {
-  mode: 'LIVE',
+  mode: "LIVE",
   max: 60,
-  interval: '1m',
-} satisfies SlidingWindowRateLimitOptions<[]>
+  interval: "1m",
+} satisfies SlidingWindowRateLimitOptions<[]>;
 
 const emailSettings = {
-  mode: 'LIVE',
-  block: ['DISPOSABLE', 'INVALID', 'NO_MX_RECORDS'],
-} satisfies EmailOptions
+  mode: "LIVE",
+  block: ["DISPOSABLE", "INVALID", "NO_MX_RECORDS"],
+} satisfies EmailOptions;
 
 async function safeJson(request: Request) {
   try {
-    return await request.clone().json()
+    return await request.clone().json();
   } catch {
-    return null
+    return null;
   }
 }
 
 export async function checkArcjet(request: Request) {
-  const url = new URL(request.url)
-  const path = url.pathname
-  const body = await safeJson(request)
-  const session = await getServerSession()
-  const userIdOrIp = (session?.user?.id ?? findIp(request)) || '127.0.0.1'
+  const url = new URL(request.url);
+  const path = url.pathname;
+  const body = await safeJson(request);
+  const session = await getServerSession();
+  const userIdOrIp = (session?.user?.id ?? findIp(request)) || "127.0.0.1";
 
   // ✅ Only protect sign-in & sign-up routes
-  const isSignin = path.endsWith('/auth/sign-in')
-  const isSignup = path.endsWith('/auth/sign-up')
+  const isSignin = path.endsWith("/auth/sign-in");
+  const isSignup = path.endsWith("/auth/sign-up");
 
   if (isSignin || isSignup) {
-    if (body && typeof body.email === 'string') {
+    if (body && typeof body.email === "string") {
       // Email/password login -> rate limit + email check
       return aj
         .withRule(
@@ -74,14 +74,14 @@ export async function checkArcjet(request: Request) {
             rateLimit: restrictiveRateLimitSettings,
           }),
         )
-        .protect(request, { email: body.email, userIdOrIp })
+        .protect(request, { email: body.email, userIdOrIp });
     } else {
       // OAuth or social login -> only light rate limit
-      return aj.withRule(slidingWindow(laxRateLimitSettings)).protect(request, { userIdOrIp })
+      return aj.withRule(slidingWindow(laxRateLimitSettings)).protect(request, { userIdOrIp });
     }
   }
 
-  return { isAllowed: () => true, isDenied: () => false, reason: null }
+  return { isAllowed: () => true, isDenied: () => false, reason: null };
 }
 
 // async function checkArcjet(request: Request) {

@@ -1,7 +1,7 @@
-'use client'
+"use client";
 
-import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarTrigger } from '@/shared/components/ui/sidebar'
-import { Separator } from '../../ui/separator'
+import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarTrigger } from "@/shared/components/ui/sidebar";
+import { Separator } from "../../ui/separator";
 
 export function StudioLogo() {
   return (
@@ -16,17 +16,14 @@ export function StudioLogo() {
             <div className="flex aspect-square size-8 items-center justify-center rounded-lg">
               <SidebarTrigger />
             </div>
-            <Separator
-              orientation="vertical"
-              className="mr-2 data-[orientation=vertical]:h-4"
-            />
+            <Separator orientation="vertical" className="mr-2 data-[orientation=vertical]:h-4" />
             <div className="grid flex-1 text-left text-sm leading-tight">
-              <span className="truncate font-medium">{'Studio'}</span>
-              <span className="truncate text-xs">{'CMS System'}</span>
+              <span className="truncate font-medium">{"Studio"}</span>
+              <span className="truncate text-xs">{"CMS System"}</span>
             </div>
           </div>
         </SidebarMenuButton>
       </SidebarMenuItem>
     </SidebarMenu>
-  )
+  );
 }

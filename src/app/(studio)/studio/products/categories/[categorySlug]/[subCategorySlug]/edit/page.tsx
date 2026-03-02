@@ -1,14 +1,14 @@
-import { PATH } from '@/shared/config/routes'
-import { slugToTitle } from '@/shared/utils/lib/url.utils'
-import { Route } from 'next'
-import DashboardSection from '@/shared/components/layout/section/section-dashboard'
-import Shell from '@/shared/components/layout/shell'
-import { HydrateClient } from '@/core/api/api.server'
+import { PATH } from "@/shared/config/routes";
+import { slugToTitle } from "@/shared/utils/lib/url.utils";
+import type { Route } from "next";
+import DashboardSection from "@/shared/components/layout/section/section-dashboard";
+import Shell from "@/shared/components/layout/shell";
+import { HydrateClient } from "@/core/api/api.server";
 
 export default async function CategoryEdit({
   params,
-}: PageProps<'/studio/products/categories/[categorySlug]/[subCategorySlug]/edit'>) {
-  const { categorySlug: slug, subCategorySlug: sub } = await params
+}: PageProps<"/studio/products/categories/[categorySlug]/[subCategorySlug]/edit">) {
+  const { categorySlug: slug, subCategorySlug: sub } = await params;
 
   return (
     <HydrateClient>
@@ -33,5 +33,5 @@ export default async function CategoryEdit({
         </Shell.Section>
       </Shell>
     </HydrateClient>
-  )
+  );
 }

@@ -1,17 +1,17 @@
-import { Badge } from '@/shared/components/ui/badge'
-import { ChevronRight, GripVertical } from 'lucide-react'
-import { cn, truncateString } from '@/shared/utils/lib/utils'
-import Link from 'next/link'
-import { Route } from 'next'
-import { Button } from '@/shared/components/ui/button'
-import { Separator } from '@/shared/components/ui/separator'
-import { SubcategoryBase } from './subcategory.schema'
-import { BlurImage } from '@/shared/components/ui/image'
+import { Badge } from "@/shared/components/ui/badge";
+import { ChevronRight, GripVertical } from "lucide-react";
+import { cn, truncateString } from "@/shared/utils/lib/utils";
+import Link from "next/link";
+import type { Route } from "next";
+import { Button } from "@/shared/components/ui/button";
+import { Separator } from "@/shared/components/ui/separator";
+import type { SubcategoryBase } from "./subcategory.schema";
+import { BlurImage } from "@/shared/components/ui/image";
 
 interface SubCategoryCardProps {
-  data: SubcategoryBase
-  href?: string
-  className?: string
+  data: SubcategoryBase;
+  href?: string;
+  className?: string;
 }
 
 export function SubCategoryCard({ data, href, className }: SubCategoryCardProps) {
@@ -24,20 +24,17 @@ export function SubCategoryCard({ data, href, className }: SubCategoryCardProps)
         height={500}
         className="motion-all bg-secondary aspect-square h-auto w-12 rounded-full border object-cover group-hover:drop-shadow"
       />
-      <Separator
-        orientation="vertical"
-        className="mx-2 data-[orientation=vertical]:h-10"
-      />
+      <Separator orientation="vertical" className="mx-2 data-[orientation=vertical]:h-10" />
       <div className="flex h-full flex-col">
         <h3 className="text-base font-semibold capitalize">{data.title}</h3>
         <p className="text-muted-foreground text-xs">{truncateString(data.description, 80)}</p>
       </div>
     </div>
-  )
+  );
 
   if (href) {
-    return <Link href={href as Route}>{content}</Link>
+    return <Link href={href as Route}>{content}</Link>;
   }
 
-  return content
+  return content;
 }

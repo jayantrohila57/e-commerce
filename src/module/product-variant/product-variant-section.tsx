@@ -1,26 +1,23 @@
-import { FormSection } from '@/shared/components/form/form.helper'
-import { ProductVariantBase } from './product-variant.types'
-import { ProductVariantCard } from './product-variant-card'
+import { FormSection } from "@/shared/components/form/form.helper";
+import type { ProductVariantBase } from "./product-variant.types";
+import { ProductVariantCard } from "./product-variant-card";
 
 type ProductVariantSectionProps = {
-  title: string
-  description: string
-  products: ProductVariantBase[] | undefined
-  productSlug: string
-  emptyMessage?: string
-}
+  title: string;
+  description: string;
+  products: ProductVariantBase[] | undefined;
+  productSlug: string;
+  emptyMessage?: string;
+};
 
 export const ProductVariantSection = ({
   title,
   description,
   products,
   productSlug,
-  emptyMessage = 'No products',
+  emptyMessage = "No products",
 }: ProductVariantSectionProps) => (
-  <FormSection
-    title={title + ` (${products?.length})`}
-    description={description}
-  >
+  <FormSection title={title + ` (${products?.length})`} description={description}>
     <div className="grid grid-cols-1 gap-2">
       {products && products?.length > 0 ? (
         products?.map((product) => (
@@ -35,4 +32,4 @@ export const ProductVariantSection = ({
       )}
     </div>
   </FormSection>
-)
+);

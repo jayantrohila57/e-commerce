@@ -1,12 +1,12 @@
-import { HydrateClient } from '@/core/api/api.server'
-import DashboardSection from '@/shared/components/layout/section/section-dashboard'
-import Shell from '@/shared/components/layout/shell'
-import { slugToTitle } from '@/shared/utils/lib/url.utils'
+import { HydrateClient } from "@/core/api/api.server";
+import DashboardSection from "@/shared/components/layout/section/section-dashboard";
+import Shell from "@/shared/components/layout/shell";
+import { slugToTitle } from "@/shared/utils/lib/url.utils";
 
 export default async function SeriesPage({
   params,
-}: PageProps<'/studio/products/categories/[categorySlug]/[subCategorySlug]/[seriesSlug]'>) {
-  const { categorySlug: slug, subCategorySlug: sub, seriesSlug: series } = await params
+}: PageProps<"/studio/products/categories/[categorySlug]/[subCategorySlug]/[seriesSlug]">) {
+  const { categorySlug: slug, subCategorySlug: sub, seriesSlug: series } = await params;
 
   return (
     <HydrateClient>
@@ -31,5 +31,5 @@ export default async function SeriesPage({
         </Shell.Section>
       </Shell>
     </HydrateClient>
-  )
+  );
 }

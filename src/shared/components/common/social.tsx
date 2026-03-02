@@ -1,17 +1,13 @@
-import { SocialIcon } from 'react-social-icons'
-import { Button } from '../ui/button'
-import { site } from '@/shared/config/site'
+import { SocialIcon } from "react-social-icons";
+import { Button } from "../ui/button";
+import { site } from "@/shared/config/site";
 
 function Social() {
   return (
     <div className="flex h-full w-full items-center justify-start gap-2">
       {site.socialLinks.map((url) => {
         return (
-          <Button
-            variant={'ghost'}
-            key={url}
-            size={'icon'}
-          >
+          <Button variant={"ghost"} key={url} size={"icon"}>
             <SocialIcon
               bgColor="transparent"
               className="invert dark:invert-0"
@@ -22,10 +18,10 @@ function Social() {
               key={url}
             />
           </Button>
-        )
+        );
       })}
     </div>
-  )
+  );
 }
 
-export default Social
+export default Social;

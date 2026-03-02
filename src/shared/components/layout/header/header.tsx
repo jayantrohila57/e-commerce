@@ -1,5 +1,5 @@
-import { HeaderActions } from './header.actions'
-import HeaderLogo from './header.logo'
+import { HeaderActions } from "./header.actions";
+import HeaderLogo from "./header.logo";
 
 export default function Header() {
   return (
@@ -9,5 +9,5 @@ export default function Header() {
       </div>
       <HeaderActions />
     </nav>
-  )
+  );
 }

@@ -1,4 +1,4 @@
-import type { NextConfig } from 'next'
+import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   experimental: {
@@ -7,41 +7,41 @@ const nextConfig: NextConfig = {
     viewTransition: true,
   },
   typescript: {
-    tsconfigPath: 'tsconfig.json',
+    tsconfigPath: "tsconfig.json",
   },
   typedRoutes: true,
   reactCompiler: true,
   images: {
     remotePatterns: [
       {
-        protocol: 'https',
-        hostname: 'lh3.googleusercontent.com',
+        protocol: "https",
+        hostname: "lh3.googleusercontent.com",
       },
       {
-        protocol: 'https',
-        hostname: 'images.unsplash.com',
-        pathname: '/**',
+        protocol: "https",
+        hostname: "images.unsplash.com",
+        pathname: "/**",
       },
       {
-        protocol: 'https',
-        hostname: 'example.com',
-        pathname: '/**',
+        protocol: "https",
+        hostname: "example.com",
+        pathname: "/**",
       },
       {
-        protocol: 'https',
-        hostname: '*.public.blob.vercel-storage.com',
-        pathname: '/**',
+        protocol: "https",
+        hostname: "*.public.blob.vercel-storage.com",
+        pathname: "/**",
       },
       {
-        protocol: 'https',
-        hostname: 'avatars.githubusercontent.com',
+        protocol: "https",
+        hostname: "avatars.githubusercontent.com",
       },
       {
-        protocol: 'https',
-        hostname: 'api.dicebear.com',
+        protocol: "https",
+        hostname: "api.dicebear.com",
       },
     ],
   },
-}
+};
 
-export default nextConfig
+export default nextConfig;

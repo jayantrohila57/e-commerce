@@ -1,27 +1,24 @@
-import { getServerSession } from '@/core/auth/auth.server'
-import { AccountSidebar } from '@/module/account/account-sidebar'
-import { ProfileUpdateForm } from '@/module/account/account.profile'
-import { ProfileCard } from '@/module/user/component.user.profile'
+import { getServerSession } from "@/core/auth/auth.server";
+import { AccountSidebar } from "@/module/account/account-sidebar";
+import { ProfileUpdateForm } from "@/module/account/account.profile";
+import { ProfileCard } from "@/module/user/component.user.profile";
 
-import Section from '@/shared/components/layout/section/section'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/shared/components/ui/card'
-import { redirect } from 'next/navigation'
-import { type User } from 'better-auth'
-import { PATH } from '@/shared/config/routes'
+import Section from "@/shared/components/layout/section/section";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/components/ui/card";
+import { redirect } from "next/navigation";
+import type { User } from "better-auth";
+import { PATH } from "@/shared/config/routes";
 
 export const metadata = {
-  title: 'View & Manage Profile',
-  description: 'Update your personal information and profile details',
-}
+  title: "View & Manage Profile",
+  description: "Update your personal information and profile details",
+};
 export default async function ProfilePage() {
-  const session = await getServerSession()
-  if (!session) return redirect(PATH.ROOT)
+  const session = await getServerSession();
+  if (!session) return redirect(PATH.ROOT);
 
   return (
-    <Section
-      className="bg-muted p-4"
-      {...metadata}
-    >
+    <Section className="bg-muted p-4" {...metadata}>
       <div className="grid h-full min-h-[800px] w-full grid-cols-12 gap-4 shadow-none">
         <div className="col-span-2 h-full w-full">
           <AccountSidebar />
@@ -42,5 +39,5 @@ export default async function ProfilePage() {
         </div>
       </div>
     </Section>
-  )
+  );
 }

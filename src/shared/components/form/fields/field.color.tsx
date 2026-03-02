@@ -1,20 +1,20 @@
-'use client'
+"use client";
 
-import { Controller, useFormContext } from 'react-hook-form'
-import { RadioGroup, RadioGroupItem } from '@/shared/components/ui/radio-group'
-import { FormControl, FormDescription, FormItem, FormLabel, FormMessage } from '@/shared/components/ui/form'
-import { type FormInputProps } from '../form.types'
-import { cn } from '@/shared/utils/lib/utils'
-import { useId } from 'react'
-import type { LucideIcon } from 'lucide-react'
+import { Controller, useFormContext } from "react-hook-form";
+import { RadioGroup, RadioGroupItem } from "@/shared/components/ui/radio-group";
+import { FormControl, FormDescription, FormItem, FormLabel, FormMessage } from "@/shared/components/ui/form";
+import type { FormInputProps } from "../form.types";
+import { cn } from "@/shared/utils/lib/utils";
+import { useId } from "react";
+import type { LucideIcon } from "lucide-react";
 
 export const InputRadio: React.FC<FormInputProps> = (props) => {
-  const reactId = useId()
-  const stableId = props.name ? `${props.name}-${reactId}` : reactId
+  const reactId = useId();
+  const stableId = props.name ? `${props.name}-${reactId}` : reactId;
 
-  const { control } = useFormContext()
-  if (props?.hidden) return null
-  if (props.type !== 'color') return null
+  const { control } = useFormContext();
+  if (props?.hidden) return null;
+  if (props.type !== "color") return null;
   return (
     <Controller
       name={props?.name}
@@ -30,18 +30,15 @@ export const InputRadio: React.FC<FormInputProps> = (props) => {
               className="bg-background dark:bg-input/30 flex flex-row gap-2 rounded-md border p-2"
             >
               {props?.options?.map(({ value, color, icon, label }) => (
-                <FormItem
-                  key={value}
-                  className="flex flex-col items-center"
-                >
+                <FormItem key={value} className="flex flex-col items-center">
                   <FormControl>
                     <RadioGroupItem
                       value={String(value)}
                       icon={icon as LucideIcon}
                       label={label}
                       className={cn(
-                        'rounded shadow-none transition-all duration-300',
-                        'h-5 w-5 data-[state=checked]:h-5 data-[state=checked]:w-12',
+                        "rounded shadow-none transition-all duration-300",
+                        "h-5 w-5 data-[state=checked]:h-5 data-[state=checked]:w-12",
                         color,
                       )}
                     />
@@ -55,5 +52,5 @@ export const InputRadio: React.FC<FormInputProps> = (props) => {
         </FormItem>
       )}
     />
-  )
-}
+  );
+};

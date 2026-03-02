@@ -1,12 +1,12 @@
-import { createTRPCRouter, protectedProcedure, publicProcedure } from '@/core/api/api.methods'
-import { STATUS } from '@/shared/config/api.config'
-import { API_RESPONSE } from '@/shared/config/api.utils'
+import { createTRPCRouter, protectedProcedure, publicProcedure } from "@/core/api/api.methods";
+import { STATUS } from "@/shared/config/api.config";
+import { API_RESPONSE } from "@/shared/config/api.utils";
 
-import { db } from '@/core/db/db'
-import { inventoryItem } from '@/core/db/db.schema'
-import { eq, ilike } from 'drizzle-orm'
-import { v4 as uuidv4 } from 'uuid'
-import { inventoryContract } from './inventory.schema'
+import { db } from "@/core/db/db";
+import { inventoryItem } from "@/core/db/db.schema";
+import { eq, ilike } from "drizzle-orm";
+import { v4 as uuidv4 } from "uuid";
+import { inventoryContract } from "./inventory.schema";
 
 export const inventoryRouter = createTRPCRouter({
   // =========================
@@ -17,29 +17,29 @@ export const inventoryRouter = createTRPCRouter({
     .output(inventoryContract.get.output)
     .query(async ({ input }) => {
       try {
-        const { id, sku } = input.params
+        const { id, sku } = input.params;
 
         if (!id && !sku) {
-          return API_RESPONSE(STATUS.FAILED, 'Failed to fetch inventory', null)
+          return API_RESPONSE(STATUS.FAILED, "Failed to fetch inventory", null);
         }
 
         const output = await db.query.inventoryItem.findFirst({
           where: (inv, { eq, and }) => {
             // use local eq / and helpers directly so types match
-            if (id && sku) return and(eq(inv.id, id), eq(inv.sku, sku))
-            if (id) return eq(inv.id, id)
-            if (sku) return eq(inv.sku, sku)
-            return undefined
+            if (id && sku) return and(eq(inv.id, id), eq(inv.sku, sku));
+            if (id) return eq(inv.id, id);
+            if (sku) return eq(inv.sku, sku);
+            return undefined;
           },
-        })
+        });
 
         return API_RESPONSE(
           output ? STATUS.SUCCESS : STATUS.FAILED,
-          output ? 'Inventory fetched successfully' : 'Failed to fetch inventory',
+          output ? "Inventory fetched successfully" : "Failed to fetch inventory",
           output ?? null,
-        )
+        );
       } catch (err) {
-        return API_RESPONSE(STATUS.ERROR, 'Error fetching inventory', null, err as Error)
+        return API_RESPONSE(STATUS.ERROR, "Error fetching inventory", null, err as Error);
       }
     }),
 
@@ -51,9 +51,9 @@ export const inventoryRouter = createTRPCRouter({
     .output(inventoryContract.getMany.output)
     .query(async ({ input }) => {
       try {
-        const { query } = input
-        const limit = query?.limit ?? 20
-        const offset = query?.offset ?? 0
+        const { query } = input;
+        const limit = query?.limit ?? 20;
+        const offset = query?.offset ?? 0;
 
         // build where clause inline so we don't need a typed array
         const output = await db.query.inventoryItem.findMany({
@@ -61,15 +61,15 @@ export const inventoryRouter = createTRPCRouter({
           limit: Math.min(limit, 100),
           offset,
           orderBy: (inv, { desc }) => [desc(inv.updatedAt)],
-        })
+        });
 
         return API_RESPONSE(
           output?.length ? STATUS.SUCCESS : STATUS.FAILED,
-          output?.length ? 'Inventories fetched successfully' : 'No inventories found',
+          output?.length ? "Inventories fetched successfully" : "No inventories found",
           output,
-        )
+        );
       } catch (err) {
-        return API_RESPONSE(STATUS.ERROR, 'Error fetching inventories', null, err as Error)
+        return API_RESPONSE(STATUS.ERROR, "Error fetching inventories", null, err as Error);
       }
     }),
 
@@ -81,19 +81,19 @@ export const inventoryRouter = createTRPCRouter({
     .output(inventoryContract.getByVariantId.output)
     .query(async ({ input }) => {
       try {
-        const { variantId } = input.params
+        const { variantId } = input.params;
 
         const output = await db.query.inventoryItem.findFirst({
           where: (inv, { eq }) => eq(inv.variantId, variantId),
-        })
+        });
 
         return API_RESPONSE(
           output ? STATUS.SUCCESS : STATUS.FAILED,
-          output ? 'Inventory fetched successfully' : 'Failed to fetch inventory',
+          output ? "Inventory fetched successfully" : "Failed to fetch inventory",
           output ?? null,
-        )
+        );
       } catch (err) {
-        return API_RESPONSE(STATUS.ERROR, 'Error fetching inventory', null, err as Error)
+        return API_RESPONSE(STATUS.ERROR, "Error fetching inventory", null, err as Error);
       }
     }),
 
@@ -105,19 +105,19 @@ export const inventoryRouter = createTRPCRouter({
     .output(inventoryContract.getBySku.output)
     .query(async ({ input }) => {
       try {
-        const { sku } = input.params
+        const { sku } = input.params;
 
         const output = await db.query.inventoryItem.findFirst({
           where: (inv, { eq }) => eq(inv.sku, sku),
-        })
+        });
 
         return API_RESPONSE(
           output ? STATUS.SUCCESS : STATUS.FAILED,
-          output ? 'Inventory fetched successfully' : 'Failed to fetch inventory',
+          output ? "Inventory fetched successfully" : "Failed to fetch inventory",
           output ?? null,
-        )
+        );
       } catch (err) {
-        return API_RESPONSE(STATUS.ERROR, 'Error fetching inventory', null, err as Error)
+        return API_RESPONSE(STATUS.ERROR, "Error fetching inventory", null, err as Error);
       }
     }),
 
@@ -129,8 +129,8 @@ export const inventoryRouter = createTRPCRouter({
     .output(inventoryContract.create.output)
     .mutation(async ({ input }) => {
       try {
-        const { data } = input
-        const id = uuidv4()
+        const { data } = input;
+        const id = uuidv4();
 
         const output = await db
           .insert(inventoryItem)
@@ -143,15 +143,15 @@ export const inventoryRouter = createTRPCRouter({
             incoming: data.incoming ?? 0,
             reserved: data.reserved ?? 0,
           })
-          .returning()
+          .returning();
 
         return API_RESPONSE(
           output?.length ? STATUS.SUCCESS : STATUS.FAILED,
-          output?.length ? 'Inventory created successfully' : 'Failed to create inventory',
+          output?.length ? "Inventory created successfully" : "Failed to create inventory",
           output?.[0] ?? null,
-        )
+        );
       } catch (err) {
-        return API_RESPONSE(STATUS.ERROR, 'Error creating inventory', null, err as Error)
+        return API_RESPONSE(STATUS.ERROR, "Error creating inventory", null, err as Error);
       }
     }),
 
@@ -163,25 +163,25 @@ export const inventoryRouter = createTRPCRouter({
     .output(inventoryContract.update.output)
     .mutation(async ({ input }) => {
       try {
-        const { id } = input.params
-        const { data } = input
+        const { id } = input.params;
+        const { data } = input;
 
-        const updateData: Record<string, unknown> = {}
-        if (data.sku !== undefined) updateData.sku = data.sku
-        if (data.barcode !== undefined) updateData.barcode = data.barcode
-        if (data.quantity !== undefined) updateData.quantity = data.quantity
-        if (data.incoming !== undefined) updateData.incoming = data.incoming
-        if (data.reserved !== undefined) updateData.reserved = data.reserved
+        const updateData: Record<string, unknown> = {};
+        if (data.sku !== undefined) updateData.sku = data.sku;
+        if (data.barcode !== undefined) updateData.barcode = data.barcode;
+        if (data.quantity !== undefined) updateData.quantity = data.quantity;
+        if (data.incoming !== undefined) updateData.incoming = data.incoming;
+        if (data.reserved !== undefined) updateData.reserved = data.reserved;
 
-        const output = await db.update(inventoryItem).set(updateData).where(eq(inventoryItem.id, id)).returning()
+        const output = await db.update(inventoryItem).set(updateData).where(eq(inventoryItem.id, id)).returning();
 
         return API_RESPONSE(
           output?.length ? STATUS.SUCCESS : STATUS.FAILED,
-          output?.length ? 'Inventory updated successfully' : 'Failed to update inventory',
+          output?.length ? "Inventory updated successfully" : "Failed to update inventory",
           output?.[0] ?? null,
-        )
+        );
       } catch (err) {
-        return API_RESPONSE(STATUS.ERROR, 'Error updating inventory', null, err as Error)
+        return API_RESPONSE(STATUS.ERROR, "Error updating inventory", null, err as Error);
       }
     }),
 
@@ -193,23 +193,23 @@ export const inventoryRouter = createTRPCRouter({
     .output(inventoryContract.delete.output)
     .mutation(async ({ input }) => {
       try {
-        const { id } = input.params
+        const { id } = input.params;
 
         // Find first to check existence, then delete
         await db.query.inventoryItem.findFirst({
           where: (inv, { eq }) => eq(inv.id, id),
-        })
+        });
 
         // Delete the record using delete syntax available in drizzle
-        const result = await db.delete(inventoryItem).where(eq(inventoryItem.id, id)).returning()
+        const result = await db.delete(inventoryItem).where(eq(inventoryItem.id, id)).returning();
 
         return API_RESPONSE(
           result?.length ? STATUS.SUCCESS : STATUS.FAILED,
-          result?.length ? 'Inventory deleted successfully' : 'Failed to delete inventory',
+          result?.length ? "Inventory deleted successfully" : "Failed to delete inventory",
           { deleted: result?.length > 0 },
-        )
+        );
       } catch (err) {
-        return API_RESPONSE(STATUS.ERROR, 'Error deleting inventory', null, err as Error)
+        return API_RESPONSE(STATUS.ERROR, "Error deleting inventory", null, err as Error);
       }
     }),
 
@@ -221,26 +221,26 @@ export const inventoryRouter = createTRPCRouter({
     .output(inventoryContract.updateStock.output)
     .mutation(async ({ input }) => {
       try {
-        const { id } = input.params
-        const { quantity, type, incoming } = input.data
+        const { id } = input.params;
+        const { quantity, type, incoming } = input.data;
 
         // Get current inventory
         const currentInventory = await db.query.inventoryItem.findFirst({
           where: (inv, { eq }) => eq(inv.id, id),
-        })
+        });
 
         if (!currentInventory) {
-          return API_RESPONSE(STATUS.FAILED, 'Inventory not found', null)
+          return API_RESPONSE(STATUS.FAILED, "Inventory not found", null);
         }
 
-        let newQuantity = currentInventory.quantity
+        let newQuantity = currentInventory.quantity;
 
-        if (type === 'add') {
-          newQuantity = currentInventory.quantity + quantity
-        } else if (type === 'subtract') {
-          newQuantity = Math.max(0, currentInventory.quantity - quantity)
-        } else if (type === 'set') {
-          newQuantity = quantity
+        if (type === "add") {
+          newQuantity = currentInventory.quantity + quantity;
+        } else if (type === "subtract") {
+          newQuantity = Math.max(0, currentInventory.quantity - quantity);
+        } else if (type === "set") {
+          newQuantity = quantity;
         }
 
         const output = await db
@@ -250,15 +250,15 @@ export const inventoryRouter = createTRPCRouter({
             incoming: incoming ?? currentInventory.incoming,
           })
           .where(eq(inventoryItem.id, id))
-          .returning()
+          .returning();
 
         return API_RESPONSE(
           output?.length ? STATUS.SUCCESS : STATUS.FAILED,
-          output?.length ? 'Stock updated successfully' : 'Failed to update stock',
+          output?.length ? "Stock updated successfully" : "Failed to update stock",
           output?.[0] ?? null,
-        )
+        );
       } catch (err) {
-        return API_RESPONSE(STATUS.ERROR, 'Error updating stock', null, err as Error)
+        return API_RESPONSE(STATUS.ERROR, "Error updating stock", null, err as Error);
       }
     }),
 
@@ -270,9 +270,9 @@ export const inventoryRouter = createTRPCRouter({
     .output(inventoryContract.search.output)
     .query(async ({ input }) => {
       try {
-        const { query } = input
-        const limit = query?.limit ?? 20
-        const offset = query?.offset ?? 0
+        const { query } = input;
+        const limit = query?.limit ?? 20;
+        const offset = query?.offset ?? 0;
 
         // build where clause inline so we don't need a typed array
         const output = await db.query.inventoryItem.findMany({
@@ -280,11 +280,11 @@ export const inventoryRouter = createTRPCRouter({
           limit: Math.min(limit, 100),
           offset,
           orderBy: (inv, { desc }) => [desc(inv.updatedAt)],
-        })
+        });
 
-        return API_RESPONSE(STATUS.SUCCESS, 'Inventories searched successfully', output)
+        return API_RESPONSE(STATUS.SUCCESS, "Inventories searched successfully", output);
       } catch (err) {
-        return API_RESPONSE(STATUS.ERROR, 'Error searching inventories', null, err as Error)
+        return API_RESPONSE(STATUS.ERROR, "Error searching inventories", null, err as Error);
       }
     }),
-})
+});

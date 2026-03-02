@@ -1,19 +1,19 @@
-import z from 'zod/v3'
-import { productVariantBaseSchema } from '../product-variant/product-variant.schema'
+import z from "zod/v3";
+import { productVariantBaseSchema } from "../product-variant/product-variant.schema";
 
 export const detailedResponse = <T extends z.ZodTypeAny>(dataSchema: T) =>
   z.object({
-    status: z.enum(['success', 'error', 'failed']).default('success'),
+    status: z.enum(["success", "error", "failed"]).default("success"),
     message: z.string(),
     data: dataSchema.nullable(),
     meta: z
       .object({
         timestamp: z.date().default(() => new Date()),
-        version: z.string().default('1.0.0'),
+        version: z.string().default("1.0.0"),
         count: z.number().optional(),
       })
       .optional(),
-  })
+  });
 
 export const baseProductSchema = z.object({
   id: z.string().min(1),
@@ -31,7 +31,7 @@ export const baseProductSchema = z.object({
 
   // PRICING
   basePrice: z.number().min(0),
-  baseCurrency: z.string().default('INR').nullable(),
+  baseCurrency: z.string().default("INR").nullable(),
   baseImage: z.string().nullable().optional(),
 
   // FEATURES
@@ -42,7 +42,7 @@ export const baseProductSchema = z.object({
 
   // STATE
   isActive: z.boolean().default(true).nullable(),
-  status: z.enum(['draft', 'archive', 'live']).default('draft'),
+  status: z.enum(["draft", "archive", "live"]).default("draft"),
 
   // SYSTEM
   deletedAt: z.date().nullable().optional(),
@@ -51,18 +51,18 @@ export const baseProductSchema = z.object({
     .date()
     .default(() => new Date())
     .nullable(),
-})
+});
 
-export const productSelectSchema = baseProductSchema
+export const productSelectSchema = baseProductSchema;
 
 export const productInsertSchema = baseProductSchema.omit({
   id: true,
   createdAt: true,
   updatedAt: true,
   deletedAt: true,
-})
+});
 
-export const productUpdateSchema = baseProductSchema.partial()
+export const productUpdateSchema = baseProductSchema.partial();
 
 //
 // SEARCH + PAGINATION
@@ -70,13 +70,13 @@ export const productUpdateSchema = baseProductSchema.partial()
 const paginationSchema = z.object({
   limit: z.number().min(1).max(100).default(20),
   offset: z.number().min(0).default(0),
-})
+});
 
 const searchSchema = z.object({
   search: z.string().min(2).max(100).optional(),
-  visibility: z.enum(['public', 'private', 'hidden']).optional(),
+  visibility: z.enum(["public", "private", "hidden"]).optional(),
   isFeatured: z.boolean().optional(),
-})
+});
 
 export const productContract = {
   get: {
@@ -202,4 +202,4 @@ export const productContract = {
     }),
     output: detailedResponse(z.array(productSelectSchema)),
   },
-}
+};

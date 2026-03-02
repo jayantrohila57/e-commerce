@@ -1,11 +1,11 @@
-import Header from '@/shared/components/layout/header/header'
-import { Shell } from '@/shared/components/layout/shell'
-import { Loader } from 'lucide-react'
+import Header from "@/shared/components/layout/header/header";
+import { Shell } from "@/shared/components/layout/shell";
+import { Loader } from "lucide-react";
 
 export const metadata = {
-  title: 'Loading',
-  description: 'Loading...',
-}
+  title: "Loading",
+  description: "Loading...",
+};
 
 export default async function Loading() {
   return (
@@ -21,5 +21,5 @@ export default async function Loading() {
         </Shell.Section>
       </Shell.Main>
     </Shell>
-  )
+  );
 }

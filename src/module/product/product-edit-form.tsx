@@ -1,62 +1,62 @@
-'use client'
-import Form from '@/shared/components/form/form'
-import { FormSection } from '@/shared/components/form/form.helper'
-import { Button } from '@/shared/components/ui/button'
-import { Separator } from '@/shared/components/ui/separator'
-import { type Route } from 'next'
-import { useRouter } from 'next/navigation'
-import { useState } from 'react'
-import { toast } from 'sonner'
-import type { z } from 'zod/v3'
+"use client";
+import Form from "@/shared/components/form/form";
+import { FormSection } from "@/shared/components/form/form.helper";
+import { Button } from "@/shared/components/ui/button";
+import { Separator } from "@/shared/components/ui/separator";
+import type { Route } from "next";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { toast } from "sonner";
+import type { z } from "zod/v3";
 
-import { apiClient } from '@/core/api/api.client'
-import { STATUS } from '@/shared/config/api.config'
-import { clientEnv } from '@/shared/config/env.client'
-import { PATH } from '@/shared/config/routes'
+import { apiClient } from "@/core/api/api.client";
+import { STATUS } from "@/shared/config/api.config";
+import { clientEnv } from "@/shared/config/env.client";
+import { PATH } from "@/shared/config/routes";
 
-import { FormItem } from '@/shared/components/ui/form'
-import { statusOptions } from '@/shared/config/options.config'
-import { CategorySelect } from './product-form.category'
-import { SeriesSelect } from './product-form.series'
-import { SubCategorySelect } from './product-form.subcategory'
+import { FormItem } from "@/shared/components/ui/form";
+import { statusOptions } from "@/shared/config/options.config";
+import { CategorySelect } from "./product-form.category";
+import { SeriesSelect } from "./product-form.series";
+import { SubCategorySelect } from "./product-form.subcategory";
 
-import { Minus, Plus } from 'lucide-react'
-import { productContract } from './product.schema'
-import type { ProductUpdate } from './product.types'
+import { Minus, Plus } from "lucide-react";
+import { productContract } from "./product.schema";
+import type { ProductUpdate } from "./product.types";
 
-const formSchema = productContract.update.input
-type FormValues = z.infer<typeof formSchema>
+const formSchema = productContract.update.input;
+type FormValues = z.infer<typeof formSchema>;
 
 export default function ProductEditForm({ product }: { product: ProductUpdate | null }) {
-  const router = useRouter()
-  const [toastId, setToastId] = useState<string | number>('')
+  const router = useRouter();
+  const [toastId, setToastId] = useState<string | number>("");
 
   const updateProduct = apiClient.product.update.useMutation({
     onSuccess: async ({ status, message }) => {
       if (status === STATUS.SUCCESS) {
-        toast.success(message, { id: toastId })
-        setToastId('')
-        router.push(PATH.STUDIO.PRODUCTS.ROOT as Route)
+        toast.success(message, { id: toastId });
+        setToastId("");
+        router.push(PATH.STUDIO.PRODUCTS.ROOT as Route);
       } else if (status === STATUS.FAILED || status === STATUS.ERROR) {
-        toast.error(message, { id: toastId })
-        setToastId('')
+        toast.error(message, { id: toastId });
+        setToastId("");
       }
     },
     onError: ({ message }) => {
-      toast.error(message || 'An error occurred while updating the product', { id: toastId })
-      setToastId('')
+      toast.error(message || "An error occurred while updating the product", { id: toastId });
+      setToastId("");
     },
-  })
+  });
 
   function onSubmit(data: FormValues) {
     if (!product) {
-      toast.error('Product not found')
-      return
+      toast.error("Product not found");
+      return;
     }
 
-    setToastId('')
-    const id = toast.loading('Updating product...')
-    setToastId(id)
+    setToastId("");
+    const id = toast.loading("Updating product...");
+    setToastId(id);
 
     updateProduct.mutate({
       params: {
@@ -78,7 +78,7 @@ export default function ProductEditForm({ product }: { product: ProductUpdate | 
         status: data.body.status,
         baseImage: data.body.baseImage,
       },
-    })
+    });
   }
 
   return (
@@ -88,20 +88,20 @@ export default function ProductEditForm({ product }: { product: ProductUpdate | 
           id: String(product?.id),
         },
         body: {
-          title: product?.title ?? '',
-          slug: product?.slug ?? '',
-          description: product?.description ?? '',
-          metaTitle: product?.metaTitle ?? '',
-          metaDescription: product?.metaDescription ?? '',
-          seriesSlug: product?.seriesSlug ?? '',
-          categorySlug: product?.categorySlug ?? '',
-          subcategorySlug: product?.subcategorySlug ?? '',
+          title: product?.title ?? "",
+          slug: product?.slug ?? "",
+          description: product?.description ?? "",
+          metaTitle: product?.metaTitle ?? "",
+          metaDescription: product?.metaDescription ?? "",
+          seriesSlug: product?.seriesSlug ?? "",
+          categorySlug: product?.categorySlug ?? "",
+          subcategorySlug: product?.subcategorySlug ?? "",
           isActive: product?.isActive ?? true,
           basePrice: product?.basePrice ?? 0,
-          baseCurrency: product?.baseCurrency ?? 'INR',
-          baseImage: product?.baseImage ?? '',
-          features: product?.features?.length ? product.features : [{ title: '' }],
-          status: product?.status ?? 'draft',
+          baseCurrency: product?.baseCurrency ?? "INR",
+          baseImage: product?.baseImage ?? "",
+          features: product?.features?.length ? product.features : [{ title: "" }],
+          status: product?.status ?? "draft",
         },
       }}
       schema={formSchema}
@@ -109,51 +109,45 @@ export default function ProductEditForm({ product }: { product: ProductUpdate | 
       className="grid h-full grid-cols-4 gap-1 pb-20"
     >
       <div className="col-span-4 h-full w-full">
-        <FormSection
-          title="Product Details"
-          description="Update product information"
-        >
+        <FormSection title="Product Details" description="Update product information">
           <Form.Field
             {...{
-              name: 'body.title',
-              label: 'Title',
-              type: 'text',
-              placeholder: 'Enter product title',
+              name: "body.title",
+              label: "Title",
+              type: "text",
+              placeholder: "Enter product title",
               required: true,
             }}
           />
 
           <Form.Field
             {...{
-              name: 'body.slug',
-              label: 'Slug',
-              type: 'slug',
-              slugField: 'body.title',
+              name: "body.slug",
+              label: "Slug",
+              type: "slug",
+              slugField: "body.title",
               inlinePrefix: `${clientEnv.NEXT_PUBLIC_BASE_URL}/product/`,
               required: true,
-              placeholder: 'Enter slug',
+              placeholder: "Enter slug",
             }}
           />
 
           <Form.Field
             {...{
-              name: 'body.description',
-              label: 'Description',
-              type: 'textarea',
-              placeholder: 'Enter product description',
+              name: "body.description",
+              label: "Description",
+              type: "textarea",
+              placeholder: "Enter product description",
             }}
           />
         </FormSection>
 
-        <FormSection
-          title="Image"
-          description="Upload product image"
-        >
+        <FormSection title="Image" description="Upload product image">
           <Form.Field
             {...{
-              name: 'body.baseImage',
-              label: 'Image',
-              type: 'image',
+              name: "body.baseImage",
+              label: "Image",
+              type: "image",
               required: true,
             }}
           />
@@ -174,19 +168,16 @@ export default function ProductEditForm({ product }: { product: ProductUpdate | 
 
         <Separator className="my-4" />
 
-        <FormSection
-          title="Product Price"
-          description="Enter product pricing"
-        >
+        <FormSection title="Product Price" description="Enter product pricing">
           <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
             <Form.Field
               {...{
-                name: 'body.basePrice',
-                label: 'Base Price',
-                type: 'currency',
-                prefixCurrency: '₹',
-                postfixCurrency: 'INR',
-                placeholder: 'Enter base price',
+                name: "body.basePrice",
+                label: "Base Price",
+                type: "currency",
+                prefixCurrency: "₹",
+                postfixCurrency: "INR",
+                placeholder: "Enter base price",
                 required: true,
               }}
             />
@@ -195,18 +186,15 @@ export default function ProductEditForm({ product }: { product: ProductUpdate | 
 
         <Separator className="my-4" />
 
-        <FormSection
-          title="Status"
-          description="Control product visibility"
-        >
+        <FormSection title="Status" description="Control product visibility">
           <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
             <Form.Field
               {...{
-                name: 'body.status',
-                label: 'Status',
-                type: 'select',
+                name: "body.status",
+                label: "Status",
+                type: "select",
                 options: [
-                  { label: 'Select type...', value: 'select-type', disabled: true },
+                  { label: "Select type...", value: "select-type", disabled: true },
                   ...statusOptions.map((t) => ({
                     label: t.label,
                     value: t.value,
@@ -218,9 +206,9 @@ export default function ProductEditForm({ product }: { product: ProductUpdate | 
 
             <Form.Field
               {...{
-                name: 'body.isActive',
-                label: 'Active',
-                type: 'switch',
+                name: "body.isActive",
+                label: "Active",
+                type: "switch",
               }}
             />
           </div>
@@ -228,23 +216,17 @@ export default function ProductEditForm({ product }: { product: ProductUpdate | 
 
         <Separator className="my-4" />
 
-        <FormSection
-          title="Product Features"
-          description="Add product features"
-        >
+        <FormSection title="Product Features" description="Add product features">
           <Form.FormGroup name="body.features">
             {({ index, add, remove, length }) => (
-              <FormItem
-                key={index}
-                className="flex flex-row items-center justify-center gap-4"
-              >
+              <FormItem key={index} className="flex flex-row items-center justify-center gap-4">
                 <div className="w-full">
                   <Form.Field
                     {...{
                       name: `body.features.${index}.title`,
-                      label: 'Title',
-                      type: 'text',
-                      placeholder: 'Feature title',
+                      label: "Title",
+                      type: "text",
+                      placeholder: "Feature title",
                     }}
                   />
                 </div>
@@ -252,8 +234,8 @@ export default function ProductEditForm({ product }: { product: ProductUpdate | 
                 <div className="flex gap-2 pt-5">
                   <Button
                     type="button"
-                    variant={'destructive'}
-                    size={'icon'}
+                    variant={"destructive"}
+                    size={"icon"}
                     onClick={() => remove(index)}
                     hidden={length === 1}
                   >
@@ -263,10 +245,10 @@ export default function ProductEditForm({ product }: { product: ProductUpdate | 
                   {index === length - 1 && (
                     <Button
                       type="button"
-                      size={'icon'}
+                      size={"icon"}
                       onClick={() =>
                         add({
-                          title: '',
+                          title: "",
                         })
                       }
                     >
@@ -286,19 +268,13 @@ export default function ProductEditForm({ product }: { product: ProductUpdate | 
         <Form.StatusBadge />
 
         <div className="flex flex-row items-center gap-2">
-          <Button
-            variant="outline"
-            type="button"
-          >
+          <Button variant="outline" type="button">
             Save Draft
           </Button>
 
-          <Form.Submit
-            disabled={updateProduct.isPending}
-            isLoading={updateProduct.isPending}
-          />
+          <Form.Submit disabled={updateProduct.isPending} isLoading={updateProduct.isPending} />
         </div>
       </div>
     </Form>
-  )
+  );
 }

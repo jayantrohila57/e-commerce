@@ -1,4 +1,4 @@
-import { Skeleton } from '@/shared/components/ui/skeleton'
+import { Skeleton } from "@/shared/components/ui/skeleton";
 
 export const PDPSkeleton = () => {
   return (
@@ -9,10 +9,7 @@ export const PDPSkeleton = () => {
           <Skeleton className="aspect-square w-full rounded-lg" />
           <div className="grid grid-cols-4 gap-2">
             {[...Array(4)].map((_, i) => (
-              <Skeleton
-                key={i}
-                className="aspect-square rounded-md"
-              />
+              <Skeleton key={i} className="aspect-square rounded-md" />
             ))}
           </div>
         </div>
@@ -34,10 +31,7 @@ export const PDPSkeleton = () => {
                 <Skeleton className="mb-2 h-5 w-1/4" />
                 <div className="flex flex-wrap gap-2">
                   {[...Array(3)].map((_, j) => (
-                    <Skeleton
-                      key={j}
-                      className="h-9 w-20 rounded-md"
-                    />
+                    <Skeleton key={j} className="h-9 w-20 rounded-md" />
                   ))}
                 </div>
               </div>
@@ -73,5 +67,5 @@ export const PDPSkeleton = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};

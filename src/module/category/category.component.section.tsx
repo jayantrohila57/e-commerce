@@ -1,48 +1,41 @@
-import { Separator } from '@/shared/components/ui/separator'
-import { CategoryCard } from './category.component.card'
-import { FormSection } from '@/shared/components/form/form.helper'
-import { CategoryBase } from './category.types'
+import { Separator } from "@/shared/components/ui/separator";
+import { CategoryCard } from "./category.component.card";
+import { FormSection } from "@/shared/components/form/form.helper";
+import type { CategoryBase } from "./category.types";
 
-type Category = CategoryBase
+type Category = CategoryBase;
 
 type CategoriesByType = {
-  featuredCategoryType: Category[]
+  featuredCategoryType: Category[];
   categoryVisibility: {
-    publicCategoryType: Category[]
-    privateCategoryType: Category[]
-    hiddenCategoryType: Category[]
-  }
-  recentCategoryType: Category[]
-  deletedCategoryType: Category[]
-}
+    publicCategoryType: Category[];
+    privateCategoryType: Category[];
+    hiddenCategoryType: Category[];
+  };
+  recentCategoryType: Category[];
+  deletedCategoryType: Category[];
+};
 
 type CategorySectionProps = {
-  title: string
-  description: string
-  categories: Category[]
-  emptyMessage?: string
-}
+  title: string;
+  description: string;
+  categories: Category[];
+  emptyMessage?: string;
+};
 
-const CategorySection = ({ title, description, categories, emptyMessage = 'No categories' }: CategorySectionProps) => (
-  <FormSection
-    title={title + ` (${categories?.length})`}
-    description={description}
-  >
+const CategorySection = ({ title, description, categories, emptyMessage = "No categories" }: CategorySectionProps) => (
+  <FormSection title={title + ` (${categories?.length})`} description={description}>
     <div className="grid grid-cols-1 gap-2">
       {categories?.length > 0 ? (
         categories?.map((cat) => (
-          <CategoryCard
-            href={`/studio/products/categories/${cat.slug}`}
-            key={cat.id}
-            category={cat}
-          />
+          <CategoryCard href={`/studio/products/categories/${cat.slug}`} key={cat.id} category={cat} />
         ))
       ) : (
         <p className="text-muted-foreground px-2 text-sm">{emptyMessage}</p>
       )}
     </div>
   </FormSection>
-)
+);
 
 export function CategoriesSection({ data }: { data: CategoriesByType | null }) {
   const {
@@ -50,7 +43,7 @@ export function CategoriesSection({ data }: { data: CategoriesByType | null }) {
     categoryVisibility: { publicCategoryType = [], privateCategoryType = [], hiddenCategoryType = [] } = {},
     recentCategoryType = [],
     deletedCategoryType = [],
-  } = data || { categoryVisibility: {} }
+  } = data || { categoryVisibility: {} };
 
   return (
     <div className="flex flex-col gap-2">
@@ -101,5 +94,5 @@ export function CategoriesSection({ data }: { data: CategoriesByType | null }) {
         emptyMessage="No deleted categories"
       />
     </div>
-  )
+  );
 }

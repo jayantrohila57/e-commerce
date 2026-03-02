@@ -1,5 +1,5 @@
-import { Button } from '@/shared/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/shared/components/ui/card'
+import { Button } from "@/shared/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/components/ui/card";
 
 export function SidebarGetStartedCard() {
   return (
@@ -14,5 +14,5 @@ export function SidebarGetStartedCard() {
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }

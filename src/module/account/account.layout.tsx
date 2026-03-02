@@ -1,5 +1,5 @@
-import AccountCommerceComponent from './account.commerce-layout'
-import AccountUserComponent from './account.user-layout'
+import AccountCommerceComponent from "./account.commerce-layout";
+import AccountUserComponent from "./account.user-layout";
 
 export default function AccountRootComponent() {
   return (
@@ -7,5 +7,5 @@ export default function AccountRootComponent() {
       <AccountUserComponent />
       <AccountCommerceComponent />
     </div>
-  )
+  );
 }

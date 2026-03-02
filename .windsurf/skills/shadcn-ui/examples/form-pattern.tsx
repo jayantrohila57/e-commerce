@@ -1,67 +1,64 @@
 // Example: Form Pattern with shadcn/ui components
 // Demonstrates: Form building, validation, and composition
 
-'use client'
+"use client";
 
-import { Button } from '@/components/ui/button'
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Textarea } from '@/components/ui/textarea'
-import { toast } from '@/components/ui/use-toast'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm } from 'react-hook-form'
-import * as z from 'zod'
+import { Button } from "@/components/ui/button";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { toast } from "@/components/ui/use-toast";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
 
 // Define form schema with zod
 const formSchema = z.object({
   username: z.string().min(2, {
-    message: 'Username must be at least 2 characters.',
+    message: "Username must be at least 2 characters.",
   }),
   email: z.string().email({
-    message: 'Please enter a valid email address.',
+    message: "Please enter a valid email address.",
   }),
-  role: z.enum(['admin', 'user', 'viewer'], {
-    required_error: 'Please select a role.',
+  role: z.enum(["admin", "user", "viewer"], {
+    required_error: "Please select a role.",
   }),
   bio: z
     .string()
     .max(160, {
-      message: 'Bio must not be longer than 160 characters.',
+      message: "Bio must not be longer than 160 characters.",
     })
     .optional(),
-})
+});
 
-type FormValues = z.infer<typeof formSchema>
+type FormValues = z.infer<typeof formSchema>;
 
 export function UserProfileForm() {
   // Initialize form with react-hook-form and zod validation
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      username: '',
-      email: '',
-      bio: '',
+      username: "",
+      email: "",
+      bio: "",
     },
-  })
+  });
 
   // Handle form submission
   function onSubmit(values: FormValues) {
     // In a real app, send to API
-    console.log(values)
+    console.log(values);
 
     toast({
-      title: 'Profile updated',
-      description: 'Your profile has been successfully updated.',
-    })
+      title: "Profile updated",
+      description: "Your profile has been successfully updated.",
+    });
   }
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-8"
-      >
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <FormField
           control={form.control}
           name="username"
@@ -69,10 +66,7 @@ export function UserProfileForm() {
             <FormItem>
               <FormLabel>Username</FormLabel>
               <FormControl>
-                <Input
-                  placeholder="johndoe"
-                  {...field}
-                />
+                <Input placeholder="johndoe" {...field} />
               </FormControl>
               <FormDescription>This is your public display name.</FormDescription>
               <FormMessage />
@@ -87,11 +81,7 @@ export function UserProfileForm() {
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input
-                  type="email"
-                  placeholder="john@example.com"
-                  {...field}
-                />
+                <Input type="email" placeholder="john@example.com" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -104,10 +94,7 @@ export function UserProfileForm() {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Role</FormLabel>
-              <Select
-                onValueChange={field.onChange}
-                defaultValue={field.value}
-              >
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Select a role" />
@@ -132,11 +119,7 @@ export function UserProfileForm() {
             <FormItem>
               <FormLabel>Bio</FormLabel>
               <FormControl>
-                <Textarea
-                  placeholder="Tell us about yourself"
-                  className="resize-none"
-                  {...field}
-                />
+                <Textarea placeholder="Tell us about yourself" className="resize-none" {...field} />
               </FormControl>
               <FormDescription>Optional. Maximum 160 characters.</FormDescription>
               <FormMessage />
@@ -147,7 +130,7 @@ export function UserProfileForm() {
         <Button type="submit">Update profile</Button>
       </form>
     </Form>
-  )
+  );
 }
 
 /**

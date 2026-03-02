@@ -1,34 +1,31 @@
-import { getServerAccounts, getServerSession } from '@/core/auth/auth.server'
-import { redirect } from 'next/navigation'
-import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from '@/shared/components/ui/card'
-import { Alert, AlertDescription } from '@/shared/components/ui/alert'
-import { Info, Shield } from 'lucide-react'
-import { Separator } from '@/shared/components/ui/separator'
-import { Badge } from '@/shared/components/ui/badge'
-import { ChangePasswordForm } from '@/module/account/account.password-change'
-import { TwoFactorAuthForm } from '@/module/account/account.two-factor'
-import { SetPasswordButton } from '@/module/account/account.set-password'
-import Section from '@/shared/components/layout/section/section'
-import { AccountSidebar } from '@/module/account/account-sidebar'
-import { PATH } from '@/shared/config/routes'
+import { Info, Shield } from "lucide-react";
+import { redirect } from "next/navigation";
+import { getServerAccounts, getServerSession } from "@/core/auth/auth.server";
+import { ChangePasswordForm } from "@/module/account/account.password-change";
+import { SetPasswordButton } from "@/module/account/account.set-password";
+import { TwoFactorAuthForm } from "@/module/account/account.two-factor";
+import { AccountSidebar } from "@/module/account/account-sidebar";
+import Section from "@/shared/components/layout/section/section";
+import { Alert, AlertDescription } from "@/shared/components/ui/alert";
+import { Badge } from "@/shared/components/ui/badge";
+import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/components/ui/card";
+import { Separator } from "@/shared/components/ui/separator";
+import { PATH } from "@/shared/config/routes";
 
 export const metadata = {
-  title: 'Security & Privacy',
-  description: 'Update your password and two-factor authentication settings',
-}
+  title: "Security & Privacy",
+  description: "Update your password and two-factor authentication settings",
+};
 
 export default async function SecurityPage() {
-  const session = await getServerSession()
-  if (!session) return redirect(PATH.ROOT)
-  const [accounts] = await Promise.all([getServerAccounts()])
-  const hasPasswordAccount = Boolean(accounts?.some((a) => a?.providerId === 'credential'))
-  const isTwoFactorEnabled = Boolean(session?.user?.twoFactorEnabled)
+  const session = await getServerSession();
+  if (!session) return redirect(PATH.ROOT);
+  const [accounts] = await Promise.all([getServerAccounts()]);
+  const hasPasswordAccount = Boolean(accounts?.some((a) => a?.providerId === "credential"));
+  const isTwoFactorEnabled = Boolean(session?.user?.twoFactorEnabled);
 
   return (
-    <Section
-      className="bg-muted p-4"
-      {...metadata}
-    >
+    <Section className="bg-muted p-4" {...metadata}>
       <div className="grid h-full w-full grid-cols-12 gap-4">
         <div className="col-span-2 h-full w-full">
           <AccountSidebar />
@@ -36,26 +33,24 @@ export default async function SecurityPage() {
         <div className="col-span-8 h-full w-full">
           <div className="space-y-6">
             {hasPasswordAccount ? (
-              <>
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Password Settings</CardTitle>
-                    <CardDescription>Choose a strong password to protect your account</CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-6">
-                    <Alert>
-                      <Info className="h-4 w-4" />
-                      <AlertDescription>
-                        Your password must be at least 8 characters long and include a mix of letters, numbers, and
-                        symbols.
-                      </AlertDescription>
-                    </Alert>
-                  </CardContent>
-                  <CardContent className="space-y-6">
-                    <ChangePasswordForm />
-                  </CardContent>
-                </Card>
-              </>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Password Settings</CardTitle>
+                  <CardDescription>Choose a strong password to protect your account</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <Alert>
+                    <Info className="h-4 w-4" />
+                    <AlertDescription>
+                      Your password must be at least 8 characters long and include a mix of letters, numbers, and
+                      symbols.
+                    </AlertDescription>
+                  </Alert>
+                </CardContent>
+                <CardContent className="space-y-6">
+                  <ChangePasswordForm />
+                </CardContent>
+              </Card>
             ) : (
               <Card>
                 <CardHeader>
@@ -65,7 +60,7 @@ export default async function SecurityPage() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <SetPasswordButton email={session.user?.email ?? ''} />
+                  <SetPasswordButton email={session.user?.email ?? ""} />
                 </CardContent>
               </Card>
             )}
@@ -87,8 +82,8 @@ export default async function SecurityPage() {
                       Enable two-factor authentication to add an extra layer of security to your account
                     </CardDescription>
                     <CardAction>
-                      <Badge variant={isTwoFactorEnabled ? 'default' : 'secondary'}>
-                        {isTwoFactorEnabled ? 'Enabled' : 'Disabled'}
+                      <Badge variant={isTwoFactorEnabled ? "default" : "secondary"}>
+                        {isTwoFactorEnabled ? "Enabled" : "Disabled"}
                       </Badge>
                     </CardAction>
                   </CardHeader>
@@ -103,5 +98,5 @@ export default async function SecurityPage() {
         <div className="col-span-2"></div>
       </div>
     </Section>
-  )
+  );
 }

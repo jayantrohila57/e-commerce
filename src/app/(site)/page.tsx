@@ -1,14 +1,14 @@
-import GetFeaturedCategories from '@/module/category/category.get-featured'
-import ShopByCategoryGrid from '@/module/category/category.shop-by'
-import SiteHero from '@/module/site/site.hero'
-import Shell from '@/shared/components/layout/shell'
+import GetFeaturedCategories from "@/module/category/category.get-featured";
+import ShopByCategoryGrid from "@/module/category/category.shop-by";
+import SiteHero from "@/module/site/site.hero";
+import Shell from "@/shared/components/layout/shell";
 
 export const metadata = {
-  title: 'Home',
-  description: 'Home Description',
-}
+  title: "Home",
+  description: "Home Description",
+};
 
-export default async function Home({}: PageProps<'/'>) {
+export default async function Home({}: PageProps<"/">) {
   return (
     <Shell>
       <Shell.Section>
@@ -21,5 +21,5 @@ export default async function Home({}: PageProps<'/'>) {
         <ShopByCategoryGrid />
       </Shell.Section>
     </Shell>
-  )
+  );
 }

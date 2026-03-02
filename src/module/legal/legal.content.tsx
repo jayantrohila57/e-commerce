@@ -1,24 +1,24 @@
-'use client'
+"use client";
 
-import { Card, CardContent, CardFooter, CardHeader } from '@/shared/components/ui/card'
-import { Button } from '@/shared/components/ui/button'
-import { Separator } from '@/shared/components/ui/separator'
-import { Printer, Share2, Calendar } from 'lucide-react'
-import { policyContent } from './policy-content'
+import { Card, CardContent, CardFooter, CardHeader } from "@/shared/components/ui/card";
+import { Button } from "@/shared/components/ui/button";
+import { Separator } from "@/shared/components/ui/separator";
+import { Printer, Share2, Calendar } from "lucide-react";
+import { policyContent } from "./policy-content";
 
 interface LegalContentProps {
-  activeSection: string
+  activeSection: string;
 }
 
 export function LegalContent({ activeSection }: LegalContentProps) {
-  const content = policyContent[activeSection]
+  const content = policyContent[activeSection];
 
   if (!content) {
     return (
       <Card className="border-border bg-background p-8 shadow-sm">
         <p className="text-muted-foreground">Policy not found.</p>
       </Card>
-    )
+    );
   }
 
   return (
@@ -37,17 +37,11 @@ export function LegalContent({ activeSection }: LegalContentProps) {
           </div>
 
           <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-            >
+            <Button variant="outline" size="sm">
               <Share2 className="mr-2 h-4 w-4" />
               Share
             </Button>
-            <Button
-              variant="outline"
-              size="sm"
-            >
+            <Button variant="outline" size="sm">
               <Printer className="mr-2 h-4 w-4" />
               Print
             </Button>
@@ -57,17 +51,11 @@ export function LegalContent({ activeSection }: LegalContentProps) {
       <Separator />
       <CardContent className="flex-1">
         {content.sections.map((section, index) => (
-          <div
-            key={index}
-            id={`section-${index}`}
-          >
+          <div key={index} id={`section-${index}`}>
             <h2 className="text-foreground text-lg font-medium">{section.heading}</h2>
             <div className="space-y-4">
               {section.content.map((paragraph: string, pIndex: number) => (
-                <p
-                  key={pIndex}
-                  className="text-muted-foreground leading-relaxed"
-                >
+                <p key={pIndex} className="text-muted-foreground leading-relaxed">
                   {paragraph}
                 </p>
               ))}
@@ -96,5 +84,5 @@ export function LegalContent({ activeSection }: LegalContentProps) {
         </div>
       </CardFooter>
     </Card>
-  )
+  );
 }

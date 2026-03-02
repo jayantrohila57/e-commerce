@@ -1,10 +1,10 @@
-import Section from '@/shared/components/layout/section/section'
-import Shell from '@/shared/components/layout/shell'
+import Section from "@/shared/components/layout/section/section";
+import Shell from "@/shared/components/layout/shell";
 
 export const metadata = {
-  title: 'Contact Support',
-  description: 'Get in touch with us to discuss your project, ask a question, or simply to say hello.',
-}
+  title: "Contact Support",
+  description: "Get in touch with us to discuss your project, ask a question, or simply to say hello.",
+};
 
 export default function Page() {
   return (
@@ -16,5 +16,5 @@ export default function Page() {
         </Section>
       </Shell.Section>
     </Shell>
-  )
+  );
 }

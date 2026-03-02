@@ -1,13 +1,13 @@
-'use client'
+"use client";
 
-import dynamic from 'next/dynamic'
+import dynamic from "next/dynamic";
 
-import { Skeleton } from '@/shared/components/ui/skeleton'
-import { Suspense } from 'react'
+import { Skeleton } from "@/shared/components/ui/skeleton";
+import { Suspense } from "react";
 
-const GitHubSignIn = dynamic(() => import('./auth.github-sign-in').then((mod) => mod.GitHubSignIn), {
+const GitHubSignIn = dynamic(() => import("./auth.github-sign-in").then((mod) => mod.GitHubSignIn), {
   loading: () => <Skeleton className="h-10 w-full rounded-full" />,
-})
+});
 // const PasskeyButton = dynamic(() => import('./auth.passkey-button').then((mod) => mod.PasskeyButton), {
 //   loading: () => <Skeleton className="h-10 w-full rounded-full" />,
 // })
@@ -22,5 +22,5 @@ export function AuthProviders() {
         <PasskeyButton />
       </Suspense> */}
     </div>
-  )
+  );
 }

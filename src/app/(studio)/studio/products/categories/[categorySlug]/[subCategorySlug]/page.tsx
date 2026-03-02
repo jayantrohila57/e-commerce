@@ -1,23 +1,23 @@
-import { apiServer, HydrateClient } from '@/core/api/api.server'
-import { SeriesSection } from '@/module/series/series-section'
-import { SubCategoryPreviewCard } from '@/module/subcategory/subcategory-preview'
-import DashboardSection from '@/shared/components/layout/section/section-dashboard'
-import Shell from '@/shared/components/layout/shell'
-import { Separator } from '@/shared/components/ui/separator'
-import { PATH } from '@/shared/config/routes'
-import { slugToTitle } from '@/shared/utils/lib/url.utils'
-import { Route } from 'next'
+import { apiServer, HydrateClient } from "@/core/api/api.server";
+import { SeriesSection } from "@/module/series/series-section";
+import { SubCategoryPreviewCard } from "@/module/subcategory/subcategory-preview";
+import DashboardSection from "@/shared/components/layout/section/section-dashboard";
+import Shell from "@/shared/components/layout/shell";
+import { Separator } from "@/shared/components/ui/separator";
+import { PATH } from "@/shared/config/routes";
+import { slugToTitle } from "@/shared/utils/lib/url.utils";
+import type { Route } from "next";
 
 export default async function SubCategoryPage({
   params,
-}: PageProps<'/studio/products/categories/[categorySlug]/[subCategorySlug]'>) {
-  const { categorySlug: slug, subCategorySlug: sub } = await params
+}: PageProps<"/studio/products/categories/[categorySlug]/[subCategorySlug]">) {
+  const { categorySlug: slug, subCategorySlug: sub } = await params;
   const { data } = await apiServer.subcategory.getBySlug({
     params: {
       slug: sub,
       categorySlug: slug,
     },
-  })
+  });
   return (
     <HydrateClient>
       <Shell>
@@ -50,5 +50,5 @@ export default async function SubCategoryPage({
         </Shell.Section>
       </Shell>
     </HydrateClient>
-  )
+  );
 }

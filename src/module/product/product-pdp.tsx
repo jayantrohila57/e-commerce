@@ -1,32 +1,32 @@
-import { Button } from '@/shared/components/ui/button'
-import { Badge } from '@/shared/components/ui/badge'
-import Image from 'next/image'
-import Link from 'next/link'
-import { type GetPDPProductOutput } from './product.types'
-import { type Route } from 'next'
-import { extractAttributeGroups, isOptionAvailable, resolveNextVariant } from './product-utility'
+import { Button } from "@/shared/components/ui/button";
+import { Badge } from "@/shared/components/ui/badge";
+import Image from "next/image";
+import Link from "next/link";
+import type { GetPDPProductOutput } from "./product.types";
+import type { Route } from "next";
+import { extractAttributeGroups, isOptionAvailable, resolveNextVariant } from "./product-utility";
 
-export const PDPProduct = ({ data, slug }: { data: GetPDPProductOutput['data']; slug: string }) => {
-  if (!data?.product) return <div>Product not found</div>
+export const PDPProduct = ({ data, slug }: { data: GetPDPProductOutput["data"]; slug: string }) => {
+  if (!data?.product) return <div>Product not found</div>;
 
-  const product = data.product
-  const variants = product?.variants
+  const product = data.product;
+  const variants = product?.variants;
 
-  const selectedVariant = variants.find((v) => v.slug === slug) ?? variants[0]
+  const selectedVariant = variants.find((v) => v.slug === slug) ?? variants[0];
 
-  const attributeGroups = extractAttributeGroups(variants)
+  const attributeGroups = extractAttributeGroups(variants);
 
-  const basePrice = Number(product?.basePrice)
-  const priceModifier = Number(selectedVariant?.priceModifierValue) || 0
+  const basePrice = Number(product?.basePrice);
+  const priceModifier = Number(selectedVariant?.priceModifierValue) || 0;
 
   const finalPrice =
-    selectedVariant?.priceModifierType === 'percent_increase'
+    selectedVariant?.priceModifierType === "percent_increase"
       ? basePrice * (1 + priceModifier / 100)
-      : selectedVariant?.priceModifierType === 'percent_decrease'
+      : selectedVariant?.priceModifierType === "percent_decrease"
         ? basePrice * (1 - priceModifier / 100)
-        : selectedVariant?.priceModifierType === 'flat_increase'
+        : selectedVariant?.priceModifierType === "flat_increase"
           ? basePrice + priceModifier
-          : basePrice - priceModifier
+          : basePrice - priceModifier;
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -58,7 +58,7 @@ export const PDPProduct = ({ data, slug }: { data: GetPDPProductOutput['data']; 
 
             {selectedVariant?.priceModifierValue && (
               <Badge variant="outline">
-                {selectedVariant?.priceModifierType === 'percent_increase'
+                {selectedVariant?.priceModifierType === "percent_increase"
                   ? `+${priceModifier}%`
                   : `+$${priceModifier}`}
               </Badge>
@@ -73,14 +73,14 @@ export const PDPProduct = ({ data, slug }: { data: GetPDPProductOutput['data']; 
 
                 <div className="mt-2 flex flex-wrap gap-2">
                   {Array.from(values).map((value) => {
-                    const isSelected = selectedVariant?.attributes?.some((a) => a.title === title && a.value === value)
+                    const isSelected = selectedVariant?.attributes?.some((a) => a.title === title && a.value === value);
 
                     const available = isOptionAvailable({
                       variants,
                       current: selectedVariant,
                       changeAttrTitle: title,
                       changeAttrValue: value,
-                    })
+                    });
 
                     if (!available) {
                       return (
@@ -93,7 +93,7 @@ export const PDPProduct = ({ data, slug }: { data: GetPDPProductOutput['data']; 
                         >
                           {value}
                         </Button>
-                      )
+                      );
                     }
 
                     const nextVariant = resolveNextVariant({
@@ -101,7 +101,7 @@ export const PDPProduct = ({ data, slug }: { data: GetPDPProductOutput['data']; 
                       current: selectedVariant,
                       changeAttrTitle: title,
                       changeAttrValue: value,
-                    })
+                    });
 
                     return (
                       <Link
@@ -111,15 +111,11 @@ export const PDPProduct = ({ data, slug }: { data: GetPDPProductOutput['data']; 
                         }
                         prefetch={false}
                       >
-                        <Button
-                          size="sm"
-                          variant={isSelected ? 'default' : 'outline'}
-                          className="capitalize"
-                        >
+                        <Button size="sm" variant={isSelected ? "default" : "outline"} className="capitalize">
                           {value}
                         </Button>
                       </Link>
-                    )
+                    );
                   })}
                 </div>
               </div>
@@ -127,16 +123,10 @@ export const PDPProduct = ({ data, slug }: { data: GetPDPProductOutput['data']; 
           </div>
 
           <div className="flex gap-4 pt-4">
-            <Button
-              size="lg"
-              className="flex-1"
-            >
+            <Button size="lg" className="flex-1">
               Add to Cart
             </Button>
-            <Button
-              size="lg"
-              variant="outline"
-            >
+            <Button size="lg" variant="outline">
               Buy Now
             </Button>
           </div>
@@ -159,5 +149,5 @@ export const PDPProduct = ({ data, slug }: { data: GetPDPProductOutput['data']; 
         </div>
       </div>
     </div>
-  )
-}
+  );
+};

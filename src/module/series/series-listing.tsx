@@ -1,11 +1,11 @@
-import CodePreview from '@/shared/components/common/code-preview'
-import { Separator } from '@/shared/components/ui/separator'
-import type { SeriesSelect } from './series.types'
+import CodePreview from "@/shared/components/common/code-preview";
+import { Separator } from "@/shared/components/ui/separator";
+import type { SeriesSelect } from "./series.types";
 
 type SeriesItemData = {
-  seriesData?: SeriesSelect | null
-  [key: string]: unknown
-} | null
+  seriesData?: SeriesSelect | null;
+  [key: string]: unknown;
+} | null;
 
 export const SeriesItem = ({ data }: { data: SeriesItemData }) => {
   return (
@@ -16,5 +16,5 @@ export const SeriesItem = ({ data }: { data: SeriesItemData }) => {
       <Separator className="my-6" />
       <CodePreview json={data} />
     </div>
-  )
-}
+  );
+};

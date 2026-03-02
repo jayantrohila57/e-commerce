@@ -1,19 +1,19 @@
-import { getServerSession } from '@/core/auth/auth.server'
-import ResetPasswordForm from '@/module/auth/auth.reset-password'
-import { redirect } from 'next/navigation'
-import Shell from '@/shared/components/layout/shell'
-import { PATH } from '@/shared/config/routes'
-import { AuthCard, AuthFooterNote } from '@/shared/components/layout/section/auth.card-layout'
+import { getServerSession } from "@/core/auth/auth.server";
+import ResetPasswordForm from "@/module/auth/auth.reset-password";
+import { redirect } from "next/navigation";
+import Shell from "@/shared/components/layout/shell";
+import { PATH } from "@/shared/config/routes";
+import { AuthCard, AuthFooterNote } from "@/shared/components/layout/section/auth.card-layout";
 
 export const metadata = {
-  title: 'Reset Password',
-  description: 'Reset Password',
-}
-export default async function ResetPasswordPage({ searchParams }: PageProps<'/auth/reset-password'>) {
-  const { token, error } = await searchParams
-  const { session } = await getServerSession()
-  if (session) redirect(PATH.ROOT)
-  if (!token) redirect(PATH.AUTH.FORGOT_PASSWORD)
+  title: "Reset Password",
+  description: "Reset Password",
+};
+export default async function ResetPasswordPage({ searchParams }: PageProps<"/auth/reset-password">) {
+  const { token, error } = await searchParams;
+  const { session } = await getServerSession();
+  if (session) redirect(PATH.ROOT);
+  if (!token) redirect(PATH.AUTH.FORGOT_PASSWORD);
   return (
     <Shell>
       <AuthCard
@@ -26,11 +26,8 @@ export default async function ResetPasswordPage({ searchParams }: PageProps<'/au
           />
         }
       >
-        <ResetPasswordForm
-          token={token as string}
-          error={error as string}
-        />
+        <ResetPasswordForm token={token as string} error={error as string} />
       </AuthCard>
     </Shell>
-  )
+  );
 }

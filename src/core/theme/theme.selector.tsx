@@ -1,14 +1,14 @@
-'use client'
+"use client";
 
-import { MoonIcon, SunIcon } from 'lucide-react'
-import { useTheme } from 'next-themes'
+import { MoonIcon, SunIcon } from "lucide-react";
+import { useTheme } from "next-themes";
 
-import { Toggle } from '@/shared/components/ui/toggle'
+import { Toggle } from "@/shared/components/ui/toggle";
 
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/shared/components/ui/tooltip'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/shared/components/ui/tooltip";
 
 export function ModeToggle() {
-  const { setTheme, theme } = useTheme()
+  const { setTheme, theme } = useTheme();
 
   return (
     <TooltipProvider>
@@ -17,9 +17,9 @@ export function ModeToggle() {
           <Toggle
             variant="outline"
             className="group data-[state=on]:hover:bg-muted size-9 rounded-full transition-all data-[state=on]:bg-transparent"
-            pressed={theme === 'dark'}
-            onPressedChange={() => setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'))}
-            aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+            pressed={theme === "dark"}
+            onPressedChange={() => setTheme((prev) => (prev === "dark" ? "light" : "dark"))}
+            aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
           >
             {/* Note: After dark mode implementation, rely on dark: prefix rather than group-data-[state=on]: */}
             <MoonIcon
@@ -39,5 +39,5 @@ export function ModeToggle() {
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>
-  )
+  );
 }

@@ -1,24 +1,24 @@
-'use client'
+"use client";
 
-import { Card, CardContent, CardHeader } from '@/shared/components/ui/card'
-import { Badge } from '@/shared/components/ui/badge'
-import { Eye, Sparkles } from 'lucide-react'
-import { cn } from '@/shared/utils/lib/utils'
+import { Card, CardContent, CardHeader } from "@/shared/components/ui/card";
+import { Badge } from "@/shared/components/ui/badge";
+import { Eye, Sparkles } from "lucide-react";
+import { cn } from "@/shared/utils/lib/utils";
 
 type Category = {
-  id: string
-  slug: string
-  title: string
-  description: string
-  image: string
-  color: string
-  visibility: 'public' | 'private' | 'hidden'
-  displayType: string
-  isFeatured: boolean
-  displayOrder: number
-  createdAt: string
-  updatedAt: string
-}
+  id: string;
+  slug: string;
+  title: string;
+  description: string;
+  image: string;
+  color: string;
+  visibility: "public" | "private" | "hidden";
+  displayType: string;
+  isFeatured: boolean;
+  displayOrder: number;
+  createdAt: string;
+  updatedAt: string;
+};
 
 export function CategoryViewCard({ data }: { data: Category }) {
   return (
@@ -41,11 +41,7 @@ export function CategoryViewCard({ data }: { data: Category }) {
       </CardHeader>
 
       <CardContent className="flex items-center justify-between px-4 py-4">
-        <Badge
-          variant="outline"
-          className="text-xs capitalize"
-          style={{ borderColor: data.color }}
-        >
+        <Badge variant="outline" className="text-xs capitalize" style={{ borderColor: data.color }}>
           {data.displayType}
         </Badge>
         <div className="text-muted-foreground flex items-center gap-1 text-sm">
@@ -54,5 +50,5 @@ export function CategoryViewCard({ data }: { data: Category }) {
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }

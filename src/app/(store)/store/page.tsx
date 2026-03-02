@@ -1,22 +1,22 @@
-import { apiServer } from '@/core/api/api.server'
-import CodePreview from '@/shared/components/common/code-preview'
-import Section from '@/shared/components/layout/section/section'
-import Shell from '@/shared/components/layout/shell'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/shared/components/ui/card'
-import { BlurImage } from '@/shared/components/ui/image'
-import { PATH } from '@/shared/config/routes'
-import { Route } from 'next'
-import Link from 'next/link'
+import { apiServer } from "@/core/api/api.server";
+import CodePreview from "@/shared/components/common/code-preview";
+import Section from "@/shared/components/layout/section/section";
+import Shell from "@/shared/components/layout/shell";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/components/ui/card";
+import { BlurImage } from "@/shared/components/ui/image";
+import { PATH } from "@/shared/config/routes";
+import type { Route } from "next";
+import Link from "next/link";
 
 export const metadata = {
-  title: 'Store',
-  description: 'Store Home',
-}
+  title: "Store",
+  description: "Store Home",
+};
 
 export default async function StorePage() {
   const { data } = await apiServer.category.getManyWithSubcategories({
     query: {},
-  })
+  });
 
   return (
     <Shell>
@@ -25,7 +25,7 @@ export default async function StorePage() {
           <Section
             key={category.id}
             title={category.title}
-            description={category.description ?? ''}
+            description={category.description ?? ""}
             action="View All "
             actionLink={PATH.STORE.CATEGORIES.CATEGORY(category.slug) as Route}
           >
@@ -59,5 +59,5 @@ export default async function StorePage() {
         ))}
       </Shell.Section>
     </Shell>
-  )
+  );
 }

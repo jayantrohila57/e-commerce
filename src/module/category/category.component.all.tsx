@@ -1,12 +1,12 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/shared/components/ui/card'
-import { BlurImage } from '@/shared/components/ui/image'
-import { Separator } from '@/shared/components/ui/separator'
-import { Route } from 'next'
-import Link from 'next/link'
-import { GetCategoryWithSubcategoriesOutput } from './category.types'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/components/ui/card";
+import { BlurImage } from "@/shared/components/ui/image";
+import { Separator } from "@/shared/components/ui/separator";
+import type { Route } from "next";
+import Link from "next/link";
+import type { GetCategoryWithSubcategoriesOutput } from "./category.types";
 
-export const CategoryItem = ({ data }: { data: GetCategoryWithSubcategoriesOutput['data'] }) => {
-  if (!data) return null
+export const CategoryItem = ({ data }: { data: GetCategoryWithSubcategoriesOutput["data"] }) => {
+  if (!data) return null;
 
   return (
     <div className="flex flex-col items-center justify-center">
@@ -16,10 +16,7 @@ export const CategoryItem = ({ data }: { data: GetCategoryWithSubcategoriesOutpu
       <Separator className="my-6" />
       <div className="grid-rows-auto mx-auto grid h-full w-full max-w-4xl grid-cols-4 gap-4 rounded-md">
         {data.subcategories?.map((subcategory) => (
-          <div
-            key={subcategory.id}
-            className="group col-span-1"
-          >
+          <div key={subcategory.id} className="group col-span-1">
             <Link href={`/store/${data.slug}/${subcategory.slug}` as Route}>
               <Card className="border-none bg-transparent shadow-none">
                 <CardContent className="flex w-full items-center justify-center">
@@ -45,5 +42,5 @@ export const CategoryItem = ({ data }: { data: GetCategoryWithSubcategoriesOutpu
         ))}
       </div>
     </div>
-  )
-}
+  );
+};

@@ -1,35 +1,32 @@
-import Link from 'next/link'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/shared/components/ui/card'
-import { apiServer, HydrateClient } from '@/core/api/api.server'
-import { PATH } from '@/shared/config/routes'
-import { type Route } from 'next'
-import Section from '@/shared/components/layout/section/section'
-import { BlurImage } from '@/shared/components/ui/image'
+import Link from "next/link";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/components/ui/card";
+import { apiServer, HydrateClient } from "@/core/api/api.server";
+import { PATH } from "@/shared/config/routes";
+import type { Route } from "next";
+import Section from "@/shared/components/layout/section/section";
+import { BlurImage } from "@/shared/components/ui/image";
 
 export default async function ShopByCategoryGrid() {
   const { data: categories } = await apiServer.category.getMany({
     query: {},
-  })
+  });
 
   if (!categories) {
-    return null
+    return null;
   }
   return (
     <HydrateClient>
       <Section
         {...{
-          title: 'Shop by Category',
-          description: 'Explore our products by category',
-          action: 'View All Categories',
+          title: "Shop by Category",
+          description: "Explore our products by category",
+          action: "View All Categories",
           actionLink: PATH.STORE.CATEGORIES.ROOT as Route,
         }}
       >
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4">
           {categories?.map((category) => (
-            <Link
-              href={PATH.STORE.CATEGORIES.CATEGORY(category.slug) as Route}
-              key={category.id}
-            >
+            <Link href={PATH.STORE.CATEGORIES.CATEGORY(category.slug) as Route} key={category.id}>
               <Card className="flex h-full flex-col justify-between pt-0 transition-shadow duration-300 hover:shadow-lg">
                 <CardContent className="overflow-hidden rounded-sm p-0">
                   <BlurImage
@@ -52,5 +49,5 @@ export default async function ShopByCategoryGrid() {
         </div>
       </Section>
     </HydrateClient>
-  )
+  );
 }

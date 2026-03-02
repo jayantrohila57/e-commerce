@@ -1,16 +1,16 @@
-'use client'
+"use client";
 
-import { usePathname } from 'next/navigation'
-import { useEffect, useRef } from 'react'
+import { usePathname } from "next/navigation";
+import { useEffect, useRef } from "react";
 
 export function ViewTransitionProvider({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname()
-  const prevPath = useRef(pathname)
+  const pathname = usePathname();
+  const prevPath = useRef(pathname);
 
   useEffect(() => {
-    if (prevPath.current === pathname) return
-    if (!document.startViewTransition) return
-  }, [pathname])
+    if (prevPath.current === pathname) return;
+    if (!document.startViewTransition) return;
+  }, [pathname]);
 
-  return <>{children}</>
+  return <>{children}</>;
 }

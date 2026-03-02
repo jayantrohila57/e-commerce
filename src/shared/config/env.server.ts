@@ -1,4 +1,4 @@
-import 'server-only'
+import "server-only";
 
 export const serverEnv = {
   NODE_ENV: String(process.env.NODE_ENV),
@@ -30,4 +30,4 @@ export const serverEnv = {
   ARKJET_API_KEY: String(process.env.ARKJET_API_KEY),
 
   BLOB_READ_WRITE_TOKEN: String(process.env.BLOB_READ_WRITE_TOKEN),
-}
+};

@@ -1,11 +1,11 @@
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/shared/components/ui/card'
-import { BlurImage } from '@/shared/components/ui/image'
-import Link from 'next/link'
-import { Separator } from '@/shared/components/ui/separator'
-import { type GetSubcategoryBySlugOutput } from './subcategory.types'
-import { type Route } from 'next'
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/shared/components/ui/card";
+import { BlurImage } from "@/shared/components/ui/image";
+import Link from "next/link";
+import { Separator } from "@/shared/components/ui/separator";
+import type { GetSubcategoryBySlugOutput } from "./subcategory.types";
+import type { Route } from "next";
 
-export const SubCategoryItem = ({ data }: { data: GetSubcategoryBySlugOutput['data'] }) => {
+export const SubCategoryItem = ({ data }: { data: GetSubcategoryBySlugOutput["data"] }) => {
   return (
     <div className="flex flex-col items-center justify-center">
       <div className="">
@@ -14,10 +14,7 @@ export const SubCategoryItem = ({ data }: { data: GetSubcategoryBySlugOutput['da
       <Separator className="my-6" />
       <div className="grid-rows-auto mx-auto grid h-full w-full max-w-4xl grid-cols-4 gap-4 rounded-md">
         {data?.seriesData?.map((series) => (
-          <div
-            key={series?.id}
-            className="group col-span-1"
-          >
+          <div key={series?.id} className="group col-span-1">
             <Link
               href={
                 `/store/${data?.subcategoryData?.categorySlug}/${data?.subcategoryData?.slug}/${series?.slug}` as Route
@@ -45,5 +42,5 @@ export const SubCategoryItem = ({ data }: { data: GetSubcategoryBySlugOutput['da
         ))}
       </div>
     </div>
-  )
-}
+  );
+};

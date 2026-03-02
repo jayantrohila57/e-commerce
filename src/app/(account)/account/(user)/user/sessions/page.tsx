@@ -1,26 +1,23 @@
-import { getServerSession, getServerSessions } from '@/core/auth/auth.server'
-import { AccountSidebar } from '@/module/account/account-sidebar'
-import { SessionManagement } from '@/module/account/account.session'
-import Section from '@/shared/components/layout/section/section'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/shared/components/ui/card'
-import { PATH } from '@/shared/config/routes'
-import { redirect } from 'next/navigation'
+import { getServerSession, getServerSessions } from "@/core/auth/auth.server";
+import { AccountSidebar } from "@/module/account/account-sidebar";
+import { SessionManagement } from "@/module/account/account.session";
+import Section from "@/shared/components/layout/section/section";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/components/ui/card";
+import { PATH } from "@/shared/config/routes";
+import { redirect } from "next/navigation";
 
 export const metadata = {
-  title: 'Your Sessions',
-  description: 'View and manage all active sessions across your devices',
-}
+  title: "Your Sessions",
+  description: "View and manage all active sessions across your devices",
+};
 
 export default async function SessionsPage() {
-  const [session, sessions] = await Promise.all([getServerSession(), getServerSessions()])
-  if (!session) return redirect(PATH.ROOT)
+  const [session, sessions] = await Promise.all([getServerSession(), getServerSessions()]);
+  if (!session) return redirect(PATH.ROOT);
 
-  const currentSessionToken = session?.session?.token
+  const currentSessionToken = session?.session?.token;
   return (
-    <Section
-      className="bg-muted p-4"
-      {...metadata}
-    >
+    <Section className="bg-muted p-4" {...metadata}>
       <div className="grid h-full w-full grid-cols-12 gap-4">
         <div className="col-span-2 h-full w-full">
           <AccountSidebar />
@@ -33,10 +30,7 @@ export default async function SessionsPage() {
             </CardHeader>
             <CardContent className="space-y-6">
               {currentSessionToken && (
-                <SessionManagement
-                  sessions={sessions}
-                  currentSessionToken={currentSessionToken}
-                />
+                <SessionManagement sessions={sessions} currentSessionToken={currentSessionToken} />
               )}
             </CardContent>
           </Card>
@@ -44,5 +38,5 @@ export default async function SessionsPage() {
         <div className="col-span-2"></div>
       </div>
     </Section>
-  )
+  );
 }

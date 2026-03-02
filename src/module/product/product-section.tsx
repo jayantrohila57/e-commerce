@@ -1,48 +1,41 @@
-import { Separator } from '@/shared/components/ui/separator'
-import { ProductBase } from './product.types'
-import { FormSection } from '@/shared/components/form/form.helper'
-import { ProductCard } from './product-card'
+import { Separator } from "@/shared/components/ui/separator";
+import type { ProductBase } from "./product.types";
+import { FormSection } from "@/shared/components/form/form.helper";
+import { ProductCard } from "./product-card";
 
-type Product = ProductBase
+type Product = ProductBase;
 
 type CategoriesByType = {
-  featuredProductType: Product[]
+  featuredProductType: Product[];
   productVisibility: {
-    publicProductType: Product[]
-    privateProductType: Product[]
-    hiddenProductType: Product[]
-  }
-  recentProductType: Product[]
-  deletedProductType: Product[]
-}
+    publicProductType: Product[];
+    privateProductType: Product[];
+    hiddenProductType: Product[];
+  };
+  recentProductType: Product[];
+  deletedProductType: Product[];
+};
 
 type ProductSectionProps = {
-  title: string
-  description: string
-  products: Product[] | null
-  emptyMessage?: string
-}
+  title: string;
+  description: string;
+  products: Product[] | null;
+  emptyMessage?: string;
+};
 
-export const ProductSection = ({ title, description, products, emptyMessage = 'No products' }: ProductSectionProps) => (
-  <FormSection
-    title={title + ` (${products?.length})`}
-    description={description}
-  >
+export const ProductSection = ({ title, description, products, emptyMessage = "No products" }: ProductSectionProps) => (
+  <FormSection title={title + ` (${products?.length})`} description={description}>
     <div className="grid grid-cols-1 gap-2">
       {products && products?.length > 0 ? (
         products?.map((product) => (
-          <ProductCard
-            href={`/studio/products/${product.slug}`}
-            key={product.id}
-            product={product}
-          />
+          <ProductCard href={`/studio/products/${product.slug}`} key={product.id} product={product} />
         ))
       ) : (
         <p className="text-muted-foreground px-2 text-sm">{emptyMessage}</p>
       )}
     </div>
   </FormSection>
-)
+);
 
 export function ProductsSection({ data }: { data: CategoriesByType | null }) {
   const {
@@ -50,7 +43,7 @@ export function ProductsSection({ data }: { data: CategoriesByType | null }) {
     productVisibility: { publicProductType = [], privateProductType = [], hiddenProductType = [] } = {},
     recentProductType = [],
     deletedProductType = [],
-  } = data || { productVisibility: {} }
+  } = data || { productVisibility: {} };
 
   return (
     <div className="flex flex-col gap-2">
@@ -101,5 +94,5 @@ export function ProductsSection({ data }: { data: CategoriesByType | null }) {
         emptyMessage="No deleted products"
       />
     </div>
-  )
+  );
 }

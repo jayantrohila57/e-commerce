@@ -1,15 +1,15 @@
-import { SeriesCard } from './series-card'
-import { FormSection } from '@/shared/components/form/form.helper'
-import { GetManySeriesOutput } from './series.types'
+import { SeriesCard } from "./series-card";
+import { FormSection } from "@/shared/components/form/form.helper";
+import type { GetManySeriesOutput } from "./series.types";
 
 type SeriesSectionProps = {
-  categorySlug: string
-  subcategorySlug: string
-  title: string
-  description: string
-  series: GetManySeriesOutput['data']
-  emptyMessage?: string
-}
+  categorySlug: string;
+  subcategorySlug: string;
+  title: string;
+  description: string;
+  series: GetManySeriesOutput["data"];
+  emptyMessage?: string;
+};
 
 export const SeriesSection = ({
   categorySlug,
@@ -17,12 +17,9 @@ export const SeriesSection = ({
   title,
   description,
   series,
-  emptyMessage = 'No series',
+  emptyMessage = "No series",
 }: SeriesSectionProps) => (
-  <FormSection
-    title={`${title} (${series?.length || 0})`}
-    description={description}
-  >
+  <FormSection title={`${title} (${series?.length || 0})`} description={description}>
     <div className="grid grid-cols-1 gap-2">
       {(series ?? [])?.length > 0 ? (
         series?.map((srs) => (
@@ -37,4 +34,4 @@ export const SeriesSection = ({
       )}
     </div>
   </FormSection>
-)
+);

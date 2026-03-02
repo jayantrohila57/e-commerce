@@ -1,53 +1,50 @@
-'use client'
+"use client";
 
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import z from 'zod/v3'
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/shared/components/ui/form'
-import { Button } from '@/shared/components/ui/button'
-import { toast } from 'sonner'
-import { Checkbox } from '@/shared/components/ui/checkbox'
-import { changePassword } from '@/core/auth/auth.client'
-import { Input } from '@/shared/components/ui/input'
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import z from "zod/v3";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/shared/components/ui/form";
+import { Button } from "@/shared/components/ui/button";
+import { toast } from "sonner";
+import { Checkbox } from "@/shared/components/ui/checkbox";
+import { changePassword } from "@/core/auth/auth.client";
+import { Input } from "@/shared/components/ui/input";
 
 const changePasswordSchema = z.object({
   currentPassword: z.string().min(1),
   newPassword: z.string().min(6),
   revokeOtherSessions: z.boolean(),
-})
+});
 
-type ChangePasswordForm = z.infer<typeof changePasswordSchema>
+type ChangePasswordForm = z.infer<typeof changePasswordSchema>;
 
 export function ChangePasswordForm() {
   const form = useForm<ChangePasswordForm>({
     resolver: zodResolver(changePasswordSchema),
     defaultValues: {
-      currentPassword: '',
-      newPassword: '',
+      currentPassword: "",
+      newPassword: "",
       revokeOtherSessions: true,
     },
-  })
+  });
 
-  const { isSubmitting } = form.formState
+  const { isSubmitting } = form.formState;
 
   async function handlePasswordChange(data: ChangePasswordForm) {
     await changePassword(data, {
       onError: (error) => {
-        toast.error(error.error.message || 'Failed to change password')
+        toast.error(error.error.message || "Failed to change password");
       },
       onSuccess: () => {
-        toast.success('Password changed successfully')
-        form.reset()
+        toast.success("Password changed successfully");
+        form.reset();
       },
-    })
+    });
   }
 
   return (
     <Form {...form}>
-      <form
-        className="space-y-4"
-        onSubmit={void form.handleSubmit(handlePasswordChange)}
-      >
+      <form className="space-y-4" onSubmit={void form.handleSubmit(handlePasswordChange)}>
         <FormField
           control={form.control}
           name="currentPassword"
@@ -55,10 +52,7 @@ export function ChangePasswordForm() {
             <FormItem>
               <FormLabel>Current Password</FormLabel>
               <FormControl>
-                <Input
-                  type="password"
-                  {...field}
-                />
+                <Input type="password" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -72,10 +66,7 @@ export function ChangePasswordForm() {
             <FormItem>
               <FormLabel>New Password</FormLabel>
               <FormControl>
-                <Input
-                  type="password"
-                  {...field}
-                />
+                <Input type="password" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -88,10 +79,7 @@ export function ChangePasswordForm() {
           render={({ field }) => (
             <FormItem className="flex">
               <FormControl>
-                <Checkbox
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
-                />
+                <Checkbox checked={field.value} onCheckedChange={field.onChange} />
               </FormControl>
               <FormLabel>Log out other sessions</FormLabel>
               <FormMessage />
@@ -99,14 +87,10 @@ export function ChangePasswordForm() {
           )}
         />
 
-        <Button
-          type="submit"
-          disabled={isSubmitting}
-          className="w-full"
-        >
-          {isSubmitting ? 'Changing Password...' : 'Change Password'}
+        <Button type="submit" disabled={isSubmitting} className="w-full">
+          {isSubmitting ? "Changing Password..." : "Change Password"}
         </Button>
       </form>
     </Form>
-  )
+  );
 }

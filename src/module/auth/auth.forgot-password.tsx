@@ -1,57 +1,54 @@
-'use client'
+"use client";
 
-import { toast } from 'sonner'
-import { requestPasswordReset } from '@/core/auth/auth.client'
-import { AuthSchema } from './auth-schema'
-import Form from '@/shared/components/form/form'
-import { Separator } from '@/shared/components/ui/separator'
-import { useTransition } from 'react'
-import type z from 'zod/v3'
+import { toast } from "sonner";
+import { requestPasswordReset } from "@/core/auth/auth.client";
+import { AuthSchema } from "./auth-schema";
+import Form from "@/shared/components/form/form";
+import { Separator } from "@/shared/components/ui/separator";
+import { useTransition } from "react";
+import type z from "zod/v3";
 
-type FormValues = z.infer<typeof AuthSchema.FORGOT_PASSWORD.INPUT>
+type FormValues = z.infer<typeof AuthSchema.FORGOT_PASSWORD.INPUT>;
 
 export function ForgotPasswordForm() {
-  const [pending, startTransition] = useTransition()
+  const [pending, startTransition] = useTransition();
 
   function onSubmit(data: FormValues) {
     startTransition(async () => {
       await requestPasswordReset(
         {
           ...data,
-          redirectTo: '/auth/reset-password',
+          redirectTo: "/auth/reset-password",
         },
         {
           onError: (error) => {
-            toast.error(error.error.message || 'Failed to send password reset email')
+            toast.error(error.error.message || "Failed to send password reset email");
           },
           onSuccess: () => {
-            toast.success('Password reset email sent')
+            toast.success("Password reset email sent");
           },
         },
-      )
-    })
+      );
+    });
   }
 
   return (
     <Form
-      defaultValues={{ email: '' }}
+      defaultValues={{ email: "" }}
       schema={AuthSchema.FORGOT_PASSWORD.INPUT}
       onSubmitAction={onSubmit}
       className="grid h-auto grid-cols-1 gap-4 p-1"
     >
       <Form.Field
         {...{
-          name: 'email',
-          label: 'Email',
-          type: 'text',
-          placeholder: 'you@example.com',
+          name: "email",
+          label: "Email",
+          type: "text",
+          placeholder: "you@example.com",
         }}
       />
       <Separator />
-      <Form.Submit
-        disabled={pending}
-        isLoading={pending}
-      />
+      <Form.Submit disabled={pending} isLoading={pending} />
     </Form>
-  )
+  );
 }

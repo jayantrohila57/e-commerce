@@ -10,12 +10,12 @@
 import React, {
   forwardRef,
   useId,
-  ReactNode,
-  InputHTMLAttributes,
-  TextareaHTMLAttributes,
-  SelectHTMLAttributes,
-} from 'react'
-import { useFormContext, RegisterOptions, FieldError } from 'react-hook-form'
+  type ReactNode,
+  type InputHTMLAttributes,
+  type TextareaHTMLAttributes,
+  type SelectHTMLAttributes,
+} from "react";
+import { useFormContext, type RegisterOptions, type FieldError } from "react-hook-form";
 
 // =============================================================================
 // TYPES
@@ -23,101 +23,101 @@ import { useFormContext, RegisterOptions, FieldError } from 'react-hook-form'
 
 export interface FormFieldProps {
   /** Field name (must match schema) */
-  name: string
+  name: string;
 
   /** Field label */
-  label: string
+  label: string;
 
   /** Input type */
-  type?: 'text' | 'email' | 'password' | 'tel' | 'url' | 'number' | 'date' | 'time' | 'datetime-local'
+  type?: "text" | "email" | "password" | "tel" | "url" | "number" | "date" | "time" | "datetime-local";
 
   /** Autocomplete value */
-  autoComplete?: string
+  autoComplete?: string;
 
   /** Hint text (separate from label) */
-  hint?: string
+  hint?: string;
 
   /** Placeholder text */
-  placeholder?: string
+  placeholder?: string;
 
   /** Required field */
-  required?: boolean
+  required?: boolean;
 
   /** Disabled field */
-  disabled?: boolean
+  disabled?: boolean;
 
   /** Read-only field */
-  readOnly?: boolean
+  readOnly?: boolean;
 
   /** Additional validation options */
-  validation?: RegisterOptions
+  validation?: RegisterOptions;
 
   /** Custom error message override */
-  errorMessage?: string
+  errorMessage?: string;
 
   /** Additional class names */
-  className?: string
+  className?: string;
 
   /** Hide label visually (still accessible) */
-  hideLabel?: boolean
+  hideLabel?: boolean;
 
   /** Render custom input */
-  children?: ReactNode
+  children?: ReactNode;
 
   /** Input props to pass through */
-  inputProps?: InputHTMLAttributes<HTMLInputElement>
+  inputProps?: InputHTMLAttributes<HTMLInputElement>;
 }
 
-export interface TextareaFieldProps extends Omit<FormFieldProps, 'type' | 'inputProps'> {
+export interface TextareaFieldProps extends Omit<FormFieldProps, "type" | "inputProps"> {
   /** Number of visible rows */
-  rows?: number
+  rows?: number;
 
   /** Maximum character count */
-  maxLength?: number
+  maxLength?: number;
 
   /** Show character count */
-  showCount?: boolean
+  showCount?: boolean;
 
   /** Textarea props */
-  textareaProps?: TextareaHTMLAttributes<HTMLTextAreaElement>
+  textareaProps?: TextareaHTMLAttributes<HTMLTextAreaElement>;
 }
 
-export interface SelectFieldProps extends Omit<FormFieldProps, 'type' | 'inputProps'> {
+export interface SelectFieldProps extends Omit<FormFieldProps, "type" | "inputProps"> {
   /** Select options */
   options: Array<{
-    value: string
-    label: string
-    disabled?: boolean
-  }>
+    value: string;
+    label: string;
+    disabled?: boolean;
+  }>;
 
   /** Placeholder option text */
-  placeholderOption?: string
+  placeholderOption?: string;
 
   /** Select props */
-  selectProps?: SelectHTMLAttributes<HTMLSelectElement>
+  selectProps?: SelectHTMLAttributes<HTMLSelectElement>;
 }
 
 export interface CheckboxFieldProps {
   /** Field name */
-  name: string
+  name: string;
 
   /** Checkbox label */
-  label: ReactNode
+  label: ReactNode;
 
   /** Required field */
-  required?: boolean
+  required?: boolean;
 
   /** Disabled field */
-  disabled?: boolean
+  disabled?: boolean;
 
   /** Additional validation */
-  validation?: RegisterOptions
+  validation?: RegisterOptions;
 
   /** Custom error message */
-  errorMessage?: string
+  errorMessage?: string;
 
   /** Additional class names */
-  className?: string
+  className?: string;
 }
 
 // =============================================================================
@@ -142,7 +142,7 @@ export interface CheckboxFieldProps {
 export function FormField({
   name,
   label,
-  type = 'text',
+  type = "text",
   autoComplete,
   hint,
   placeholder,
@@ -151,53 +151,47 @@ export function FormField({
   readOnly,
   validation,
   errorMessage,
-  className = '',
+  className = "",
   hideLabel = false,
   children,
   inputProps,
 }: FormFieldProps) {
-  const id = useId()
-  const fieldId = `field-${name}-${id}`
-  const hintId = `${fieldId}-hint`
-  const errorId = `${fieldId}-error`
+  const id = useId();
+  const fieldId = `field-${name}-${id}`;
+  const hintId = `${fieldId}-hint`;
+  const errorId = `${fieldId}-error`;
 
   const {
     register,
     formState: { errors, touchedFields },
-  } = useFormContext()
+  } = useFormContext();
 
-  const error = errors[name] as FieldError | undefined
-  const touched = touchedFields[name]
-  const showError = touched && !!error
-  const showValid = touched && !error
+  const error = errors[name] as FieldError | undefined;
+  const touched = touchedFields[name];
+  const showError = touched && !!error;
+  const showValid = touched && !error;
 
   // Build aria-describedby
-  const describedBy = [hint && hintId, showError && errorId].filter(Boolean).join(' ') || undefined
+  const describedBy = [hint && hintId, showError && errorId].filter(Boolean).join(" ") || undefined;
 
   // Field classes
   const fieldClasses = [
-    'form-field',
-    showError && 'form-field--error',
-    showValid && 'form-field--valid',
-    disabled && 'form-field--disabled',
+    "form-field",
+    showError && "form-field--error",
+    showValid && "form-field--valid",
+    disabled && "form-field--disabled",
     className,
   ]
     .filter(Boolean)
-    .join(' ')
+    .join(" ");
 
   return (
     <div className={fieldClasses}>
-      <label
-        htmlFor={fieldId}
-        className={hideLabel ? 'sr-only' : 'form-field__label'}
-      >
+      <label htmlFor={fieldId} className={hideLabel ? "sr-only" : "form-field__label"}>
         {label}
         {required && (
           <>
-            <span
-              className="form-field__required"
-              aria-hidden="true"
-            >
+            <span className="form-field__required" aria-hidden="true">
               *
             </span>
             <span className="sr-only">(required)</span>
@@ -206,10 +200,7 @@ export function FormField({
       </label>
 
       {hint && (
-        <span
-          id={hintId}
-          className="form-field__hint"
-        >
+        <span id={hintId} className="form-field__hint">
           {hint}
         </span>
       )}
@@ -228,42 +219,32 @@ export function FormField({
             aria-required={required}
             {...inputProps}
             {...register(name, {
-              required: required && 'This field is required',
+              required: required && "This field is required",
               ...validation,
             })}
           />
         )}
 
         {showValid && (
-          <span
-            className="form-field__icon form-field__icon--valid"
-            aria-hidden="true"
-          >
+          <span className="form-field__icon form-field__icon--valid" aria-hidden="true">
             ✓
           </span>
         )}
 
         {showError && (
-          <span
-            className="form-field__icon form-field__icon--error"
-            aria-hidden="true"
-          >
+          <span className="form-field__icon form-field__icon--error" aria-hidden="true">
             !
           </span>
         )}
       </div>
 
       {showError && (
-        <span
-          id={errorId}
-          className="form-field__error"
-          role="alert"
-        >
-          {errorMessage || error?.message || 'Invalid value'}
+        <span id={errorId} className="form-field__error" role="alert">
+          {errorMessage || error?.message || "Invalid value"}
         </span>
       )}
     </div>
-  )
+  );
 }
 
 // =============================================================================
@@ -295,63 +276,54 @@ export function TextareaField({
   readOnly,
   validation,
   errorMessage,
-  className = '',
+  className = "",
   hideLabel = false,
   rows = 4,
   maxLength,
   showCount = false,
   textareaProps,
 }: TextareaFieldProps) {
-  const id = useId()
-  const fieldId = `field-${name}-${id}`
-  const hintId = `${fieldId}-hint`
-  const errorId = `${fieldId}-error`
+  const id = useId();
+  const fieldId = `field-${name}-${id}`;
+  const hintId = `${fieldId}-hint`;
+  const errorId = `${fieldId}-error`;
 
   const {
     register,
     watch,
     formState: { errors, touchedFields },
-  } = useFormContext()
+  } = useFormContext();
 
-  const value = watch(name) || ''
-  const error = errors[name] as FieldError | undefined
-  const touched = touchedFields[name]
-  const showError = touched && !!error
+  const value = watch(name) || "";
+  const error = errors[name] as FieldError | undefined;
+  const touched = touchedFields[name];
+  const showError = touched && !!error;
 
-  const describedBy = [hint && hintId, showError && errorId].filter(Boolean).join(' ') || undefined
+  const describedBy = [hint && hintId, showError && errorId].filter(Boolean).join(" ") || undefined;
 
   const fieldClasses = [
-    'form-field',
-    'form-field--textarea',
-    showError && 'form-field--error',
-    disabled && 'form-field--disabled',
+    "form-field",
+    "form-field--textarea",
+    showError && "form-field--error",
+    disabled && "form-field--disabled",
     className,
   ]
     .filter(Boolean)
-    .join(' ')
+    .join(" ");
 
   return (
     <div className={fieldClasses}>
-      <label
-        htmlFor={fieldId}
-        className={hideLabel ? 'sr-only' : 'form-field__label'}
-      >
+      <label htmlFor={fieldId} className={hideLabel ? "sr-only" : "form-field__label"}>
         {label}
         {required && (
-          <span
-            className="form-field__required"
-            aria-hidden="true"
-          >
+          <span className="form-field__required" aria-hidden="true">
             *
           </span>
         )}
       </label>
 
       {hint && (
-        <span
-          id={hintId}
-          className="form-field__hint"
-        >
+        <span id={hintId} className="form-field__hint">
           {hint}
         </span>
       )}
@@ -368,7 +340,7 @@ export function TextareaField({
         aria-required={required}
         {...textareaProps}
         {...register(name, {
-          required: required && 'This field is required',
+          required: required && "This field is required",
           maxLength: maxLength && {
             value: maxLength,
             message: `Maximum ${maxLength} characters`,
@@ -378,25 +350,18 @@ export function TextareaField({
       />
 
       {showCount && maxLength && (
-        <span
-          className="form-field__count"
-          aria-live="polite"
-        >
+        <span className="form-field__count" aria-live="polite">
           {value.length}/{maxLength}
         </span>
       )}
 
       {showError && (
-        <span
-          id={errorId}
-          className="form-field__error"
-          role="alert"
-        >
+        <span id={errorId} className="form-field__error" role="alert">
           {errorMessage || error?.message}
         </span>
       )}
     </div>
-  )
+  );
 }
 
 // =============================================================================
@@ -429,60 +394,51 @@ export function SelectField({
   disabled,
   validation,
   errorMessage,
-  className = '',
+  className = "",
   hideLabel = false,
   options,
   placeholderOption,
   selectProps,
 }: SelectFieldProps) {
-  const id = useId()
-  const fieldId = `field-${name}-${id}`
-  const hintId = `${fieldId}-hint`
-  const errorId = `${fieldId}-error`
+  const id = useId();
+  const fieldId = `field-${name}-${id}`;
+  const hintId = `${fieldId}-hint`;
+  const errorId = `${fieldId}-error`;
 
   const {
     register,
     formState: { errors, touchedFields },
-  } = useFormContext()
+  } = useFormContext();
 
-  const error = errors[name] as FieldError | undefined
-  const touched = touchedFields[name]
-  const showError = touched && !!error
+  const error = errors[name] as FieldError | undefined;
+  const touched = touchedFields[name];
+  const showError = touched && !!error;
 
-  const describedBy = [hint && hintId, showError && errorId].filter(Boolean).join(' ') || undefined
+  const describedBy = [hint && hintId, showError && errorId].filter(Boolean).join(" ") || undefined;
 
   const fieldClasses = [
-    'form-field',
-    'form-field--select',
-    showError && 'form-field--error',
-    disabled && 'form-field--disabled',
+    "form-field",
+    "form-field--select",
+    showError && "form-field--error",
+    disabled && "form-field--disabled",
     className,
   ]
     .filter(Boolean)
-    .join(' ')
+    .join(" ");
 
   return (
     <div className={fieldClasses}>
-      <label
-        htmlFor={fieldId}
-        className={hideLabel ? 'sr-only' : 'form-field__label'}
-      >
+      <label htmlFor={fieldId} className={hideLabel ? "sr-only" : "form-field__label"}>
         {label}
         {required && (
-          <span
-            className="form-field__required"
-            aria-hidden="true"
-          >
+          <span className="form-field__required" aria-hidden="true">
             *
           </span>
         )}
       </label>
 
       {hint && (
-        <span
-          id={hintId}
-          className="form-field__hint"
-        >
+        <span id={hintId} className="form-field__hint">
           {hint}
         </span>
       )}
@@ -497,24 +453,17 @@ export function SelectField({
           aria-required={required}
           {...selectProps}
           {...register(name, {
-            required: required && 'Please select an option',
+            required: required && "Please select an option",
             ...validation,
           })}
         >
           {placeholderOption && (
-            <option
-              value=""
-              disabled
-            >
+            <option value="" disabled>
               {placeholderOption}
             </option>
           )}
           {options.map((option) => (
-            <option
-              key={option.value}
-              value={option.value}
-              disabled={option.disabled}
-            >
+            <option key={option.value} value={option.value} disabled={option.disabled}>
               {option.label}
             </option>
           ))}
@@ -522,16 +471,12 @@ export function SelectField({
       </div>
 
       {showError && (
-        <span
-          id={errorId}
-          className="form-field__error"
-          role="alert"
-        >
+        <span id={errorId} className="form-field__error" role="alert">
           {errorMessage || error?.message}
         </span>
       )}
     </div>
-  )
+  );
 }
 
 // =============================================================================
@@ -557,37 +502,34 @@ export function CheckboxField({
   disabled,
   validation,
   errorMessage,
-  className = '',
+  className = "",
 }: CheckboxFieldProps) {
-  const id = useId()
-  const fieldId = `field-${name}-${id}`
-  const errorId = `${fieldId}-error`
+  const id = useId();
+  const fieldId = `field-${name}-${id}`;
+  const errorId = `${fieldId}-error`;
 
   const {
     register,
     formState: { errors, touchedFields },
-  } = useFormContext()
+  } = useFormContext();
 
-  const error = errors[name] as FieldError | undefined
-  const touched = touchedFields[name]
-  const showError = touched && !!error
+  const error = errors[name] as FieldError | undefined;
+  const touched = touchedFields[name];
+  const showError = touched && !!error;
 
   const fieldClasses = [
-    'form-field',
-    'form-field--checkbox',
-    showError && 'form-field--error',
-    disabled && 'form-field--disabled',
+    "form-field",
+    "form-field--checkbox",
+    showError && "form-field--error",
+    disabled && "form-field--disabled",
     className,
   ]
     .filter(Boolean)
-    .join(' ')
+    .join(" ");
 
   return (
     <div className={fieldClasses}>
-      <label
-        htmlFor={fieldId}
-        className="form-field__checkbox-label"
-      >
+      <label htmlFor={fieldId} className="form-field__checkbox-label">
         <input
           id={fieldId}
           type="checkbox"
@@ -595,7 +537,7 @@ export function CheckboxField({
           aria-invalid={showError}
           aria-describedby={showError ? errorId : undefined}
           {...register(name, {
-            required: required && 'This field is required',
+            required: required && "This field is required",
             ...validation,
           })}
         />
@@ -603,16 +545,12 @@ export function CheckboxField({
       </label>
 
       {showError && (
-        <span
-          id={errorId}
-          className="form-field__error"
-          role="alert"
-        >
+        <span id={errorId} className="form-field__error" role="alert">
           {errorMessage || error?.message}
         </span>
       )}
     </div>
-  )
+  );
 }
 
 // =============================================================================
@@ -623,31 +561,24 @@ export function CheckboxField({
  * Password field with visibility toggle
  */
 export const PasswordField = forwardRef<HTMLInputElement, FormFieldProps>(function PasswordField(props, ref) {
-  const [visible, setVisible] = React.useState(false)
+  const [visible, setVisible] = React.useState(false);
 
   return (
-    <FormField
-      {...props}
-      type={visible ? 'text' : 'password'}
-    >
+    <FormField {...props} type={visible ? "text" : "password"}>
       <div className="password-field__wrapper">
-        <input
-          ref={ref}
-          type={visible ? 'text' : 'password'}
-          className="password-field__input"
-        />
+        <input ref={ref} type={visible ? "text" : "password"} className="password-field__input" />
         <button
           type="button"
           className="password-field__toggle"
           onClick={() => setVisible(!visible)}
-          aria-label={visible ? 'Hide password' : 'Show password'}
+          aria-label={visible ? "Hide password" : "Show password"}
         >
-          {visible ? '👁️' : '👁️‍🗨️'}
+          {visible ? "👁️" : "👁️‍🗨️"}
         </button>
       </div>
     </FormField>
-  )
-})
+  );
+});
 
 // =============================================================================
 // CSS
@@ -763,4 +694,4 @@ export const formFieldCSS = `
   white-space: nowrap;
   border: 0;
 }
-`
+`;

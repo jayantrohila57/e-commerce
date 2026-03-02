@@ -1,5 +1,5 @@
-import { SubNavHeader } from '@/shared/components/layout/section/section.header'
-import Shell from '@/shared/components/layout/shell'
+import { SubNavHeader } from "@/shared/components/layout/section/section.header";
+import Shell from "@/shared/components/layout/shell";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -9,5 +9,5 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         {children}
       </Shell.Section>
     </Shell>
-  )
+  );
 }

@@ -1,33 +1,30 @@
-import Link from 'next/link'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/shared/components/ui/card'
-import { apiServer, HydrateClient } from '@/core/api/api.server'
-import { PATH } from '@/shared/config/routes'
-import { Route } from 'next'
-import Section from '@/shared/components/layout/section/section'
-import { BlurImage } from '@/shared/components/ui/image'
+import Link from "next/link";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/components/ui/card";
+import { apiServer, HydrateClient } from "@/core/api/api.server";
+import { PATH } from "@/shared/config/routes";
+import type { Route } from "next";
+import Section from "@/shared/components/layout/section/section";
+import { BlurImage } from "@/shared/components/ui/image";
 
 export default async function GetFeaturedCategories() {
   const { data: categories } = await apiServer.category.getAllFeaturedCategories({
     query: {},
-  })
+  });
 
   if (!categories) {
-    return null
+    return null;
   }
   return (
     <HydrateClient>
       <Section
         {...{
-          title: 'Featured Categories',
-          description: 'Explore our featured categories',
+          title: "Featured Categories",
+          description: "Explore our featured categories",
         }}
       >
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3">
           {categories?.map((category) => (
-            <Link
-              href={PATH.STORE.CATEGORIES.CATEGORY(category.slug) as Route}
-              key={category.id}
-            >
+            <Link href={PATH.STORE.CATEGORIES.CATEGORY(category.slug) as Route} key={category.id}>
               <Card className="flex h-full flex-col justify-between pt-0 transition-shadow duration-300 hover:shadow-lg">
                 <CardContent className="overflow-hidden rounded-sm p-0">
                   <BlurImage
@@ -50,5 +47,5 @@ export default async function GetFeaturedCategories() {
         </div>
       </Section>
     </HydrateClient>
-  )
+  );
 }

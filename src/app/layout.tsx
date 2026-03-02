@@ -1,22 +1,16 @@
-import '@/shared/styles/globals.css'
+import "@/shared/styles/globals.css";
 
-import { Toaster } from '@/shared/components/ui/sonner'
-import { className, viewport } from '@/shared/utils/methods/font'
-import { ThemeProvider } from '@/core/theme/theme.provider'
-import { TRPCReactProvider } from '@/core/api/api.client'
+import { TRPCReactProvider } from "@/core/api/api.client";
+import { ThemeProvider } from "@/core/theme/theme.provider";
+import { Toaster } from "@/shared/components/ui/sonner";
+import { className, viewport } from "@/shared/utils/methods/font";
 
-export { viewport }
+export { viewport };
 
-export default function RootLayout({ children }: LayoutProps<'/'>) {
+export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html
-      lang="en"
-      suppressHydrationWarning
-    >
-      <body
-        suppressHydrationWarning
-        className={className}
-      >
+    <html lang="en" suppressHydrationWarning>
+      <body suppressHydrationWarning className={className}>
         <TRPCReactProvider>
           <ThemeProvider>
             {children}
@@ -25,5 +19,5 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
         </TRPCReactProvider>
       </body>
     </html>
-  )
+  );
 }

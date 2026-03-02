@@ -1,12 +1,12 @@
-'use client'
-import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/card'
-import { Button } from '@/shared/components/ui/button'
+"use client";
+import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/card";
+import { Button } from "@/shared/components/ui/button";
 
 export default function CodePreview({ json }: { json: unknown }) {
-  const code = JSON.stringify(json, null, 6)
+  const code = JSON.stringify(json, null, 6);
 
   async function handleCopy() {
-    await navigator.clipboard.writeText(code)
+    await navigator.clipboard.writeText(code);
   }
 
   return (
@@ -14,11 +14,7 @@ export default function CodePreview({ json }: { json: unknown }) {
       <CardHeader className="flex items-center justify-between gap-4">
         <CardTitle className="text-sm font-medium">JSON Preview</CardTitle>
         <div className="flex items-center gap-2">
-          <Button
-            size="sm"
-            variant="ghost"
-            onClick={handleCopy}
-          >
+          <Button size="sm" variant="ghost" onClick={handleCopy}>
             Copy
           </Button>
         </div>
@@ -28,5 +24,5 @@ export default function CodePreview({ json }: { json: unknown }) {
         <pre className="overflow-auto bg-transparent p-4 font-mono text-sm whitespace-pre-wrap">{code}</pre>
       </CardContent>
     </Card>
-  )
+  );
 }

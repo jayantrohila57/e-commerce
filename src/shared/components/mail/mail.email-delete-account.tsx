@@ -1,8 +1,8 @@
-import { Html, Head, Preview, Body, Container, Section, Text, Button } from '@react-email/components'
+import { Html, Head, Preview, Body, Container, Section, Text, Button } from "@react-email/components";
 
 interface DeleteAccountEmailProps {
-  name: string
-  url: string
+  name: string;
+  url: string;
 }
 
 export const DeleteAccountEmail = ({ name, url }: DeleteAccountEmailProps) => (
@@ -17,10 +17,7 @@ export const DeleteAccountEmail = ({ name, url }: DeleteAccountEmailProps) => (
           <Text>
             We&apos;re sorry to see you go! Please confirm your account deletion by clicking the button below:
           </Text>
-          <Button
-            href={url}
-            style={buttonStyle}
-          >
+          <Button href={url} style={buttonStyle}>
             Confirm Deletion
           </Button>
           <Text>If you don&apos;t have an account, please ignore this email.</Text>
@@ -34,33 +31,33 @@ export const DeleteAccountEmail = ({ name, url }: DeleteAccountEmailProps) => (
       </Container>
     </Body>
   </Html>
-)
+);
 
 const bodyStyle = {
-  backgroundColor: '#f9f9f9',
-  fontFamily: 'Arial, sans-serif',
-}
+  backgroundColor: "#f9f9f9",
+  fontFamily: "Arial, sans-serif",
+};
 
 const containerStyle = {
-  backgroundColor: '#ffffff',
-  padding: '32px',
-  borderRadius: '8px',
-  maxWidth: '600px',
-  margin: '0 auto',
-}
+  backgroundColor: "#ffffff",
+  padding: "32px",
+  borderRadius: "8px",
+  maxWidth: "600px",
+  margin: "0 auto",
+};
 
 const headingStyle = {
-  color: '#333',
-  fontSize: '22px',
-  fontWeight: 'bold',
-}
+  color: "#333",
+  fontSize: "22px",
+  fontWeight: "bold",
+};
 
 const buttonStyle = {
-  backgroundColor: '#dc3545',
-  color: '#fff',
-  padding: '12px 24px',
-  borderRadius: '6px',
-  textDecoration: 'none',
-  display: 'inline-block',
-  marginTop: '16px',
-}
+  backgroundColor: "#dc3545",
+  color: "#fff",
+  padding: "12px 24px",
+  borderRadius: "6px",
+  textDecoration: "none",
+  display: "inline-block",
+  marginTop: "16px",
+};

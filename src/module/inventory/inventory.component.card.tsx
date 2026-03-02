@@ -1,22 +1,22 @@
-import { Badge } from '@/shared/components/ui/badge'
-import { Card, CardDescription, CardHeader, CardTitle } from '@/shared/components/ui/card'
-import { PATH } from '@/shared/config/routes'
-import { Route } from 'next'
-import Link from 'next/link'
+import { Badge } from "@/shared/components/ui/badge";
+import { Card, CardDescription, CardHeader, CardTitle } from "@/shared/components/ui/card";
+import { PATH } from "@/shared/config/routes";
+import type { Route } from "next";
+import Link from "next/link";
 
 type Inventory = {
-  id: string
-  sku: string
-  barcode?: string | null
-  quantity: number
-  incoming: number
-  reserved: number
-}
+  id: string;
+  sku: string;
+  barcode?: string | null;
+  quantity: number;
+  incoming: number;
+  reserved: number;
+};
 
 export interface InventoryCardProps {
-  inventory: Inventory
-  href?: string
-  className?: string
+  inventory: Inventory;
+  href?: string;
+  className?: string;
 }
 
 export function InventoryCard({ inventory, href }: InventoryCardProps) {
@@ -31,7 +31,7 @@ export function InventoryCard({ inventory, href }: InventoryCardProps) {
             <div className="flex flex-col">
               <CardTitle className="text-sm">{inventory?.sku}</CardTitle>
               <CardDescription className="text-muted-foreground text-xs">
-                {inventory?.barcode ?? 'No barcode'}
+                {inventory?.barcode ?? "No barcode"}
               </CardDescription>
             </div>
           </div>
@@ -43,14 +43,14 @@ export function InventoryCard({ inventory, href }: InventoryCardProps) {
         </CardHeader>
       </Card>
     </div>
-  )
+  );
 
   if (href) {
-    return <Link href={href as Route}>{content}</Link>
+    return <Link href={href as Route}>{content}</Link>;
   }
 
   // default link to edit page
-  return <Link href={PATH.STUDIO.INVENTORY?.EDIT(inventory?.id) as Route}>{content}</Link>
+  return <Link href={PATH.STUDIO.INVENTORY?.EDIT(inventory?.id) as Route}>{content}</Link>;
 }
 
-export default InventoryCard
+export default InventoryCard;

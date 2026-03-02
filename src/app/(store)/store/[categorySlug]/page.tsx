@@ -1,19 +1,19 @@
-import { apiServer, HydrateClient } from '@/core/api/api.server'
-import Section from '@/shared/components/layout/section/section'
-import { CategoryItem } from '@/module/category/category.component.all'
-import { clientEnv } from '@/shared/config/env.client'
-import { notFound } from 'next/navigation'
+import { apiServer, HydrateClient } from "@/core/api/api.server";
+import Section from "@/shared/components/layout/section/section";
+import { CategoryItem } from "@/module/category/category.component.all";
+import { clientEnv } from "@/shared/config/env.client";
+import { notFound } from "next/navigation";
 
-export async function generateMetadata({ params }: PageProps<'/store/[categorySlug]'>) {
-  const { categorySlug: slug } = await params
+export async function generateMetadata({ params }: PageProps<"/store/[categorySlug]">) {
+  const { categorySlug: slug } = await params;
   const { data } = await apiServer.category.get({
     params: {
       slug,
     },
-  })
+  });
 
-  const category = data
-  if (!category) return notFound()
+  const category = data;
+  if (!category) return notFound();
   return {
     title: category?.title,
     description: category?.description,
@@ -27,17 +27,17 @@ export async function generateMetadata({ params }: PageProps<'/store/[categorySl
         },
       ],
     },
-  }
+  };
 }
 
-export default async function CartPage({ params }: PageProps<'/store/[categorySlug]'>) {
-  const { categorySlug: slug } = await params
+export default async function CartPage({ params }: PageProps<"/store/[categorySlug]">) {
+  const { categorySlug: slug } = await params;
   const { data } = await apiServer.category.getCategoryWithSubCategories({
     params: {
       slug,
     },
-  })
-  if (!data) return notFound()
+  });
+  if (!data) return notFound();
 
   return (
     <HydrateClient>
@@ -45,5 +45,5 @@ export default async function CartPage({ params }: PageProps<'/store/[categorySl
         <CategoryItem data={data} />
       </Section>
     </HydrateClient>
-  )
+  );
 }

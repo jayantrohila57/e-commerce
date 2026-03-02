@@ -1,11 +1,11 @@
-import { Shell } from '@/shared/components/layout/shell'
-import Section from '@/shared/components/layout/section/section'
-import Header from '@/shared/components/layout/header/header'
+import { Shell } from "@/shared/components/layout/shell";
+import Section from "@/shared/components/layout/section/section";
+import Header from "@/shared/components/layout/header/header";
 
 export const metadata = {
-  title: 'Not Found',
-  description: 'The page you are looking for does not exist or has been moved.',
-}
+  title: "Not Found",
+  description: "The page you are looking for does not exist or has been moved.",
+};
 
 export default async function NotFound() {
   return (
@@ -17,11 +17,11 @@ export default async function NotFound() {
         <Shell.Section>
           <Section {...metadata}>
             <div className="flex h-full w-full items-center justify-center">
-              <h1>{'Not Found'}</h1>
+              <h1>{"Not Found"}</h1>
             </div>
           </Section>
         </Shell.Section>
       </Shell.Main>
     </Shell>
-  )
+  );
 }

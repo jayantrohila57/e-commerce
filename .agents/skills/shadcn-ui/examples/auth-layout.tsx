@@ -1,34 +1,31 @@
 // Example: Authentication Layout with shadcn/ui
 // Demonstrates: Layout composition, card usage, form integration
 
-'use client'
+"use client";
 
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { useState } from 'react'
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useState } from "react";
 
 export function AuthLayout() {
-  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault()
-    setIsLoading(true)
+    event.preventDefault();
+    setIsLoading(true);
 
     // Simulate API call
     setTimeout(() => {
-      setIsLoading(false)
-    }, 2000)
+      setIsLoading(false);
+    }, 2000);
   }
 
   return (
     <div className="bg-muted/40 flex min-h-screen items-center justify-center">
-      <Tabs
-        defaultValue="login"
-        className="w-[400px]"
-      >
+      <Tabs defaultValue="login" className="w-[400px]">
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="login">Login</TabsTrigger>
           <TabsTrigger value="register">Register</TabsTrigger>
@@ -44,35 +41,18 @@ export function AuthLayout() {
               <CardContent className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="m@example.com"
-                    required
-                  />
+                  <Input id="email" type="email" placeholder="m@example.com" required />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="password">Password</Label>
-                  <Input
-                    id="password"
-                    type="password"
-                    required
-                  />
+                  <Input id="password" type="password" required />
                 </div>
               </CardContent>
               <CardFooter className="flex flex-col space-y-4">
-                <Button
-                  type="submit"
-                  className="w-full"
-                  disabled={isLoading}
-                >
-                  {isLoading ? 'Signing in...' : 'Sign in'}
+                <Button type="submit" className="w-full" disabled={isLoading}>
+                  {isLoading ? "Signing in..." : "Sign in"}
                 </Button>
-                <Button
-                  type="button"
-                  variant="link"
-                  className="text-muted-foreground w-full text-sm"
-                >
+                <Button type="button" variant="link" className="text-muted-foreground w-full text-sm">
                   Forgot password?
                 </Button>
               </CardFooter>
@@ -90,45 +70,24 @@ export function AuthLayout() {
               <CardContent className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="name">Name</Label>
-                  <Input
-                    id="name"
-                    placeholder="John Doe"
-                    required
-                  />
+                  <Input id="name" placeholder="John Doe" required />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="register-email">Email</Label>
-                  <Input
-                    id="register-email"
-                    type="email"
-                    placeholder="m@example.com"
-                    required
-                  />
+                  <Input id="register-email" type="email" placeholder="m@example.com" required />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="register-password">Password</Label>
-                  <Input
-                    id="register-password"
-                    type="password"
-                    required
-                  />
+                  <Input id="register-password" type="password" required />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="confirm-password">Confirm Password</Label>
-                  <Input
-                    id="confirm-password"
-                    type="password"
-                    required
-                  />
+                  <Input id="confirm-password" type="password" required />
                 </div>
               </CardContent>
               <CardFooter>
-                <Button
-                  type="submit"
-                  className="w-full"
-                  disabled={isLoading}
-                >
-                  {isLoading ? 'Creating account...' : 'Create account'}
+                <Button type="submit" className="w-full" disabled={isLoading}>
+                  {isLoading ? "Creating account..." : "Create account"}
                 </Button>
               </CardFooter>
             </form>
@@ -136,7 +95,7 @@ export function AuthLayout() {
         </TabsContent>
       </Tabs>
     </div>
-  )
+  );
 }
 
 /**

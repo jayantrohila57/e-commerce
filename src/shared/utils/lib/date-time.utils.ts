@@ -1,10 +1,10 @@
 const getTimestamp = (): string => {
-  return new Intl.DateTimeFormat('en-US', {
-    dateStyle: 'short',
-    timeStyle: 'short',
+  return new Intl.DateTimeFormat("en-US", {
+    dateStyle: "short",
+    timeStyle: "short",
   })
     .format(new Date())
-    .toUpperCase()
-}
+    .toUpperCase();
+};
 
-export { getTimestamp }
+export { getTimestamp };

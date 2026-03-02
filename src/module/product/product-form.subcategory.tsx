@@ -1,23 +1,23 @@
-'use client'
+"use client";
 
-import Form from '@/shared/components/form/form'
-import { apiClient } from '@/core/api/api.client'
-import { Option } from '@/shared/components/form/form.types'
-import { useFormContext, useWatch } from 'react-hook-form'
-import { useEffect } from 'react'
+import Form from "@/shared/components/form/form";
+import { apiClient } from "@/core/api/api.client";
+import type { Option } from "@/shared/components/form/form.types";
+import { useFormContext, useWatch } from "react-hook-form";
+import { useEffect } from "react";
 
 export function SubCategorySelect() {
-  const form = useFormContext()
-  const value = useWatch({ name: 'body.categorySlug' })
+  const form = useFormContext();
+  const value = useWatch({ name: "body.categorySlug" });
   const { data: subcategories } = apiClient.subcategory.getMany.useQuery({
     query: {},
-  })
+  });
 
   const buildSubcategoryOptions = (category: string): Option[] => {
     return [
       {
-        label: 'Select type...',
-        value: 'select-type',
+        label: "Select type...",
+        value: "select-type",
         disabled: true,
       },
       ...(subcategories?.data
@@ -27,29 +27,29 @@ export function SubCategorySelect() {
           value: t.slug,
           icon: t.icon,
         })) ?? []),
-    ]
-  }
+    ];
+  };
 
   useEffect(() => {
-    if (form && form.getValues('body.subcategorySlug')) {
-      form.setValue('body.subcategorySlug', '')
-      form.setValue('body.seriesSlug', '')
+    if (form && form.getValues("body.subcategorySlug")) {
+      form.setValue("body.subcategorySlug", "");
+      form.setValue("body.seriesSlug", "");
     }
-  }, [value])
+  }, [value]);
 
   return (
     <Form.Field
       {...{
-        name: 'body.subcategorySlug',
-        label: 'Subcategory',
-        type: 'select',
-        description: 'Select the subcategory of the post',
-        helperText: 'The subcategory is used to display the subcategory',
+        name: "body.subcategorySlug",
+        label: "Subcategory",
+        type: "select",
+        description: "Select the subcategory of the post",
+        helperText: "The subcategory is used to display the subcategory",
         required: true,
-        placeholder: 'Select subcategory',
+        placeholder: "Select subcategory",
         hidden: !value,
         options: buildSubcategoryOptions(value),
       }}
     />
-  )
+  );
 }

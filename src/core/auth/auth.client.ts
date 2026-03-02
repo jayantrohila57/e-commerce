@@ -1,8 +1,8 @@
-import { createAuthClient } from 'better-auth/react'
-import { nextCookies } from 'better-auth/next-js'
-import { inferAdditionalFields, twoFactorClient, passkeyClient, adminClient } from 'better-auth/client/plugins'
-import { type auth } from './auth'
-import { admin, user, ac } from './permissions'
+import { createAuthClient } from "better-auth/react";
+import { nextCookies } from "better-auth/next-js";
+import { inferAdditionalFields, twoFactorClient, passkeyClient, adminClient } from "better-auth/client/plugins";
+import type { auth } from "./auth";
+import { admin, user, ac } from "./permissions";
 
 export const {
   $Infer,
@@ -33,16 +33,16 @@ export const {
     }),
     twoFactorClient({
       onTwoFactorRedirect: () => {
-        window.location.href = '/auth/2fa'
+        window.location.href = "/auth/2fa";
       },
     }),
     inferAdditionalFields<typeof auth>(),
   ],
-})
+});
 
 export const getClientSession = async () => {
-  const session = await getSession()
-  return session
-}
+  const session = await getSession();
+  return session;
+};
 
-export type ClientSessionType = typeof $Infer.Session
+export type ClientSessionType = typeof $Infer.Session;

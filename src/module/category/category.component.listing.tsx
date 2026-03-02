@@ -1,12 +1,12 @@
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/shared/components/ui/card'
-import { GetCategoriesOutput } from './category.types'
-import { BlurImage } from '@/shared/components/ui/image'
-import Link from 'next/link'
-import { Separator } from '@/shared/components/ui/separator'
-import { truncateString } from '@/shared/utils/lib/utils'
-import { Route } from 'next'
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/shared/components/ui/card";
+import type { GetCategoriesOutput } from "./category.types";
+import { BlurImage } from "@/shared/components/ui/image";
+import Link from "next/link";
+import { Separator } from "@/shared/components/ui/separator";
+import { truncateString } from "@/shared/utils/lib/utils";
+import type { Route } from "next";
 
-export default function CategoriesListing({ data }: { data: GetCategoriesOutput['data'] }) {
+export default function CategoriesListing({ data }: { data: GetCategoriesOutput["data"] }) {
   return (
     <div className="flex flex-col items-center justify-center">
       <div className="">
@@ -15,10 +15,7 @@ export default function CategoriesListing({ data }: { data: GetCategoriesOutput[
       <Separator className="my-6" />
       <div className="grid-rows-auto mx-auto grid h-full w-full max-w-4xl grid-cols-4 gap-4 rounded-md">
         {data?.map((category) => (
-          <div
-            key={category.id}
-            className="group col-span-1"
-          >
+          <div key={category.id} className="group col-span-1">
             <Link href={`/store/${category.slug} ` as Route}>
               <Card className="border-none bg-transparent shadow-none">
                 <CardContent className="flex w-full items-center justify-center">
@@ -44,5 +41,5 @@ export default function CategoriesListing({ data }: { data: GetCategoriesOutput[
         ))}
       </div>
     </div>
-  )
+  );
 }

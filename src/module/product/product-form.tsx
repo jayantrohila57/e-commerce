@@ -1,55 +1,55 @@
-'use client'
+"use client";
 
-import { apiClient } from '@/core/api/api.client'
-import Form from '@/shared/components/form/form'
-import { FormSection } from '@/shared/components/form/form.helper'
-import { Button } from '@/shared/components/ui/button'
-import { FormItem } from '@/shared/components/ui/form'
-import { Separator } from '@/shared/components/ui/separator'
-import { STATUS } from '@/shared/config/api.config'
-import { clientEnv } from '@/shared/config/env.client'
-import { statusOptions } from '@/shared/config/options.config'
-import { PATH } from '@/shared/config/routes'
-import { Minus, Plus } from 'lucide-react'
-import { type Route } from 'next'
-import { useRouter } from 'next/navigation'
-import { useState } from 'react'
-import { toast } from 'sonner'
-import type { z } from 'zod/v3'
-import { CategorySelect } from './product-form.category'
-import { SeriesSelect } from './product-form.series'
-import { SubCategorySelect } from './product-form.subcategory'
-import { productContract } from './product.schema'
+import { apiClient } from "@/core/api/api.client";
+import Form from "@/shared/components/form/form";
+import { FormSection } from "@/shared/components/form/form.helper";
+import { Button } from "@/shared/components/ui/button";
+import { FormItem } from "@/shared/components/ui/form";
+import { Separator } from "@/shared/components/ui/separator";
+import { STATUS } from "@/shared/config/api.config";
+import { clientEnv } from "@/shared/config/env.client";
+import { statusOptions } from "@/shared/config/options.config";
+import { PATH } from "@/shared/config/routes";
+import { Minus, Plus } from "lucide-react";
+import type { Route } from "next";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { toast } from "sonner";
+import type { z } from "zod/v3";
+import { CategorySelect } from "./product-form.category";
+import { SeriesSelect } from "./product-form.series";
+import { SubCategorySelect } from "./product-form.subcategory";
+import { productContract } from "./product.schema";
 
-const formSchema = productContract.create.input
+const formSchema = productContract.create.input;
 
-type FormValues = z.infer<typeof formSchema>
+type FormValues = z.infer<typeof formSchema>;
 
 export default function ProductForm() {
-  const router = useRouter()
-  const [toastId, setToastId] = useState<string | number>('')
+  const router = useRouter();
+  const [toastId, setToastId] = useState<string | number>("");
 
   const createProduct = apiClient.product.create.useMutation({
     onSuccess: async ({ status, message }) => {
       if (status === STATUS.SUCCESS) {
-        toast.success(message, { id: toastId })
-        setToastId('')
-        router.push(PATH.STUDIO.PRODUCTS.ROOT as Route)
+        toast.success(message, { id: toastId });
+        setToastId("");
+        router.push(PATH.STUDIO.PRODUCTS.ROOT as Route);
       } else if (status === STATUS.FAILED || status === STATUS.ERROR) {
-        toast.error(message, { id: toastId })
-        setToastId('')
+        toast.error(message, { id: toastId });
+        setToastId("");
       }
     },
     onError: ({ message }) => {
-      toast.error(message || 'An error occurred while creating the product', { id: toastId })
-      setToastId('')
+      toast.error(message || "An error occurred while creating the product", { id: toastId });
+      setToastId("");
     },
-  })
+  });
 
   function onSubmit(data: FormValues) {
-    setToastId('')
-    const id = toast.loading('Creating product...')
-    setToastId(id)
+    setToastId("");
+    const id = toast.loading("Creating product...");
+    setToastId(id);
     createProduct.mutate({
       body: {
         title: data.body.title,
@@ -67,31 +67,31 @@ export default function ProductForm() {
         status: data.body.status,
         baseImage: data.body.baseImage,
       },
-    })
+    });
   }
 
   return (
     <Form
       defaultValues={{
         body: {
-          title: '',
-          slug: '',
-          description: '',
-          metaTitle: '',
-          metaDescription: '',
-          seriesSlug: 'phone-cases-series-1',
-          categorySlug: '',
-          subcategorySlug: '',
+          title: "",
+          slug: "",
+          description: "",
+          metaTitle: "",
+          metaDescription: "",
+          seriesSlug: "phone-cases-series-1",
+          categorySlug: "",
+          subcategorySlug: "",
           isActive: true,
           basePrice: 0,
-          baseCurrency: 'INR',
-          baseImage: '',
+          baseCurrency: "INR",
+          baseImage: "",
           features: [
             {
-              title: '',
+              title: "",
             },
           ],
-          status: 'draft',
+          status: "draft",
         },
       }}
       schema={formSchema}
@@ -99,55 +99,49 @@ export default function ProductForm() {
       className="grid h-full grid-cols-4 gap-1 pb-20"
     >
       <div className="col-span-4 h-full w-full">
-        <FormSection
-          title="Product Details"
-          description="Enter product information"
-        >
+        <FormSection title="Product Details" description="Enter product information">
           <Form.Field
             {...{
-              name: 'body.title',
-              label: 'Title',
-              type: 'text',
-              placeholder: 'Enter product title',
+              name: "body.title",
+              label: "Title",
+              type: "text",
+              placeholder: "Enter product title",
               required: true,
             }}
           />
           <Form.Field
             {...{
-              name: 'body.slug',
-              label: 'Slug',
-              type: 'slug',
-              slugField: 'body.title',
-              description: 'Enter the slug of the product',
-              helperText: 'The slug is used to generate the URL of the product',
+              name: "body.slug",
+              label: "Slug",
+              type: "slug",
+              slugField: "body.title",
+              description: "Enter the slug of the product",
+              helperText: "The slug is used to generate the URL of the product",
               inlinePrefix: `${clientEnv.NEXT_PUBLIC_BASE_URL}/product/`,
               required: true,
-              placeholder: 'Enter slug',
+              placeholder: "Enter slug",
             }}
           />
           <Form.Field
             {...{
-              name: 'body.description',
-              label: 'Description',
-              type: 'textarea',
-              placeholder: 'Enter product description',
+              name: "body.description",
+              label: "Description",
+              type: "textarea",
+              placeholder: "Enter product description",
             }}
           />
         </FormSection>
-        <FormSection
-          title="Image"
-          description="Upload the image of the category"
-        >
+        <FormSection title="Image" description="Upload the image of the category">
           <Form.Field
             {...{
-              name: 'body.baseImage',
-              label: 'Image',
-              type: 'image',
-              description: 'Upload the image of the category',
+              name: "body.baseImage",
+              label: "Image",
+              type: "image",
+              description: "Upload the image of the category",
               helperText:
-                'After selecting, click the upload icon to attach the imageThe image is used to generate the meta image of the category',
+                "After selecting, click the upload icon to attach the imageThe image is used to generate the meta image of the category",
               required: true,
-              placeholder: 'Upload image',
+              placeholder: "Upload image",
             }}
           />
         </FormSection>
@@ -167,20 +161,16 @@ export default function ProductForm() {
         </FormSection>
 
         <Separator className="my-4" />
-        <FormSection
-          title="Product Price"
-          description="Enter product price"
-          className="space-y-4"
-        >
+        <FormSection title="Product Price" description="Enter product price" className="space-y-4">
           <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
             <Form.Field
               {...{
-                name: 'body.basePrice',
-                label: 'Base Price',
-                type: 'currency',
-                prefixCurrency: '₹',
-                postfixCurrency: 'INR',
-                placeholder: 'Enter base price',
+                name: "body.basePrice",
+                label: "Base Price",
+                type: "currency",
+                prefixCurrency: "₹",
+                postfixCurrency: "INR",
+                placeholder: "Enter base price",
                 required: true,
               }}
             />
@@ -188,23 +178,19 @@ export default function ProductForm() {
         </FormSection>
         <Separator className="my-4" />
 
-        <FormSection
-          title="Status"
-          description="Control product visibility"
-          className="space-y-4"
-        >
+        <FormSection title="Status" description="Control product visibility" className="space-y-4">
           <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
             <Form.Field
               {...{
-                name: 'body.status',
-                label: 'Status',
-                type: 'select',
-                description: 'Select the status of the post',
-                helperText: 'The status is used to generate status of the post',
+                name: "body.status",
+                label: "Status",
+                type: "select",
+                description: "Select the status of the post",
+                helperText: "The status is used to generate status of the post",
                 required: true,
-                placeholder: 'Select type',
+                placeholder: "Select type",
                 options: [
-                  { label: 'Select type...', value: 'select-type', disabled: true },
+                  { label: "Select type...", value: "select-type", disabled: true },
                   ...statusOptions.map((t) => ({
                     label: t.label,
                     value: t.value,
@@ -215,35 +201,28 @@ export default function ProductForm() {
             />
             <Form.Field
               {...{
-                name: 'body.isActive',
-                label: 'Active',
-                type: 'switch',
-                description: 'Set product visibility',
-                helperText: 'Inactive products will not be visible to customers',
+                name: "body.isActive",
+                label: "Active",
+                type: "switch",
+                description: "Set product visibility",
+                helperText: "Inactive products will not be visible to customers",
               }}
             />
           </div>
         </FormSection>
         <Separator className="my-4" />
-        <FormSection
-          title="Product Features"
-          description="Enter product features"
-          className="space-y-4"
-        >
+        <FormSection title="Product Features" description="Enter product features" className="space-y-4">
           <Form.FormGroup name="body.features">
             {({ index, add, remove, length }) => (
-              <FormItem
-                key={index}
-                className="flex flex-row items-center justify-center gap-4"
-              >
+              <FormItem key={index} className="flex flex-row items-center justify-center gap-4">
                 <div className="w-full">
                   <Form.Field
                     key={`body.features.${index}.title`}
                     {...{
                       name: `body.features.${index}.title`,
-                      label: 'Title',
-                      type: 'text',
-                      placeholder: 'Enter feature title',
+                      label: "Title",
+                      type: "text",
+                      placeholder: "Enter feature title",
                     }}
                   />
                 </div>
@@ -253,8 +232,8 @@ export default function ProductForm() {
                     disabled={index === length - 1}
                     hidden={index === length - 1}
                     type="button"
-                    variant={'destructive'}
-                    size={'icon'}
+                    variant={"destructive"}
+                    size={"icon"}
                     onClick={() => remove(index)}
                   >
                     <Minus />
@@ -264,10 +243,10 @@ export default function ProductForm() {
                     type="button"
                     disabled={index !== length - 1}
                     hidden={index !== length - 1}
-                    size={'icon'}
+                    size={"icon"}
                     onClick={() =>
                       add({
-                        title: '',
+                        title: "",
                       })
                     }
                   >
@@ -283,18 +262,12 @@ export default function ProductForm() {
       <div className="col-span-4 flex h-auto w-full flex-row items-center justify-between gap-x-4 p-0 py-4">
         <Form.StatusBadge />
         <div className="flex flex-row items-center gap-2">
-          <Button
-            variant="outline"
-            type="button"
-          >
-            {'Save Draft'}
+          <Button variant="outline" type="button">
+            {"Save Draft"}
           </Button>
-          <Form.Submit
-            disabled={createProduct.isPending}
-            isLoading={createProduct.isPending}
-          />
+          <Form.Submit disabled={createProduct.isPending} isLoading={createProduct.isPending} />
         </div>
       </div>
     </Form>
-  )
+  );
 }

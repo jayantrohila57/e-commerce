@@ -1,24 +1,24 @@
-import Link from 'next/link'
-import { Button } from '@/shared/components/ui/button'
-import { policyContent } from './policy-content'
+import Link from "next/link";
+import { Button } from "@/shared/components/ui/button";
+import { policyContent } from "./policy-content";
 
 interface LegalContentProps {
-  activeSection: string
+  activeSection: string;
 }
 
 export function LegalSidebar({ activeSection }: LegalContentProps) {
-  const sections = Object.values(policyContent)
+  const sections = Object.values(policyContent);
   return (
     <div>
       <nav className="flex-1">
         <ul className="space-y-2">
           {sections.map((section) => {
-            const isActive = activeSection === section.id
+            const isActive = activeSection === section.id;
             return (
               <li key={section.id}>
                 <Link href={section.href}>
                   <Button
-                    variant={isActive ? 'outline' : 'ghost'}
+                    variant={isActive ? "outline" : "ghost"}
                     className="flex w-full items-center justify-start rounded-sm text-left text-xs"
                   >
                     {section.icon}
@@ -26,10 +26,10 @@ export function LegalSidebar({ activeSection }: LegalContentProps) {
                   </Button>
                 </Link>
               </li>
-            )
+            );
           })}
         </ul>
       </nav>
     </div>
-  )
+  );
 }

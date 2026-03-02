@@ -1,55 +1,48 @@
-import { Separator } from '@/shared/components/ui/separator'
-import { SubCategoryCard } from './subcategory-card'
-import { FormSection } from '@/shared/components/form/form.helper'
-import { SubcategoryBase } from './subcategory.schema'
+import { Separator } from "@/shared/components/ui/separator";
+import { SubCategoryCard } from "./subcategory-card";
+import { FormSection } from "@/shared/components/form/form.helper";
+import type { SubcategoryBase } from "./subcategory.schema";
 
-type SubCategory = SubcategoryBase
+type SubCategory = SubcategoryBase;
 
 type CategoriesByType = {
-  featuredCategoryType: SubCategory[]
+  featuredCategoryType: SubCategory[];
   categoryVisibility: {
-    publicCategoryType: SubCategory[]
-    privateCategoryType: SubCategory[]
-    hiddenCategoryType: SubCategory[]
-  }
-  recentCategoryType: SubCategory[]
-  deletedCategoryType: SubCategory[]
-}
+    publicCategoryType: SubCategory[];
+    privateCategoryType: SubCategory[];
+    hiddenCategoryType: SubCategory[];
+  };
+  recentCategoryType: SubCategory[];
+  deletedCategoryType: SubCategory[];
+};
 
 type SubCategorySectionProps = {
-  slug: string
-  title: string
-  description: string
-  categories: SubCategory[]
-  emptyMessage?: string
-}
+  slug: string;
+  title: string;
+  description: string;
+  categories: SubCategory[];
+  emptyMessage?: string;
+};
 
 export const SubCategorySection = ({
   slug,
   title,
   description,
   categories,
-  emptyMessage = 'No categories',
+  emptyMessage = "No categories",
 }: SubCategorySectionProps) => (
-  <FormSection
-    title={title + ` (${categories?.length})`}
-    description={description}
-  >
+  <FormSection title={title + ` (${categories?.length})`} description={description}>
     <div className="grid grid-cols-1 gap-2">
       {categories?.length > 0 ? (
         categories?.map((cat) => (
-          <SubCategoryCard
-            href={`/studio/products/categories/${slug}/${cat.slug}`}
-            key={cat.id}
-            data={cat}
-          />
+          <SubCategoryCard href={`/studio/products/categories/${slug}/${cat.slug}`} key={cat.id} data={cat} />
         ))
       ) : (
         <p className="text-muted-foreground px-2 text-sm">{emptyMessage}</p>
       )}
     </div>
   </FormSection>
-)
+);
 
 export function SubCategoriesSection({ data, slug }: { data: CategoriesByType | null; slug: string }) {
   const {
@@ -57,7 +50,7 @@ export function SubCategoriesSection({ data, slug }: { data: CategoriesByType | 
     categoryVisibility: { publicCategoryType = [], privateCategoryType = [], hiddenCategoryType = [] } = {},
     recentCategoryType = [],
     deletedCategoryType = [],
-  } = data || { categoryVisibility: {} }
+  } = data || { categoryVisibility: {} };
 
   return (
     <div className="flex flex-col gap-2">
@@ -114,5 +107,5 @@ export function SubCategoriesSection({ data, slug }: { data: CategoriesByType | 
         emptyMessage="No deleted categories"
       />
     </div>
-  )
+  );
 }

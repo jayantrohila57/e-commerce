@@ -1,13 +1,13 @@
-import { truncateString } from '@/shared/utils/lib/utils'
-import Link from 'next/link'
-import { Route } from 'next'
-import { Separator } from '@/shared/components/ui/separator'
-import { BlurImage } from '@/shared/components/ui/image'
-import { ProductBase } from './product.types'
+import { truncateString } from "@/shared/utils/lib/utils";
+import Link from "next/link";
+import type { Route } from "next";
+import { Separator } from "@/shared/components/ui/separator";
+import { BlurImage } from "@/shared/components/ui/image";
+import type { ProductBase } from "./product.types";
 
 interface ProductCardProps {
-  product: ProductBase
-  href?: string
+  product: ProductBase;
+  href?: string;
 }
 
 export function ProductCard({ product, href }: ProductCardProps) {
@@ -20,20 +20,17 @@ export function ProductCard({ product, href }: ProductCardProps) {
         height={500}
         className="motion-all bg-secondary aspect-square h-auto w-12 rounded-full border object-cover group-hover:drop-shadow"
       />
-      <Separator
-        orientation="vertical"
-        className="mx-4 data-[orientation=vertical]:h-8"
-      />
+      <Separator orientation="vertical" className="mx-4 data-[orientation=vertical]:h-8" />
       <div className="flex h-full flex-col">
         <h3 className="text-base font-semibold capitalize">{product.title}</h3>
         <p className="text-muted-foreground text-xs">{truncateString(product.description, 80)}</p>
       </div>
     </div>
-  )
+  );
 
   if (href) {
-    return <Link href={href as Route}>{content}</Link>
+    return <Link href={href as Route}>{content}</Link>;
   }
 
-  return content
+  return content;
 }

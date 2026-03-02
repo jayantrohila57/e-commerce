@@ -1,7 +1,7 @@
-import { Html, Head, Body, Preview, Container, Text, Section } from '@react-email/components'
+import { Html, Head, Body, Preview, Container, Text, Section } from "@react-email/components";
 
 interface WelcomeEmailProps {
-  name: string
+  name: string;
 }
 
 export const WelcomeEmail = ({ name }: WelcomeEmailProps) => (
@@ -26,23 +26,23 @@ export const WelcomeEmail = ({ name }: WelcomeEmailProps) => (
       </Container>
     </Body>
   </Html>
-)
+);
 
 const bodyStyle = {
-  backgroundColor: '#f9f9f9',
-  fontFamily: 'Arial, sans-serif',
-}
+  backgroundColor: "#f9f9f9",
+  fontFamily: "Arial, sans-serif",
+};
 
 const containerStyle = {
-  backgroundColor: '#ffffff',
-  padding: '32px',
-  borderRadius: '8px',
-  maxWidth: '600px',
-  margin: '0 auto',
-}
+  backgroundColor: "#ffffff",
+  padding: "32px",
+  borderRadius: "8px",
+  maxWidth: "600px",
+  margin: "0 auto",
+};
 
 const headingStyle = {
-  color: '#333',
-  fontSize: '22px',
-  fontWeight: 'bold',
-}
+  color: "#333",
+  fontSize: "22px",
+  fontWeight: "bold",
+};

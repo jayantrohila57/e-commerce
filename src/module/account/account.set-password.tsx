@@ -1,7 +1,7 @@
-'use client'
+"use client";
 
-import { requestPasswordReset } from '@/core/auth/auth.client'
-import { Button } from '@/shared/components/ui/button'
+import { requestPasswordReset } from "@/core/auth/auth.client";
+import { Button } from "@/shared/components/ui/button";
 
 export function SetPasswordButton({ email }: { email: string }) {
   return (
@@ -10,11 +10,11 @@ export function SetPasswordButton({ email }: { email: string }) {
       onClick={() => {
         void requestPasswordReset({
           email,
-          redirectTo: '/auth/reset-password',
-        })
+          redirectTo: "/auth/reset-password",
+        });
       }}
     >
       Send Password Reset Email
     </Button>
-  )
+  );
 }

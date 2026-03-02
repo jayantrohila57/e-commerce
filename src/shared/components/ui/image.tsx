@@ -5,32 +5,61 @@ import Image from 'next/image'
 import type { ComponentProps } from 'react'
 import { cn } from '@/shared/utils/lib/utils'
 
-interface BlurImageProps extends ComponentProps<typeof Image> {
+interface BlurImageProps extends Omit<ComponentProps<typeof Image>, 'src'> {
+  src?: string | null
   fallbackSrc?: string
 }
 
-export function BlurImage({ className, alt, fallbackSrc = '/fallback.png', ...props }: BlurImageProps) {
+function normalizeSrc(value?: string | null) {
+  if (!value) return null
+
+  const trimmed = value.trim()
+
+  if (!trimmed) return null
+
+  // Absolute URL
+  if (/^https?:\/\//.test(trimmed)) return trimmed
+
+  // Root-relative
+  if (trimmed.startsWith('/')) return trimmed
+
+  // If it's something like "uploads/image.jpg"
+  return `/${trimmed}`
+}
+
+export function BlurImage({ className, alt, src, fallbackSrc = '/fallback.png', ...props }: BlurImageProps) {
+  const safeInitialSrc = normalizeSrc(src) ?? fallbackSrc
+
+  const [currentSrc, setCurrentSrc] = React.useState(safeInitialSrc)
   const [isLoading, setLoading] = React.useState(true)
-  const [hasError, setError] = React.useState(false)
-  const src = props.src ? props.src : fallbackSrc
-  const errorSrc = hasError && fallbackSrc
+
+  React.useEffect(() => {
+    setLoading(true)
+    const normalized = normalizeSrc(src) ?? fallbackSrc
+    setCurrentSrc(normalized)
+    setLoading(false)
+  }, [src, fallbackSrc])
+
+  const handleError = () => {
+    if (currentSrc !== fallbackSrc) {
+      setCurrentSrc(fallbackSrc)
+    }
+    setLoading(false)
+  }
+
   return (
     <Image
       {...props}
       alt={alt}
-      src={errorSrc || src}
+      src={currentSrc}
       className={cn(
         className,
-        'motion-all',
+        'transition-all duration-300',
         isLoading ? 'animate-shimmer blur-xs' : 'blur-0',
-        errorSrc && 'bg-input/30',
+        currentSrc === fallbackSrc && 'bg-input/30',
       )}
-      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
       onLoad={() => setLoading(false)}
-      onError={() => {
-        setError(true)
-        setLoading(false)
-      }}
+      onError={handleError}
     />
   )
 }

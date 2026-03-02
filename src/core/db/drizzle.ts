@@ -1,3 +1,4 @@
+import 'server-only'
 import { serverEnv } from '@/shared/config/env.server'
 import { config } from 'dotenv'
 import { defineConfig } from 'drizzle-kit'

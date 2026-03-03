@@ -468,6 +468,35 @@ export const payment = pgTable("payment", {
     .$onUpdate(() => new Date()),
 });
 
+export const addressTypeEnum = pgEnum("address_type", ["billing", "shipping"]);
+
+export const address = pgTable("address", {
+  id: text("id").primaryKey(),
+  
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+    
+  type: addressTypeEnum("type").notNull(),
+  
+  line1: text("line1").notNull(),
+  line2: text("line2"),
+  city: text("city").notNull(),
+  state: text("state").notNull(),
+  postalCode: text("postal_code").notNull(),
+  country: text("country").notNull(),
+  
+  isDefault: boolean("is_default").default(false).notNull(),
+  
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+    
+  updatedAt: timestamp("updated_at", { withTimezone: true })
+    .defaultNow()
+    .$onUpdate(() => new Date()),
+});
+
 /////////////////////////////////////////////////
 
 export const attributeRelations = relations(attribute, ({ one }) => ({
@@ -581,6 +610,13 @@ export const paymentRelations = relations(payment, ({ one }) => ({
   order: one(order, {
     fields: [payment.orderId],
     references: [order.id],
+  }),
+}));
+
+export const addressRelations = relations(address, ({ one }) => ({
+  user: one(user, {
+    fields: [address.userId],
+    references: [user.id],
   }),
 }));
 

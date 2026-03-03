@@ -1,4 +1,6 @@
-import { Html, Head, Preview, Body, Container, Section, Text, Button } from "@react-email/components";
+import { Body, Button, Container, Head, Html, Link, Preview, Section, Text } from "@react-email/components";
+import { siteConfig } from "@/shared/config/site";
+import { emailContent, emailStyles } from "./email.styles";
 
 interface ResetPasswordEmailProps {
   name: string;
@@ -9,53 +11,41 @@ export const ResetPasswordEmail = ({ name, url }: ResetPasswordEmailProps) => (
   <Html>
     <Head />
     <Preview>Reset your password</Preview>
-    <Body style={bodyStyle}>
-      <Container style={containerStyle}>
+    <Body style={emailStyles.body}>
+      <Container style={emailStyles.container}>
         <Section>
-          <Text style={headingStyle}>Reset Your Password</Text>
-          <Text>Hello {name},</Text>
-          <Text>You requested to reset your password. Click the button below to set a new one:</Text>
-          <Button href={url} style={buttonStyle}>
+          <Text style={emailStyles.heading}>Reset Your Password</Text>
+          <Text style={emailStyles.text}>{emailContent.greeting(name)}</Text>
+          <Text style={emailStyles.text}>
+            You requested to reset your password for your {siteConfig.name} account. Click the button below to set a new
+            one:
+          </Text>
+          <Button href={url} style={emailStyles.warningButton}>
             Reset Password
           </Button>
-          <Text>If you didn’t request this, please ignore this email.</Text>
-          <Text>This link will expire in 24 hours.</Text>
-          <Text>
-            Best regards,
-            <br />
-            Your App Team
+          <Text style={emailStyles.mutedText}>{emailContent.securityNotice()}</Text>
+          <Text style={emailStyles.mutedText}>{emailContent.linkExpiry()}</Text>
+          <Text style={emailStyles.text}>{emailContent.signOff()}</Text>
+        </Section>
+
+        <Section style={emailStyles.footer}>
+          <Text style={emailStyles.mutedText}>{siteConfig.email.footer.company}</Text>
+          <Text style={emailStyles.mutedText}>
+            {siteConfig.contact.address.line1}, {siteConfig.contact.address.city}, {siteConfig.contact.address.state}{" "}
+            {siteConfig.contact.address.postalCode}
           </Text>
+          <Text style={emailStyles.mutedText}>
+            <Link href={siteConfig.urls.privacy} style={emailStyles.footerLink}>
+              {siteConfig.email.footer.privacy}
+            </Link>
+            {" • "}
+            <Link href={siteConfig.urls.terms} style={emailStyles.footerLink}>
+              {siteConfig.email.footer.terms}
+            </Link>
+          </Text>
+          <Text style={emailStyles.mutedText}>{emailContent.supportInfo()}</Text>
         </Section>
       </Container>
     </Body>
   </Html>
 );
-
-const bodyStyle = {
-  backgroundColor: "#f9f9f9",
-  fontFamily: "Arial, sans-serif",
-};
-
-const containerStyle = {
-  backgroundColor: "#ffffff",
-  padding: "32px",
-  borderRadius: "8px",
-  maxWidth: "600px",
-  margin: "0 auto",
-};
-
-const headingStyle = {
-  color: "#333",
-  fontSize: "22px",
-  fontWeight: "bold",
-};
-
-const buttonStyle = {
-  backgroundColor: "#007bff",
-  color: "#fff",
-  padding: "12px 24px",
-  borderRadius: "6px",
-  textDecoration: "none",
-  display: "inline-block",
-  marginTop: "16px",
-};

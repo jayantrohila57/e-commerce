@@ -1,4 +1,6 @@
-import { Html, Head, Body, Preview, Container, Text, Section } from "@react-email/components";
+import { Body, Container, Head, Html, Link, Preview, Section, Text } from "@react-email/components";
+import { siteConfig } from "@/shared/config/site";
+import { emailContent, emailStyles } from "./email.styles";
 
 interface WelcomeEmailProps {
   name: string;
@@ -7,42 +9,40 @@ interface WelcomeEmailProps {
 export const WelcomeEmail = ({ name }: WelcomeEmailProps) => (
   <Html>
     <Head />
-    <Preview>Welcome to Our App!</Preview>
-    <Body style={bodyStyle}>
-      <Container style={containerStyle}>
+    <Preview>Welcome to {siteConfig.name}!</Preview>
+    <Body style={emailStyles.body}>
+      <Container style={emailStyles.container}>
         <Section>
-          <Text style={headingStyle}>Welcome to Our App!</Text>
-          <Text>Hello {name},</Text>
-          <Text>
-            Thank you for signing up for our app! We’re thrilled to have you on board. Explore, build, and make
-            something amazing.
+          <Text style={emailStyles.heading}>Welcome to {siteConfig.name}!</Text>
+          <Text style={emailStyles.text}>{emailContent.greeting(name)}</Text>
+          <Text style={emailStyles.text}>
+            Thank you for signing up with {siteConfig.name}! We're thrilled to have you join our community of smart
+            shoppers.
           </Text>
-          <Text>
-            Best regards,
-            <br />
-            Your App Team
+          <Text style={emailStyles.text}>
+            Discover amazing products, exclusive deals, and a seamless shopping experience designed just for you.
           </Text>
+          <Text style={emailStyles.text}>{emailContent.signOff()}</Text>
+        </Section>
+
+        <Section style={emailStyles.footer}>
+          <Text style={emailStyles.mutedText}>{siteConfig.email.footer.company}</Text>
+          <Text style={emailStyles.mutedText}>
+            {siteConfig.contact.address.line1}, {siteConfig.contact.address.city}, {siteConfig.contact.address.state}{" "}
+            {siteConfig.contact.address.postalCode}
+          </Text>
+          <Text style={emailStyles.mutedText}>
+            <Link href={siteConfig.urls.privacy} style={emailStyles.footerLink}>
+              {siteConfig.email.footer.privacy}
+            </Link>
+            {" • "}
+            <Link href={siteConfig.urls.terms} style={emailStyles.footerLink}>
+              {siteConfig.email.footer.terms}
+            </Link>
+          </Text>
+          <Text style={emailStyles.mutedText}>{emailContent.supportInfo()}</Text>
         </Section>
       </Container>
     </Body>
   </Html>
 );
-
-const bodyStyle = {
-  backgroundColor: "#f9f9f9",
-  fontFamily: "Arial, sans-serif",
-};
-
-const containerStyle = {
-  backgroundColor: "#ffffff",
-  padding: "32px",
-  borderRadius: "8px",
-  maxWidth: "600px",
-  margin: "0 auto",
-};
-
-const headingStyle = {
-  color: "#333",
-  fontSize: "22px",
-  fontWeight: "bold",
-};

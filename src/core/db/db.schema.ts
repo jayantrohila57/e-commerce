@@ -341,6 +341,133 @@ export const wishlist = pgTable("wishlist", {
   variantId: text("variant_id").notNull(),
 });
 
+export const order = pgTable(
+  "order",
+  {
+    id: text("id").primaryKey(),
+
+    // Ownership
+    userId: text("user_id").references(() => user.id, {
+      onDelete: "set null",
+    }),
+
+    // Status
+    status: orderStatusEnum("status")
+      .default("pending")
+      .notNull(),
+
+    // Monetary snapshot (stored in smallest currency unit, e.g., paise for INR)
+    subtotal: integer("subtotal").notNull(),
+    discountTotal: integer("discount_total").default(0).notNull(),
+    taxTotal: integer("tax_total").default(0).notNull(),
+    shippingTotal: integer("shipping_total").default(0).notNull(),
+    grandTotal: integer("grand_total").notNull(),
+
+    currency: text("currency").default("INR").notNull(),
+
+    // Address snapshots (immutable once placed)
+    shippingAddress: json("shipping_address").$type<{
+      fullName: string;
+      line1: string;
+      line2?: string;
+      city: string;
+      state: string;
+      postalCode: string;
+      country: string;
+      phone?: string;
+    }>().notNull(),
+
+    billingAddress: json("billing_address").$type<{
+      fullName: string;
+      line1: string;
+      line2?: string;
+      city: string;
+      state: string;
+      postalCode: string;
+      country: string;
+      phone?: string;
+    }>(),
+
+    // Metadata
+    notes: text("notes"),
+    placedAt: timestamp("placed_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .defaultNow()
+      .$onUpdate(() => new Date()),
+  },
+  (table) => ({
+    userIdIdx: index("order_user_idx").on(table.userId),
+    statusIdx: index("order_status_idx").on(table.status),
+    placedAtIdx: index("order_placed_at_idx").on(table.placedAt),
+  }),
+);
+
+export const orderItem = pgTable(
+  "order_item",
+  {
+    id: text("id").primaryKey(),
+
+    orderId: text("order_id")
+      .notNull()
+      .references(() => order.id, { onDelete: "cascade" }),
+
+    variantId: text("variant_id")
+      .notNull()
+      .references(() => productVariant.id),
+
+    productTitle: text("product_title").notNull(),
+    variantTitle: text("variant_title").notNull(),
+
+    quantity: integer("quantity").notNull(),
+
+    unitPrice: integer("unit_price").notNull(), // snapshot at time of order
+    totalPrice: integer("total_price").notNull(),
+
+    attributes: json("attributes").$type<
+      { title: string; type: string; value: string }[]
+    >(),
+
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => ({
+    orderIdx: index("order_item_order_idx").on(table.orderId),
+  }),
+);
+
+export const payment = pgTable("payment", {
+  id: text("id").primaryKey(),
+
+  orderId: text("order_id")
+    .notNull()
+    .references(() => order.id, { onDelete: "cascade" }),
+
+  provider: paymentProviderEnum("provider").notNull(),
+  status: paymentStatusEnum("status").default("pending").notNull(),
+
+  amount: integer("amount").notNull(), // in smallest currency unit
+  currency: text("currency").default("INR").notNull(),
+
+  providerPaymentId: text("provider_payment_id"),
+  providerMetadata: json("provider_metadata"),
+
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+
+  updatedAt: timestamp("updated_at", { withTimezone: true })
+    .defaultNow()
+    .$onUpdate(() => new Date()),
+});
+
 /////////////////////////////////////////////////
 
 export const attributeRelations = relations(attribute, ({ one }) => ({
@@ -427,6 +554,33 @@ export const wishlistRelations = relations(wishlist, ({ one }) => ({
   variant: one(productVariant, {
     fields: [wishlist.variantId],
     references: [productVariant.id],
+  }),
+}));
+
+export const orderRelations = relations(order, ({ one, many }) => ({
+  user: one(user, {
+    fields: [order.userId],
+    references: [user.id],
+  }),
+  items: many(orderItem),
+  payments: many(payment),
+}));
+
+export const orderItemRelations = relations(orderItem, ({ one }) => ({
+  order: one(order, {
+    fields: [orderItem.orderId],
+    references: [order.id],
+  }),
+  variant: one(productVariant, {
+    fields: [orderItem.variantId],
+    references: [productVariant.id],
+  }),
+}));
+
+export const paymentRelations = relations(payment, ({ one }) => ({
+  order: one(order, {
+    fields: [payment.orderId],
+    references: [order.id],
   }),
 }));
 

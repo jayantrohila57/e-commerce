@@ -1,16 +1,17 @@
 # Master Completion Plan
 
 > **Generated:** 2026-03-02  
-> **Last Updated:** 2026-03-03 (Phase 0 Shared Infrastructure COMPLETE)  
+> **Last Updated:** 2026-03-03 (Phase 1 Database Tables COMPLETE)  
 > **Source Documents:** 01-project-plan.md, 02-architecture-review.md, 03-api-analysis.md, 04-form-audit.md, 05-ui-data-alignment.md, 06-full-system-audit.md  
-> **Overall Project Completion:** ~60% → Target: Production Ready (+5% from Phase 0 completion)
+> **Overall Project Completion:** ~71% → Target: Production Ready (+16% from Phase 0-1 completion)
 
 ---
 
 ## 🎯 Latest Status Updates
 
 ### ✅ Phase 0: Shared Infrastructure Foundation - COMPLETED (100%)
-### ✅ Phase 1: Foundation & Infrastructure - COMPLETED (100%)
+### ✅ Phase 1: Commerce Core Database Tables - COMPLETED (100%)
+### ⏸️ Phase 2: Commerce Core API Routers - NOT STARTED (0%)
 
 **Completed on March 3, 2026:**
 
@@ -21,9 +22,19 @@
 - ✅ Consolidated `site.config.ts` into single `site.ts` file
 - ✅ Updated all imports and removed redundant configuration
 
-**Impact:** +3% overall project completion (55% → 58%)
+🗄️ **Database Schema Implementation:**
+- ✅ All commerce tables implemented in `db.schema.ts`
+- ✅ Order system tables (`order`, `order_item`) with relations
+- ✅ Payment system tables (`payment`) with provider enums
+- ✅ Address system tables (`address`) with billing/shipping types
+- ✅ Shipment system tables (`shipment`) with tracking
+- ✅ Discount system tables (`discount`, `order_discount`)
+- ✅ Advanced enterprise tables (tax, reviews, refunds, bundles)
+- ✅ Proper indexes and constraints defined
 
-**Next Priority:** Begin Phase 0 (Shared Infrastructure) to enable Phase 1-2 commerce tables
+**Impact:** +16% overall project completion (55% → 71%)
+
+**Next Priority:** Begin Phase 2 (API Routers) to implement commerce functionality
 
 ---
 
@@ -78,18 +89,18 @@
 | Create `shared/utils/lib/soft-delete.utils.ts` with `softDeleteFilter()`, `cascadeSoftDelete()` | SHARED INFRA | HIGH | None | All delete operations | ✅ |
 | Create `shared/db/utils/query.utils.ts` with `buildPagination()`, `buildSearch()` | SHARED INFRA | MEDIUM | pagination.schema | All list queries | ✅ |
 
-### 0.3 Database Index Fixes (DEFERRED)
+### 0.3 Database Indexes - COMPLETED
 
 | Task | Type | Priority | Dependencies | Used In | Status |
 |------|------|----------|--------------|---------|--------|
-| Add index on `inventory_item.variantId` | NEW CORE | HIGH | None | Inventory API, Cart API | ⏸️ Deferred to Phase 7 |
-| Add index on `inventory_item.sku` | NEW CORE | HIGH | None | Inventory search, Order fulfillment | ⏸️ Deferred to Phase 7 |
-| Add index on `cart.userId` | NEW CORE | HIGH | None | Cart API, Checkout | ⏸️ Deferred to Phase 7 |
-| Add index on `cart.sessionId` | NEW CORE | HIGH | None | Guest cart | ⏸️ Deferred to Phase 7 |
-| Add index on `wishlist.userId` | NEW CORE | MEDIUM | None | Wishlist API | ⏸️ Deferred to Phase 7 |
-| Add index on `attribute.seriesSlug` | NEW CORE | MEDIUM | None | Attribute API | ⏸️ Deferred to Phase 7 |
+| Add index on `inventory_item.variantId` | NEW CORE | HIGH | None | Inventory API, Cart API | ✅ |
+| Add index on `inventory_item.sku` | NEW CORE | HIGH | None | Inventory search, Order fulfillment | ✅ |
+| Add index on `cart.userId` | NEW CORE | HIGH | None | Cart API, Checkout | ✅ |
+| Add index on `cart.sessionId` | NEW CORE | HIGH | None | Guest cart | ✅ |
+| Add index on `wishlist.userId` | NEW CORE | MEDIUM | None | Wishlist API | ✅ |
+| Add index on `attribute.seriesSlug` | NEW CORE | MEDIUM | None | Attribute API | ✅ |
 
-**Note:** Database indexes will be implemented in Phase 7 (Production Readiness) alongside other performance optimizations. This allows us to focus on core commerce functionality first.
+**Note:** All critical database indexes have been implemented in `db.schema.ts`. Additional indexes were also added for `cart_line`, `inventory_reservation`, and commerce tables for optimal performance.
 
 ---
 
@@ -99,43 +110,43 @@
 
 ### 1.1 Order System Tables
 
-| Task | Type | Priority | Dependencies | Used In |
-|------|------|----------|--------------|---------|
-| Create `order` table with `orderStatusEnum`, `userId`, `total`, `status`, `shippingAddress` (JSON) | NEW CORE | HIGHEST | None | Checkout API, Order Management, Customer Dashboard |
-| Create `order_item` table with `orderId`, `variantId`, `quantity`, `price`, `attributes` (JSON) | NEW CORE | HIGHEST | order table | Checkout API, Order Details, Inventory deduction |
-| Add `order` → `user` relation | NEW CORE | HIGHEST | order, user tables | Customer orders list |
-| Add `order_item` → `order` relation | NEW CORE | HIGHEST | order, order_item | Order details |
-| Add `order_item` → `product_variant` relation | NEW CORE | HIGHEST | order_item, product_variant | Order line items |
+| Task | Type | Priority | Dependencies | Used In | Status |
+|------|------|----------|--------------|---------|--------|
+| Create `order` table with `orderStatusEnum`, `userId`, `total`, `status`, `shippingAddress` (JSON) | NEW CORE | HIGHEST | None | Checkout API, Order Management, Customer Dashboard | ✅ |
+| Create `order_item` table with `orderId`, `variantId`, `quantity`, `price`, `attributes` (JSON) | NEW CORE | HIGHEST | order table | Checkout API, Order Details, Inventory deduction | ✅ |
+| Add `order` → `user` relation | NEW CORE | HIGHEST | order, user tables | Customer orders list | ✅ |
+| Add `order_item` → `order` relation | NEW CORE | HIGHEST | order, order_item | Order details | ✅ |
+| Add `order_item` → `product_variant` relation | NEW CORE | HIGHEST | order_item, product_variant | Order line items | ✅ |
 
 ### 1.2 Payment System Tables
 
-| Task | Type | Priority | Dependencies | Used In |
-|------|------|----------|--------------|---------|
-| Create `payment` table with `paymentStatusEnum`, `paymentProviderEnum`, `orderId`, `amount`, `providerId`, `metadata` (JSON) | NEW CORE | HIGHEST | order table | Payment API, Webhooks, Order confirmation |
-| Add `payment` → `order` relation | NEW CORE | HIGHEST | payment, order | Payment status tracking |
+| Task | Type | Priority | Dependencies | Used In | Status |
+|------|------|----------|--------------|---------|--------|
+| Create `payment` table with `paymentStatusEnum`, `paymentProviderEnum`, `orderId`, `amount`, `providerId`, `metadata` (JSON) | NEW CORE | HIGHEST | order table | Payment API, Webhooks, Order confirmation | ✅ |
+| Add `payment` → `order` relation | NEW CORE | HIGHEST | payment, order | Payment status tracking | ✅ |
 
 ### 1.3 Address System Tables
 
-| Task | Type | Priority | Dependencies | Used In |
-|------|------|----------|--------------|---------|
-| Create `address` table with `userId`, `type` (billing/shipping), `line1`, `line2`, `city`, `state`, `postalCode`, `country`, `isDefault` | NEW CORE | HIGH | None | Checkout, Account profile, Order shipping |
-| Add `address` → `user` relation | NEW CORE | HIGH | address, user | Address management |
+| Task | Type | Priority | Dependencies | Used In | Status |
+|------|------|----------|--------------|---------|--------|
+| Create `address` table with `userId`, `type` (billing/shipping), `line1`, `line2`, `city`, `state`, `postalCode`, `country`, `isDefault` | NEW CORE | HIGH | None | Checkout, Account profile, Order shipping | ✅ |
+| Add `address` → `user` relation | NEW CORE | HIGH | address, user | Address management | ✅ |
 
 ### 1.4 Shipment System Tables
 
-| Task | Type | Priority | Dependencies | Used In |
-|------|------|----------|--------------|---------|
-| Create `shipment` table with `shipmentStatusEnum`, `orderId`, `trackingNumber`, `carrier`, `shippedAt`, `deliveredAt` | NEW CORE | MEDIUM | order table | Order fulfillment, Customer tracking |
-| Add `shipment` → `order` relation | NEW CORE | MEDIUM | shipment, order | Shipment tracking |
+| Task | Type | Priority | Dependencies | Used In | Status |
+|------|------|----------|--------------|---------|--------|
+| Create `shipment` table with `shipmentStatusEnum`, `orderId`, `trackingNumber`, `carrier`, `shippedAt`, `deliveredAt` | NEW CORE | MEDIUM | order table | Order fulfillment, Customer tracking | ✅ |
+| Add `shipment` → `order` relation | NEW CORE | MEDIUM | shipment, order | Shipment tracking | ✅ |
 
-### 1.5 Discount/Coupon Tables (Post-MVP)
+### 1.5 Discount/Coupon Tables
 
-| Task | Type | Priority | Dependencies | Used In |
-|------|------|----------|--------------|---------|
-| Create `discount` table with `discountTypeEnum`, `code`, `value`, `minOrderAmount`, `maxUses`, `expiresAt` | NEW CORE | LOW | None | Promo code feature |
-| Create `order_discount` junction table | NEW CORE | LOW | order, discount | Order discounts |
+| Task | Type | Priority | Dependencies | Used In | Status |
+|------|------|----------|--------------|---------|--------|
+| Create `discount` table with `discountTypeEnum`, `code`, `value`, `minOrderAmount`, `maxUses`, `expiresAt` | NEW CORE | LOW | None | Promo code feature | ✅ |
+| Create `order_discount` junction table | NEW CORE | LOW | order, discount | Order discounts | ✅ |
 
-**Migration Required:** Create migration `0006_commerce_tables.sql`
+**Migration Required:** ✅ All tables implemented in `db.schema.ts` - ready for migration
 
 ---
 
@@ -593,9 +604,9 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| Order tables | Phase 1.1 | ❌ Not implemented |
-| Payment table | Phase 1.2 | ❌ Not implemented |
-| Address table | Phase 1.3 | ❌ Not implemented |
+| Order tables | Phase 1.1 | ✅ Implemented |
+| Payment table | Phase 1.2 | ✅ Implemented |
+| Address table | Phase 1.3 | ✅ Implemented |
 | Order API | Phase 2.3 | ❌ Not implemented |
 | Payment API | Phase 2.4 | ❌ Not implemented |
 | Address API | Phase 2.2 | ❌ Not implemented |
@@ -603,7 +614,7 @@
 | Payment integration | Phase 2.4 | ❌ Not implemented |
 | Order confirmation email | Phase 6 | ❌ Not implemented |
 
-**Blocking Issues:** All commerce tables and APIs missing
+**Blocking Issues:** All commerce APIs missing
 
 ### Milestone 4: Admin Complete
 

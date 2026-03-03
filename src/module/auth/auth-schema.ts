@@ -1,5 +1,5 @@
-import { BaseResponseSchema } from "@/shared/schema/common";
 import { z } from "zod/v3";
+import { detailedResponse } from "@/shared/schema";
 
 export const OTP_LENGTH = 6;
 export const PASSWORD_MIN = 8;
@@ -11,7 +11,7 @@ export const AuthSchema = {
       password: z.string().min(PASSWORD_MIN, "Please enter your password"),
       rememberMe: z.string().default("false"),
     }),
-    OUTPUT: BaseResponseSchema(z.null()),
+    OUTPUT: detailedResponse(z.null()),
   },
   SIGN_UP: {
     INPUT: z.object({
@@ -25,7 +25,7 @@ export const AuthSchema = {
         .regex(/[0-9]/, "Password must contain at least one number")
         .regex(/[@$!%*?&#]/, "Password must contain at least one special character (@$!%*?&)"),
     }),
-    OUTPUT: BaseResponseSchema(
+    OUTPUT: detailedResponse(
       z.object({
         token: z.string(),
       }),
@@ -37,7 +37,7 @@ export const AuthSchema = {
       token: z.string(),
       tokenType: z.string(),
     }),
-    OUTPUT: BaseResponseSchema(
+    OUTPUT: detailedResponse(
       z.object({
         token: z.string().nullable(),
       }),
@@ -48,13 +48,13 @@ export const AuthSchema = {
       token: z.string(),
       tokenType: z.string(),
     }),
-    OUTPUT: BaseResponseSchema(z.null()),
+    OUTPUT: detailedResponse(z.null()),
   },
   FORGOT_PASSWORD: {
     INPUT: z.object({
       email: z.string().email("Enter a valid email").trim(),
     }),
-    OUTPUT: BaseResponseSchema(
+    OUTPUT: detailedResponse(
       z.object({
         token: z.string(),
       }),
@@ -79,7 +79,7 @@ export const AuthSchema = {
         message: "Passwords do not match",
         path: ["confirmPassword"],
       }),
-    OUTPUT: BaseResponseSchema(z.null()),
+    OUTPUT: detailedResponse(z.null()),
   },
 };
 

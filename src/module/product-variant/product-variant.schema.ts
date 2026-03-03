@@ -1,5 +1,6 @@
-import { inventoryBaseSchema } from "@/module/inventory/inventory.schema";
 import z from "zod/v3";
+import { inventoryBaseSchema } from "@/module/inventory/inventory.schema";
+import { detailedResponse, offsetPaginationSchema } from "@/shared/schema";
 
 // =========================
 // ENUMS
@@ -75,27 +76,12 @@ export const productVariantUpdateSchema = productVariantBaseSchema.partial();
 // =========================
 // DETAILED RESPONSE WRAPPER
 // =========================
-export const detailedResponse = <T extends z.ZodTypeAny>(dataSchema: T) =>
-  z.object({
-    status: z.enum(["success", "error", "failed"]).default("success"),
-    message: z.string(),
-    data: dataSchema.nullable(),
-    meta: z
-      .object({
-        timestamp: z.date().default(() => new Date()),
-        version: z.string().default("1.0.0"),
-        count: z.number().optional(),
-      })
-      .optional(),
-  });
+// Using shared detailedResponse from @/shared/schema/common
 
 // =========================
 // PAGINATION + SEARCH
 // =========================
-const paginationSchema = z.object({
-  limit: z.number().min(1).max(100).default(20),
-  offset: z.number().min(0).default(0),
-});
+// Using shared offsetPaginationSchema from @/shared/schema/common
 
 // =========================
 // COMBINED RESPONSE (variant + inventory)
@@ -136,7 +122,7 @@ export const productVariantContract = {
 
   getMany: {
     input: z.object({
-      query: paginationSchema.extend({
+      query: offsetPaginationSchema.extend({
         productId: z.string().optional(),
       }),
     }),

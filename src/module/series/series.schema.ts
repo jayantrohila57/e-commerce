@@ -1,21 +1,7 @@
 import z from "zod/v3";
-
-export const detailedResponse = <T extends z.ZodTypeAny>(dataSchema: T) =>
-  z.object({
-    status: z.enum(["success", "error", "failed"]).default("success"),
-    message: z.string(),
-    data: dataSchema.nullable(),
-    meta: z
-      .object({
-        timestamp: z.date().default(() => new Date()),
-        version: z.string().default("1.0.0"),
-        count: z.number().optional(),
-      })
-      .optional(),
-  });
+import { detailedResponse, offsetPaginationSchema, visibilityEnum } from "@/shared/schema";
 
 export const displayTypeEnum = z.enum(["grid", "carousel", "banner", "list", "featured"]);
-export const visibilityEnum = z.enum(["public", "private", "hidden"]);
 
 export const seriesBaseSchema = z.object({
   id: z.string().min(1),
@@ -43,11 +29,6 @@ export const seriesBaseSchema = z.object({
     .nullable(),
 });
 
-const paginationSchema = z.object({
-  limit: z.number().min(1).max(100).default(20),
-  offset: z.number().min(0).default(0),
-});
-
 export const seriesSelectSchema = seriesBaseSchema;
 
 export const seriesInsertSchema = seriesBaseSchema.omit({
@@ -62,7 +43,7 @@ export const seriesUpdateSchema = seriesBaseSchema.partial();
 export const seriesContract = {
   getMany: {
     input: z.object({
-      query: paginationSchema
+      query: offsetPaginationSchema
         .extend({
           subcategorySlug: z.string().optional(),
         })

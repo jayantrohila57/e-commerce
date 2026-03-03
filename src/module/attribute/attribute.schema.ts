@@ -1,18 +1,5 @@
 import z from "zod/v3";
-
-export const detailedResponse = <T extends z.ZodTypeAny>(dataSchema: T) =>
-  z.object({
-    status: z.enum(["success", "error", "failed"]).default("success"),
-    message: z.string(),
-    data: dataSchema.nullable(),
-    meta: z
-      .object({
-        timestamp: z.date().default(() => new Date()),
-        version: z.string().default("1.0.0"),
-        count: z.number().optional(),
-      })
-      .optional(),
-  });
+import { detailedResponse, offsetPaginationSchema } from "@/shared/schema";
 
 export const attributeBaseSchema = z.object({
   id: z.string().min(1),
@@ -37,10 +24,6 @@ export const attributeInsertSchema = attributeBaseSchema.omit({
 });
 
 export const attributeUpdateSchema = attributeInsertSchema.partial();
-const paginationSchema = z.object({
-  limit: z.number().min(1).max(100).default(20),
-  offset: z.number().min(0).default(0),
-});
 
 // Search
 const searchSchema = z.object({
@@ -69,7 +52,7 @@ export const attributeContract = {
 
   getMany: {
     input: z.object({
-      query: searchSchema.merge(paginationSchema).optional(),
+      query: searchSchema.merge(offsetPaginationSchema).optional(),
     }),
     output: detailedResponse(z.array(attributeSelectSchema)),
   },
@@ -79,7 +62,7 @@ export const attributeContract = {
       params: z.object({
         seriesSlug: z.string(),
       }),
-      query: paginationSchema.optional(),
+      query: offsetPaginationSchema.optional(),
     }),
     output: detailedResponse(z.array(attributeSelectSchema)),
   },
@@ -112,7 +95,7 @@ export const attributeContract = {
 
   search: {
     input: z.object({
-      query: searchSchema.merge(paginationSchema),
+      query: searchSchema.merge(offsetPaginationSchema),
     }),
     output: detailedResponse(z.array(attributeSelectSchema)),
   },

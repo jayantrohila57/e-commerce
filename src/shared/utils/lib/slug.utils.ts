@@ -12,17 +12,17 @@
  * - Prevent consecutive hyphens
  */
 export function generateSlug(input: string): string {
-  if (!input || typeof input !== 'string') {
-    return '';
+  if (!input || typeof input !== "string") {
+    return "";
   }
 
   return input
     .toLowerCase()
     .trim()
-    .replace(/[^\w\s-]/g, '') // Remove special characters
-    .replace(/\s+/g, '-') // Replace spaces with hyphens
-    .replace(/-+/g, '-') // Prevent consecutive hyphens
-    .replace(/^-+|-+$/g, ''); // Trim hyphens from start/end
+    .replace(/[^\w\s-]/g, "") // Remove special characters
+    .replace(/\s+/g, "-") // Replace spaces with hyphens
+    .replace(/-+/g, "-") // Prevent consecutive hyphens
+    .replace(/^-+|-+$/g, ""); // Trim hyphens from start/end
 }
 
 /**
@@ -63,7 +63,7 @@ export function generateUniqueSlug(baseSlug: string, existingSlugs: string[]): s
  * Validates if a string is a valid slug format
  */
 export function isValidSlug(slug: string): boolean {
-  if (!slug || typeof slug !== 'string') {
+  if (!slug || typeof slug !== "string") {
     return false;
   }
 
@@ -76,12 +76,12 @@ export function isValidSlug(slug: string): boolean {
  * Handles common edge cases
  */
 export function sanitizeSlugInput(input: string): string {
-  if (!input || typeof input !== 'string') {
-    return '';
+  if (!input || typeof input !== "string") {
+    return "";
   }
 
   return input
-    .normalize('NFD') // Decompose accented characters
-    .replace(/[\u0300-\u036f]/g, '') // Remove diacritics
+    .normalize("NFD") // Decompose accented characters
+    .replace(/[\u0300-\u036f]/g, "") // Remove diacritics
     .trim();
 }

@@ -1,8 +1,9 @@
 # E-Commerce Project Documentation Index
 
 > **Last Updated:** 2026-03-03  
-> **Project Completion:** ~60%  
+> **Project Completion:** ~55%  
 > **Target:** Production Ready
+> **Platform Type:** Single-Merchant Enterprise Commerce
 
 ---
 
@@ -18,6 +19,8 @@
 ├── 06-full-system-audit.md    ← Consolidated findings
 └── 07-completion-roadmap.md   ← Action plan & milestones
 ```
+
+> **Note:** This documentation covers both **MVP Core Commerce** features and **Post-MVP Enterprise Enhancements**. Enterprise features (marked with 🏢) include audit logging, analytics, tax configuration, loyalty systems, and advanced product relationships.
 
 ---
 
@@ -130,6 +133,21 @@
 3. Form validation inconsistencies
 4. No test infrastructure
 
+### 🏢 Enterprise Features (Post-MVP)
+| Feature | Status | Business Value |
+|---------|--------|----------------|
+| Shipment Tracking | 🟡 Partial | Fulfillment visibility |
+| Discount/Coupon System | ❌ Not Implemented | Marketing & retention |
+| Product Reviews | ❌ Not Implemented | Social proof |
+| Order Audit Logging | ❌ Not Implemented | Compliance & debugging |
+| Refund Management | ❌ Not Implemented | Customer service |
+| Tax Configuration | ❌ Not Implemented | Legal compliance |
+| Product Relationships | ❌ Not Implemented | Cross-sell/upsell |
+| Loyalty & Rewards | ❌ Not Implemented | Customer retention |
+| Cart Abandonment | ❌ Not Implemented | Recovery revenue |
+| Product Analytics | ❌ Not Implemented | Business intelligence |
+| System Audit Logging | ❌ Not Implemented | Security & compliance |
+
 ---
 
 ## Quick Reference
@@ -144,6 +162,7 @@
 | UI & Design System | 93% | 01-project-plan.md §5 |
 | Marketing & Analytics | 20% | 01-project-plan.md §6 |
 | Testing & Deployment | 43% | 01-project-plan.md §7 |
+| **Enterprise Features** | **5%** | 01-project-plan.md §8 🏢 |
 
 ### MVP Timeline
 - **Weeks 1-2:** Shared Infrastructure + DB Tables + Security Fixes
@@ -155,4 +174,33 @@ See **07-completion-roadmap.md** for detailed breakdown.
 
 ---
 
-*Generated: 2026-03-02*
+*Generated: 2026-03-03*
+
+---
+
+## Enterprise Roadmap Overview
+
+The platform is evolving from a **basic commerce engine** to an **enterprise-ready commerce system** with the following enhancement phases:
+
+### Phase 1: Core Commerce (MVP) - In Progress
+- Transaction processing (orders, payments, cart)
+- Product catalog management
+- Customer accounts & checkout
+- Basic inventory tracking
+
+### Phase 2: Operational Excellence (Post-MVP)
+- Shipment tracking & fulfillment
+- Discount & coupon management
+- Product reviews & ratings
+- Order audit trails
+- Refund lifecycle management
+
+### Phase 3: Enterprise Intelligence 🏢
+- Tax configuration rules
+- Product relationships (cross-sell, upsell, bundles)
+- Loyalty & rewards system
+- Cart abandonment tracking
+- Product view analytics
+- System-wide audit logging
+
+> **Platform Type:** Single-merchant company-based platform (not marketplace). All enterprise features are designed for a single business entity with multiple users/roles.

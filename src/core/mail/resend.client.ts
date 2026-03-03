@@ -6,17 +6,17 @@ const mail = new Resend(serverEnv.RESEND_API_KEY);
 
 export default mail;
 
-export function sendEmail({ 
-  to, 
-  subject, 
-  html, 
-  text, 
-  from 
-}: { 
-  to: string; 
-  subject: string; 
-  html: string; 
-  text: string; 
+export function sendEmail({
+  to,
+  subject,
+  html,
+  text,
+  from,
+}: {
+  to: string;
+  subject: string;
+  html: string;
+  text: string;
   from?: string;
 }) {
   return mail.emails.send({

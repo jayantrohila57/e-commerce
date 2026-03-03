@@ -78,18 +78,18 @@
 | Create `shared/utils/lib/soft-delete.utils.ts` with `softDeleteFilter()`, `cascadeSoftDelete()` | SHARED INFRA | HIGH | None | All delete operations | ✅ |
 | Create `shared/db/utils/query.utils.ts` with `buildPagination()`, `buildSearch()` | SHARED INFRA | MEDIUM | pagination.schema | All list queries | ✅ |
 
-### 0.3 Database Index Fixes
+### 0.3 Database Index Fixes (DEFERRED)
 
-| Task | Type | Priority | Dependencies | Used In |
-|------|------|----------|--------------|---------|
-| Add index on `inventory_item.variantId` | NEW CORE | HIGH | None | Inventory API, Cart API |
-| Add index on `inventory_item.sku` | NEW CORE | HIGH | None | Inventory search, Order fulfillment |
-| Add index on `cart.userId` | NEW CORE | HIGH | None | Cart API, Checkout |
-| Add index on `cart.sessionId` | NEW CORE | HIGH | None | Guest cart |
-| Add index on `wishlist.userId` | NEW CORE | MEDIUM | None | Wishlist API |
-| Add index on `attribute.seriesSlug` | NEW CORE | MEDIUM | None | Attribute API |
+| Task | Type | Priority | Dependencies | Used In | Status |
+|------|------|----------|--------------|---------|--------|
+| Add index on `inventory_item.variantId` | NEW CORE | HIGH | None | Inventory API, Cart API | ⏸️ Deferred to Phase 7 |
+| Add index on `inventory_item.sku` | NEW CORE | HIGH | None | Inventory search, Order fulfillment | ⏸️ Deferred to Phase 7 |
+| Add index on `cart.userId` | NEW CORE | HIGH | None | Cart API, Checkout | ⏸️ Deferred to Phase 7 |
+| Add index on `cart.sessionId` | NEW CORE | HIGH | None | Guest cart | ⏸️ Deferred to Phase 7 |
+| Add index on `wishlist.userId` | NEW CORE | MEDIUM | None | Wishlist API | ⏸️ Deferred to Phase 7 |
+| Add index on `attribute.seriesSlug` | NEW CORE | MEDIUM | None | Attribute API | ⏸️ Deferred to Phase 7 |
 
-**Migration Required:** Create migration `0005_add_critical_indexes.sql`
+**Note:** Database indexes will be implemented in Phase 7 (Production Readiness) alongside other performance optimizations. This allows us to focus on core commerce functionality first.
 
 ---
 
@@ -428,13 +428,14 @@
 | Add E2E tests for checkout flow | NEW CORE | MEDIUM | Playwright | Commerce reliability |
 | Add E2E tests for admin CRUD operations | NEW CORE | LOW | Playwright | Admin reliability |
 
-### 7.4 Monitoring & Observability
+### 7.4 Performance & Database Optimization
 
 | Task | Type | Priority | Dependencies | Used In |
 |------|------|----------|--------------|---------|
-| Integrate Sentry for error tracking | NEW CORE | MEDIUM | None | Production monitoring |
-| Add structured logging | NEW CORE | MEDIUM | None | Debugging |
-| Configure performance monitoring | NEW CORE | LOW | None | Performance |
+| Add database indexes for commerce performance | NEW CORE | HIGH | Phase 1 tables | All commerce APIs |
+| Create migration `0005_add_critical_indexes.sql` | NEW CORE | HIGH | Index definitions | Production performance |
+| Add performance monitoring | NEW CORE | LOW | None | Production monitoring |
+| Audit and optimize slow queries | NEW CORE | MEDIUM | Phase 2 APIs | Query performance |
 
 ---
 
@@ -471,6 +472,98 @@
 | Add DataLoader for N+1 prevention | REFACTOR | LOW | None | Performance |
 | Implement Redis caching | REFACTOR | LOW | None | Performance |
 | Add API versioning | REFACTOR | LOW | None | API stability |
+
+---
+
+## Phase 9: Enterprise Features 🏢
+
+**Objective:** Transform the platform from basic commerce engine to enterprise-ready system with auditability, analytics, and retention features. These features are designed for a **single-merchant company-based platform** (not marketplace).
+
+> **Timeline:** 12-16 weeks post-MVP
+> **Platform Type:** Single-merchant enterprise (not multi-vendor marketplace)
+
+### 9.1 Operational Excellence
+
+| Task | Type | Priority | Dependencies | Business Value |
+|------|------|----------|--------------|----------------|
+| Implement `shipment` table & API | NEW CORE | MEDIUM | Order API | Fulfillment visibility |
+| Implement `shipment_event` audit trail | NEW CORE | MEDIUM | Shipment API | Carrier tracking history |
+| Create carrier integration abstraction | NEW CORE | LOW | Shipment API | Multi-carrier support |
+| Build shipment tracking UI | NEW CORE | MEDIUM | Shipment API | Customer experience |
+
+### 9.2 Marketing & Retention
+
+| Task | Type | Priority | Dependencies | Business Value |
+|------|------|----------|--------------|----------------|
+| Implement `discount`/`order_discount` API | NEW CORE | MEDIUM | Order API | Promotional campaigns |
+| Build discount management UI | NEW CORE | MEDIUM | Discount API | Admin promo control |
+| Create coupon code validation logic | NEW CORE | MEDIUM | Discount API | Checkout integration |
+| Implement `review` table & API | NEW CORE | LOW | Order API | Social proof |
+| Build review moderation system | NEW CORE | LOW | Review API | Content quality |
+| Create PDP review display | NEW CORE | LOW | Review API | Customer engagement |
+
+### 9.3 Audit & Compliance
+
+| Task | Type | Priority | Dependencies | Business Value |
+|------|------|----------|--------------|----------------|
+| Implement `order_status_history` table | NEW CORE | HIGH | Order API | Compliance & debugging |
+| Implement `order_audit_log` table | NEW CORE | HIGH | All APIs | Security audit trail |
+| Create automatic audit recording middleware | NEW CORE | HIGH | Audit tables | Automated compliance |
+| Build admin audit log viewer | NEW CORE | MEDIUM | Audit API | Support & compliance |
+| Implement `refund`/`refund_item` lifecycle | NEW CORE | MEDIUM | Payment API | Customer service |
+| Create refund workflow UI | NEW CORE | MEDIUM | Refund API | Admin processing |
+
+### 9.4 Tax Configuration
+
+| Task | Type | Priority | Dependencies | Business Value |
+|------|------|----------|--------------|----------------|
+| Implement `tax_category` table | NEW CORE | MEDIUM | Product API | Product classification |
+| Implement `tax_rate`/`tax_rule` tables | NEW CORE | MEDIUM | Tax category | Jurisdiction rules |
+| Build tax calculation engine | NEW CORE | MEDIUM | Tax tables | Automated compliance |
+| Create TaxJar/Avalara integration | NEW CORE | LOW | Tax engine | Real-time rate lookup |
+| Build tax configuration UI | NEW CORE | MEDIUM | Tax API | Admin management |
+
+### 9.5 Product Intelligence
+
+| Task | Type | Priority | Dependencies | Business Value |
+|------|------|----------|--------------|----------------|
+| Implement `product_relationship` table | NEW CORE | LOW | Product API | Cross-sell/upsell |
+| Implement `bundle_component` table | NEW CORE | LOW | Product API | Bundle products |
+| Build product relationship management UI | NEW CORE | LOW | Product Relationship API | Admin merchandising |
+| Create PDP cross-sell/upsell display | NEW CORE | LOW | Product Relationship API | Revenue optimization |
+| Implement bundle pricing logic | NEW CORE | LOW | Bundle API | Complex pricing |
+
+### 9.6 Loyalty & Rewards
+
+| Task | Type | Priority | Dependencies | Business Value |
+|------|------|----------|--------------|----------------|
+| Implement `loyalty_program`/`loyalty_tier` tables | NEW CORE | LOW | User system | Program structure |
+| Implement `customer_loyalty`/`loyalty_transaction` tables | NEW CORE | LOW | Loyalty program | Points tracking |
+| Build points calculation engine | NEW CORE | LOW | Loyalty tables | Automated accrual |
+| Create tier management system | NEW CORE | LOW | Loyalty engine | Customer tiers |
+| Build loyalty program admin UI | NEW CORE | LOW | Loyalty API | Program configuration |
+| Create customer rewards dashboard | NEW CORE | LOW | Loyalty API | Customer engagement |
+
+### 9.7 Analytics & Intelligence
+
+| Task | Type | Priority | Dependencies | Business Value |
+|------|------|----------|--------------|----------------|
+| Implement `cart_abandonment` tracking | NEW CORE | MEDIUM | Cart API | Recovery analytics |
+| Implement `abandonment_recovery` email system | NEW CORE | MEDIUM | Cart Abandonment | Revenue recovery |
+| Build `product_view` event collection | NEW CORE | LOW | PDP | View analytics |
+| Create analytics aggregation pipeline | NEW CORE | LOW | View events | Business intelligence |
+| Build admin analytics dashboard | NEW CORE | LOW | Analytics API | Data visualization |
+| Implement trending/popular products API | NEW CORE | LOW | Analytics API | Merchandising |
+
+### 9.8 System-Wide Audit
+
+| Task | Type | Priority | Dependencies | Business Value |
+|------|------|----------|--------------|----------------|
+| Implement `audit_log` table | NEW CORE | HIGH | All APIs | Security compliance |
+| Create audit action categorization enum | NEW CORE | HIGH | Audit log | Standardized logging |
+| Build audit middleware for all mutations | NEW CORE | HIGH | Audit schema | Automatic logging |
+| Implement audit log archive/retention | NEW CORE | MEDIUM | Audit log | Data retention compliance |
+| Build comprehensive audit viewer | NEW CORE | MEDIUM | Audit API | Security review |
 
 ---
 
@@ -536,6 +629,26 @@
 
 **Blocking Issues:** Multiple phases incomplete
 
+### Milestone 6: Enterprise Ready 🏢 (Post-MVP)
+
+| Requirement | Phase | Status | Business Value |
+|-------------|-------|--------|----------------|
+| Shipment tracking & fulfillment | 9.1 | ❌ Not implemented | Fulfillment visibility |
+| Discount/promo code system | 9.2 | ❌ Not implemented | Marketing & retention |
+| Product reviews & ratings | 9.2 | ❌ Not implemented | Social proof |
+| Order audit logging | 9.3 | ❌ Not implemented | Compliance & debugging |
+| Refund lifecycle management | 9.3 | ❌ Not implemented | Customer service |
+| Tax configuration | 9.4 | ❌ Not implemented | Legal compliance |
+| Product relationships | 9.5 | ❌ Not implemented | Revenue optimization |
+| Loyalty & rewards | 9.6 | ❌ Not implemented | Customer retention |
+| Cart abandonment tracking | 9.7 | ❌ Not implemented | Revenue recovery |
+| Product view analytics | 9.7 | ❌ Not implemented | Business intelligence |
+| System-wide audit logging | 9.8 | ❌ Not implemented | Security & compliance |
+
+**Platform Type:** Single-merchant company-based platform (not marketplace)
+
+**Blocking Issues:** All enterprise features require full MVP commerce functionality first
+
 ---
 
 ## Critical Path to MVP
@@ -554,6 +667,7 @@ Phase 0 (Shared Infra) ─┬─► Phase 1 (DB Tables) ─┬─► Phase 2 (AP
 Phase 6 (Emails) ────────► After Phase 2 APIs
 Phase 7 (SEO/Prod) ──────► After Phase 5
 Phase 8 (Post-MVP) ──────► After MVP Launch
+Phase 9 (Enterprise) ──────► After MVP Stabilization 🏢
 ```
 
 ### Sequential Dependencies (Must Complete in Order)
@@ -563,7 +677,13 @@ Phase 8 (Post-MVP) ──────► After MVP Launch
 3. **Phase 2** → Phase 5 (APIs required for UI)
 4. **Phase 2** → Phase 6 (APIs required for email triggers)
 
-### Parallel Work Opportunities
+### Enterprise Dependencies (Post-MVP Sequential)
+
+1. **MVP Stabilization** → Phase 9.1-9.8 (enterprise requires stable commerce)
+2. **Order API** → Phase 9.3 (audit logging requires order data)
+3. **Payment API** → Phase 9.3 (refunds require payment records)
+4. **Product API** → Phase 9.5 (relationships require product data)
+5. **Cart API** → Phase 9.7 (abandonment tracking requires cart data)
 
 - Phase 3 (Security) can run parallel with Phase 5 (Commerce UI)
 - Phase 4 (UI Alignment) can start after Phase 0, run parallel with Phases 1-3
@@ -595,6 +715,13 @@ Phase 8 (Post-MVP) ──────► After MVP Launch
 
 - Phase 8 features can be implemented incrementally after launch
 
+### Enterprise Timeline: 12-16 weeks 🏢
+
+- **Weeks 1-4:** Phase 9.1-9.2 (Shipment, Discount, Review)
+- **Weeks 5-8:** Phase 9.3-9.4 (Audit, Refund, Tax)
+- **Weeks 9-12:** Phase 9.5-9.6 (Product Relationships, Loyalty)
+- **Weeks 13-16:** Phase 9.7-9.8 (Analytics, System Audit)
+
 ---
 
 ## Risk Register
@@ -607,6 +734,10 @@ Phase 8 (Post-MVP) ──────► After MVP Launch
 | Schema migration failures | MEDIUM | Test migrations on staging, backup before deploy |
 | Security vulnerabilities | CRITICAL | External security audit before production |
 | N+1 query performance | MEDIUM | Audit queries before launch, add DataLoader |
+| **Enterprise Data Retention** 🏢 | **MEDIUM** | **Define retention policies for audit logs, analytics** |
+| **Tax Compliance Complexity** 🏢 | **HIGH** | **Start with TaxJar/Avalara integration** |
+| **Audit Log Storage Growth** 🏢 | **MEDIUM** | **Implement log rotation and archival** |
+| **Loyalty Program Complexity** 🏢 | **LOW** | **Start simple, add tiers later** |
 
 ---
 
@@ -625,6 +756,22 @@ Phase 8 (Post-MVP) ──────► After MVP Launch
 9. **Repository/Service layer refactor** - Architectural improvement, not functional
 10. **API versioning** - No API consumers yet
 
+### Enterprise Features (Phase 9) 🏢
+
+Deferred until MVP stabilizes and transaction volume justifies investment:
+
+1. **Shipment tracking & carrier integration** - Start with manual tracking
+2. **Order audit logging** - DB logs sufficient initially
+3. **Refund lifecycle management** - Manual refund processing initially
+4. **Tax configuration engine** - Static tax rates sufficient initially
+5. **Product relationships** - Manual merchandising initially
+6. **Loyalty & rewards** - Requires customer base and repeat purchases
+7. **Cart abandonment tracking** - Email marketing tools can supplement
+8. **Product view analytics** - Google Analytics can supplement
+9. **System-wide audit logging** - Application logs sufficient initially
+
+**Note:** These features transform the platform from basic commerce to enterprise-ready system with auditability, analytics, and retention capabilities.
+
 ### Must-Have for MVP
 
 1. Cart API + UI
@@ -641,11 +788,17 @@ Phase 8 (Post-MVP) ──────► After MVP Launch
 
 This plan consolidates findings from 6 audit documents into a unified execution roadmap:
 
-- **~60% current completion** → **Production Ready**
-- **8 phases** with clear dependency ordering
-- **5 business milestones** to track progress
+- **~55% current completion** → **Production Ready**
+- **9 phases** with clear dependency ordering
+- **6 business milestones** to track progress
 - **8-10 week MVP timeline**
-- **Critical path:** Shared Infra → DB Tables → APIs → Commerce UI
+- **12-16 week Enterprise enhancement timeline** 🏢
+- **Critical path:** Shared Infra → DB Tables → APIs → Commerce UI → Enterprise Features
+
+**Platform Evolution:**
+- **Current:** Basic commerce engine with catalog management
+- **MVP Target:** Functional single-merchant checkout platform
+- **Enterprise Target:** Full-featured commerce system with auditability, analytics, and retention
 
 **Immediate Next Steps:**
 1. ✅ Phase 0 (Shared Infrastructure Foundation) - COMPLETED March 3, 2026

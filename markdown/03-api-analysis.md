@@ -102,12 +102,28 @@
 | ❌ | `order` | `orderStatusEnum` + `MESSAGE.ORDER` defined | **Blocks entire checkout flow** |
 | ❌ | `order_item` | Implied by `ORDER.GET_ORDER_WITH_ITEMS` | **Blocks order line items** |
 | ❌ | `payment` | `paymentStatusEnum` + `paymentProviderEnum` + `MESSAGE.SHIPMENT` | **Blocks payment processing** |
-| ❌ | `shipment` | `shipmentStatusEnum` + `MESSAGE.SHIPMENT` | **Blocks fulfillment** |
+| 🟡 | `shipment` | `shipmentStatusEnum` + `MESSAGE.SHIPMENT` | **Blocks fulfillment** - Schema defined, no API |
+| ❌ | `shipment_event` | New enterprise model | **Fulfillment audit trail** |
 | ❌ | `address` | `MESSAGE.ADDRESS` with full CRUD messages | **Blocks checkout shipping** |
-| ❌ | `discount` / `coupon` | `discountTypeEnum` + `MESSAGE.DISCOUNT` | Blocks promo functionality |
-| ❌ | `review` | `MESSAGE.REVIEW` with full CRUD + user/product filters | Blocks social proof |
+| 🟡 | `discount` / `coupon` | `discountTypeEnum` + `MESSAGE.DISCOUNT` | Schema defined, no API |
+| 🟡 | `order_discount` | Junction table for discounts | Schema defined, no API |
+| ❌ | `review` | `MESSAGE.REVIEW` with full CRUD + user/product filters | Schema defined, no API |
 
-### 2.3 Relation Issues
+### 2.3 Enterprise Tables (Post-MVP) 🏢
+
+| Status | Table | Purpose | Business Value |
+|--------|-------|---------|----------------|
+| ❌ | `order_status_history` | Audit trail for order state changes | Compliance & debugging |
+| ❌ | `order_audit_log` | Comprehensive order modification log | Security & support |
+| ❌ | `refund` / `refund_item` | Refund lifecycle management | Customer service |
+| ❌ | `tax_category` / `tax_rate` / `tax_rule` | Tax configuration | Legal compliance |
+| ❌ | `product_relationship` / `bundle_component` | Cross-sell, upsell, bundles | Revenue optimization |
+| ❌ | `loyalty_program` / `loyalty_tier` / `customer_loyalty` | Rewards system | Customer retention |
+| ❌ | `cart_abandonment` / `abandonment_recovery` | Abandoned cart tracking | Revenue recovery |
+| ❌ | `product_view` / `product_analytics_summary` | View analytics | Business intelligence |
+| ❌ | `audit_log` / `audit_log_archive` | System-wide audit logging | Security & compliance |
+
+### 2.4 Relation Issues
 
 | Status | Issue | Location |
 |--------|-------|----------|

@@ -469,6 +469,176 @@
 
 ---
 
+---
+
+## Phase 8 — Enterprise Features 🏢
+
+> **Post-MVP Enhancement Phase:** Features for operational excellence, compliance, and customer retention. These extend the core commerce engine into an enterprise-ready platform.
+
+### 8.1 Shipment Tracking & Fulfillment
+
+| Status | Task | Business Capability |
+|--------|------|-------------------|
+| ✅ | DB enum: `shipment_status` (pending/in_transit/delivered) | Basic status tracking |
+| ✅ | API message constants defined (CREATE, UPDATE_TRACKING) | Admin operations |
+| ✅ | Routes defined (`PATH.STUDIO.SHIPPING`) | Navigation structure |
+| 🟡 | `shipment` DB table — schema defined | Data foundation |
+| ❌ | `shipment_event` table for tracking history | Full audit trail |
+| ❌ | `shipment_carrier` table for carrier config | Multi-carrier support |
+| ❌ | tRPC shipment router | API layer |
+| ❌ | Carrier integration (Shippo/EasyPost) | Real-time tracking |
+| ❌ | Customer tracking page | Customer experience |
+
+**New Database Models:**
+- `shipment` — Core shipment records linked to orders
+- `shipment_event` — Timeline of shipment status changes
+- `shipment_carrier` — Carrier configuration (UPS, FedEx, etc.)
+
+### 8.2 Discount & Coupon System
+
+| Status | Task | Business Capability |
+|--------|------|-------------------|
+| ✅ | DB enum: `discount_type` (flat/percent) | Discount calculation |
+| ✅ | API message constants defined (CRUD + VALIDATE_CODE) | Admin operations |
+| ✅ | Routes defined (`PATH.STUDIO.DISCOUNTS`) | Navigation structure |
+| 🟡 | `discount` DB table — schema defined | Data foundation |
+| 🟡 | `order_discount` junction table — schema defined | Order-discount mapping |
+| ❌ | tRPC discount router | API layer |
+| ❌ | Coupon code validation logic | Checkout integration |
+| ❌ | Discount UI in checkout | Customer experience |
+| ❌ | Usage tracking & limits | Campaign management |
+
+**New Database Models:**
+- `discount` — Coupon/promo codes with rules and limits
+- `order_discount` — Junction table linking orders to applied discounts
+- `discount_usage` — Usage tracking per customer/session
+
+### 8.3 Order Status History & Audit Logging
+
+| Status | Task | Business Capability |
+|--------|------|-------------------|
+| ❌ | `order_status_history` table | Status change tracking |
+| ❌ | `order_audit_log` table | Comprehensive audit trail |
+| ❌ | Automatic history recording | Automated compliance |
+| ❌ | Admin audit view | Debugging & support |
+| ❌ | Customer-facing status timeline | Transparency |
+
+**New Database Models:**
+- `order_status_history` — Timestamped status transitions with actor info
+- `order_audit_log` — Detailed audit of all order modifications
+
+### 8.4 Refund Lifecycle Management
+
+| Status | Task | Business Capability |
+|--------|------|-------------------|
+| ❌ | DB enum: `refund_status` | Refund state machine |
+| ❌ | DB enum: `refund_reason` | Categorization |
+| ❌ | `refund` table | Refund records |
+| ❌ | `refund_item` table | Line-item refunds |
+| ❌ | tRPC refund router | API layer |
+| ❌ | Refund workflow UI | Customer service |
+| ❌ | Payment gateway refund integration | Automated processing |
+
+**New Database Models:**
+- `refund` — Refund requests with status and amounts
+- `refund_item` — Individual line items being refunded
+- `refund_status_history` — Refund state transitions
+
+### 8.5 Tax Configuration Rules 🏢
+
+| Status | Task | Business Capability |
+|--------|------|-------------------|
+| ❌ | `tax_category` table | Product tax classification |
+| ❌ | `tax_rate` table | Jurisdiction-specific rates |
+| ❌ | `tax_rule` table | Conditional tax logic |
+| ❌ | `tax_exemption` table | Customer exemptions |
+| ❌ | Tax calculation engine | Automated compliance |
+| ❌ | TaxJar/Avalara integration | Real-time rates |
+
+**New Database Models:**
+- `tax_category` — Product tax classifications (e.g., "Standard", "Food", "Digital")
+- `tax_rate` — Rates by region/country/state
+- `tax_rule` — Conditional rules (thresholds, exemptions)
+- `tax_exemption` — Customer-specific exemption certificates
+
+### 8.6 Product Relationships (Cross-sell, Upsell, Bundles) 🏢
+
+| Status | Task | Business Capability |
+|--------|------|-------------------|
+| ❌ | `product_relationship` table | Relationship definitions |
+| ❌ | DB enum: `relationship_type` | cross_sell, upsell, bundle, accessory |
+| ❌ | `bundle_component` table | Bundle composition |
+| ❌ | tRPC product relationship router | API layer |
+| ❌ | PDP cross-sell/upsell display | Revenue optimization |
+| ❌ | Bundle pricing logic | Complex pricing |
+
+**New Database Models:**
+- `product_relationship` — Links products with relationship types
+- `bundle_component` — Bundle composition with quantities
+- `relationship_rule` — Conditional display rules
+
+### 8.7 Loyalty & Rewards System 🏢
+
+| Status | Task | Business Capability |
+|--------|------|-------------------|
+| ❌ | `loyalty_program` table | Program configuration |
+| ❌ | `loyalty_tier` table | Tier levels |
+| ❌ | `customer_loyalty` table | Customer enrollment |
+| ❌ | `loyalty_transaction` table | Points tracking |
+| ❌ | `reward` table | Redeemable rewards |
+| ❌ | Points calculation engine | Automated accrual |
+| ❌ | Rewards redemption UI | Customer engagement |
+
+**New Database Models:**
+- `loyalty_program` — Program settings and rules
+- `loyalty_tier` — Tier levels with thresholds and benefits
+- `customer_loyalty` — Customer enrollment and current points
+- `loyalty_transaction` — Points earned/spent history
+- `reward` — Available rewards catalog
+
+### 8.8 Cart Abandonment Tracking 🏢
+
+| Status | Task | Business Capability |
+|--------|------|-------------------|
+| ❌ | `cart_abandonment` table | Abandoned cart records |
+| ❌ | `abandonment_recovery` table | Recovery attempts |
+| ❌ | Abandonment detection logic | Automatic tracking |
+| ❌ | Recovery email sequences | Revenue recovery |
+| ❌ | Abandonment analytics dashboard | Business intelligence |
+
+**New Database Models:**
+- `cart_abandonment` — Snapshot of abandoned carts with value
+- `abandonment_recovery` — Recovery email sends and outcomes
+
+### 8.9 Product View Analytics 🏢
+
+| Status | Task | Business Capability |
+|--------|------|-------------------|
+| ❌ | `product_view` table | View event logging |
+| ❌ | `product_analytics_summary` table | Aggregated metrics |
+| ❌ | Analytics collection middleware | Data pipeline |
+| ❌ | Admin analytics dashboard | Business intelligence |
+| ❌ | Trending/popular products API | Merchandising |
+
+**New Database Models:**
+- `product_view` — Individual view events (user, timestamp, source)
+- `product_analytics_summary` — Daily/weekly aggregated metrics
+- `product_conversion_funnel` — View → Cart → Purchase metrics
+
+### 8.10 System-Wide Audit Logging 🏢
+
+| Status | Task | Business Capability |
+|--------|------|-------------------|
+| ❌ | `audit_log` table | Centralized audit storage |
+| ❌ | DB enum: `audit_action_type` | Action categorization |
+| ❌ | Audit middleware for all mutations | Automatic logging |
+| ❌ | Audit log viewer (Admin) | Compliance & security |
+| ❌ | Data retention policies | GDPR compliance |
+
+**New Database Models:**
+- `audit_log` — Comprehensive system audit (user, action, entity, before/after)
+- `audit_log_archive` — Archived/aggregated historical data
+
 ## Project Completion Summary
 
 ### Overall Progress
@@ -482,8 +652,11 @@
 | 5 — UI & Design System | 27 | 2 | 0 | **~93%** |
 | 6 — Marketing & Analytics | 3 | 0 | 5 | **~20%** |
 | 7 — Testing & Deployment | 10 | 2 | 9 | **~43%** |
+| **8 — Enterprise Features** 🏢 | **0** | **2** | **14** | **~12%** |
 
-### **Overall Project Completion: ~58%**
+### **Overall Project Completion: ~55%**
+
+> **Platform Evolution:** This single-merchant commerce platform is transitioning from basic commerce engine to enterprise-ready system with auditability, analytics, and retention features.
 
 ### What Works Today
 - Full auth system (email, OAuth, 2FA, passkeys, sessions)

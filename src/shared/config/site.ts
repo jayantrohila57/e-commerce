@@ -5,7 +5,7 @@ export const siteConfig = {
   name: "ShopHub",
   domain: "shophub.com",
   description: "ShopHub is your premier online shopping destination for quality products and exceptional service.",
-  
+
   // Contact Information
   contact: {
     email: "support@shophub.com",
@@ -18,8 +18,8 @@ export const siteConfig = {
       city: "San Francisco",
       state: "CA",
       postalCode: "94105",
-      country: "United States"
-    }
+      country: "United States",
+    },
   },
 
   // URLs
@@ -32,18 +32,18 @@ export const siteConfig = {
     shipping: "https://shophub.com/shipping",
     terms: "https://shophub.com/legal/terms",
     privacy: "https://shophub.com/legal/privacy",
-    unsubscribe: "https://shophub.com/unsubscribe"
+    unsubscribe: "https://shophub.com/unsubscribe",
   },
 
   // Email Configuration
   email: {
     from: {
       name: "ShopHub",
-      address: "noreply@shophub.com"
+      address: "noreply@shophub.com",
     },
     support: {
       name: "ShopHub Support",
-      address: "support@shophub.com"
+      address: "support@shophub.com",
     },
     replyTo: "support@shophub.com",
     footer: {
@@ -51,8 +51,8 @@ export const siteConfig = {
       address: "123 Commerce Street, Suite 100, San Francisco, CA 94105, United States",
       unsubscribe: "If you no longer wish to receive these emails, you can unsubscribe here.",
       privacy: "Privacy Policy",
-      terms: "Terms of Service"
-    }
+      terms: "Terms of Service",
+    },
   },
 
   // Social Media
@@ -60,41 +60,41 @@ export const siteConfig = {
     {
       name: "Facebook",
       url: "https://facebook.com/shophub",
-      icon: "facebook"
+      icon: "facebook",
     },
     {
-      name: "Instagram", 
+      name: "Instagram",
       url: "https://instagram.com/shophub",
-      icon: "instagram"
+      icon: "instagram",
     },
     {
       name: "Twitter",
       url: "https://twitter.com/shophub",
-      icon: "twitter"
+      icon: "twitter",
     },
     {
       name: "LinkedIn",
       url: "https://linkedin.com/company/shophub",
-      icon: "linkedin"
+      icon: "linkedin",
     },
     {
       name: "YouTube",
       url: "https://youtube.com/@shophub",
-      icon: "youtube"
-    }
+      icon: "youtube",
+    },
   ],
 
   // Brand Colors
   colors: {
     primary: "#3b82f6",
-    secondary: "#64748b", 
+    secondary: "#64748b",
     success: "#22c55e",
     warning: "#f59e0b",
     error: "#ef4444",
     info: "#06b6d4",
     background: "#f9fafb",
     text: "#111827",
-    textMuted: "#6b7280"
+    textMuted: "#6b7280",
   },
 
   // Business Info
@@ -102,15 +102,15 @@ export const siteConfig = {
     hours: "Mon-Fri 9AM-6PM EST",
     freeShippingThreshold: 50,
     returnPolicy: "30-day return policy",
-    paymentMethods: ["Visa", "Mastercard", "American Express", "PayPal", "Apple Pay", "Google Pay"]
+    paymentMethods: ["Visa", "Mastercard", "American Express", "PayPal", "Apple Pay", "Google Pay"],
   },
 
   // Legal
   legal: {
     companyName: "ShopHub Inc.",
     taxId: "12-3456789",
-    lastUpdated: "March 2026"
-  }
+    lastUpdated: "March 2026",
+  },
 };
 
 // Legacy exports for backward compatibility
@@ -124,7 +124,7 @@ export const site = {
   legalUpdate: siteConfig.legal.lastUpdated,
   apiTitle: `${siteConfig.name} API`,
   apiVersion: "1.0.0",
-  socialLinks: siteConfig.socialLinks.map(link => link.url),
+  socialLinks: siteConfig.socialLinks.map((link) => link.url),
 };
 
 export type SiteConfig = typeof siteConfig;

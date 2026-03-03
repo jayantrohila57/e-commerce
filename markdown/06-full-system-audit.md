@@ -585,19 +585,12 @@ The form system at `src/shared/components/form/` demonstrates excellent reusabil
 | **Attribute** | ✅ | ❌ | ❌ | ❌ | ❌ **High Risk** |
 | **Product** | ✅ | ✅ | ✅ | ⚠️ | 🟡 **Needs Improvement** |
 | **Product Variant** | ✅ | ✅ | ✅ | ⚠️ | 🟡 **Needs Improvement** |
-| **Inventory** | ✅ | ✅ | ✅ | ⚠️ | 🟡 **Needs Improvement** |
-| **User** | ⚠️ | ❌ | ❌ | ❌ | ❌ **High Risk** |
-| **Account** | ⚠️ | ❌ | ⚠️ | ❌ | ❌ **High Risk** |
-| **Cart** | ✅ | ❌ | ❌ | ❌ | ❌ **High Risk** |
-| **Wishlist** | ✅ | ❌ | ❌ | ❌ | ❌ **High Risk** |
-| **Order** | ⚠️ | ❌ | ❌ | ❌ | ❌ **High Risk** |
-| **Payment** | ⚠️ | ❌ | ❌ | ❌ | ❌ **High Risk** |
-| **Media** | ✅ | ❌ | ⚠️ | ❌ | ❌ **High Risk** |
 
 **Legend:**
-- ✅ Complete/Stable
-- 🟡 Partial/Needs Improvement
-- ❌ Missing/Incomplete
+- Complete/Stable
+- Partial/Needs Improvement
+- Missing/Incomplete
+- Partial/Has Issues
 - ⚠️ Partial/Has Issues
 
 ---
@@ -717,6 +710,53 @@ Order Confirmation
 ❌ NO EMAIL NOTIFICATIONS (Infrastructure exists)
 
 ❌ FLOW STATUS: Critical path broken - Cannot complete purchase
+```
+
+### 12.4 Enterprise Feature Flows (Post-MVP) 🏢
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                      ENTERPRISE FEATURE FLOWS                               │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+Shipment Tracking
+    │
+    ▼
+🟡 shipment table exists (schema defined)
+    │
+    ▼
+❌ shipment_event table (no API)
+❌ carrier integration (no implementation)
+❌ tracking page (no UI)
+
+Discount/Promo Codes
+    │
+    ▼
+🟡 discount table exists (schema defined)
+🟡 order_discount junction exists
+    │
+    ▼
+❌ discount router (no API)
+❌ validation logic (no implementation)
+❌ checkout integration (no UI)
+
+Order Audit Logging
+    │
+    ▼
+❌ order_status_history table
+❌ order_audit_log table
+❌ automatic recording middleware
+❌ admin audit viewer
+
+Product Reviews
+    │
+    ▼
+❌ review table
+❌ review router
+❌ moderation system
+❌ PDP review display
+
+🏢 ENTERPRISE STATUS: All enterprise features require implementation
 ```
 
 ---

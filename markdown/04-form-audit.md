@@ -438,6 +438,19 @@ setToastId(id)
 | Tax configuration | ❌ Missing | High - Legal compliance |
 | Shipping dimensions | ❌ Missing | Medium - Shipping calculations |
 
+### 6.2 Enterprise Form Requirements 🏢
+
+| Feature | Module | Form Components Needed | Status |
+|---------|--------|------------------------|--------|
+| Shipment tracking | Shipment | Carrier selection, tracking number, status | ❌ Not designed |
+| Discount/coupon management | Discount | Code generation, rules, limits, dates | ❌ Not designed |
+| Product reviews | Review | Rating, comment, moderation | ❌ Not designed |
+| Refund processing | Refund | Reason, amount, line-item selection | ❌ Not designed |
+| Tax configuration | Tax | Category, rate, rule, jurisdiction | ❌ Not designed |
+| Product relationships | Product | Cross-sell, upsell, bundle builder | ❌ Not designed |
+| Loyalty program | Loyalty | Tier rules, point values, rewards | ❌ Not designed |
+| Cart abandonment | Analytics | Trigger rules, email templates | ❌ Not designed |
+
 ### 6.2 Form UX Enhancements
 
 | Feature | Status | Benefit |

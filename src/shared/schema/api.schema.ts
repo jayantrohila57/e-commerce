@@ -1,6 +1,6 @@
-import z from 'zod/v3';
-import { STATUS } from '../config/api.config';
-import { paginationMetaSchema } from './pagination.schema';
+import z from "zod/v3";
+import { STATUS } from "../config/api.config";
+import { paginationMetaSchema } from "./pagination.schema";
 
 /**
  * API Response Status Values

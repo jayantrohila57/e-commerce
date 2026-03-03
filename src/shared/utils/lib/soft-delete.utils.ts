@@ -1,5 +1,5 @@
-import { and, isNull, type SQL } from 'drizzle-orm';
-import type { PgColumn } from 'drizzle-orm/pg-core';
+import { and, isNull, type SQL } from "drizzle-orm";
+import type { PgColumn } from "drizzle-orm/pg-core";
 
 /**
  * Soft Delete Utilities
@@ -47,10 +47,7 @@ export function checkIsDeleted<T extends { deletedAt?: Date | null }>(entity: T)
  * Build where clause with soft delete filter
  * Combines user conditions with soft delete check
  */
-export function withSoftDelete(
-  deletedAtColumn: PgColumn,
-  ...conditions: (SQL | undefined)[]
-): SQL | undefined {
+export function withSoftDelete(deletedAtColumn: PgColumn, ...conditions: (SQL | undefined)[]): SQL | undefined {
   const validConditions = conditions.filter((c): c is SQL => c !== undefined);
   if (validConditions.length === 0) {
     return isNull(deletedAtColumn);

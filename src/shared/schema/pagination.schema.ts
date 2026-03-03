@@ -1,4 +1,4 @@
-import z from 'zod/v3';
+import z from "zod/v3";
 
 /**
  * Pagination Input Schema (Page-based)
@@ -11,7 +11,7 @@ export const paginationInput = z.object({
   offset: z.number().min(0).optional(),
   search: z.string().optional(),
   sortBy: z.string().optional(),
-  sortOrder: z.enum(['asc', 'desc']).default('desc'),
+  sortOrder: z.enum(["asc", "desc"]).default("desc"),
 });
 
 export type PaginationInput = z.infer<typeof paginationInput>;

@@ -1,4 +1,4 @@
-import z from 'zod/v3';
+import z from "zod/v3";
 
 /**
  * ID Schema
@@ -17,11 +17,11 @@ export type IdSchema = z.infer<typeof idSchema>;
  */
 export const slugSchema = z
   .string()
-  .min(1, 'Slug is required')
-  .max(100, 'Slug must be less than 100 characters')
+  .min(1, "Slug is required")
+  .max(100, "Slug must be less than 100 characters")
   .regex(
     /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
-    'Slug must contain only lowercase letters, numbers, and hyphens (e.g., "my-slug-123")'
+    'Slug must contain only lowercase letters, numbers, and hyphens (e.g., "my-slug-123")',
   );
 
 export type SlugSchema = z.infer<typeof slugSchema>;
@@ -77,9 +77,7 @@ export type SeoSchema = z.infer<typeof seoSchema>;
  * Color Schema
  * Hex color validation
  */
-export const colorSchema = z
-  .string()
-  .regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, 'Invalid hex color format');
+export const colorSchema = z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, "Invalid hex color format");
 
 export type ColorSchema = z.infer<typeof colorSchema>;
 

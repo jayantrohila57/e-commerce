@@ -3,8 +3,8 @@ import "server-only";
 import { createHydrationHelpers } from "@trpc/react-query/rsc";
 import { headers } from "next/headers";
 import { cache } from "react";
-import { createTRPCContext } from "./api.methods";
 import { createQueryClient } from "../query/client";
+import { createTRPCContext } from "./api.methods";
 import { type AppRouter, createCaller } from "./api.routes";
 
 const createContext = cache(async () => {

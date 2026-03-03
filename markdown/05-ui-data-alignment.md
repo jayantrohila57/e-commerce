@@ -452,3 +452,26 @@ The application has a solid foundation with comprehensive schemas and API contra
 - Sprint 3: Data tables and bulk operations
 
 **Risk Level**: Medium-High - Data integrity issues could cause production problems
+
+---
+
+## Enterprise Modules Alignment 🏢
+
+The following modules are planned for post-MVP enterprise features:
+
+| Module | Schema | Forms | API | DB Tables | Status |
+|--------|--------|-------|-----|-----------|--------|
+| **Shipment** | 🟡 Defined | ❌ Missing | ❌ Missing | 🟡 Partial | ❌ Not Aligned |
+| **Discount** | 🟡 Defined | ❌ Missing | ❌ Missing | 🟡 Partial | ❌ Not Aligned |
+| **Review** | 🟡 Defined | ❌ Missing | ❌ Missing | ❌ Missing | ❌ Not Aligned |
+| **Refund** | ❌ Missing | ❌ Missing | ❌ Missing | ❌ Missing | ❌ Not Aligned |
+| **Tax** | ❌ Missing | ❌ Missing | ❌ Missing | ❌ Missing | ❌ Not Aligned |
+| **Loyalty** | ❌ Missing | ❌ Missing | ❌ Missing | ❌ Missing | ❌ Not Aligned |
+| **Analytics** | ❌ Missing | ❌ Missing | ❌ Missing | ❌ Missing | ❌ Not Aligned |
+| **Audit Log** | ❌ Missing | ❌ Missing | ❌ Missing | ❌ Missing | ❌ Not Aligned |
+
+**Enterprise Feature Patterns:**
+- All enterprise modules require new field types: `rating`, `date-range`, `currency-range`
+- Complex validation rules (e.g., discount constraints, tax jurisdiction matching)
+- Audit trail requirements for all mutations
+- Analytics data collection middleware

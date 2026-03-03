@@ -65,18 +65,29 @@ src/
 │   └── mail/               # Email templates/methods
 ├── module/                 # Feature modules
 │   ├── account/
-│   ├── attribute/
-│   ├── auth/
-│   ├── category/
-│   ├── cookies/
-│   ├── inventory/
-│   ├── legal/
-│   ├── product/
-│   ├── product-variant/
-│   ├── series/
-│   ├── site/
-│   ├── subcategory/
-│   └── user/
+│   ├── attribute/          # ⚠️ NO API - Schema only
+│   ├── auth/               # Authentication UI
+│   ├── cart/               # ⚠️ Schema only - No API
+│   ├── category/           # ✅ Full CRUD + UI
+│   ├── cookies/            # Cookie consent
+│   ├── discount/           # 🏢 Enterprise - Schema defined
+│   ├── inventory/          # ✅ Full CRUD + UI
+│   ├── legal/              # Legal pages
+│   ├── loyalty/            # 🏢 Enterprise - Not implemented
+│   ├── order/              # ❌ Critical - Not implemented
+│   ├── payment/            # ❌ Critical - Not implemented
+│   ├── product/            # ✅ Full CRUD + UI
+│   ├── product-analytics/  # 🏢 Enterprise - Not implemented
+│   ├── product-variant/    # ✅ Full CRUD + UI
+│   ├── refund/             # 🏢 Enterprise - Not implemented
+│   ├── review/             # 🏢 Enterprise - Schema defined
+│   ├── series/             # ✅ Full CRUD
+│   ├── shipment/           # 🏢 Enterprise - Schema defined
+│   ├── site/               # Site-wide components
+│   ├── subcategory/        # ✅ Full CRUD
+│   ├── tax/                # 🏢 Enterprise - Not implemented
+│   └── user/               # ⚠️ NO API - Directory only
+│   └── wishlist/           # ⚠️ Schema only - No APIs
 └── shared/                 # Shared utilities
     ├── components/         # UI components & forms
     ├── config/             # Configuration files
@@ -138,6 +149,51 @@ Each module typically contains:
 - `*.schema.ts` - Zod schemas for validation
 - `*.types.ts` - TypeScript type definitions
 - `*.tsx` - UI components (forms, cards, lists)
+
+### Enterprise Module Architecture 🏢
+
+**Post-MVP modules** extending the platform into enterprise territory:
+
+```
+module/
+├── shipment/              # 🏢 Fulfillment & tracking
+│   ├── shipment.api.ts
+│   ├── shipment.schema.ts
+│   └── shipment-carrier.integration.ts
+├── discount/              # 🏢 Promotions & coupons
+│   ├── discount.api.ts
+│   ├── discount.schema.ts
+│   └── discount-validation.service.ts
+├── review/                # 🏢 Product reviews
+│   ├── review.api.ts
+│   ├── review.schema.ts
+│   └── review-moderation.service.ts
+├── refund/                # 🏢 Refund lifecycle
+│   ├── refund.api.ts
+│   ├── refund.schema.ts
+│   └── refund-processing.service.ts
+├── tax/                   # 🏢 Tax configuration
+│   ├── tax.api.ts
+│   ├── tax.schema.ts
+│   ├── tax-calculation.engine.ts
+│   └── tax-provider.integration.ts
+├── loyalty/               # 🏢 Rewards program
+│   ├── loyalty.api.ts
+│   ├── loyalty.schema.ts
+│   ├── points-calculation.engine.ts
+│   └── tier-management.service.ts
+└── product-analytics/     # 🏢 View tracking & analytics
+    ├── analytics.api.ts
+    ├── analytics.schema.ts
+    ├── event-collector.middleware.ts
+    └── aggregation.service.ts
+```
+
+**Key Architectural Patterns for Enterprise:**
+1. **Event-Driven Updates** — Audit logs, analytics, loyalty points triggered by events
+2. **Service Layer** — Complex business logic (tax calculation, loyalty tiers)
+3. **Integration Abstractions** — Carrier APIs, tax providers, payment gateways
+4. **Data Retention Policies** — Audit archives, analytics aggregation
 
 ---
 

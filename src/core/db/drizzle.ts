@@ -1,5 +1,3 @@
-import "server-only";
-import { serverEnv } from "@/shared/config/env.server";
 import { config } from "dotenv";
 import { defineConfig } from "drizzle-kit";
 
@@ -10,6 +8,6 @@ export default defineConfig({
   out: "./migrations",
   dialect: "postgresql",
   dbCredentials: {
-    url: serverEnv.DATABASE_URL,
+    url: process.env.DATABASE_URL as string,
   },
 });

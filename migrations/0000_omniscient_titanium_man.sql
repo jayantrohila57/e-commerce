@@ -1,8 +1,10 @@
+CREATE TYPE "public"."address_type" AS ENUM('billing', 'shipping');--> statement-breakpoint
 CREATE TYPE "public"."discount_type" AS ENUM('flat', 'percent');--> statement-breakpoint
 CREATE TYPE "public"."display_type" AS ENUM('grid', 'carousel', 'banner', 'list', 'featured');--> statement-breakpoint
 CREATE TYPE "public"."order_status" AS ENUM('pending', 'paid', 'shipped', 'delivered', 'cancelled');--> statement-breakpoint
 CREATE TYPE "public"."payment_provider" AS ENUM('stripe', 'razorpay', 'paypal', 'cod');--> statement-breakpoint
 CREATE TYPE "public"."payment_status" AS ENUM('pending', 'completed', 'failed', 'refunded');--> statement-breakpoint
+CREATE TYPE "public"."product_status" AS ENUM('draft', 'archive', 'live');--> statement-breakpoint
 CREATE TYPE "public"."shipment_status" AS ENUM('pending', 'in_transit', 'delivered');--> statement-breakpoint
 CREATE TYPE "public"."visibility" AS ENUM('public', 'private', 'hidden');--> statement-breakpoint
 CREATE TABLE "account" (
@@ -24,17 +26,15 @@ CREATE TABLE "account" (
 CREATE TABLE "address" (
 	"id" text PRIMARY KEY NOT NULL,
 	"user_id" text NOT NULL,
-	"type" text DEFAULT 'home' NOT NULL,
-	"address_line1" text NOT NULL,
-	"address_line2" text,
-	"landmark" text,
+	"type" "address_type" NOT NULL,
+	"line1" text NOT NULL,
+	"line2" text,
 	"city" text NOT NULL,
 	"state" text NOT NULL,
 	"postal_code" text NOT NULL,
-	"is_default" boolean DEFAULT false,
-	"country" text DEFAULT 'IN',
-	"zone_id" text,
-	"created_at" timestamp with time zone DEFAULT now(),
+	"country" text NOT NULL,
+	"is_default" boolean DEFAULT false NOT NULL,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"updated_at" timestamp with time zone DEFAULT now()
 );
 --> statement-breakpoint
@@ -48,26 +48,23 @@ CREATE TABLE "attribute" (
 	"display_order" integer DEFAULT 0 NOT NULL,
 	"created_at" timestamp DEFAULT now(),
 	"deleted_at" timestamp with time zone,
-	"updated_at" timestamp DEFAULT now()
+	"updated_at" timestamp DEFAULT now(),
+	CONSTRAINT "attribute_slug_unique" UNIQUE("slug")
 );
 --> statement-breakpoint
 CREATE TABLE "cart" (
 	"id" text PRIMARY KEY NOT NULL,
 	"user_id" text,
-	"status" text DEFAULT 'active' NOT NULL,
-	"created_at" timestamp DEFAULT now(),
+	"session_id" text,
 	"updated_at" timestamp DEFAULT now()
 );
 --> statement-breakpoint
-CREATE TABLE "cart_item" (
+CREATE TABLE "cart_line" (
 	"id" text PRIMARY KEY NOT NULL,
-	"cart_id" text,
-	"product_id" text,
-	"variant_id" text,
-	"quantity" integer DEFAULT 1,
-	"price_at_add" numeric(10, 2),
-	"created_at" timestamp DEFAULT now(),
-	"updated_at" timestamp DEFAULT now()
+	"cart_id" text NOT NULL,
+	"variant_id" text NOT NULL,
+	"quantity" integer NOT NULL,
+	"price_snapshot" integer NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "category" (
@@ -90,58 +87,64 @@ CREATE TABLE "category" (
 	CONSTRAINT "category_slug_unique" UNIQUE("slug")
 );
 --> statement-breakpoint
-CREATE TABLE "delivery_zones" (
-	"id" text PRIMARY KEY NOT NULL,
-	"postal_code" text NOT NULL,
-	"city" text NOT NULL,
-	"state" text NOT NULL,
-	"is_serviceable" boolean DEFAULT true,
-	"delivery_days" integer DEFAULT 3,
-	"free_delivery_threshold" numeric(10, 2) DEFAULT '500.00',
-	"delivery_fee" numeric(10, 2) DEFAULT '50.00',
-	"created_at" timestamp with time zone DEFAULT now(),
-	"updated_at" timestamp with time zone DEFAULT now(),
-	CONSTRAINT "delivery_zones_postal_code_unique" UNIQUE("postal_code")
-);
---> statement-breakpoint
-CREATE TABLE "discount" (
-	"id" text PRIMARY KEY NOT NULL,
-	"code" text,
-	"type" "discount_type" NOT NULL,
-	"value" numeric(10, 2),
-	"expires_at" timestamp,
-	"is_active" boolean DEFAULT true,
-	CONSTRAINT "discount_code_unique" UNIQUE("code")
-);
---> statement-breakpoint
-CREATE TABLE "inventory" (
+CREATE TABLE "inventory_item" (
 	"id" text PRIMARY KEY NOT NULL,
 	"variant_id" text NOT NULL,
-	"warehouse_id" text NOT NULL,
+	"sku" text NOT NULL,
+	"barcode" text,
 	"quantity" integer DEFAULT 0 NOT NULL,
+	"incoming" integer DEFAULT 0 NOT NULL,
 	"reserved" integer DEFAULT 0 NOT NULL,
-	"updated_at" timestamp DEFAULT now()
+	"updated_at" timestamp DEFAULT now(),
+	CONSTRAINT "inventory_item_sku_unique" UNIQUE("sku")
+);
+--> statement-breakpoint
+CREATE TABLE "inventory_reservation" (
+	"id" text PRIMARY KEY NOT NULL,
+	"inventory_id" text NOT NULL,
+	"user_id" text,
+	"quantity" integer NOT NULL,
+	"expires_at" timestamp NOT NULL,
+	"created_at" timestamp DEFAULT now()
+);
+--> statement-breakpoint
+CREATE TABLE "media" (
+	"id" text PRIMARY KEY NOT NULL,
+	"url" text NOT NULL,
+	"alt" text,
+	"type" text DEFAULT 'image',
+	"created_at" timestamp DEFAULT now()
 );
 --> statement-breakpoint
 CREATE TABLE "order" (
 	"id" text PRIMARY KEY NOT NULL,
 	"user_id" text,
 	"status" "order_status" DEFAULT 'pending' NOT NULL,
-	"total" numeric(10, 2),
-	"currency" text DEFAULT 'INR',
-	"payment_id" text,
-	"address_id" text,
-	"created_at" timestamp DEFAULT now()
+	"subtotal" integer NOT NULL,
+	"discount_total" integer DEFAULT 0 NOT NULL,
+	"tax_total" integer DEFAULT 0 NOT NULL,
+	"shipping_total" integer DEFAULT 0 NOT NULL,
+	"grand_total" integer NOT NULL,
+	"currency" text DEFAULT 'INR' NOT NULL,
+	"shipping_address" json NOT NULL,
+	"billing_address" json,
+	"notes" text,
+	"placed_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now()
 );
 --> statement-breakpoint
 CREATE TABLE "order_item" (
 	"id" text PRIMARY KEY NOT NULL,
-	"order_id" text,
-	"product_id" text,
-	"variant_id" text,
+	"order_id" text NOT NULL,
+	"variant_id" text NOT NULL,
+	"product_title" text NOT NULL,
+	"variant_title" text NOT NULL,
 	"quantity" integer NOT NULL,
-	"price" numeric(10, 2),
-	"created_at" timestamp DEFAULT now()
+	"unit_price" integer NOT NULL,
+	"total_price" integer NOT NULL,
+	"attributes" json,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "passkey" (
@@ -160,12 +163,15 @@ CREATE TABLE "passkey" (
 --> statement-breakpoint
 CREATE TABLE "payment" (
 	"id" text PRIMARY KEY NOT NULL,
-	"order_id" text,
+	"order_id" text NOT NULL,
 	"provider" "payment_provider" NOT NULL,
 	"status" "payment_status" DEFAULT 'pending' NOT NULL,
-	"amount" numeric(10, 2),
-	"transaction_id" text,
-	"created_at" timestamp DEFAULT now()
+	"amount" integer NOT NULL,
+	"currency" text DEFAULT 'INR' NOT NULL,
+	"provider_payment_id" text,
+	"provider_metadata" json,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now()
 );
 --> statement-breakpoint
 CREATE TABLE "product" (
@@ -175,33 +181,34 @@ CREATE TABLE "product" (
 	"meta_title" text,
 	"meta_description" text,
 	"slug" text NOT NULL,
+	"category_slug" text NOT NULL,
+	"subcategory_slug" text NOT NULL,
 	"series_slug" text NOT NULL,
+	"base_price" integer NOT NULL,
+	"base_currency" text DEFAULT 'INR',
 	"base_image" text,
+	"features" json,
 	"is_active" boolean DEFAULT true,
+	"status" "product_status" DEFAULT 'draft' NOT NULL,
 	"deleted_at" timestamp with time zone,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"updated_at" timestamp with time zone DEFAULT now(),
 	CONSTRAINT "product_slug_unique" UNIQUE("slug")
 );
 --> statement-breakpoint
-CREATE TABLE "product_image" (
-	"id" text PRIMARY KEY NOT NULL,
-	"product_id" text,
-	"url" text NOT NULL,
-	"alt" text,
-	"position" integer DEFAULT 0
-);
---> statement-breakpoint
 CREATE TABLE "product_variant" (
 	"id" text PRIMARY KEY NOT NULL,
+	"slug" text NOT NULL,
 	"product_id" text NOT NULL,
-	"sku" text NOT NULL,
-	"stock" integer DEFAULT 0,
-	"price" numeric(10, 2),
-	"is_default" boolean DEFAULT false,
-	"images" text,
-	"created_at" timestamp DEFAULT now(),
-	CONSTRAINT "product_variant_sku_unique" UNIQUE("sku")
+	"title" text NOT NULL,
+	"price_modifier_type" text NOT NULL,
+	"price_modifier_value" numeric(10, 2) NOT NULL,
+	"attributes" json,
+	"media" json,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"deleted_at" timestamp with time zone,
+	"updated_at" timestamp with time zone DEFAULT now(),
+	CONSTRAINT "product_variant_slug_unique" UNIQUE("slug")
 );
 --> statement-breakpoint
 CREATE TABLE "rate_limit" (
@@ -209,15 +216,6 @@ CREATE TABLE "rate_limit" (
 	"key" text,
 	"count" integer,
 	"last_request" bigint
-);
---> statement-breakpoint
-CREATE TABLE "review" (
-	"id" text PRIMARY KEY NOT NULL,
-	"user_id" text,
-	"product_id" text,
-	"rating" integer NOT NULL,
-	"comment" text,
-	"created_at" timestamp DEFAULT now()
 );
 --> statement-breakpoint
 CREATE TABLE "series" (
@@ -252,16 +250,6 @@ CREATE TABLE "session" (
 	"user_id" text NOT NULL,
 	"impersonated_by" text,
 	CONSTRAINT "session_token_unique" UNIQUE("token")
-);
---> statement-breakpoint
-CREATE TABLE "shipment" (
-	"id" text PRIMARY KEY NOT NULL,
-	"order_id" text,
-	"carrier" text,
-	"tracking_number" text,
-	"status" "shipment_status" DEFAULT 'pending' NOT NULL,
-	"estimated_delivery" timestamp,
-	"created_at" timestamp DEFAULT now()
 );
 --> statement-breakpoint
 CREATE TABLE "subcategory" (
@@ -317,50 +305,51 @@ CREATE TABLE "verification" (
 	"updated_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "warehouse" (
-	"id" text PRIMARY KEY NOT NULL,
-	"name" text NOT NULL,
-	"location" text,
-	"created_at" timestamp DEFAULT now()
-);
---> statement-breakpoint
 CREATE TABLE "wishlist" (
 	"id" text PRIMARY KEY NOT NULL,
-	"user_id" text,
-	"created_at" timestamp DEFAULT now()
-);
---> statement-breakpoint
-CREATE TABLE "wishlist_item" (
-	"id" text PRIMARY KEY NOT NULL,
-	"wishlist_id" text,
-	"product_id" text,
-	"variant_id" text,
-	"created_at" timestamp DEFAULT now()
+	"user_id" text NOT NULL,
+	"variant_id" text NOT NULL
 );
 --> statement-breakpoint
 ALTER TABLE "account" ADD CONSTRAINT "account_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "address" ADD CONSTRAINT "address_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "address" ADD CONSTRAINT "address_zone_id_delivery_zones_id_fk" FOREIGN KEY ("zone_id") REFERENCES "public"."delivery_zones"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "attribute" ADD CONSTRAINT "attribute_series_slug_series_slug_fk" FOREIGN KEY ("series_slug") REFERENCES "public"."series"("slug") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "cart" ADD CONSTRAINT "cart_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "cart_item" ADD CONSTRAINT "cart_item_cart_id_cart_id_fk" FOREIGN KEY ("cart_id") REFERENCES "public"."cart"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "cart_item" ADD CONSTRAINT "cart_item_product_id_product_id_fk" FOREIGN KEY ("product_id") REFERENCES "public"."product"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "cart_item" ADD CONSTRAINT "cart_item_variant_id_product_variant_id_fk" FOREIGN KEY ("variant_id") REFERENCES "public"."product_variant"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "inventory" ADD CONSTRAINT "inventory_variant_id_product_variant_id_fk" FOREIGN KEY ("variant_id") REFERENCES "public"."product_variant"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "inventory" ADD CONSTRAINT "inventory_warehouse_id_warehouse_id_fk" FOREIGN KEY ("warehouse_id") REFERENCES "public"."warehouse"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "cart_line" ADD CONSTRAINT "cart_line_cart_id_cart_id_fk" FOREIGN KEY ("cart_id") REFERENCES "public"."cart"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "cart_line" ADD CONSTRAINT "cart_line_variant_id_product_variant_id_fk" FOREIGN KEY ("variant_id") REFERENCES "public"."product_variant"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "inventory_item" ADD CONSTRAINT "inventory_item_variant_id_product_variant_id_fk" FOREIGN KEY ("variant_id") REFERENCES "public"."product_variant"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "inventory_reservation" ADD CONSTRAINT "inventory_reservation_inventory_id_inventory_item_id_fk" FOREIGN KEY ("inventory_id") REFERENCES "public"."inventory_item"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "order" ADD CONSTRAINT "order_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "order_item" ADD CONSTRAINT "order_item_order_id_order_id_fk" FOREIGN KEY ("order_id") REFERENCES "public"."order"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "order_item" ADD CONSTRAINT "order_item_variant_id_product_variant_id_fk" FOREIGN KEY ("variant_id") REFERENCES "public"."product_variant"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "passkey" ADD CONSTRAINT "passkey_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "payment" ADD CONSTRAINT "payment_order_id_order_id_fk" FOREIGN KEY ("order_id") REFERENCES "public"."order"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "payment" ADD CONSTRAINT "payment_order_id_order_id_fk" FOREIGN KEY ("order_id") REFERENCES "public"."order"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "product" ADD CONSTRAINT "product_category_slug_category_slug_fk" FOREIGN KEY ("category_slug") REFERENCES "public"."category"("slug") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "product" ADD CONSTRAINT "product_subcategory_slug_subcategory_slug_fk" FOREIGN KEY ("subcategory_slug") REFERENCES "public"."subcategory"("slug") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "product" ADD CONSTRAINT "product_series_slug_series_slug_fk" FOREIGN KEY ("series_slug") REFERENCES "public"."series"("slug") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "product_image" ADD CONSTRAINT "product_image_product_id_product_id_fk" FOREIGN KEY ("product_id") REFERENCES "public"."product"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "product_variant" ADD CONSTRAINT "product_variant_product_id_product_id_fk" FOREIGN KEY ("product_id") REFERENCES "public"."product"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "review" ADD CONSTRAINT "review_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "review" ADD CONSTRAINT "review_product_id_product_id_fk" FOREIGN KEY ("product_id") REFERENCES "public"."product"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "series" ADD CONSTRAINT "series_subcategory_slug_subcategory_slug_fk" FOREIGN KEY ("subcategory_slug") REFERENCES "public"."subcategory"("slug") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "session" ADD CONSTRAINT "session_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "shipment" ADD CONSTRAINT "shipment_order_id_order_id_fk" FOREIGN KEY ("order_id") REFERENCES "public"."order"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "subcategory" ADD CONSTRAINT "subcategory_category_slug_category_slug_fk" FOREIGN KEY ("category_slug") REFERENCES "public"."category"("slug") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "two_factor" ADD CONSTRAINT "two_factor_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "wishlist" ADD CONSTRAINT "wishlist_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "wishlist_item" ADD CONSTRAINT "wishlist_item_wishlist_id_wishlist_id_fk" FOREIGN KEY ("wishlist_id") REFERENCES "public"."wishlist"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "wishlist_item" ADD CONSTRAINT "wishlist_item_product_id_product_id_fk" FOREIGN KEY ("product_id") REFERENCES "public"."product"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "wishlist_item" ADD CONSTRAINT "wishlist_item_variant_id_product_variant_id_fk" FOREIGN KEY ("variant_id") REFERENCES "public"."product_variant"("id") ON DELETE no action ON UPDATE no action;
+ALTER TABLE "wishlist" ADD CONSTRAINT "wishlist_variant_id_product_variant_id_fk" FOREIGN KEY ("variant_id") REFERENCES "public"."product_variant"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+CREATE INDEX "category_visibility_idx" ON "category" USING btree ("visibility");--> statement-breakpoint
+CREATE INDEX "category_is_featured_idx" ON "category" USING btree ("is_featured");--> statement-breakpoint
+CREATE INDEX "category_display_order_idx" ON "category" USING btree ("display_order");--> statement-breakpoint
+CREATE INDEX "order_user_idx" ON "order" USING btree ("user_id");--> statement-breakpoint
+CREATE INDEX "order_status_idx" ON "order" USING btree ("status");--> statement-breakpoint
+CREATE INDEX "order_placed_at_idx" ON "order" USING btree ("placed_at");--> statement-breakpoint
+CREATE INDEX "order_item_order_idx" ON "order_item" USING btree ("order_id");--> statement-breakpoint
+CREATE INDEX "payment_order_id_idx" ON "payment" USING btree ("order_id");--> statement-breakpoint
+CREATE INDEX "product_category_slug_idx" ON "product" USING btree ("category_slug");--> statement-breakpoint
+CREATE INDEX "product_subcategory_slug_idx" ON "product" USING btree ("subcategory_slug");--> statement-breakpoint
+CREATE INDEX "product_series_slug_idx" ON "product" USING btree ("series_slug");--> statement-breakpoint
+CREATE INDEX "product_status_idx" ON "product" USING btree ("status");--> statement-breakpoint
+CREATE INDEX "product_is_active_idx" ON "product" USING btree ("is_active");--> statement-breakpoint
+CREATE INDEX "product_variant_product_id_idx" ON "product_variant" USING btree ("product_id");--> statement-breakpoint
+CREATE INDEX "series_subcategory_slug_idx" ON "series" USING btree ("subcategory_slug");--> statement-breakpoint
+CREATE INDEX "series_visibility_idx" ON "series" USING btree ("visibility");--> statement-breakpoint
+CREATE INDEX "series_is_featured_idx" ON "series" USING btree ("is_featured");--> statement-breakpoint
+CREATE INDEX "subcategory_category_slug_idx" ON "subcategory" USING btree ("category_slug");--> statement-breakpoint
+CREATE INDEX "subcategory_visibility_idx" ON "subcategory" USING btree ("visibility");--> statement-breakpoint
+CREATE INDEX "subcategory_is_featured_idx" ON "subcategory" USING btree ("is_featured");

@@ -183,8 +183,8 @@
 |--------|------|
 | ✅ | DB schema: `cart` + `cart_line` tables with relations |
 | ✅ | API message constants defined (CREATE, GET, ADD_ITEM, UPDATE_ITEM, REMOVE_ITEM, CLEAR_CART) |
-| ❌ | No tRPC cart router |
-| ❌ | No add-to-cart UI flow |
+| ✅ | tRPC cart router with `get`, `getUserCart`, `add`, `update`, `remove`, `clear`, `getTotals`, `merge` |
+| ❌ | Add-to-cart UI flow not wired to cart API |
 | 🟡 | Account cart page exists but content area is empty |
 | 🟡 | Cart button component exists in shared (`cart-button.tsx`) |
 
@@ -193,8 +193,8 @@
 |--------|------|
 | ✅ | DB schema: `wishlist` table with user/variant relations |
 | ✅ | API message constants defined |
-| ❌ | No tRPC wishlist router |
-| ❌ | No wishlist logic |
+| ✅ | tRPC wishlist router with `get`, `add`, `remove` using Zod contracts |
+| ❌ | No wishlist UI logic wired to router |
 | 🟡 | Account wishlist page exists but content is empty |
 | 🟡 | Wishlist button component exists in shared (`wishlist-button.tsx`) |
 
@@ -209,10 +209,10 @@
 | Status | Task |
 |--------|------|
 | ✅ | DB enums: `order_status` (pending/paid/shipped/delivered/cancelled) |
+| ✅ | `order` and `order_item` tables with full relations |
 | ✅ | API message constants defined (CREATE, GET, GET_USER_ORDERS, CANCEL_ORDER) |
 | ✅ | Routes defined (`PATH.STUDIO.ORDERS`) |
-| ❌ | No `order` DB table (enum exists, table missing) |
-| ❌ | No tRPC order router |
+| ✅ | tRPC order router with `get`, `getMany`, `create` (from cart), and `updateStatus` |
 | ❌ | No Studio order management pages |
 | 🟡 | Account order page exists but content is empty |
 
@@ -220,29 +220,29 @@
 | Status | Task |
 |--------|------|
 | ✅ | DB enums: `payment_status`, `payment_provider` (stripe/razorpay/paypal/cod) |
+| ✅ | `payment` table with order relation and metadata |
 | ✅ | Routes defined (`PATH.STUDIO.PAYMENTS`) |
-| ❌ | No payment DB table |
-| ❌ | No payment gateway integration (Stripe/Razorpay/PayPal) |
-| ❌ | No tRPC payment router |
+| ✅ | tRPC payment router with `createIntent`, `confirm`, `getStatus` |
+| ❌ | No payment gateway integration (Stripe/Razorpay/PayPal) wired to payment router |
 | 🟡 | Account payment page exists but content is empty |
 
 ### 3.6 Shipping & Fulfillment
 | Status | Task |
 |--------|------|
 | ✅ | DB enum: `shipment_status` (pending/in_transit/delivered) |
+| ✅ | `shipment` table with order relation |
 | ✅ | API message constants defined (CREATE, UPDATE_TRACKING) |
 | ✅ | Routes defined (`PATH.STUDIO.SHIPPING`) |
-| ❌ | No shipment DB table |
-| ❌ | No tRPC shipment router |
+| ✅ | tRPC shipment router with `create`, `updateStatus`, `getByOrder` |
 | ❌ | No shipping rate calculation or carrier integration |
 | 🟡 | Account shipment page exists but content is empty |
 
 ### 3.7 Address Management
 | Status | Task |
 |--------|------|
+| ✅ | `address` DB table with user relation and type enum |
 | ✅ | API message constants defined (CRUD + GET_USER_ADDRESSES) |
-| ❌ | No `address` DB table |
-| ❌ | No tRPC address router |
+| ✅ | tRPC address router with `getMany`, `create`, `update`, `delete`, `setDefault` |
 | 🟡 | Account address page exists but content is empty |
 
 ### 3.8 Discounts & Coupons
@@ -647,14 +647,14 @@
 |-------|-----------|---------|----------|------------|
 | 1 — Foundation | 29 | 0 | 0 | **100%** |
 | 2 — Catalog & Admin | 32 | 3 | 5 | **~80%** |
-| 3 — Commerce Engine | 15 | 9 | 18 | **~36%** |
+| 3 — Commerce Engine | 21 | 9 | 12 | **~55%** |
 | 4 — Customer Experience | 21 | 8 | 8 | **~57%** |
 | 5 — UI & Design System | 27 | 2 | 0 | **~93%** |
 | 6 — Marketing & Analytics | 3 | 0 | 5 | **~20%** |
 | 7 — Testing & Deployment | 10 | 2 | 9 | **~43%** |
 | **8 — Enterprise Features** 🏢 | **0** | **2** | **14** | **~12%** |
 
-### **Overall Project Completion: ~55%**
+### **Overall Project Completion: ~65%**
 
 > **Platform Evolution:** This single-merchant commerce platform is transitioning from basic commerce engine to enterprise-ready system with auditability, analytics, and retention features.
 

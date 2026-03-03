@@ -100,7 +100,7 @@ src/
 
 ## 2. Module Relationships
 
-### 2.1 Registered tRPC Routers (6 of 12 potential)
+### 2.1 Registered tRPC Routers (Core + Commerce)
 
 ```mermaid
 graph TD
@@ -110,6 +110,13 @@ graph TD
     A --> E[productRouter]
     A --> F[productVariantRouter]
     A --> G[inventoryRouter]
+    A --> H[attributeRouter]
+    A --> I[cartRouter]
+    A --> J[wishlistRouter]
+    A --> K[orderRouter]
+    A --> L[paymentRouter]
+    A --> M[addressRouter]
+    A --> N[shipmentRouter]
     
     B --> B1[GET/GET_MANY/CREATE/UPDATE/DELETE]
     C --> C1[GET_MANY/GET_BY_SLUG/CREATE/UPDATE/DELETE]
@@ -117,18 +124,21 @@ graph TD
     E --> E1[GET/GET_MANY/GET_BY_SLUG/CREATE/UPDATE/DELETE/SEARCH]
     F --> F1[GET/GET_MANY/CREATE/UPDATE/DELETE]
     G --> G1[GET/GET_MANY/CREATE/UPDATE/DELETE/UPDATE_STOCK]
+    H --> H1[GET_MANY/CREATE/UPDATE/DELETE]
+    I --> I1[GET/GET_USER_CART/ADD/UPDATE/REMOVE/CLEAR/GET_TOTALS/MERGE]
+    J --> J1[GET/ADD/REMOVE]
+    K --> K1[GET/GET_MANY/CREATE/UPDATE_STATUS]
+    L --> L1[CREATE_INTENT/CONFIRM/GET_STATUS]
+    M --> M1[GET_MANY/CREATE/UPDATE/DELETE/SET_DEFAULT]
+    N --> N1[CREATE/UPDATE_STATUS/GET_BY_ORDER]
 ```
 
 ### 2.2 Missing API Routers (Critical Gap)
 
 | Module | Schema | API Router | Status |
 |--------|--------|------------|--------|
-| attribute | ✅ Full | ❌ Missing | **CRITICAL** |
 | user | ❌ None | ❌ Missing | **CRITICAL** |
 | account | ❌ None | ❌ Missing | **CRITICAL** |
-| cart | ✅ DB Only | ❌ Missing | **HIGH** |
-| wishlist | ✅ DB Only | ❌ Missing | **HIGH** |
-| order/payment | ✅ Enums Only | ❌ Missing | **HIGH** |
 | media | ✅ DB Only | ❌ Missing | **MEDIUM** |
 
 ---
@@ -490,11 +500,11 @@ The form system at `src/shared/components/form/` demonstrates excellent reusabil
 
 | ID | Issue | Location | Impact | Fix Effort |
 |----|-------|----------|--------|------------|
-| CR-001 | **Missing Order/Payment/Cart APIs** | API Router | Cannot process transactions | High |
+| CR-001 | **Checkout UI & Payment Gateway Integration Missing** | Commerce UI + payment layer | Users cannot complete purchases yet | High |
 | CR-002 | **No Resource Ownership Checks** | All protected procedures | Data exposure risk | High |
 | CR-003 | **Category Update Slug Logic Bug** | `category.api.ts:232` | Prevents valid updates | Low |
 | CR-004 | **Price Modifier Type Mismatch** | Schema/DB/API | Data corruption risk | Medium |
-| CR-005 | **No Attribute API Router** | API Routes | Cannot manage attributes | Medium |
+| CR-005 | **Attribute/Admin UIs Missing** | Studio UI | Attributes managed only via API | Medium |
 
 ### 🟠 High Risk (Address Within 2 Weeks)
 
@@ -582,7 +592,7 @@ The form system at `src/shared/components/form/` demonstrates excellent reusabil
 | **Category** | ✅ | ✅ | ✅ | ✅ | ✅ **Stable** |
 | **Subcategory** | ✅ | ✅ | ✅ | ⚠️ | 🟡 **Needs Improvement** |
 | **Series** | ✅ | ✅ | ⚠️ | ❌ | 🟡 **Needs Improvement** |
-| **Attribute** | ✅ | ❌ | ❌ | ❌ | ❌ **High Risk** |
+| **Attribute** | ✅ | ✅ | ❌ | ✅ | 🟡 **API complete, UI missing** |
 | **Product** | ✅ | ✅ | ✅ | ⚠️ | 🟡 **Needs Improvement** |
 | **Product Variant** | ✅ | ✅ | ✅ | ⚠️ | 🟡 **Needs Improvement** |
 
@@ -689,27 +699,27 @@ Browse Products
 Add to Cart
     │
     ▼
-❌ NO CART API (Database table exists, no endpoints)
+✅ Cart API (add/update/remove/clear with inventory reservation)
     │
     ▼
 Checkout
     │
     ▼
-❌ NO ORDER API (Enums defined, no tables or endpoints)
+✅ Order API (creates order from cart in a transaction and deducts inventory)
     │
     ▼
 Payment
     │
     ▼
-❌ NO PAYMENT API (Enums defined, no tables or endpoints)
+✅ Payment API (create intent / confirm / status — gateway integration pending)
     │
     ▼
 Order Confirmation
     │
     ▼
-❌ NO EMAIL NOTIFICATIONS (Infrastructure exists)
+🟡 Email notifications (templates exist, not yet wired to order/payment events)
 
-❌ FLOW STATUS: Critical path broken - Cannot complete purchase
+🟡 FLOW STATUS: Core commerce APIs exist; checkout UI, payment gateway integration, and emails still missing
 ```
 
 ### 12.4 Enterprise Feature Flows (Post-MVP) 🏢

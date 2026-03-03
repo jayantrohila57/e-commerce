@@ -65,29 +65,29 @@ src/
 │   └── mail/               # Email templates/methods
 ├── module/                 # Feature modules
 │   ├── account/
-│   ├── attribute/          # ⚠️ NO API - Schema only
+│   ├── attribute/          # ✅ Schema + API for attributes
 │   ├── auth/               # Authentication UI
-│   ├── cart/               # ⚠️ Schema only - No API
+│   ├── cart/               # ✅ Schema + API for carts
 │   ├── category/           # ✅ Full CRUD + UI
 │   ├── cookies/            # Cookie consent
 │   ├── discount/           # 🏢 Enterprise - Schema defined
 │   ├── inventory/          # ✅ Full CRUD + UI
 │   ├── legal/              # Legal pages
 │   ├── loyalty/            # 🏢 Enterprise - Not implemented
-│   ├── order/              # ❌ Critical - Not implemented
-│   ├── payment/            # ❌ Critical - Not implemented
+│   ├── order/              # ✅ Core order API (no admin UI yet)
+│   ├── payment/            # ✅ Payment API (gateway/webhooks pending)
 │   ├── product/            # ✅ Full CRUD + UI
 │   ├── product-analytics/  # 🏢 Enterprise - Not implemented
 │   ├── product-variant/    # ✅ Full CRUD + UI
 │   ├── refund/             # 🏢 Enterprise - Not implemented
 │   ├── review/             # 🏢 Enterprise - Schema defined
 │   ├── series/             # ✅ Full CRUD
-│   ├── shipment/           # 🏢 Enterprise - Schema defined
+│   ├── shipment/           # ✅ Schema + API (enterprise extensions pending)
 │   ├── site/               # Site-wide components
 │   ├── subcategory/        # ✅ Full CRUD
 │   ├── tax/                # 🏢 Enterprise - Not implemented
-│   └── user/               # ⚠️ NO API - Directory only
-│   └── wishlist/           # ⚠️ Schema only - No APIs
+│   ├── user/               # ⚠️ NO API - Directory only
+│   └── wishlist/           # ✅ Schema + API for wishlists
 └── shared/                 # Shared utilities
     ├── components/         # UI components & forms
     ├── config/             # Configuration files

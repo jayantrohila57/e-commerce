@@ -99,15 +99,15 @@
 
 | Status | Table | Evidence | Impact |
 |--------|-------|----------|--------|
-| ❌ | `order` | `orderStatusEnum` + `MESSAGE.ORDER` defined | **Blocks entire checkout flow** |
-| ❌ | `order_item` | Implied by `ORDER.GET_ORDER_WITH_ITEMS` | **Blocks order line items** |
-| ❌ | `payment` | `paymentStatusEnum` + `paymentProviderEnum` + `MESSAGE.SHIPMENT` | **Blocks payment processing** |
-| 🟡 | `shipment` | `shipmentStatusEnum` + `MESSAGE.SHIPMENT` | **Blocks fulfillment** - Schema defined, no API |
-| ❌ | `shipment_event` | New enterprise model | **Fulfillment audit trail** |
-| ❌ | `address` | `MESSAGE.ADDRESS` with full CRUD messages | **Blocks checkout shipping** |
-| 🟡 | `discount` / `coupon` | `discountTypeEnum` + `MESSAGE.DISCOUNT` | Schema defined, no API |
-| 🟡 | `order_discount` | Junction table for discounts | Schema defined, no API |
-| ❌ | `review` | `MESSAGE.REVIEW` with full CRUD + user/product filters | Schema defined, no API |
+| ✅ | `order` | `order` table + `orderStatusEnum` defined in `db.schema.ts` | Core order storage for checkout and history |
+| ✅ | `order_item` | Implemented with `orderId`/`variantId` relations | Order line items for fulfillment and analytics |
+| ✅ | `payment` | `payment` table + `paymentStatusEnum` + `paymentProviderEnum` | Records payment attempts and status |
+| ✅ | `shipment` | `shipment` table + `shipmentStatusEnum` | Basis for fulfillment tracking |
+| ❌ | `shipment_event` | Planned enterprise model only | Fulfillment audit trail (Post-MVP) |
+| ✅ | `address` | `address` table implemented with user relation | Checkout shipping/billing & account address book |
+| 🟡 | `discount` / `coupon` | `discount` table and enums exist | API/router still missing |
+| 🟡 | `order_discount` | Junction table implemented | API/router still missing |
+| 🟡 | `review` | `review` table implemented | API/router still missing |
 
 ### 2.3 Enterprise Tables (Post-MVP) 🏢
 
@@ -149,7 +149,7 @@
 | ✅ Product | `product.schema.ts` | ✅ Full (8 endpoints) | ✅ All procedures | ❌ |
 | ✅ ProductVariant | `product-variant.schema.ts` | ✅ Full (6 endpoints) | ✅ All procedures | ❌ |
 | ✅ Inventory | `inventory.schema.ts` | ✅ Full (8 endpoints) | ✅ All procedures | ❌ |
-| 🟡 Attribute | `attribute.schema.ts` | ✅ Full (7 endpoints) | ❌ **No router exists** | ✅ |
+| ✅ Attribute | `attribute.schema.ts` | ✅ Full (7 endpoints) | ✅ attribute router uses contract | ✅ |
 
 ### 3.2 Structural Issues
 
@@ -191,6 +191,13 @@
 | ✅ product | ✅ prot | ✅ prot | ✅ pub | ✅ prot | ✅ prot | ✅ prot (soft) | ✅ pub | `getProductsBySeriesSlug` (pub), `getPDPProductByVariant` (pub), `getProductWithVariants` (pub) |
 | ✅ productVariant | ✅ prot | ✅ prot | ✅ prot | ✅ prot | ✅ prot | ✅ prot (soft) | — | Atomic create with inventory (transaction) |
 | ✅ inventory | ✅ pub | ✅ pub | — | ✅ prot | ✅ prot | ✅ prot (**hard**) | ✅ pub | `getByVariantId`, `getBySku`, `updateStock` |
+| ✅ attribute | — | ✅ pub (filterable) | — | ✅ prot | ✅ prot | ✅ prot | ✅ pub (search) | Series-scoped attributes |
+| ✅ cart | ✅ pub (`get`) | ✅ prot (`getUserCart`) | — | ✅ pub (`add`) | ✅ pub (`update`) | ✅ pub (`remove`, `clear`) | — | `getTotals`, `merge` guest cart, inventory reservation |
+| ✅ wishlist | ✅ prot (`get`) | — | — | ✅ prot (`add`) | — | ✅ prot (`remove`) | — | Variant + product join in response |
+| ✅ order | ✅ prot (`get`) | ✅ prot (`getMany`) | — | ✅ prot (from cart, transactional) | ✅ prot (`updateStatus`) | — | — | Inventory deduction on placement |
+| ✅ payment | — | — | — | ✅ pub (`createIntent`) | ✅ pub (`confirm`) | — | — | `getStatus` per order; gateway integration TODO |
+| ✅ address | — | ✅ prot (`getMany`) | — | ✅ prot (`create`) | ✅ prot (`update`) | ✅ prot (`delete`) | — | `setDefault` with ownership checks |
+| ✅ shipment | — | — | — | ✅ prot (`create`) | ✅ prot (`updateStatus`) | — | — | `getByOrder` public lookup |
 
 ### 4.2 Auth Guard Issues
 
@@ -329,34 +336,34 @@ This table maps every module found in `MESSAGE` constants and `PATH` routes agai
 | Product | ✅ | ✅ | ✅ | ✅ | ✅ | **✅ Complete** |
 | ProductVariant | ✅ | ✅ | ✅ | ✅ | ✅ | **✅ Complete** |
 | Inventory | ✅ | ✅ | ✅ | ❌ inline | ✅ | **🟡 No message constants** |
-| Attribute | ✅ | ✅ | ❌ | ❌ | ❌ | **🟡 Schema only** |
+| Attribute | ✅ | ✅ | ✅ | ❌ | ❌ | **🟡 API exists, messages/routes pending** |
 | User | ✅ | ❌ | ❌ | ✅ | ✅ | **🟡 Auth-managed only** |
-| Cart | ✅ | ❌ | ❌ | ✅ | ✅ | **❌ Not implemented** |
-| Wishlist | ✅ | ❌ | ❌ | ✅ | ✅ | **❌ Not implemented** |
-| Order | ❌ enum only | ❌ | ❌ | ✅ | ✅ | **❌ Not implemented** |
-| Address | ❌ | ❌ | ❌ | ✅ | ✅ | **❌ Not implemented** |
-| Shipment | ❌ enum only | ❌ | ❌ | ✅ | ✅ | **❌ Not implemented** |
-| Payment | ❌ enum only | ❌ | ❌ | ❌ | ✅ | **❌ Not implemented** |
-| Discount | ❌ enum only | ❌ | ❌ | ✅ | ✅ | **❌ Not implemented** |
-| Review | ❌ | ❌ | ❌ | ✅ | ✅ | **❌ Not implemented** |
+| Cart | ✅ | ✅ | ✅ | ✅ | ✅ | **🟡 API complete, UI pending** |
+| Wishlist | ✅ | ✅ | ✅ | ✅ | ✅ | **🟡 API complete, UI pending** |
+| Order | ✅ | ✅ | ✅ | ✅ | ✅ | **🟡 Core API complete, admin UI pending** |
+| Address | ✅ | ✅ | ✅ | ✅ | ✅ | **🟡 API complete, UI pending** |
+| Shipment | ✅ | ✅ | ✅ | ✅ | ✅ | **🟡 API complete, carrier integration pending** |
+| Payment | ✅ | ✅ | ✅ | ❌ | ✅ | **🟡 API complete, gateway/webhooks pending** |
+| Discount | ✅ | ❌ | ❌ | ✅ | ✅ | **❌ Not implemented (API/UI)** |
+| Review | ✅ | ❌ | ❌ | ✅ | ✅ | **❌ Not implemented (API/UI)** |
 
 ---
 
 ## API Maturity Summary
 
-### Maturity Level: **Early-Middle Development (~45% API-complete)**
+### Maturity Level: **Middle Development (~65% API-complete)**
 
 > [!IMPORTANT]
-> The catalog/admin API is production-quality in structure. The commerce API (everything a customer needs to buy something) does not exist yet.
+> The catalog/admin APIs are production-quality in structure, and the core commerce APIs (cart, order, payment, address, wishlist, shipment, attribute) now exist with Zod contracts and Drizzle-backed implementations. The remaining gaps are checkout UI, payment gateway/webhook integration, and admin/customer experiences on top of these routers.
 
 ### Completion Breakdown
 
 | Layer | Score | Notes |
 |-------|-------|-------|
 | Infrastructure | **90%** | tRPC, auth, DB, response wrapper all solid |
-| Data Model | **55%** | 18/25 tables exist; missing order/payment/shipment/address/discount/review |
-| Validation | **60%** | 7 Zod contracts; structural duplication; 1 unused; 6 missing |
-| Business Logic | **40%** | 6/13+ routers implemented; no commerce flows |
+| Data Model | **80%** | Core commerce and enterprise tables implemented; some enterprise-only tables still planned |
+| Validation | **75%** | Commerce contracts added; some duplication and a few modules still schema-less |
+| Business Logic | **60%** | Catalog + inventory + core commerce routers implemented; checkout/payment flows still incomplete |
 | Security | **45%** | Auth excellent; RBAC not enforced; tRPC unprotected; blob upload open |
 | Performance | **35%** | Missing indexes, no pagination counts, N+1 queries |
 | Testing | **0%** | Nothing exists |

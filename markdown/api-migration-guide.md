@@ -422,8 +422,8 @@ All changes are **additive**:
 ## Next Steps
 
 1. **Phase 1**: Update existing modules incrementally (product, category, etc.)
-2. **Phase 2**: Create missing commerce tables (order, payment, address)
-3. **Phase 3**: Implement commerce APIs using shared patterns
+2. **Phase 2**: Create missing commerce tables (order, payment, address) **(completed in `db.schema.ts`)**
+3. **Phase 3**: Implement commerce APIs using shared patterns **(core routers for cart, order, payment, address, wishlist, shipment, attribute now implemented)**
 
 ---
 

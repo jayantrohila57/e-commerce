@@ -82,7 +82,9 @@
 | ✅ | Resend client integration (`resend.client.ts`) |
 | ✅ | React Email templates: welcome, verification, password reset, delete account |
 | ✅ | `mail.methods.tsx` with send functions for all email types |
-| 🟡 | Email templates use placeholder branding ("Logo", "example.com") |
+| ✅ | Professional branding with ShopHub identity and consistent styling |
+| ✅ | Order confirmation email template ready for Phase 2 |
+| ✅ | Consolidated site configuration in single `site.ts` file |
 
 ### 1.6 Security
 | Status | Task |
@@ -473,7 +475,7 @@
 
 | Phase | Completed | Partial | Not Done | Completion |
 |-------|-----------|---------|----------|------------|
-| 1 — Foundation | 27 | 2 | 0 | **~93%** |
+| 1 — Foundation | 29 | 0 | 0 | **100%** |
 | 2 — Catalog & Admin | 32 | 3 | 5 | **~80%** |
 | 3 — Commerce Engine | 15 | 9 | 18 | **~36%** |
 | 4 — Customer Experience | 21 | 8 | 8 | **~57%** |
@@ -481,7 +483,7 @@
 | 6 — Marketing & Analytics | 3 | 0 | 5 | **~20%** |
 | 7 — Testing & Deployment | 10 | 2 | 9 | **~43%** |
 
-### **Overall Project Completion: ~55%**
+### **Overall Project Completion: ~58%**
 
 ### What Works Today
 - Full auth system (email, OAuth, 2FA, passkeys, sessions)

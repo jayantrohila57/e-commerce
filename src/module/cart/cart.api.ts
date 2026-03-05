@@ -1,6 +1,6 @@
 import { and, eq, sql } from "drizzle-orm";
 import { v4 as uuidv4 } from "uuid";
-import { createTRPCRouter, protectedProcedure, publicProcedure } from "@/core/api/api.methods";
+import { createTRPCRouter, customerProcedure, publicProcedure } from "@/core/api/api.methods";
 import { db } from "@/core/db/db";
 import { cart, cartLine, inventoryItem, inventoryReservation, productVariant } from "@/core/db/db.schema";
 import { MESSAGE, STATUS } from "@/shared/config/api.config";
@@ -188,7 +188,7 @@ export const cartRouter = createTRPCRouter({
   /**
    * Get authenticated user's cart
    */
-  getUserCart: protectedProcedure
+  getUserCart: customerProcedure
     .input(cartContract.getUserCart.input)
     .output(cartContract.getUserCart.output)
     .query(async ({ ctx }) => {
@@ -494,7 +494,7 @@ export const cartRouter = createTRPCRouter({
   /**
    * Get cart totals
    */
-  getTotals: protectedProcedure
+  getTotals: customerProcedure
     .input(cartContract.getTotals.input)
     .output(cartContract.getTotals.output)
     .query(async ({ ctx }) => {
@@ -527,7 +527,7 @@ export const cartRouter = createTRPCRouter({
   /**
    * Merge guest cart to user cart (called on login)
    */
-  merge: protectedProcedure
+  merge: customerProcedure
     .input(cartContract.merge.input)
     .output(cartContract.merge.output)
     .mutation(async ({ input, ctx }) => {

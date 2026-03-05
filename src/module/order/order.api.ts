@@ -1,8 +1,9 @@
 import { and, eq, sql } from "drizzle-orm";
 import { v4 as uuidv4 } from "uuid";
-import { createTRPCRouter, protectedProcedure } from "@/core/api/api.methods";
+import { createTRPCRouter, customerProcedure, staffProcedure } from "@/core/api/api.methods";
+import { APP_ROLE, normalizeRole } from "@/core/auth/auth.roles";
 import { db } from "@/core/db/db";
-import { cart, cartLine, inventoryItem, order, orderItem } from "@/core/db/db.schema";
+import { cart, cartLine, inventoryItem, order, orderItem, user as userTable } from "@/core/db/db.schema";
 import { MESSAGE, STATUS } from "@/shared/config/api.config";
 import { API_RESPONSE } from "@/shared/config/api.utils";
 import { debugError } from "@/shared/utils/lib/logger.utils";
@@ -12,7 +13,7 @@ export const orderRouter = createTRPCRouter({
   /**
    * Get order by ID
    */
-  get: protectedProcedure
+  get: customerProcedure
     .input(orderContract.get.input)
     .output(orderContract.get.output)
     .query(async ({ input, ctx }) => {
@@ -32,7 +33,8 @@ export const orderRouter = createTRPCRouter({
         }
 
         // Verify ownership if order belongs to a user
-        if (data.userId && data.userId !== userId) {
+        const role = normalizeRole(ctx.user.role);
+        if (role === APP_ROLE.CUSTOMER && data.userId && data.userId !== userId) {
           return API_RESPONSE(STATUS.FAILED, "Unauthorized", null);
         }
 
@@ -46,15 +48,16 @@ export const orderRouter = createTRPCRouter({
   /**
    * Get current user's orders
    */
-  getMany: protectedProcedure
+  getMany: customerProcedure
     .input(orderContract.getMany.input)
     .output(orderContract.getMany.output)
     .query(async ({ ctx }) => {
       try {
         const userId = ctx.user.id;
 
+        const role = normalizeRole(ctx.user.role);
         const data = await db.query.order.findMany({
-          where: eq(order.userId, userId),
+          where: role === APP_ROLE.CUSTOMER ? eq(order.userId, userId) : undefined,
           orderBy: (order, { desc }) => [desc(order.placedAt)],
           with: {
             items: true,
@@ -71,7 +74,7 @@ export const orderRouter = createTRPCRouter({
   /**
    * Create order from cart
    */
-  create: protectedProcedure
+  create: customerProcedure
     .input(orderContract.create.input)
     .output(orderContract.create.output)
     .mutation(async ({ input, ctx }) => {
@@ -172,6 +175,12 @@ export const orderRouter = createTRPCRouter({
           return { ...newOrder, items: orderItemsData };
         });
 
+        // 7. Upgrade role from user -> customer on first checkout
+        const currentRole = normalizeRole(ctx.user.role);
+        if (currentRole === APP_ROLE.USER) {
+          await db.update(userTable).set({ role: APP_ROLE.CUSTOMER }).where(eq(userTable.id, userId));
+        }
+
         return API_RESPONSE(STATUS.SUCCESS, MESSAGE.ORDER.CREATE.SUCCESS, result);
       } catch (err) {
         debugError("ORDER:CREATE:ERROR", err);
@@ -182,16 +191,13 @@ export const orderRouter = createTRPCRouter({
   /**
    * Update order status (Admin only or system)
    */
-  updateStatus: protectedProcedure
+  updateStatus: staffProcedure
     .input(orderContract.updateStatus.input)
     .output(orderContract.updateStatus.output)
     .mutation(async ({ input, ctx }) => {
       try {
         const { id } = input.params;
         const { status } = input.body;
-
-        // In a real app, we'd check for admin role here
-        // if (ctx.user.role !== 'admin') throw new Error("Unauthorized");
 
         const [updatedOrder] = await db
           .update(order)

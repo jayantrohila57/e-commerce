@@ -82,7 +82,7 @@ export type DiscountType = z.infer<typeof discountTypeEnum>;
  * User Role Enum
  * System access levels
  */
-export const userRoleEnum = z.enum(["admin", "user"]);
+export const userRoleEnum = z.enum(["admin", "staff", "user", "customer"]);
 
 export type UserRole = z.infer<typeof userRoleEnum>;
 

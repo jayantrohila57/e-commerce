@@ -1,18 +1,18 @@
 import { desc, eq } from "drizzle-orm";
 import { v4 as uuidv4 } from "uuid";
-import { createTRPCRouter, publicProcedure } from "@/core/api/api.methods";
+import { createTRPCRouter, customerProcedure } from "@/core/api/api.methods";
 import { db } from "@/core/db/db";
 import { order, payment } from "@/core/db/db.schema";
 import { STATUS } from "@/shared/config/api.config";
 import { API_RESPONSE } from "@/shared/config/api.utils";
 import { debugError } from "@/shared/utils/lib/logger.utils";
-import { paymentContract, type Payment, type PaymentProviderMetadata } from "./payment.schema";
+import { type Payment, type PaymentProviderMetadata, paymentContract } from "./payment.schema";
 
 export const paymentRouter = createTRPCRouter({
   /**
    * Create a payment intent for an order
    */
-  createIntent: publicProcedure
+  createIntent: customerProcedure
     .input(paymentContract.createIntent.input)
     .output(paymentContract.createIntent.output)
     .mutation(async ({ input }) => {
@@ -69,7 +69,7 @@ export const paymentRouter = createTRPCRouter({
   /**
    * Confirm a payment
    */
-  confirm: publicProcedure
+  confirm: customerProcedure
     .input(paymentContract.confirm.input)
     .output(paymentContract.confirm.output)
     .mutation(async ({ input }) => {
@@ -125,7 +125,7 @@ export const paymentRouter = createTRPCRouter({
   /**
    * Get payment status for an order
    */
-  getStatus: publicProcedure
+  getStatus: customerProcedure
     .input(paymentContract.getStatus.input)
     .output(paymentContract.getStatus.output)
     .query(async ({ input }) => {

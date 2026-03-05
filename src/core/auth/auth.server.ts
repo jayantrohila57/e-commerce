@@ -1,14 +1,24 @@
 import { headers } from "next/headers";
 import { cache } from "react";
-import { auth } from "./auth";
 import { debugLog } from "@/shared/utils/lib/logger.utils";
+import { auth } from "./auth";
+import { normalizeRole } from "./auth.roles";
 
 export const getServerSession = cache(async () => {
   const data = await auth.api.getSession({
     headers: await headers(),
   });
+
+  const normalizedUser = data?.user
+    ? {
+        ...data.user,
+        role: normalizeRole(data.user.role),
+      }
+    : data?.user;
+
   return {
     ...data,
+    user: normalizedUser,
   };
 });
 

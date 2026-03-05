@@ -1,10 +1,14 @@
 import "server-only";
 
 import { initTRPC, TRPCError } from "@trpc/server";
+import { forbidden } from "next/navigation";
 import superjson from "superjson";
 import { ZodError } from "zod/v3";
 import { STATUS } from "@/shared/config/api.config";
 import { API_RESPONSE, prettyZodError, zodErrorObject } from "@/shared/config/api.utils";
+import { debugError } from "@/shared/utils/lib/logger.utils";
+import { canUseGuard } from "../auth/auth.guard";
+import { normalizeRole } from "../auth/auth.roles";
 import { getServerSession } from "../auth/auth.server";
 
 export const createTRPCContext = async (opts: { headers: Headers }) => {
@@ -45,22 +49,32 @@ const enforceUser = t.middleware(({ ctx, next }) => {
   });
 });
 
-const enforceRole = (roles: string[]) =>
+const enforceRole = (guard: "admin" | "staff" | "customer") =>
   t.middleware(({ ctx, next }) => {
     if (!ctx.user) throw new TRPCError({ code: "UNAUTHORIZED" });
-    // if (!roles.includes(ctx.user.role!)) {
-    //   throw new TRPCError({ code: "FORBIDDEN", message: "Access denied" });
-    // }
+    const currentRole = normalizeRole(ctx.user.role);
+
+    if (!canUseGuard(guard, currentRole)) {
+      debugError(
+        "ACCESS_DENIED",
+        `User ${ctx.user?.id} attempted to access ${guard} resource with role ${currentRole}`,
+      );
+      forbidden();
+    }
 
     return next({
       ctx: {
         ...ctx,
-        user: ctx.user,
+        user: {
+          ...ctx.user,
+          role: currentRole,
+        },
       },
     });
   });
 
 export const publicProcedure = t.procedure;
 export const protectedProcedure = t.procedure.use(enforceUser);
-export const adminProcedure = t.procedure.use(enforceUser).use(enforceRole(["admin"]));
-export const customerProcedure = t.procedure.use(enforceUser).use(enforceRole(["admin", "user"]));
+export const adminProcedure = t.procedure.use(enforceUser).use(enforceRole("admin"));
+export const customerProcedure = t.procedure.use(enforceUser).use(enforceRole("customer"));
+export const staffProcedure = t.procedure.use(enforceUser).use(enforceRole("staff"));

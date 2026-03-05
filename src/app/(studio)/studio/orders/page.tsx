@@ -1,5 +1,6 @@
-import { redirect } from "next/navigation";
+import { forbidden, redirect } from "next/navigation";
 import { apiServer, HydrateClient } from "@/core/api/api.server";
+import { APP_ROLE, normalizeRole } from "@/core/auth/auth.roles";
 import { getServerSession } from "@/core/auth/auth.server";
 import { OrdersSection } from "@/module/order/order-section";
 import DashboardSection from "@/shared/components/layout/section/section-dashboard";
@@ -12,8 +13,9 @@ export const metadata = {
 };
 
 export default async function StudioOrdersPage() {
-  const { session } = await getServerSession();
+  const { session, user } = await getServerSession();
   if (!session) return redirect(PATH.ROOT);
+  if (normalizeRole(user?.role) === APP_ROLE.CUSTOMER) forbidden();
 
   const { data } = await apiServer.order.getMany({
     query: {},

@@ -1,15 +1,15 @@
-import { createTRPCRouter, protectedProcedure } from "@/core/api/api.methods";
+import { eq } from "drizzle-orm";
+import { v4 as uuidv4 } from "uuid";
+import { createTRPCRouter, staffProcedure } from "@/core/api/api.methods";
 import { db } from "@/core/db/db";
 import { series } from "@/core/db/db.schema";
 import { MESSAGE, STATUS } from "@/shared/config/api.config";
 import { API_RESPONSE } from "@/shared/config/api.utils";
 import { debugError } from "@/shared/utils/lib/logger.utils";
-import { eq } from "drizzle-orm";
-import { v4 as uuidv4 } from "uuid";
 import { seriesContract } from "./series.schema";
 
 export const seriesRouter = createTRPCRouter({
-  getMany: protectedProcedure
+  getMany: staffProcedure
     .input(seriesContract.getMany.input)
     .output(seriesContract.getMany.output)
     .query(async ({ input }) => {
@@ -35,7 +35,7 @@ export const seriesRouter = createTRPCRouter({
       }
     }),
 
-  create: protectedProcedure
+  create: staffProcedure
     .input(seriesContract.create.input)
     .output(seriesContract.create.output)
     .mutation(async ({ input }) => {
@@ -62,7 +62,7 @@ export const seriesRouter = createTRPCRouter({
       }
     }),
 
-  update: protectedProcedure
+  update: staffProcedure
     .input(seriesContract.update.input)
     .output(seriesContract.update.output)
     .mutation(async ({ input }) => {
@@ -89,7 +89,7 @@ export const seriesRouter = createTRPCRouter({
       }
     }),
 
-  delete: protectedProcedure
+  delete: staffProcedure
     .input(seriesContract.delete.input)
     .output(seriesContract.delete.output)
     .mutation(async ({ input }) => {

@@ -1,6 +1,6 @@
-import { Shell } from "@/shared/components/layout/shell";
-import DashboardSection from "@/shared/components/layout/section/section-dashboard";
 import { Loader } from "lucide-react";
+import DashboardSection from "@/shared/components/layout/section/section-dashboard";
+import { Shell } from "@/shared/components/layout/shell";
 
 export default async function Loading() {
   return (

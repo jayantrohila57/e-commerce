@@ -1,6 +1,6 @@
 import { and, asc, eq } from "drizzle-orm";
 import { v4 as uuidv4 } from "uuid";
-import { createTRPCRouter, protectedProcedure, publicProcedure } from "@/core/api/api.methods";
+import { createTRPCRouter, publicProcedure, staffProcedure } from "@/core/api/api.methods";
 import { db } from "@/core/db/db";
 import { attribute } from "@/core/db/db.schema";
 import { STATUS } from "@/shared/config/api.config";
@@ -34,7 +34,7 @@ export const attributeRouter = createTRPCRouter({
   /**
    * Create a new attribute
    */
-  create: protectedProcedure
+  create: staffProcedure
     .input(attributeContract.create.input)
     .output(attributeContract.create.output)
     .mutation(async ({ input }) => {
@@ -59,7 +59,7 @@ export const attributeRouter = createTRPCRouter({
   /**
    * Update an attribute
    */
-  update: protectedProcedure
+  update: staffProcedure
     .input(attributeContract.update.input)
     .output(attributeContract.update.output)
     .mutation(async ({ input }) => {
@@ -89,7 +89,7 @@ export const attributeRouter = createTRPCRouter({
   /**
    * Delete an attribute
    */
-  delete: protectedProcedure
+  delete: staffProcedure
     .input(attributeContract.delete.input)
     .output(attributeContract.delete.output)
     .mutation(async ({ input }) => {

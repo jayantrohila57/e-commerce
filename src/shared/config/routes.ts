@@ -144,6 +144,7 @@ export const PATH = {
   },
   SITE: {
     ROOT: "/",
+    FORBIDDEN: "/forbidden" as Route,
     ABOUT: "/about",
     CONTACT: "/contact",
     LEGAL: {

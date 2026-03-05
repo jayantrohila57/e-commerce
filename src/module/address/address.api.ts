@@ -1,12 +1,12 @@
 import { and, desc, eq } from "drizzle-orm";
 import { v4 as uuidv4 } from "uuid";
-import { createTRPCRouter, protectedProcedure } from "@/core/api/api.methods";
+import { createTRPCRouter, customerProcedure } from "@/core/api/api.methods";
 import { db } from "@/core/db/db";
 import { address } from "@/core/db/db.schema";
 import { MESSAGE, STATUS } from "@/shared/config/api.config";
 import { API_RESPONSE } from "@/shared/config/api.utils";
 import { debugError } from "@/shared/utils/lib/logger.utils";
-import { addressContract, type Address } from "./address.schema";
+import { type Address, addressContract } from "./address.schema";
 
 function mapAddress(row: (typeof address)["_"]["inferSelect"]): Address {
   return {
@@ -29,7 +29,7 @@ export const addressRouter = createTRPCRouter({
   /**
    * Get all addresses for the authenticated user
    */
-  getMany: protectedProcedure
+  getMany: customerProcedure
     .input(addressContract.getMany.input)
     .output(addressContract.getMany.output)
     .query(async ({ ctx }) => {
@@ -53,7 +53,7 @@ export const addressRouter = createTRPCRouter({
   /**
    * Create a new address
    */
-  create: protectedProcedure
+  create: customerProcedure
     .input(addressContract.create.input)
     .output(addressContract.create.output)
     .mutation(async ({ input, ctx }) => {
@@ -97,7 +97,7 @@ export const addressRouter = createTRPCRouter({
   /**
    * Update an address
    */
-  update: protectedProcedure
+  update: customerProcedure
     .input(addressContract.update.input)
     .output(addressContract.update.output)
     .mutation(async ({ input, ctx }) => {
@@ -140,7 +140,7 @@ export const addressRouter = createTRPCRouter({
   /**
    * Delete an address
    */
-  delete: protectedProcedure
+  delete: customerProcedure
     .input(addressContract.delete.input)
     .output(addressContract.delete.output)
     .mutation(async ({ input, ctx }) => {
@@ -181,7 +181,7 @@ export const addressRouter = createTRPCRouter({
   /**
    * Set an address as default
    */
-  setDefault: protectedProcedure
+  setDefault: customerProcedure
     .input(addressContract.setDefault.input)
     .output(addressContract.setDefault.output)
     .mutation(async ({ input, ctx }) => {

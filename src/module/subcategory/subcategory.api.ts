@@ -1,10 +1,10 @@
-import { createTRPCRouter, protectedProcedure, publicProcedure } from "@/core/api/api.methods";
+import { and, eq, ilike } from "drizzle-orm";
+import { v4 as uuidv4 } from "uuid";
+import { createTRPCRouter, publicProcedure, staffProcedure } from "@/core/api/api.methods";
 import { db } from "@/core/db/db";
 import { subcategory } from "@/core/db/db.schema";
 import { MESSAGE, STATUS } from "@/shared/config/api.config";
 import { API_RESPONSE } from "@/shared/config/api.utils";
-import { and, eq, ilike } from "drizzle-orm";
-import { v4 as uuidv4 } from "uuid";
 import { subcategoryContract } from "./subcategory.schema";
 
 export const subcategoryRouter = createTRPCRouter({
@@ -63,7 +63,7 @@ export const subcategoryRouter = createTRPCRouter({
       }
     }),
 
-  create: protectedProcedure
+  create: staffProcedure
     .input(subcategoryContract.create.input)
     .output(subcategoryContract.create.output)
     .mutation(async ({ input }) => {
@@ -100,7 +100,7 @@ export const subcategoryRouter = createTRPCRouter({
       }
     }),
 
-  update: protectedProcedure
+  update: staffProcedure
     .input(subcategoryContract.update.input)
     .output(subcategoryContract.update.output)
     .mutation(async ({ input }) => {
@@ -135,7 +135,7 @@ export const subcategoryRouter = createTRPCRouter({
       }
     }),
 
-  delete: protectedProcedure
+  delete: staffProcedure
     .input(subcategoryContract.delete.input)
     .output(subcategoryContract.delete.output)
     .mutation(async ({ input }) => {

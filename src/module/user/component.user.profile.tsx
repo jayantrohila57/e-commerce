@@ -1,9 +1,9 @@
 "use client";
 
+import { Ban, Calendar, Mail, Shield, User as UserIcon } from "lucide-react";
 import Image from "next/image";
-import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/shared/components/ui/card";
 import { Badge } from "@/shared/components/ui/badge";
-import { Mail, Shield, Ban, Calendar, User as UserIcon } from "lucide-react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/components/ui/card";
 import { Separator } from "@/shared/components/ui/separator";
 
 interface UserProfileProps {
@@ -26,7 +26,7 @@ export function ProfileCard({ user }: UserProfileProps) {
   const avatar = user?.image ?? "https://api.dicebear.com/9.x/identicon/svg?seed=default";
   const created = user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : "Unknown date";
   const verified = user?.emailVerified;
-  const role = user?.role ?? "guest";
+  const role = user?.role ?? "customer";
   const banned = user?.banned ?? false;
   const reason = user?.banReason ?? "No reason provided";
 

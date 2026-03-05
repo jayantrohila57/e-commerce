@@ -1,6 +1,7 @@
 import type { Route } from "next";
-import { notFound, redirect } from "next/navigation";
+import { forbidden, notFound, redirect } from "next/navigation";
 import { apiServer } from "@/core/api/api.server";
+import { APP_ROLE, normalizeRole } from "@/core/auth/auth.roles";
 import { getServerSession } from "@/core/auth/auth.server";
 import { OrderStatusActions } from "@/module/order/components/order-status-actions";
 import { OrderDetailSection } from "@/module/order/order-detail.section";
@@ -22,8 +23,9 @@ interface StudioOrderDetailPageProps {
 
 export default async function StudioOrderDetailPage({ params }: StudioOrderDetailPageProps) {
   const { id } = await params;
-  const { session } = await getServerSession();
+  const { session, user } = await getServerSession();
   if (!session) return redirect(PATH.ROOT);
+  if (normalizeRole(user?.role) === APP_ROLE.CUSTOMER) forbidden();
 
   const res = await apiServer.order?.get({
     params: { id },

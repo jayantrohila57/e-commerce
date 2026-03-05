@@ -3,7 +3,7 @@
 > **Generated:** 2026-03-05  
 > **Platform:** Single-Merchant Enterprise Commerce  
 > **Stack:** Next.js 16 · tRPC · Drizzle ORM · Neon Postgres · Better Auth · Radix UI · Tailwind CSS v4  
-> **Overall Completion:** ~76%
+> **Overall Completion:** ~78%
 
 ---
 
@@ -305,6 +305,11 @@ Enterprise (requires stable Post-MVP):
 | 🟡 | Profile form uses inline schema instead of shared `AuthSchema` |
 | 🟡 | Profile form has no email format validation |
 | 🟡 | Commerce sub-pages (order, payment, shipment, review) exist but are empty |
+| ✅ | Studio customers page with admin-only access guard |
+| ✅ | Studio user management section with role-based grouping and permissions display |
+| ✅ | Admin actions for updating roles and banning/unbanning users |
+| 🟡 | No pagination/search on Studio customers list (fixed page size) |
+| 🟡 | No audit logging for admin user management actions |
 
 ---
 
@@ -761,7 +766,7 @@ Enterprise (requires stable Post-MVP):
 | 8 | Product Management | Phase 4, 5, 6 | ✅ Complete | 85% |
 | 9 | Product Variant | Phase 8 | 🟡 Partial | 80% |
 | 10 | Inventory Management | Phase 9 | 🟡 Partial | 70% |
-| 11 | Account Management | Phase 2 | 🟡 Partial | 75% |
+| 11 | Account Management | Phase 2 | 🟡 Partial | 85% |
 | 12 | Address Management | Phase 11 | ✅ Complete | 95% |
 | 13 | Cart | Phase 9, 10 | 🟡 Partial | 80% |
 | 14 | Wishlist | Phase 9 | ✅ Complete | 85% |
@@ -774,7 +779,7 @@ Enterprise (requires stable Post-MVP):
 | 21 | Site & Marketing Pages | Phase 8 | 🟡 Partial | 55% |
 | 22 | SEO & Production Readiness | Phase 17, 21 | 🟡 Partial | 30% |
 | 23 | Testing Infrastructure | Phase 17 | ❌ Not Started | 0% |
-| **MVP Subtotal** | | | | **~68%** |
+| **MVP Subtotal** | | | | **~70%** |
 | 24 | Discount & Coupon System | Phase 15, 8 | 🟡 Schema Only | 20% |
 | 25 | Product Reviews & Ratings | Phase 8, 15 | 🟡 Schema Only | 15% |
 | 26 | Refund Management | Phase 16, 15 | ❌ Not Started | 0% |

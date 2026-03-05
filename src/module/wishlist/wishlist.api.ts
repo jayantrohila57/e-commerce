@@ -1,6 +1,6 @@
 import { and, eq } from "drizzle-orm";
 import { v4 as uuidv4 } from "uuid";
-import { createCallerFactory, createTRPCRouter, protectedProcedure } from "@/core/api/api.methods";
+import { createCallerFactory, createTRPCRouter, customerProcedure } from "@/core/api/api.methods";
 import { db } from "@/core/db/db";
 import { wishlist } from "@/core/db/db.schema";
 import { cartRouter } from "@/module/cart/cart.api";
@@ -15,7 +15,7 @@ export const wishlistRouter = createTRPCRouter({
   /**
    * Get user's wishlist
    */
-  get: protectedProcedure
+  get: customerProcedure
     .input(wishlistContract.get.input)
     .output(wishlistContract.get.output)
     .query(async ({ ctx }) => {
@@ -59,7 +59,7 @@ export const wishlistRouter = createTRPCRouter({
   /**
    * Add item to wishlist
    */
-  add: protectedProcedure
+  add: customerProcedure
     .input(wishlistContract.add.input)
     .output(wishlistContract.add.output)
     .mutation(async ({ input, ctx }) => {
@@ -95,7 +95,7 @@ export const wishlistRouter = createTRPCRouter({
   /**
    * Remove item from wishlist
    */
-  remove: protectedProcedure
+  remove: customerProcedure
     .input(wishlistContract.remove.input)
     .output(wishlistContract.remove.output)
     .mutation(async ({ input, ctx }) => {
@@ -123,7 +123,7 @@ export const wishlistRouter = createTRPCRouter({
   /**
    * Clear all items from wishlist
    */
-  clear: protectedProcedure
+  clear: customerProcedure
     .input(wishlistContract.clear.input)
     .output(wishlistContract.clear.output)
     .mutation(async ({ ctx }) => {
@@ -142,7 +142,7 @@ export const wishlistRouter = createTRPCRouter({
   /**
    * Move item from wishlist to cart
    */
-  moveToCart: protectedProcedure
+  moveToCart: customerProcedure
     .input(wishlistContract.moveToCart.input)
     .output(wishlistContract.moveToCart.output)
     .mutation(async ({ input, ctx }) => {

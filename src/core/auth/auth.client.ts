@@ -1,8 +1,9 @@
-import { createAuthClient } from "better-auth/react";
+import { adminClient, inferAdditionalFields, passkeyClient, twoFactorClient } from "better-auth/client/plugins";
 import { nextCookies } from "better-auth/next-js";
-import { inferAdditionalFields, twoFactorClient, passkeyClient, adminClient } from "better-auth/client/plugins";
+import { createAuthClient } from "better-auth/react";
 import type { auth } from "./auth";
-import { admin, user, ac } from "./permissions";
+import { normalizeRole } from "./auth.roles";
+import { ac, admin, customer, staff, user } from "./permissions";
 
 export const {
   $Infer,
@@ -29,6 +30,8 @@ export const {
       roles: {
         admin,
         user,
+        customer,
+        staff,
       },
     }),
     twoFactorClient({
@@ -42,6 +45,18 @@ export const {
 
 export const getClientSession = async () => {
   const session = await getSession();
+  if (session?.data?.user) {
+    return {
+      ...session,
+      data: {
+        ...session.data,
+        user: {
+          ...session.data.user,
+          role: normalizeRole(session.data.user.role),
+        },
+      },
+    };
+  }
   return session;
 };
 

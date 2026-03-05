@@ -1,18 +1,18 @@
-import { createTRPCRouter, protectedProcedure, publicProcedure } from "@/core/api/api.methods";
-import { STATUS } from "@/shared/config/api.config";
-import { API_RESPONSE } from "@/shared/config/api.utils";
+import { eq, ilike } from "drizzle-orm";
+import { v4 as uuidv4 } from "uuid";
+import { createTRPCRouter, publicProcedure, staffProcedure } from "@/core/api/api.methods";
 
 import { db } from "@/core/db/db";
 import { inventoryItem } from "@/core/db/db.schema";
-import { eq, ilike } from "drizzle-orm";
-import { v4 as uuidv4 } from "uuid";
+import { STATUS } from "@/shared/config/api.config";
+import { API_RESPONSE } from "@/shared/config/api.utils";
 import { inventoryContract } from "./inventory.schema";
 
 export const inventoryRouter = createTRPCRouter({
   // =========================
   // GET ONE BY ID OR SKU
   // =========================
-  get: publicProcedure
+  get: staffProcedure
     .input(inventoryContract.get.input)
     .output(inventoryContract.get.output)
     .query(async ({ input }) => {
@@ -46,7 +46,7 @@ export const inventoryRouter = createTRPCRouter({
   // =========================
   // GET MANY
   // =========================
-  getMany: publicProcedure
+  getMany: staffProcedure
     .input(inventoryContract.getMany.input)
     .output(inventoryContract.getMany.output)
     .query(async ({ input }) => {
@@ -124,7 +124,7 @@ export const inventoryRouter = createTRPCRouter({
   // =========================
   // CREATE
   // =========================
-  create: protectedProcedure
+  create: staffProcedure
     .input(inventoryContract.create.input)
     .output(inventoryContract.create.output)
     .mutation(async ({ input }) => {
@@ -158,7 +158,7 @@ export const inventoryRouter = createTRPCRouter({
   // =========================
   // UPDATE
   // =========================
-  update: protectedProcedure
+  update: staffProcedure
     .input(inventoryContract.update.input)
     .output(inventoryContract.update.output)
     .mutation(async ({ input }) => {
@@ -188,7 +188,7 @@ export const inventoryRouter = createTRPCRouter({
   // =========================
   // DELETE
   // =========================
-  delete: protectedProcedure
+  delete: staffProcedure
     .input(inventoryContract.delete.input)
     .output(inventoryContract.delete.output)
     .mutation(async ({ input }) => {
@@ -216,7 +216,7 @@ export const inventoryRouter = createTRPCRouter({
   // =========================
   // UPDATE STOCK
   // =========================
-  updateStock: protectedProcedure
+  updateStock: staffProcedure
     .input(inventoryContract.updateStock.input)
     .output(inventoryContract.updateStock.output)
     .mutation(async ({ input }) => {
@@ -265,7 +265,7 @@ export const inventoryRouter = createTRPCRouter({
   // =========================
   // SEARCH
   // =========================
-  search: publicProcedure
+  search: staffProcedure
     .input(inventoryContract.search.input)
     .output(inventoryContract.search.output)
     .query(async ({ input }) => {

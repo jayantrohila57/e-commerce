@@ -1,19 +1,20 @@
 // src/module/product-variant/product-variant.api.ts
-import { createTRPCRouter, protectedProcedure } from "@/core/api/api.methods";
-import { MESSAGE, STATUS } from "@/shared/config/api.config";
-import { API_RESPONSE } from "@/shared/config/api.utils";
+
+import { eq } from "drizzle-orm";
+import { v4 as uuidv4 } from "uuid";
+import { createTRPCRouter, staffProcedure } from "@/core/api/api.methods";
 
 import { db } from "@/core/db/db";
 import { inventoryItem, productVariant } from "@/core/db/db.schema";
-import { eq } from "drizzle-orm";
-import { v4 as uuidv4 } from "uuid";
+import { MESSAGE, STATUS } from "@/shared/config/api.config";
+import { API_RESPONSE } from "@/shared/config/api.utils";
 import { productVariantContract } from "./product-variant.schema";
 
 export const productVariantRouter = createTRPCRouter({
   // =========================
   // CREATE (with inventory in atomic transaction)
   // =========================
-  create: protectedProcedure
+  create: staffProcedure
     .input(productVariantContract.create.input)
     .output(productVariantContract.create.output)
     .mutation(async ({ input }) => {
@@ -78,7 +79,7 @@ export const productVariantRouter = createTRPCRouter({
   // =========================
   // GET (single by ID with inventory)
   // =========================
-  get: protectedProcedure
+  get: staffProcedure
     .input(productVariantContract.get.input)
     .output(productVariantContract.get.output)
     .query(async ({ input }) => {
@@ -105,7 +106,7 @@ export const productVariantRouter = createTRPCRouter({
   // =========================
   // GET MANY (with pagination and optional productId filter)
   // =========================
-  getMany: protectedProcedure
+  getMany: staffProcedure
     .input(productVariantContract.getMany.input)
     .output(productVariantContract.getMany.output)
     .query(async ({ input }) => {
@@ -143,7 +144,7 @@ export const productVariantRouter = createTRPCRouter({
   // =========================
   // GET BY SLUG
   // =========================
-  getBySlug: protectedProcedure
+  getBySlug: staffProcedure
     .input(productVariantContract.getBySlug.input)
     .output(productVariantContract.getBySlug.output)
     .query(async ({ input }) => {
@@ -170,7 +171,7 @@ export const productVariantRouter = createTRPCRouter({
   // =========================
   // UPDATE
   // =========================
-  update: protectedProcedure
+  update: staffProcedure
     .input(productVariantContract.update.input)
     .output(productVariantContract.update.output)
     .mutation(async ({ input }) => {
@@ -206,7 +207,7 @@ export const productVariantRouter = createTRPCRouter({
   // =========================
   // DELETE
   // =========================
-  delete: protectedProcedure
+  delete: staffProcedure
     .input(productVariantContract.delete.input)
     .output(productVariantContract.delete.output)
     .mutation(async ({ input }) => {

@@ -1,6 +1,6 @@
 import { desc, eq } from "drizzle-orm";
 import { v4 as uuidv4 } from "uuid";
-import { createTRPCRouter, protectedProcedure, publicProcedure } from "@/core/api/api.methods";
+import { createTRPCRouter, customerProcedure, staffProcedure } from "@/core/api/api.methods";
 import { db } from "@/core/db/db";
 import { order, shipment } from "@/core/db/db.schema";
 import { MESSAGE, STATUS } from "@/shared/config/api.config";
@@ -12,7 +12,7 @@ export const shipmentRouter = createTRPCRouter({
   /**
    * Create a shipment for an order
    */
-  create: protectedProcedure
+  create: staffProcedure
     .input(shipmentContract.create.input)
     .output(shipmentContract.create.output)
     .mutation(async ({ input }) => {
@@ -50,7 +50,7 @@ export const shipmentRouter = createTRPCRouter({
   /**
    * Update shipment status
    */
-  updateStatus: protectedProcedure
+  updateStatus: staffProcedure
     .input(shipmentContract.updateStatus.input)
     .output(shipmentContract.updateStatus.output)
     .mutation(async ({ input }) => {
@@ -97,7 +97,7 @@ export const shipmentRouter = createTRPCRouter({
   /**
    * Get shipments for an order
    */
-  getByOrder: publicProcedure
+  getByOrder: customerProcedure
     .input(shipmentContract.getByOrder.input)
     .output(shipmentContract.getByOrder.output)
     .query(async ({ input }) => {

@@ -17,6 +17,8 @@ import type { Route } from "next";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useId, useState } from "react";
+import { useSession } from "@/core/auth/auth.client";
+import { APP_ROLE, normalizeRole, roleCanAccessStudio } from "@/core/auth/auth.roles";
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -68,6 +70,10 @@ export function NavMain() {
   const isActive = useIsActive();
   const collapsibleId = useId();
 
+  const session = useSession();
+  const role = normalizeRole(session.data?.user?.role);
+  const canSeeStudio = roleCanAccessStudio(role);
+
   const onboardItems: NavItem[] = [
     {
       title: "Overview",
@@ -94,15 +100,16 @@ export function NavMain() {
       icon: ShoppingBag,
       items: [{ title: "All Orders", url: PATH.STUDIO.ORDERS.ROOT, icon: ShoppingBag }],
     },
-    // {
-    //   title: 'Customers',
-    //   url: PATH.STUDIO.CUSTOMERS.ROOT,
-    //   icon: Users,
-    //   items: [
-    //     { title: 'All Customers', url: PATH.STUDIO.CUSTOMERS.ROOT, icon: Users },
-    //     { title: 'Segments', url: `${PATH.STUDIO.CUSTOMERS.ROOT}/segments`, icon: Users },
-    //   ],
-    // },
+    ...(role === APP_ROLE.ADMIN
+      ? [
+          {
+            title: "Users",
+            url: PATH.STUDIO.CUSTOMERS.ROOT,
+            icon: Users,
+            items: [{ title: "All Users", url: PATH.STUDIO.CUSTOMERS.ROOT, icon: Users }],
+          } as NavItem,
+        ]
+      : []),
     // {
     //   title: 'Payments & Finance',
     //   url: PATH.STUDIO.PAYMENTS.ROOT,
@@ -154,9 +161,9 @@ export function NavMain() {
 
   const sections = [
     { title: "Dashboard", section: onboardItems },
-    { title: "Studio", section: mainItems },
-    // { title: 'Marketing', section: marketingItems },
-    // { title: 'Settings', section: setting },
+    ...(canSeeStudio ? [{ title: "Studio", section: mainItems }] : []),
+    // { title: "Marketing", section: marketingItems },
+    // { title: "Settings", section: setting },
   ];
 
   const [openStates, setOpenStates] = useState<Record<string, boolean>>(() => {

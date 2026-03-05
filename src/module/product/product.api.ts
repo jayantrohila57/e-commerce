@@ -1,16 +1,15 @@
-import { createTRPCRouter, protectedProcedure, publicProcedure } from "@/core/api/api.methods";
+import { and, eq, ilike, isNull } from "drizzle-orm";
+import { v4 as uuidv4 } from "uuid";
+import { createTRPCRouter, publicProcedure, staffProcedure } from "@/core/api/api.methods";
+import { db } from "@/core/db/db";
+import { product } from "@/core/db/db.schema";
 import { MESSAGE, STATUS } from "@/shared/config/api.config";
 import { API_RESPONSE } from "@/shared/config/api.utils";
 import { debugError } from "@/shared/utils/lib/logger.utils";
-
-import { db } from "@/core/db/db";
-import { product } from "@/core/db/db.schema";
-import { and, eq, ilike, isNull } from "drizzle-orm";
-import { v4 as uuidv4 } from "uuid";
 import { productContract } from "./product.schema";
 
 export const productRouter = createTRPCRouter({
-  get: protectedProcedure
+  get: staffProcedure
     .input(productContract.get.input)
     .output(productContract.get.output)
     .query(async ({ input }) => {
@@ -74,7 +73,7 @@ export const productRouter = createTRPCRouter({
         return API_RESPONSE(STATUS.ERROR, MESSAGE.PRODUCT.GET_BY_SLUG.ERROR, null, err as Error);
       }
     }),
-  getMany: protectedProcedure
+  getMany: staffProcedure
     .input(productContract.getMany.input)
     .output(productContract.getMany.output)
     .query(async ({ input }) => {
@@ -204,7 +203,7 @@ export const productRouter = createTRPCRouter({
       }
     }),
 
-  create: protectedProcedure
+  create: staffProcedure
     .input(productContract.create.input)
     .output(productContract.create.output)
     .mutation(async ({ input }) => {
@@ -252,7 +251,7 @@ export const productRouter = createTRPCRouter({
         return API_RESPONSE(STATUS.ERROR, MESSAGE.PRODUCT.CREATE.ERROR, null, err as Error);
       }
     }),
-  update: protectedProcedure
+  update: staffProcedure
     .input(productContract.update.input)
     .output(productContract.update.output)
     .mutation(async ({ input }) => {
@@ -301,7 +300,7 @@ export const productRouter = createTRPCRouter({
         return API_RESPONSE(STATUS.ERROR, MESSAGE.PRODUCT.UPDATE.ERROR, null, err as Error);
       }
     }),
-  delete: protectedProcedure
+  delete: staffProcedure
     .input(productContract.delete.input)
     .output(productContract.delete.output)
     .mutation(async ({ input }) => {

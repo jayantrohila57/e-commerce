@@ -1,21 +1,22 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { twoFactor } from "better-auth/plugins/two-factor";
-import { passkey } from "better-auth/plugins/passkey";
+import { createAuthMiddleware } from "better-auth/api";
+import { nextCookies } from "better-auth/next-js";
 import { admin as adminPlugin } from "better-auth/plugins/admin";
+import { passkey } from "better-auth/plugins/passkey";
+import { twoFactor } from "better-auth/plugins/two-factor";
 import { db } from "@/core/db/db";
-import { serverEnv } from "@/shared/config/env.server";
-import { site } from "@/shared/config/site";
 import {
   sendDeleteAccountEmail,
   sendEmailVerificationEmail,
   sendPasswordResetEmail,
   sendWelcomeEmail,
 } from "@/shared/components/mail/mail.methods";
-import { nextCookies } from "better-auth/next-js";
-import { createAuthMiddleware } from "better-auth/api";
-import { ac, admin, user } from "./permissions";
+import { serverEnv } from "@/shared/config/env.server";
+import { site } from "@/shared/config/site";
 import { debugLog } from "@/shared/utils/lib/logger.utils";
+import { resolveNewUserRole } from "./auth.roles";
+import { ac, admin, customer, staff, user } from "./permissions";
 
 const MAX_AGE = 60 * 60; // 1 hour
 
@@ -30,6 +31,14 @@ export const auth = betterAuth({
   },
   appName: site.name,
   user: {
+    additionalFields: {
+      role: {
+        type: "string",
+        required: true,
+        defaultValue: "user",
+        returned: true,
+      },
+    },
     changeEmail: {
       enabled: true,
       sendChangeEmailVerification: async ({ user, url, newEmail }) => {
@@ -93,6 +102,20 @@ export const auth = betterAuth({
       }
     }),
   },
+  databaseHooks: {
+    user: {
+      create: {
+        before: async (newUser) => {
+          return {
+            data: {
+              ...newUser,
+              role: resolveNewUserRole(typeof newUser.role === "string" ? newUser.role : undefined),
+            },
+          };
+        },
+      },
+    },
+  },
   plugins: [
     nextCookies(),
     twoFactor(),
@@ -102,6 +125,8 @@ export const auth = betterAuth({
       roles: {
         admin,
         user,
+        customer,
+        staff,
       },
     }),
   ],

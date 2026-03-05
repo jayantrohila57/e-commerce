@@ -3,7 +3,7 @@
 > **Generated:** 2026-03-05  
 > **Platform:** Single-Merchant Enterprise Commerce  
 > **Stack:** Next.js 16 · tRPC · Drizzle ORM · Neon Postgres · Better Auth · Radix UI · Tailwind CSS v4  
-> **Overall Completion:** ~75%
+> **Overall Completion:** ~76%
 
 ---
 
@@ -311,7 +311,7 @@ Enterprise (requires stable Post-MVP):
 ### Phase 12: Address Management
 
 **Module:** Address (`src/module/address/`)  
-**Status:** 🟡 Partial  
+**Status:** ✅ Complete  
 **Dependencies:** Phase 11 (Account)
 
 | Status | Task |
@@ -319,9 +319,14 @@ Enterprise (requires stable Post-MVP):
 | ✅ | DB schema: `address` table with user relation and type enum (billing/shipping) |
 | ✅ | tRPC API: `getMany`, `create`, `update`, `delete`, `setDefault` with ownership checks |
 | ✅ | API message constants defined |
-| 🟡 | Account address page exists but content is empty |
-| ❌ | No address form component |
-| ❌ | No address card / listing component |
+| ✅ | Account address page with list, summary, and commerce sidebar layout |
+| ✅ | `useAddress` hook with create/update/delete/setDefault mutations |
+| ✅ | Address form components: `AddressCreateForm`, `AddressEditForm` (Zod + Form, dedicated pages) |
+| ✅ | Address card component with edit link, delete, set-default actions |
+| ✅ | Address item list with loading skeletons, empty state, add-address CTA |
+| ✅ | Address summary with counts by type and add-address CTA |
+| ✅ | Dedicated pages: `/account/commerce/address/new`, `/account/commerce/address/[id]/edit` |
+| ✅ | Routes: `PATH.ACCOUNT.ADDRESS`, `PATH.ACCOUNT.ADDRESS_NEW`, `PATH.ACCOUNT.ADDRESS_EDIT(id)` |
 
 ---
 
@@ -351,7 +356,7 @@ Enterprise (requires stable Post-MVP):
 ### Phase 14: Wishlist
 
 **Module:** Wishlist (`src/module/wishlist/`)  
-**Status:** 🟡 Partial  
+**Status:** ✅ Complete  
 **Dependencies:** Phase 9 (Product Variant)
 
 | Status | Task |
@@ -359,12 +364,11 @@ Enterprise (requires stable Post-MVP):
 | ✅ | DB schema: `wishlist` table with user/variant relations |
 | ✅ | tRPC API: `get`, `add`, `remove` with Zod contracts |
 | ✅ | API message constants defined |
-| ✅ | `useWishlist` hook exists |
-| ✅ | Wishlist button component exists (`wishlist-button.tsx`) |
-| 🟡 | Wishlist button component not fully wired to API |
-| 🟡 | Account wishlist page exists but content is empty |
-| ❌ | No wishlist item list with product details |
-| ❌ | No "Move to Cart" functionality |
+| ✅ | `useWishlist` hook with add/remove/clear/move-to-cart mutations wired to API |
+| ✅ | Wishlist button and PDP wishlist toggle fully wired to API |
+| ✅ | Account wishlist page with wishlist list and summary layout |
+| ✅ | Wishlist item list with product details, loading, and empty states |
+| ✅ | "Move to Cart" functionality (wishlist → cart with cart totals refresh) |
 
 ---
 
@@ -756,9 +760,9 @@ Enterprise (requires stable Post-MVP):
 | 9 | Product Variant | Phase 8 | 🟡 Partial | 80% |
 | 10 | Inventory Management | Phase 9 | 🟡 Partial | 70% |
 | 11 | Account Management | Phase 2 | 🟡 Partial | 75% |
-| 12 | Address Management | Phase 11 | 🟡 Partial | 40% |
+| 12 | Address Management | Phase 11 | ✅ Complete | 95% |
 | 13 | Cart | Phase 9, 10 | 🟡 Partial | 80% |
-| 14 | Wishlist | Phase 9 | 🟡 Partial | 45% |
+| 14 | Wishlist | Phase 9 | ✅ Complete | 85% |
 | 15 | Order Management | Phase 13, 12 | 🟡 Partial | 50% |
 | 16 | Payment Processing | Phase 15 | 🟡 Partial | 35% |
 | 17 | Checkout Flow | Phase 13, 12, 15, 16 | ❌ Not Started | 5% |
@@ -768,7 +772,7 @@ Enterprise (requires stable Post-MVP):
 | 21 | Site & Marketing Pages | Phase 8 | 🟡 Partial | 55% |
 | 22 | SEO & Production Readiness | Phase 17, 21 | 🟡 Partial | 30% |
 | 23 | Testing Infrastructure | Phase 17 | ❌ Not Started | 0% |
-| **MVP Subtotal** | | | | **~63%** |
+| **MVP Subtotal** | | | | **~66%** |
 | 24 | Discount & Coupon System | Phase 15, 8 | 🟡 Schema Only | 20% |
 | 25 | Product Reviews & Ratings | Phase 8, 15 | 🟡 Schema Only | 15% |
 | 26 | Refund Management | Phase 16, 15 | ❌ Not Started | 0% |

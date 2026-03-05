@@ -385,10 +385,12 @@ Enterprise (requires stable Post-MVP):
 | ✅ | tRPC API: `get`, `getMany`, `create` (from cart, transactional), `updateStatus` |
 | ✅ | Inventory deduction on order placement |
 | ✅ | API message constants and routes defined |
-| 🟡 | Account order page exists but content is empty |
-| ❌ | No Studio order management pages (listing, detail, status updates) |
-| ❌ | No order confirmation page |
-| ❌ | No order status timeline UI |
+| ✅ | Account order list and detail pages with `OrderList` + `OrderDetailSection` UI |
+| ✅ | Studio order management pages for listing, detail view, and status updates |
+| ✅ | Store order detail page and checkout confirmation page wired to order API |
+| ✅ | Order status timeline UI component (`OrderTimeline`) and summary (`OrderSummary`) |
+| 🟡 | No filtering/search/pagination on Studio or account order lists |
+| ❌ | No customer-initiated cancellation/return flow from account orders |
 
 ---
 
@@ -414,7 +416,7 @@ Enterprise (requires stable Post-MVP):
 ### Phase 17: Checkout Flow
 
 **Module:** Checkout (combined: Cart + Address + Order + Payment)  
-**Status:** ❌ Not Started  
+**Status:** 🟡 Partial  
 **Dependencies:** Phase 13 (Cart), Phase 12 (Address), Phase 15 (Order), Phase 16 (Payment)
 
 | Status | Task |
@@ -425,7 +427,7 @@ Enterprise (requires stable Post-MVP):
 | ❌ | Order summary component (cart items + totals) |
 | ❌ | Payment method selection and payment form |
 | ❌ | Cart-to-order conversion UI trigger |
-| ❌ | Order confirmation page with order details |
+| ✅ | Order confirmation page with order details (`/store/checkout/confirmation`) |
 | ❌ | Guest checkout flow |
 | ❌ | Coupon code input (deferred to Phase 24) |
 
@@ -735,8 +737,8 @@ Enterprise (requires stable Post-MVP):
 |-------|--------|----------|--------|
 | **Foundation** | 1–3 | 2 weeks | ✅ Done |
 | **Product Catalog** | 4–10 | 3 weeks | ✅ Mostly Done |
-| **Account & Commerce APIs** | 11–16 | 2–3 weeks | 🟡 APIs Done, UIs Pending |
-| **Checkout & Fulfillment** | 17–19 | 2–3 weeks | ❌ Not Started |
+| **Account & Commerce APIs** | 11–16 | 2–3 weeks | 🟡 APIs Done, UIs mostly wired |
+| **Checkout & Fulfillment** | 17–19 | 2–3 weeks | 🟡 Early UI work started |
 | **Polish & Launch** | 20–23 | 2 weeks | 🟡 Partial |
 | **Post-MVP** | 24–26 | 4–6 weeks | ❌ Not Started |
 | **Enterprise** | 27–31 | 12–16 weeks | ❌ Not Started |
@@ -763,16 +765,16 @@ Enterprise (requires stable Post-MVP):
 | 12 | Address Management | Phase 11 | ✅ Complete | 95% |
 | 13 | Cart | Phase 9, 10 | 🟡 Partial | 80% |
 | 14 | Wishlist | Phase 9 | ✅ Complete | 85% |
-| 15 | Order Management | Phase 13, 12 | 🟡 Partial | 50% |
+| 15 | Order Management | Phase 13, 12 | 🟡 Partial | 75% |
 | 16 | Payment Processing | Phase 15 | 🟡 Partial | 35% |
-| 17 | Checkout Flow | Phase 13, 12, 15, 16 | ❌ Not Started | 5% |
+| 17 | Checkout Flow | Phase 13, 12, 15, 16 | 🟡 Partial | 20% |
 | 18 | Shipment & Fulfillment | Phase 15 | 🟡 Partial | 35% |
 | 19 | Email & Notifications | Phase 15, 16 | 🟡 Partial | 50% |
 | 20 | Legal & Cookies | Phase 1 | ✅ Complete | 90% |
 | 21 | Site & Marketing Pages | Phase 8 | 🟡 Partial | 55% |
 | 22 | SEO & Production Readiness | Phase 17, 21 | 🟡 Partial | 30% |
 | 23 | Testing Infrastructure | Phase 17 | ❌ Not Started | 0% |
-| **MVP Subtotal** | | | | **~66%** |
+| **MVP Subtotal** | | | | **~68%** |
 | 24 | Discount & Coupon System | Phase 15, 8 | 🟡 Schema Only | 20% |
 | 25 | Product Reviews & Ratings | Phase 8, 15 | 🟡 Schema Only | 15% |
 | 26 | Refund Management | Phase 16, 15 | ❌ Not Started | 0% |

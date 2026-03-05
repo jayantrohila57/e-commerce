@@ -29,6 +29,13 @@ export const PATH = {
   },
   STORE: {
     ROOT: "/store",
+    CHECKOUT: {
+      CONFIRMATION: "/store/checkout/confirmation" as Route,
+    },
+    ORDER: {
+      ROOT: "/store/order",
+      DETAIL: (orderId: string) => `/store/order/${orderId}`,
+    },
     PRODUCTS: {
       ROOT: "/store/products",
       PRODUCT: (productId: string) => `/store/products/${productId}`,

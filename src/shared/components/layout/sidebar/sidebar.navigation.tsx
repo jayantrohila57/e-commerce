@@ -1,23 +1,22 @@
 "use client";
 
-import { PATH } from "@/shared/config/routes";
-import { cn } from "@/shared/utils/lib/utils";
 import {
   BarChart3,
   ChevronRight,
   DollarSign,
   LayoutDashboard,
   LifeBuoy,
+  type LucideIcon,
   MessageSquare,
   Package,
   Settings2,
+  ShoppingBag,
   Users,
-  type LucideIcon,
 } from "lucide-react";
+import type { Route } from "next";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useId, useState } from "react";
-
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -28,7 +27,8 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "@/shared/components/ui/sidebar";
-import type { Route } from "next";
+import { PATH } from "@/shared/config/routes";
+import { cn } from "@/shared/utils/lib/utils";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../../ui/collapsible";
 import { Separator } from "../../ui/separator";
 
@@ -88,16 +88,12 @@ export function NavMain() {
         { title: "Inventory", url: PATH.STUDIO.INVENTORY.ROOT, icon: Package },
       ],
     },
-    // {
-    //   title: 'Orders',
-    //   url: PATH.STUDIO.ORDERS.ROOT,
-    //   icon: ShoppingBag,
-    //   items: [
-    //     { title: 'All Orders', url: PATH.STUDIO.ORDERS.ROOT, icon: ShoppingBag },
-    //     { title: 'Pending', url: `${PATH.STUDIO.ORDERS.ROOT}?status=pending`, icon: ShoppingBag },
-    //     { title: 'Completed', url: `${PATH.STUDIO.ORDERS.ROOT}?status=completed`, icon: ShoppingBag },
-    //   ],
-    // },
+    {
+      title: "Orders",
+      url: PATH.STUDIO.ORDERS.ROOT,
+      icon: ShoppingBag,
+      items: [{ title: "All Orders", url: PATH.STUDIO.ORDERS.ROOT, icon: ShoppingBag }],
+    },
     // {
     //   title: 'Customers',
     //   url: PATH.STUDIO.CUSTOMERS.ROOT,

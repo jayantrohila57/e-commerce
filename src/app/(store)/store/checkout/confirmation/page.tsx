@@ -1,0 +1,66 @@
+import type { Route } from "next";
+import Link from "next/link";
+import { redirect } from "next/navigation";
+import { apiServer } from "@/core/api/api.server";
+import { OrderDetailSection } from "@/module/order/order-detail.section";
+import Section from "@/shared/components/layout/section/section";
+import { Button } from "@/shared/components/ui/button";
+import { PATH } from "@/shared/config/routes";
+
+interface ConfirmationPageProps {
+  searchParams: {
+    orderId?: string;
+  };
+}
+
+export const metadata = {
+  title: "Order confirmation",
+  description: "Thank you for your order",
+};
+
+export default async function CheckoutConfirmationPage({ searchParams }: ConfirmationPageProps) {
+  const orderId = searchParams.orderId;
+
+  if (!orderId) {
+    return redirect(PATH.STORE.ROOT);
+  }
+
+  const res = await apiServer.order.get({
+    params: { id: orderId },
+  });
+
+  if (res.status !== "success" || !res.data) {
+    return redirect(PATH.STORE.ROOT);
+  }
+
+  const order = res.data;
+
+  return (
+    <Section className="bg-muted p-4" {...metadata}>
+      <div className="mx-auto flex max-w-5xl flex-col gap-6">
+        <div className="space-y-2 text-center">
+          <h1 className="text-2xl font-semibold tracking-tight">Thank you for your order!</h1>
+          <p className="text-sm text-muted-foreground">
+            Your order <span className="font-semibold text-foreground">#{order.id.slice(0, 8)}</span> has been received.
+            A confirmation email has been sent to you.
+          </p>
+        </div>
+
+        <OrderDetailSection
+          order={order}
+          showTimeline={false}
+          actions={
+            <>
+              <Button asChild size="sm">
+                <Link href={PATH.STORE.ORDER.DETAIL(order.id) as Route}>View order details</Link>
+              </Button>
+              <Button asChild size="sm" variant="outline">
+                <Link href={PATH.STORE.ROOT}>Continue shopping</Link>
+              </Button>
+            </>
+          }
+        />
+      </div>
+    </Section>
+  );
+}

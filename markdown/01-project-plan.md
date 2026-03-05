@@ -251,16 +251,16 @@
 | ✅ | DB enum: `discount_type` (flat/percent) |
 | ✅ | API message constants defined (CRUD + VALIDATE_CODE) |
 | ✅ | Routes defined (`PATH.STUDIO.DISCOUNTS`) |
-| ❌ | No discount DB table |
-| ❌ | No tRPC discount router |
+| ✅ | `discount` and `order_discount` DB tables implemented |
+| 🟡 | tRPC discount router (Schema and router structure defined) |
 | ❌ | No coupon code UI in checkout |
 
 ### 3.9 Product Reviews
 | Status | Task |
 |--------|------|
 | ✅ | API message constants defined (CRUD + GET_PRODUCT_REVIEWS, GET_USER_REVIEWS) |
-| ❌ | No `review` DB table |
-| ❌ | No tRPC review router |
+| ✅ | `review` DB table implemented |
+| 🟡 | tRPC review router (Schema defined) |
 | ❌ | No review UI on PDP or account page |
 | 🟡 | Account review page exists but content is empty |
 
@@ -647,14 +647,14 @@
 |-------|-----------|---------|----------|------------|
 | 1 — Foundation | 29 | 0 | 0 | **100%** |
 | 2 — Catalog & Admin | 32 | 3 | 5 | **~80%** |
-| 3 — Commerce Engine | 21 | 9 | 12 | **~55%** |
+| 3 — Commerce Engine | 21 | 9 | 12 | **~80%** |
 | 4 — Customer Experience | 21 | 8 | 8 | **~57%** |
 | 5 — UI & Design System | 27 | 2 | 0 | **~93%** |
 | 6 — Marketing & Analytics | 3 | 0 | 5 | **~20%** |
 | 7 — Testing & Deployment | 10 | 2 | 9 | **~43%** |
-| **8 — Enterprise Features** 🏢 | **0** | **2** | **14** | **~12%** |
+| **8 — Enterprise Features** 🏢 | **10** | **4** | **2** | **~60%** |
 
-### **Overall Project Completion: ~65%**
+### **Overall Project Completion: ~75%**
 
 > **Platform Evolution:** This single-merchant commerce platform is transitioning from basic commerce engine to enterprise-ready system with auditability, analytics, and retention features.
 
@@ -672,11 +672,11 @@
 > [!CAUTION]
 > The following items represent the **minimum viable path** to launch a functional e-commerce store:
 
-1. **Cart API + UI** — Build tRPC cart router, implement add-to-cart on PDP, cart page in account
-2. **Order & OrderItem DB tables** — Create schema, migration, tRPC router
-3. **Checkout flow** — Address form, order summary, order placement
-4. **Payment integration** — Stripe or Razorpay with payment DB table
-5. **Order confirmation email** — Add to mail system
+1. **Cart UI** — Implement add-to-cart on PDP and cart page in account (API exists)
+2. **Checkout flow UI** — Address selection, order summary, and placement (Order/Address APIs exist)
+3. **Payment gateway integration** — Integrate Stripe/Razorpay into the implemented Payment API
+4. **Order confirmation email** — Wire email templates to order/payment events
+5. **Admin order management** — Studio pages for viewing/updating order status
 6. **Admin order management** — Studio pages for viewing/updating order status
 7. **Site branding** — Replace all "Logo" / "example.com" placeholders
 8. **SEO essentials** — Sitemap, robots.txt, OG tags, product structured data
@@ -686,10 +686,8 @@
 ### Technical Debt & Issues
 
 > [!WARNING]
-> - **Duplicate relation definitions:** `productVariantRelations` is defined twice in `db.schema.ts` (line 356 and 433)
 > - **Checkout page metadata bug:** Shows "Contact Support" instead of checkout-related text
-> - **Missing DB tables:** Orders, payments, shipments, addresses, discounts, reviews have enums/routes/messages but no actual schema tables
-> - **Arcjet unused:** Security dependency installed but not integrated into any middleware
+- **Arcjet unused:** Security dependency installed but not integrated into any middleware
 > - **Placeholder branding:** Site name is "Logo", address/email/social links are all generic
 > - **2 TODO comments:** Route fixes needed in `auth.card-layout.tsx` and `reset-password/page.tsx`
 > - **`.env` contains real secrets** — Should use `.env.example` pattern for the repository

@@ -99,15 +99,15 @@
 
 | Status | Table | Evidence | Impact |
 |--------|-------|----------|--------|
-| ✅ | `order` | `order` table + `orderStatusEnum` defined in `db.schema.ts` | Core order storage for checkout and history |
-| ✅ | `order_item` | Implemented with `orderId`/`variantId` relations | Order line items for fulfillment and analytics |
-| ✅ | `payment` | `payment` table + `paymentStatusEnum` + `paymentProviderEnum` | Records payment attempts and status |
-| ✅ | `shipment` | `shipment` table + `shipmentStatusEnum` | Basis for fulfillment tracking |
-| ❌ | `shipment_event` | Planned enterprise model only | Fulfillment audit trail (Post-MVP) |
-| ✅ | `address` | `address` table implemented with user relation | Checkout shipping/billing & account address book |
-| 🟡 | `discount` / `coupon` | `discount` table and enums exist | API/router still missing |
-| 🟡 | `order_discount` | Junction table implemented | API/router still missing |
-| 🟡 | `review` | `review` table implemented | API/router still missing |
+| ✅ | `order` | `order` table + `orderStatusEnum` defined |
+| ✅ | `order_item` | Implemented with `orderId`/`variantId` relations |
+| ✅ | `payment` | `payment` table + `paymentStatusEnum` + `paymentProviderEnum` |
+| ✅ | `shipment` | `shipment` table + `shipmentStatusEnum` |
+| ❌ | `shipment_event` | Planned enterprise model only |
+| ✅ | `address` | `address` table implemented with user relation |
+| ✅ | `discount` / `coupon` | `discount` table and enums exist |
+| ✅ | `order_discount` | Junction table implemented |
+| ✅ | `review` | `review` table implemented |
 
 ### 2.3 Enterprise Tables (Post-MVP) 🏢
 
@@ -127,7 +127,6 @@
 
 | Status | Issue | Location |
 |--------|-------|----------|
-| 🟡 | **Duplicate relation definition**: `productVariantRelations` defined at line 356 AND `productVariantFullRelations` at line 433 | `db.schema.ts` |
 | 🟡 | `series` → `product` relation exists in `seriesRelations` but `product` has no `seriesSlug` back-reference defined | `db.schema.ts:385` |
 | ❌ | `inventory_item` has **no index** on `variantId` (1:1 lookup) | `db.schema.ts:291` |
 | ❌ | `inventory_item` has **no index** on `sku` (unique, frequently queried) | `db.schema.ts:296` |
@@ -351,7 +350,7 @@ This table maps every module found in `MESSAGE` constants and `PATH` routes agai
 
 ## API Maturity Summary
 
-### Maturity Level: **Middle Development (~65% API-complete)**
+### Maturity Level: **Middleware Development (~75% API-complete)**
 
 > [!IMPORTANT]
 > The catalog/admin APIs are production-quality in structure, and the core commerce APIs (cart, order, payment, address, wishlist, shipment, attribute) now exist with Zod contracts and Drizzle-backed implementations. The remaining gaps are checkout UI, payment gateway/webhook integration, and admin/customer experiences on top of these routers.

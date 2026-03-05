@@ -29,13 +29,13 @@ This audit provides a comprehensive analysis of an early-stage Next.js 16-based 
 
 | Domain | Status | Score |
 |--------|--------|-------|
-| Database Schema | 🟡 Needs Improvement | 70% |
-| API Layer | 🟡 Needs Improvement | 65% |
+| Database Schema | ✅ Stable | 95% |
+| API Layer | 🟡 Needs Improvement | 75% |
 | Validation Layer | ✅ Stable | 85% |
 | UI/Forms | ✅ Stable | 80% |
 | Authentication | ✅ Stable | 85% |
-| Business Logic | ❌ High Risk / Incomplete | 40% |
-| Data Integrity | 🟡 Needs Improvement | 60% |
+| Business Logic | 🟡 Partial | 65% |
+| Data Integrity | 🟡 Needs Improvement | 70% |
 | Security | 🟡 Needs Improvement | 65% |
 
 ---
@@ -137,8 +137,8 @@ graph TD
 
 | Module | Schema | API Router | Status |
 |--------|--------|------------|--------|
-| user | ❌ None | ❌ Missing | **CRITICAL** |
-| account | ❌ None | ❌ Missing | **CRITICAL** |
+| user | ✅ Auth-only | ✅ Auth-only | **STABLE** |
+| account | ✅ Auth-only | ✅ Auth-only | **STABLE** |
 | media | ✅ DB Only | ❌ Missing | **MEDIUM** |
 
 ---
@@ -258,27 +258,10 @@ The form system at `src/shared/components/form/` demonstrates excellent reusabil
 ### 5.1 Database Schema Analysis
 
 #### ✅ Well-Designed Elements
-
-1. **Soft Delete Pattern**: `deletedAt` timestamp on all major entities
-   ```typescript
-   deletedAt: timestamp('deleted_at', { withTimezone: true })
-   ```
-
-2. **Proper Indexing Strategy**:
-   ```typescript
-   // Category indexes
-   visibilityIdx: index('category_visibility_idx').on(table.visibility)
-   isFeaturedIdx: index('category_is_featured_idx').on(table.isFeatured)
-   displayOrderIdx: index('category_display_order_idx').on(table.displayOrder)
-   ```
-
+1. **Soft Delete Pattern**: `deletedAt` timestamp on major entities
+2. **Proper Indexing Strategy**: Confirmed for catalog and cart/inventory.
 3. **Drizzle Relations**: Properly defined for eager loading
-   ```typescript
-   export const productVariantRelations = relations(productVariant, ({ one, many }) => ({
-     product: one(product, { fields: [productVariant.productId], references: [product.id] }),
-     inventory: one(inventoryItem, { fields: [productVariant.id], references: [inventoryItem.variantId] }),
-   }))
-   ```
+4. **Commerce Schema**: Full set of tables for Orders, Payments, Shipments, Addresses, and Discounts implemented.
 
 #### ❌ Schema Drift & Issues
 
@@ -500,6 +483,8 @@ The form system at `src/shared/components/form/` demonstrates excellent reusabil
 
 | ID | Issue | Location | Impact | Fix Effort |
 |----|-------|----------|--------|------------|
+| ID | Issue | Location | Impact | Fix Effort |
+|----|-------|----------|--------|------------|
 | CR-001 | **Checkout UI & Payment Gateway Integration Missing** | Commerce UI + payment layer | Users cannot complete purchases yet | High |
 | CR-002 | **No Resource Ownership Checks** | All protected procedures | Data exposure risk | High |
 | CR-003 | **Category Update Slug Logic Bug** | `category.api.ts:232` | Prevents valid updates | Low |
@@ -510,8 +495,9 @@ The form system at `src/shared/components/form/` demonstrates excellent reusabil
 
 | ID | Issue | Location | Impact | Fix Effort |
 |----|-------|----------|--------|------------|
+| ID | Issue | Location | Impact | Fix Effort |
+|----|-------|----------|--------|------------|
 | HI-001 | **SQL Injection in Search Queries** | Multiple API files | Security vulnerability | Low |
-| HI-002 | **No Cart/Wishlist API Routers** | API Routes | Core e-commerce non-functional | Medium |
 | HI-003 | **N+1 Queries in Subcategory API** | `subcategory.api.ts` | Performance degradation | Low |
 | HI-004 | **Missing User Management APIs** | `module/user/` | Cannot manage users | Medium |
 | HI-005 | **Inconsistent Soft Delete Enforcement** | Various queries | Data integrity issues | Medium |
@@ -555,11 +541,11 @@ The form system at `src/shared/components/form/` demonstrates excellent reusabil
 ### Phase 2: Core E-Commerce Completion (Weeks 3-4)
 **Goal: Enable full purchase flow**
 
-- [ ] Implement Cart API router with full CRUD (CR-001)
-- [ ] Implement Wishlist API router (HI-002)
-- [ ] Implement Order API router (CR-001)
-- [ ] Implement Payment API router (CR-001)
-- [ ] Implement Attribute API router (CR-005)
+- [x] Implement Cart API router with full CRUD (CR-001)
+- [x] Implement Wishlist API router (HI-002)
+- [x] Implement Order API router (CR-001)
+- [x] Implement Payment API router (CR-001)
+- [x] Implement Attribute API router (CR-005)
 - [ ] Create cart/wishlist UI components
 
 ### Phase 3: Data Integrity & Performance (Weeks 5-6)

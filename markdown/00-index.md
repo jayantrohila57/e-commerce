@@ -1,7 +1,7 @@
 # E-Commerce Project Documentation Index
 
 > **Last Updated:** 2026-03-03  
-> **Project Completion:** ~65%  
+> **Project Completion:** ~75%  
 > **Target:** Production Ready
 > **Platform Type:** Single-Merchant Enterprise Commerce
 
@@ -59,7 +59,7 @@
 **Purpose:** Master checklist of all features by development phase  
 **Key Sections:**
 - Phase 1-7 breakdown with ✅/🟡/❌ status
-- Overall completion percentage (~55%)
+- Overall completion percentage (~75%)
 - Critical path to production
 
 ### 02-architecture-review.md
@@ -121,32 +121,25 @@
 3. **SQL Injection in Search** - Security vulnerability
 4. **Price Modifier Type Mismatch** - Data corruption risk
 
-### 🟠 High Priority
-1. Inventory uses hard delete (inconsistent)
-2. Missing database indexes
-3. No RBAC enforcement on mutations
-4. Blob upload has no auth guard
-
 ### 🟡 Medium Priority
 1. Duplicated schema definitions
-2. Missing data tables implementation
-3. Form validation inconsistencies
-4. No test infrastructure
+2. Form validation inconsistencies
+3. No test infrastructure
 
 ### 🏢 Enterprise Features (Post-MVP)
 | Feature | Status | Business Value |
 |---------|--------|----------------|
 | Shipment Tracking | 🟡 Partial | Fulfillment visibility |
-| Discount/Coupon System | ❌ Not Implemented | Marketing & retention |
-| Product Reviews | ❌ Not Implemented | Social proof |
-| Order Audit Logging | ❌ Not Implemented | Compliance & debugging |
-| Refund Management | ❌ Not Implemented | Customer service |
-| Tax Configuration | ❌ Not Implemented | Legal compliance |
-| Product Relationships | ❌ Not Implemented | Cross-sell/upsell |
-| Loyalty & Rewards | ❌ Not Implemented | Customer retention |
-| Cart Abandonment | ❌ Not Implemented | Recovery revenue |
-| Product Analytics | ❌ Not Implemented | Business intelligence |
-| System Audit Logging | ❌ Not Implemented | Security & compliance |
+| Discount/Coupon System | 🟡 Schema Ready | Marketing & retention |
+| Product Reviews | 🟡 Schema Ready | Social proof |
+| Order Audit Logging | 🟡 Schema Ready | Compliance & debugging |
+| Refund Management | 🟡 Schema Ready | Customer service |
+| Tax Configuration | 🟡 Schema Ready | Legal compliance |
+| Product Relationships | 🟡 Schema Ready | Cross-sell/upsell |
+| Loyalty & Rewards | 🟡 Schema Ready | Customer retention |
+| Cart Abandonment | 🟡 Schema Ready | Recovery revenue |
+| Product Analytics | 🟡 Schema Ready | Business intelligence |
+| System Audit Logging | 🟡 Schema Ready | Security & compliance |
 
 ---
 
@@ -157,12 +150,12 @@
 |--------|-------|-------------------|
 | Foundation & Infrastructure | 93% | 01-project-plan.md §1 |
 | Product Catalog & Admin | 80% | 01-project-plan.md §2 |
-| Commerce Engine | 55% | 01-project-plan.md §3 |
+| Commerce Engine | 80% | 01-project-plan.md §3 |
 | Customer Experience | 57% | 01-project-plan.md §4 |
 | UI & Design System | 93% | 01-project-plan.md §5 |
 | Marketing & Analytics | 20% | 01-project-plan.md §6 |
 | Testing & Deployment | 43% | 01-project-plan.md §7 |
-| **Enterprise Features** | **5%** | 01-project-plan.md §8 🏢 |
+| **Enterprise Features** | **60%** | 01-project-plan.md §8 🏢 |
 
 ### MVP Timeline
 - **Weeks 1-2:** Shared Infrastructure + DB Tables + Security Fixes

@@ -1,5 +1,6 @@
 import { CommerceSidebar } from "@/module/account/account.commerce.sidebar";
 import { WishlistItemList } from "@/module/wishlist/components/wishlist-item-list";
+import { WishlistSummary } from "@/module/wishlist/components/wishlist-summary";
 import Section from "@/shared/components/layout/section/section";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/components/ui/card";
 
@@ -15,16 +16,21 @@ export default async function WishlistPage() {
         <div className="col-span-2 hidden lg:block h-full w-full">
           <CommerceSidebar />
         </div>
-        <div className="col-span-12 lg:col-span-10">
-          <Card className="h-full w-full border-none">
-            <CardHeader>
-              <CardTitle>Wishlist</CardTitle>
-              <CardDescription>Products you have saved for later</CardDescription>
-            </CardHeader>
-            <CardContent className="p-0 sm:p-6 backdrop-blur-sm">
-              <WishlistItemList />
-            </CardContent>
-          </Card>
+        <div className="col-span-12 lg:col-span-10 grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <div className="lg:col-span-8">
+            <Card className="h-full w-full border-none">
+              <CardHeader>
+                <CardTitle>Wishlist</CardTitle>
+                <CardDescription>Products you have saved for later</CardDescription>
+              </CardHeader>
+              <CardContent className="p-0 sm:p-6 backdrop-blur-sm">
+                <WishlistItemList />
+              </CardContent>
+            </Card>
+          </div>
+          <div className="lg:col-span-4">
+            <WishlistSummary />
+          </div>
         </div>
       </div>
     </Section>

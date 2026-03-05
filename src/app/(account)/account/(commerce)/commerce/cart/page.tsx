@@ -19,7 +19,6 @@ export default async function CartPage() {
         <div className="col-span-12 lg:col-span-10 grid grid-cols-1 lg:grid-cols-12 gap-6">
           <div className="lg:col-span-8">
             <Card className="h-full w-full border-none ">
-              
               <CardContent className="p-0 sm:p-6   backdrop-blur-sm">
                 <CartItemList />
               </CardContent>

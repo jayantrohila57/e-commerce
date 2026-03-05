@@ -3,9 +3,9 @@
 import { Heart } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useWishlist } from "@/module/wishlist/use-wishlist";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/shared/components/ui/tooltip";
 import { Badge } from "@/shared/components/ui/badge";
 import { Button } from "@/shared/components/ui/button";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/shared/components/ui/tooltip";
 import { PATH } from "@/shared/config/routes";
 
 export default function WishListButton() {
@@ -37,7 +37,7 @@ export default function WishListButton() {
             )}
           </Button>
         </TooltipTrigger>
-        <TooltipContent>
+        <TooltipContent sideOffset={10}>
           <p id="wishlist-tooltip">
             {count > 0 ? `You have ${count} item${count === 1 ? "" : "s"} in your wishlist` : "Your wishlist is empty"}
           </p>

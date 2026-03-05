@@ -378,7 +378,11 @@ export const cartRouter = createTRPCRouter({
             // Reserve more
             const availableQuantity = inventory.quantity - inventory.reserved;
             if (availableQuantity < diff) {
-              return API_RESPONSE(STATUS.FAILED, `Insufficient inventory. Only ${availableQuantity} items available`, null);
+              return API_RESPONSE(
+                STATUS.FAILED,
+                `Insufficient inventory. Only ${availableQuantity} items available`,
+                null,
+              );
             }
             await reserveInventory(line.variantId, diff, userId);
           } else {

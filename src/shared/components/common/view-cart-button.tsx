@@ -28,4 +28,3 @@ export function ViewCartButton({ variantId, className }: ViewCartButtonProps) {
     </Link>
   );
 }
-

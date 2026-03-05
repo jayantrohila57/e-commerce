@@ -1,9 +1,9 @@
 import type { Route } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { PDPWishlistToggle } from "@/module/product/product-pdp-wishlist-toggle";
 import { AddToCartButton } from "@/shared/components/common/add-to-cart-button";
 import { ViewCartButton } from "@/shared/components/common/view-cart-button";
-import WishListButton from "@/shared/components/common/wishlist-button";
 import { Badge } from "@/shared/components/ui/badge";
 import { Button } from "@/shared/components/ui/button";
 import type { GetPDPProductOutput } from "./product.types";
@@ -48,6 +48,9 @@ export const PDPProduct = ({ data, slug }: { data: GetPDPProductOutput["data"]; 
             ) : (
               <div className="flex h-full items-center justify-center text-gray-400">No image available</div>
             )}
+            <div className="absolute right-3 top-3 z-10">
+              <PDPWishlistToggle variantId={selectedVariant.id} />
+            </div>
           </div>
         </div>
 
@@ -69,7 +72,7 @@ export const PDPProduct = ({ data, slug }: { data: GetPDPProductOutput["data"]; 
           </div>
 
           {/* ---- ATTRIBUTES ---- */}
-          <div className="space-y-4">
+          <div className="space-y-4 flex flex-row gap-4">
             {Object.entries(attributeGroups).map(([title, values]) => (
               <div key={title}>
                 <h3 className="text-sm font-medium capitalize">{title}</h3>
@@ -132,9 +135,6 @@ export const PDPProduct = ({ data, slug }: { data: GetPDPProductOutput["data"]; 
               <Button size="lg" variant="outline">
                 Buy Now
               </Button>
-            </div>
-            <div className="flex justify-start">
-              <WishListButton />
             </div>
           </div>
 

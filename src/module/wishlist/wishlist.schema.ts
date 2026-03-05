@@ -42,6 +42,26 @@ export const wishlistContract = {
     }),
     output: detailedResponse(z.object({ id: z.string() })),
   },
+  clear: {
+    input: z.object({}).optional(),
+    output: detailedResponse(
+      z.object({
+        success: z.boolean(),
+      }),
+    ),
+  },
+  moveToCart: {
+    input: z.object({
+      params: z.object({
+        id: z.string().min(1),
+      }),
+    }),
+    output: detailedResponse(
+      z.object({
+        id: z.string(),
+      }),
+    ),
+  },
 };
 
 export type Wishlist = z.infer<typeof wishlistSelectSchema>;

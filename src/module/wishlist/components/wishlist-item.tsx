@@ -1,9 +1,10 @@
 "use client";
 
-import { Loader2, Trash2 } from "lucide-react";
+import { Loader2, ShoppingCart, Trash2 } from "lucide-react";
 import Image from "next/image";
-import type { Wishlist } from "@/module/wishlist/wishlist.schema";
+import { useCart } from "@/module/cart/use-cart";
 import { useWishlist } from "@/module/wishlist/use-wishlist";
+import type { Wishlist } from "@/module/wishlist/wishlist.schema";
 import { Button } from "@/shared/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/shared/components/ui/tooltip";
 
@@ -12,11 +13,24 @@ interface WishlistItemProps {
 }
 
 export function WishlistItem({ item }: WishlistItemProps) {
-  const { removeFromWishlist, isRemoving } = useWishlist();
+  const { addToCart, isAdding } = useCart();
+  const { removeFromWishlist, moveToCart, isRemoving, isMoving } = useWishlist();
 
   const handleRemove = () => {
-    if (!isRemoving) {
+    if (!isRemoving && !isMoving) {
       removeFromWishlist(item.id);
+    }
+  };
+
+  const handleAddToCart = () => {
+    if (!isAdding) {
+      addToCart(item.variantId, 1);
+    }
+  };
+
+  const handleMoveToCart = () => {
+    if (!isMoving && !isRemoving) {
+      moveToCart(item.id);
     }
   };
 
@@ -40,7 +54,43 @@ export function WishlistItem({ item }: WishlistItemProps) {
         </div>
       </div>
 
-      <div className="flex items-center gap-4 min-w-[80px] justify-end">
+      <div className="flex items-center gap-3 min-w-[220px] justify-end">
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant="outline"
+              size="sm"
+              className="flex items-center gap-2"
+              onClick={handleAddToCart}
+              disabled={isAdding}
+            >
+              {isAdding ? <Loader2 className="h-3 w-3 animate-spin" /> : <ShoppingCart className="h-3 w-3" />}
+              <span className="text-xs sm:text-sm">Add to cart</span>
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Add this item to your cart</p>
+          </TooltipContent>
+        </Tooltip>
+
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant="default"
+              size="sm"
+              className="flex items-center gap-2"
+              onClick={handleMoveToCart}
+              disabled={isMoving || isRemoving}
+            >
+              {isMoving ? <Loader2 className="h-3 w-3 animate-spin" /> : <ShoppingCart className="h-3 w-3" />}
+              <span className="text-xs sm:text-sm">Move to cart</span>
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Add to cart and remove from wishlist</p>
+          </TooltipContent>
+        </Tooltip>
+
         <Tooltip>
           <TooltipTrigger asChild>
             <Button
@@ -48,7 +98,7 @@ export function WishlistItem({ item }: WishlistItemProps) {
               size="icon"
               className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
               onClick={handleRemove}
-              disabled={isRemoving}
+              disabled={isRemoving || isMoving}
             >
               {isRemoving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
             </Button>
@@ -61,4 +111,3 @@ export function WishlistItem({ item }: WishlistItemProps) {
     </div>
   );
 }
-

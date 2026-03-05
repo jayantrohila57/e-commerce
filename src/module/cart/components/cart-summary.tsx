@@ -80,9 +80,7 @@ export function CartSummary() {
         </TooltipContent>
       </Tooltip>
 
-      <p className="text-[10px] text-muted-foreground text-center">
-        Shipping and taxes are calculated at checkout.
-      </p>
+      <p className="text-[10px] text-muted-foreground text-center">Shipping and taxes are calculated at checkout.</p>
     </div>
   );
 }

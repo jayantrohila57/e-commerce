@@ -337,7 +337,7 @@ This table maps every module found in `MESSAGE` constants and `PATH` routes agai
 | Inventory | ✅ | ✅ | ✅ | ❌ inline | ✅ | **🟡 No message constants** |
 | Attribute | ✅ | ✅ | ✅ | ❌ | ❌ | **🟡 API exists, messages/routes pending** |
 | User | ✅ | ❌ | ❌ | ✅ | ✅ | **🟡 Auth-managed only** |
-| Cart | ✅ | ✅ | ✅ | ✅ | ✅ | **🟡 API complete, UI pending** |
+| Cart | ✅ | ✅ | ✅ | ✅ | ✅ | **✅ API + cart UI complete (checkout pending)** |
 | Wishlist | ✅ | ✅ | ✅ | ✅ | ✅ | **🟡 API complete, UI pending** |
 | Order | ✅ | ✅ | ✅ | ✅ | ✅ | **🟡 Core API complete, admin UI pending** |
 | Address | ✅ | ✅ | ✅ | ✅ | ✅ | **🟡 API complete, UI pending** |

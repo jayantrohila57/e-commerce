@@ -346,6 +346,14 @@ export const cartRouter = createTRPCRouter({
         }
 
         if (quantity === 0) {
+          // Release reservation before deleting
+          const inventory = await db.query.inventoryItem.findFirst({
+            where: eq(inventoryItem.variantId, line.variantId),
+          });
+          if (inventory) {
+            await releaseReservation(inventory.id, line.quantity);
+          }
+
           // Remove item
           await db.delete(cartLine).where(eq(cartLine.id, lineId));
 
@@ -353,6 +361,30 @@ export const cartRouter = createTRPCRouter({
           await db.update(cart).set({ updatedAt: new Date() }).where(eq(cart.id, line.cartId));
 
           return API_RESPONSE(STATUS.SUCCESS, MESSAGE.CART.REMOVE_ITEM.SUCCESS, null);
+        }
+
+        // Handle quantity change
+        const diff = quantity - line.quantity;
+        if (diff !== 0) {
+          const inventory = await db.query.inventoryItem.findFirst({
+            where: eq(inventoryItem.variantId, line.variantId),
+          });
+
+          if (!inventory) {
+            return API_RESPONSE(STATUS.FAILED, "Inventory not found", null);
+          }
+
+          if (diff > 0) {
+            // Reserve more
+            const availableQuantity = inventory.quantity - inventory.reserved;
+            if (availableQuantity < diff) {
+              return API_RESPONSE(STATUS.FAILED, `Insufficient inventory. Only ${availableQuantity} items available`, null);
+            }
+            await reserveInventory(line.variantId, diff, userId);
+          } else {
+            // Release some
+            await releaseReservation(inventory.id, Math.abs(diff));
+          }
         }
 
         // Update quantity
@@ -394,6 +426,14 @@ export const cartRouter = createTRPCRouter({
         // Verify ownership (if user is logged in)
         if (userId && line.cart.userId && line.cart.userId !== userId) {
           return API_RESPONSE(STATUS.FAILED, "Unauthorized", null);
+        }
+
+        // Release reservation before deleting
+        const inventory = await db.query.inventoryItem.findFirst({
+          where: eq(inventoryItem.variantId, line.variantId),
+        });
+        if (inventory) {
+          await releaseReservation(inventory.id, line.quantity);
         }
 
         // Remove item

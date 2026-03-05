@@ -184,9 +184,9 @@
 | ✅ | DB schema: `cart` + `cart_line` tables with relations |
 | ✅ | API message constants defined (CREATE, GET, ADD_ITEM, UPDATE_ITEM, REMOVE_ITEM, CLEAR_CART) |
 | ✅ | tRPC cart router with `get`, `getUserCart`, `add`, `update`, `remove`, `clear`, `getTotals`, `merge` |
-| ❌ | Add-to-cart UI flow not wired to cart API |
-| 🟡 | Account cart page exists but content area is empty |
-| 🟡 | Cart button component exists in shared (`cart-button.tsx`) |
+| ✅ | Add-to-cart UI flow wired to cart API on PDP and account cart page |
+| ✅ | Account cart page renders cart items with quantity controls and summary |
+| ✅ | Cart button component wired to cart totals with badge and tooltip |
 
 ### 3.2 Wishlist
 | Status | Task |
@@ -672,7 +672,7 @@
 > [!CAUTION]
 > The following items represent the **minimum viable path** to launch a functional e-commerce store:
 
-1. **Cart UI** — Implement add-to-cart on PDP and cart page in account (API exists)
+1. **Cart UI** — Implemented add-to-cart on PDP and account cart page (**DONE**)
 2. **Checkout flow UI** — Address selection, order summary, and placement (Order/Address APIs exist)
 3. **Payment gateway integration** — Integrate Stripe/Razorpay into the implemented Payment API
 4. **Order confirmation email** — Wire email templates to order/payment events

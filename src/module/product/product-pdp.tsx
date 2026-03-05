@@ -1,9 +1,11 @@
-import { Button } from "@/shared/components/ui/button";
-import { Badge } from "@/shared/components/ui/badge";
+import type { Route } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { AddToCartButton } from "@/shared/components/common/add-to-cart-button";
+import { ViewCartButton } from "@/shared/components/common/view-cart-button";
+import { Badge } from "@/shared/components/ui/badge";
+import { Button } from "@/shared/components/ui/button";
 import type { GetPDPProductOutput } from "./product.types";
-import type { Route } from "next";
 import { extractAttributeGroups, isOptionAvailable, resolveNextVariant } from "./product-utility";
 
 export const PDPProduct = ({ data, slug }: { data: GetPDPProductOutput["data"]; slug: string }) => {
@@ -123,9 +125,8 @@ export const PDPProduct = ({ data, slug }: { data: GetPDPProductOutput["data"]; 
           </div>
 
           <div className="flex gap-4 pt-4">
-            <Button size="lg" className="flex-1">
-              Add to Cart
-            </Button>
+            <AddToCartButton variantId={selectedVariant.id} size="lg" className="flex-1" />
+            <ViewCartButton variantId={selectedVariant.id} className="flex-1" />
             <Button size="lg" variant="outline">
               Buy Now
             </Button>

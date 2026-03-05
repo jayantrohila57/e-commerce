@@ -1,35 +1,34 @@
-import { getServerSession } from "@/core/auth/auth.server";
-
+import { CommerceSidebar } from "@/module/account/account.commerce.sidebar";
+import { CartItemList } from "@/module/cart/components/cart-item-list";
+import { CartSummary } from "@/module/cart/components/cart-summary";
 import Section from "@/shared/components/layout/section/section";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/components/ui/card";
-import { redirect } from "next/navigation";
-import { PATH } from "@/shared/config/routes";
-import { CommerceSidebar } from "@/module/account/account.commerce.sidebar";
 
 export const metadata = {
   title: "Cart",
-  description: "Update cart details",
+  description: "View and manage your shopping cart items",
 };
-export default async function CartPage() {
-  const session = await getServerSession();
-  if (!session) return redirect(PATH.ROOT);
 
+export default async function CartPage() {
   return (
     <Section className="bg-muted p-4" {...metadata}>
       <div className="grid h-full w-full grid-cols-12 gap-4">
-        <div className="col-span-2 h-full w-full">
+        <div className="col-span-2 hidden lg:block h-full w-full">
           <CommerceSidebar />
         </div>
-        <div className="col-span-8 h-full w-full">
-          <Card>
-            <CardHeader>
-              <CardTitle>Cart Information</CardTitle>
-              <CardDescription>Update your cart details</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6"></CardContent>
-          </Card>
+        <div className="col-span-12 lg:col-span-10 grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <div className="lg:col-span-8">
+            <Card className="h-full w-full border-none ">
+              
+              <CardContent className="p-0 sm:p-6   backdrop-blur-sm">
+                <CartItemList />
+              </CardContent>
+            </Card>
+          </div>
+          <div className="lg:col-span-4">
+            <CartSummary />
+          </div>
         </div>
-        <div className="col-span-2"></div>
       </div>
     </Section>
   );

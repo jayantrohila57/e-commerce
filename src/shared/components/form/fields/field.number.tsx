@@ -1,11 +1,11 @@
 "use client";
 
+import { useId } from "react";
 import { Controller, useFormContext } from "react-hook-form";
-import { Input } from "@/shared/components/ui/input";
 import { FormControl, FormDescription, FormItem, FormLabel, FormMessage } from "@/shared/components/ui/form";
+import { Input } from "@/shared/components/ui/input";
 import { cn } from "@/shared/utils/lib/utils";
 import type { FormInputProps } from "../form.types";
-import { useId } from "react";
 
 export const InputNumber: React.FC<FormInputProps> = (props) => {
   const reactId = useId();
@@ -31,7 +31,15 @@ export const InputNumber: React.FC<FormInputProps> = (props) => {
         <FormItem id={stableId}>
           <FormLabel required={props.required}>{props.label}</FormLabel>
           <FormControl className={cn(props?.className)}>
-            <Input {...field} {...props?.fieldProps} {...inputConfig} />
+            <Input
+              {...field}
+              {...props?.fieldProps}
+              {...inputConfig}
+              onChange={(e) => {
+                const val = e.target.value;
+                field.onChange(val === "" ? "" : Number(val));
+              }}
+            />
           </FormControl>
           <FormDescription>{props?.helperText}</FormDescription>
           <FormMessage>{fieldState?.error?.message}</FormMessage>

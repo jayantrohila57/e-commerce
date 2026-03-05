@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { AddToCartButton } from "@/shared/components/common/add-to-cart-button";
 import { ViewCartButton } from "@/shared/components/common/view-cart-button";
+import WishListButton from "@/shared/components/common/wishlist-button";
 import { Badge } from "@/shared/components/ui/badge";
 import { Button } from "@/shared/components/ui/button";
 import type { GetPDPProductOutput } from "./product.types";
@@ -124,12 +125,17 @@ export const PDPProduct = ({ data, slug }: { data: GetPDPProductOutput["data"]; 
             ))}
           </div>
 
-          <div className="flex gap-4 pt-4">
-            <AddToCartButton variantId={selectedVariant.id} size="lg" className="flex-1" />
-            <ViewCartButton variantId={selectedVariant.id} className="flex-1" />
-            <Button size="lg" variant="outline">
-              Buy Now
-            </Button>
+          <div className="flex flex-col gap-3 pt-4">
+            <div className="flex gap-4">
+              <AddToCartButton variantId={selectedVariant.id} size="lg" className="flex-1" />
+              <ViewCartButton variantId={selectedVariant.id} className="flex-1" />
+              <Button size="lg" variant="outline">
+                Buy Now
+              </Button>
+            </div>
+            <div className="flex justify-start">
+              <WishListButton />
+            </div>
           </div>
 
           <div className="space-y-4 pt-6">

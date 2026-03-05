@@ -1,35 +1,31 @@
-import { getServerSession } from "@/core/auth/auth.server";
-
+import { CommerceSidebar } from "@/module/account/account.commerce.sidebar";
+import { WishlistItemList } from "@/module/wishlist/components/wishlist-item-list";
 import Section from "@/shared/components/layout/section/section";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/components/ui/card";
-import { redirect } from "next/navigation";
-import { PATH } from "@/shared/config/routes";
-import { CommerceSidebar } from "@/module/account/account.commerce.sidebar";
 
 export const metadata = {
   title: "Wishlist",
-  description: "Update cart details",
+  description: "View and manage your saved items",
 };
-export default async function CartPage() {
-  const session = await getServerSession();
-  if (!session) return redirect(PATH.ROOT);
 
+export default async function WishlistPage() {
   return (
     <Section className="bg-muted p-4" {...metadata}>
       <div className="grid h-full w-full grid-cols-12 gap-4">
-        <div className="col-span-2 h-full w-full">
+        <div className="col-span-2 hidden lg:block h-full w-full">
           <CommerceSidebar />
         </div>
-        <div className="col-span-8 h-full w-full">
-          <Card>
+        <div className="col-span-12 lg:col-span-10">
+          <Card className="h-full w-full border-none">
             <CardHeader>
-              <CardTitle>Cart Information</CardTitle>
-              <CardDescription>Update your cart details</CardDescription>
+              <CardTitle>Wishlist</CardTitle>
+              <CardDescription>Products you have saved for later</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-6"></CardContent>
+            <CardContent className="p-0 sm:p-6 backdrop-blur-sm">
+              <WishlistItemList />
+            </CardContent>
           </Card>
         </div>
-        <div className="col-span-2"></div>
       </div>
     </Section>
   );

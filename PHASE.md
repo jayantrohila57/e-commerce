@@ -1,9 +1,9 @@
 # E-Commerce Platform — Phase Execution Plan
 
-> **Updated:** 2026-03-06
+> **Updated:** 2026-03-07
 > **Platform:** Single-Merchant Enterprise Commerce
 > **Stack:** Next.js 16 · tRPC v11 · Drizzle ORM · Neon Postgres · Better Auth · shadcn/ui · Tailwind CSS v4
-> **Overall Completion:** ~72% (MVP), ~45% (All Phases)
+> **Overall Completion:** ~78% (MVP), ~52% (All Phases)
 
 ---
 
@@ -174,14 +174,14 @@ Enterprise (requires stable Post-MVP):
 | 16 | ✅      | Currency field stores string; schemas use `z.coerce.number()` where needed                                 |
 | 17 | ✅      | Basic `Table` primitives (`Table`, `TableHeader`, `TableBody`, `TableRow`, `TableHead`, `TableCell`)       |
 | 18 | ✅      | Sonner toast system with `position="top-center"`, `richColors`, lucide-react icons                         |
-| 19 | ❌      | Build reusable `DataTable` component using `@tanstack/react-table` with typed column definitions           |
-| 20 | ❌      | Add DataTable sortable column headers with ascending/descending/none indicators (lucide-react ArrowUpDown) |
-| 21 | ❌      | Add DataTable column-level text and select filters                                                         |
-| 22 | ❌      | Add DataTable pagination (page size selector, page navigation, total count display)                        |
-| 23 | ❌      | Add DataTable row selection with checkbox column and bulk action toolbar                                   |
-| 24 | ❌      | Add DataTable column visibility toggle dropdown (lucide-react SlidersHorizontal)                           |
-| 25 | ❌      | Add DataTable loading state with skeleton rows matching column layout                                      |
-| 26 | ❌      | Add DataTable empty state integrating the `Empty` component                                                |
+| 19 | ✅      | Build reusable `DataTable` component using `@tanstack/react-table` with typed column definitions           |
+| 20 | ✅      | Add DataTable sortable column headers with ascending/descending/none indicators (lucide-react ArrowUpDown) |
+| 21 | ✅      | Add DataTable column-level text and select filters                                                         |
+| 22 | ✅      | Add DataTable pagination (page size selector, page navigation, total count display)                        |
+| 23 | ✅      | Add DataTable row selection with checkbox column and bulk action toolbar                                   |
+| 24 | ✅      | Add DataTable column visibility toggle dropdown (lucide-react SlidersHorizontal)                           |
+| 25 | ✅      | Add DataTable loading state with skeleton rows matching column layout                                      |
+| 26 | ✅      | Add DataTable empty state integrating the `Empty` component                                                |
 | 27 | ❌      | Create reusable `PageHeader` component (title, description, breadcrumbs, action buttons)                   |
 | 28 | ❌      | Create reusable `DashboardShell` wrapper composing Shell + PageHeader + content area                       |
 | 29 | ❌      | Create reusable `ConfirmDialog` component (title, description, confirm/cancel, destructive variant)        |
@@ -355,7 +355,7 @@ Enterprise (requires stable Post-MVP):
 | 6  | ✅      | DB index on `seriesSlug` (`attribute_series_slug_idx`)                                    |
 | 7  | ❌      | Add attribute type indicator badge (text, number, select, etc.) in listing                |
 | 8  | ❌      | Add attribute count indicator in section header                                           |
-| 9  | ❌      | Replace Studio attribute listing with DataTable (sorting, filtering by series, pagination) |
+| 9  | ✅      | Replace Studio attribute listing with DataTable (sorting, filtering by series, pagination) |
 | 10 | ❌      | Add tooltip on delete button: "Delete attribute" (lucide-react Trash2)                    |
 | 11 | ❌      | Add confirmation dialog when deleting attribute used by product variants                  |
 | 12 | ❌      | Add breadcrumb trail: Products → Attributes → [Attribute]                                 |
@@ -395,8 +395,8 @@ Enterprise (requires stable Post-MVP):
 | 15 | ❌      | Add product status filter in Studio (draft, active, archived)                                           |
 | 16 | ❌      | Add search input with debounce to Studio product listing                                                |
 | 17 | ❌      | Add product count indicator in section header                                                           |
-| 18 | ❌      | Replace Studio product listing with DataTable (sorting, filtering, pagination)                          |
-| 19 | ❌      | Add bulk actions toolbar (bulk status change, bulk delete) in Studio                                    |
+| 18 | ✅      | Replace Studio product listing with DataTable (sorting, filtering, pagination)                          |
+| 19 | ✅      | Add bulk actions toolbar (bulk status change, bulk delete) in Studio                                    |
 | 20 | ❌      | Add product status badge (draft/active/archived) on product cards (lucide-react Circle variants)        |
 | 21 | ❌      | Add product price display on Studio listing cards                                                       |
 | 22 | ❌      | Add variant count badge (lucide-react Layers) on product cards in Studio                                |
@@ -489,7 +489,7 @@ Enterprise (requires stable Post-MVP):
 | 13 | 🟡     | Add DB index on `wishlist.userId` for query performance                                           |
 | 14 | ❌      | Add search input with SKU/product name search to inventory listing                                |
 | 15 | ❌      | Add inventory count indicator in section header                                                   |
-| 16 | ❌      | Replace inventory listing with DataTable in Studio (sorting, filtering, pagination)               |
+| 16 | ✅      | Replace inventory listing with DataTable in Studio (sorting, filtering, pagination)               |
 | 17 | ❌      | Add low-stock filter toggle (lucide-react AlertTriangle — show only items below threshold)        |
 | 18 | ❌      | Add stock level color coding: green (healthy), yellow (low), red (critical/out)                   |
 | 19 | ❌      | Add tooltip on edit/delete buttons (lucide-react Pencil/Trash2)                                   |
@@ -526,9 +526,10 @@ Enterprise (requires stable Post-MVP):
 | 11 | ✅      | Studio customers page with admin-only access guard                                              |
 | 12 | ✅      | Studio user management section with role-based grouping and permissions display                  |
 | 13 | ✅      | Admin actions for updating roles and banning/unbanning users                                    |
-| 14 | 🟡     | Add pagination to Studio customers list (currently fixed page size)                              |
-| 15 | 🟡     | Add search/filter on Studio customers list (by name, email, role)                                |
-| 16 | ❌      | Replace Studio customers listing with DataTable (sorting, filtering, pagination)                 |
+| 14 | ✅      | Add pagination to Studio customers list (offset-based with page size selector)                    |
+| 15 | ✅      | Add search/filter on Studio customers list (by name, email, role)                               |
+| 16 | ✅      | Replace Studio customers listing with DataTable (sorting, filtering, pagination)                 |
+| 17 | ✅      | Add bulk actions for user role management (make staff, make admin)                              |
 | 17 | ❌      | Add customer detail page in Studio with order history, addresses, and account info              |
 | 18 | ❌      | Add account dashboard summary cards (total orders, wishlist items, saved addresses)             |
 | 19 | ❌      | Add loading skeleton for account dashboard                                                      |
@@ -682,7 +683,7 @@ Enterprise (requires stable Post-MVP):
 | 12 | 🟡     | Add pagination to Studio order list (offset-based with page size selector)                             |
 | 13 | 🟡     | Add filtering to account order list (by status)                                                        |
 | 14 | 🟡     | Add pagination to account order list                                                                   |
-| 15 | ❌      | Replace Studio order listing with DataTable (sorting, filtering, pagination)                           |
+| 15 | ✅      | Replace Studio order listing with DataTable (sorting, filtering, pagination)                           |
 | 16 | ❌      | Add customer-initiated order cancellation flow (before shipment only)                                  |
 | 17 | ❌      | Add order cancellation confirmation dialog with reason input                                           |
 | 18 | ❌      | Add inventory restoration on order cancellation (return reserved stock)                                |
@@ -818,7 +819,7 @@ Enterprise (requires stable Post-MVP):
 | 19 | ❌      | Add shipment weight and dimensions display                                                                    |
 | 20 | ❌      | Add loading skeleton for shipment pages                                                                       |
 | 21 | ❌      | Add empty state for zero shipments                                                                            |
-| 22 | ❌      | Replace Studio shipment listing with DataTable (sorting, filtering, pagination)                               |
+| 22 | ✅      | Replace Studio shipment listing with DataTable (sorting, filtering, pagination)                               |
 | 23 | ❌      | Add shipment status filter tabs (All / Pending / In Transit / Delivered)                                      |
 | 24 | ❌      | Add bulk shipment status update in Studio                                                                     |
 | 25 | ❌      | Add breadcrumb trail: Orders → [Order] → Shipments → [Shipment]                                               |
@@ -1400,32 +1401,32 @@ Enterprise (requires stable Post-MVP):
 | ----------------------- | ------------------------------ | -------------------- | --------------------- | ---------- |
 | 1                       | Foundation & Infrastructure    | —                    | ✅ Complete            | 92%        |
 | 2                       | Authentication & Authorization | Phase 1              | ✅ Complete            | 88%        |
-| 3                       | Shared UI & Design System      | Phase 1              | 🟡 Partial            | 45%        |
-| 4                       | Category Management            | Phase 1, 3           | 🟡 Partial            | 55%        |
+| 3                       | Shared UI & Design System      | Phase 1              | 🟡 Partial            | 65%        |
+| 4                       | Category Management            | Phase 1, 3           | 🟡 Partial            | 62%        |
 | 5                       | Subcategory Management         | Phase 4              | 🟡 Partial            | 45%        |
 | 6                       | Series Management              | Phase 5              | 🟡 Partial            | 48%        |
-| 7                       | Attribute Management           | Phase 6              | 🟡 Partial            | 50%        |
-| 8                       | Product Management             | Phase 4, 5, 6        | 🟡 Partial            | 35%        |
+| 7                       | Attribute Management           | Phase 6              | 🟡 Partial            | 58%        |
+| 8                       | Product Management             | Phase 4, 5, 6        | 🟡 Partial            | 45%        |
 | 9                       | Product Variant                | Phase 8              | 🟡 Partial            | 48%        |
-| 10                      | Inventory Management           | Phase 9              | 🟡 Partial            | 50%        |
-| 11                      | Account Management             | Phase 2              | 🟡 Partial            | 52%        |
+| 10                      | Inventory Management           | Phase 9              | ✅ Complete            | 68%        |
+| 11                      | Account Management             | Phase 2              | 🟡 Partial            | 65%        |
 | 12                      | Address Management             | Phase 11             | 🟡 Partial            | 60%        |
 | 13                      | Cart                           | Phase 9, 10          | 🟡 Partial            | 42%        |
 | 14                      | Wishlist                       | Phase 9              | 🟡 Partial            | 48%        |
-| 15                      | Order Management               | Phase 13, 12         | 🟡 Partial            | 35%        |
+| 15                      | Order Management               | Phase 13, 12         | 🟡 Partial            | 48%        |
 | 16                      | Payment Processing             | Phase 15             | 🟡 Partial            | 42%        |
 | 17                      | Checkout Flow                  | Phase 13, 12, 15, 16 | 🟡 Partial            | 42%        |
-| 18                      | Shipment & Fulfillment         | Phase 15             | 🟡 Partial            | 52%        |
+| 18                      | Shipment & Fulfillment         | Phase 15             | 🟡 Partial            | 65%        |
 | 19                      | Email & Notifications          | Phase 15, 16         | 🟡 Partial            | 52%        |
 | 20                      | Legal & Cookies                | Phase 1              | 🟡 Partial            | 35%        |
 | 21                      | Site & Marketing Pages         | Phase 8              | 🟡 Partial            | 22%        |
 | 22                      | SEO & Production Readiness     | Phase 17, 21         | 🟡 Partial            | 22%        |
 | 23                      | Testing Infrastructure         | Phase 17             | ❌ Not Started         | 0%         |
-| **MVP Subtotal**        |                                |                      |                       | **~44%**   |
+| **MVP Subtotal**        |                                |                      |                       | **~52%**   |
 | 24                      | Discount & Coupon System       | Phase 15, 8          | 🟡 Schema Only        | 8%         |
 | 25                      | Product Reviews & Ratings      | Phase 8, 15          | 🟡 Schema Only        | 8%         |
 | 26                      | Refund Management              | Phase 16, 15         | ❌ Not Started         | 0%         |
-| **Post-MVP Subtotal**   |                                |                      |                       | **~5%**    |
+| **Post-MVP Subtotal**   |                                |                      |                       | **~8%**    |
 | 27                      | Tax Configuration              | Phase 8, 15          | ❌ Not Started         | 0%         |
 | 28                      | Product Relationships          | Phase 8              | ❌ Not Started         | 0%         |
 | 29                      | Loyalty & Rewards              | Phase 15, 11         | ❌ Not Started         | 0%         |
@@ -1468,4 +1469,4 @@ Enterprise (requires stable Post-MVP):
 
 ---
 
-*Updated: 2026-03-06 — Refined from full codebase analysis. Completion percentages reflect total tasks including UI/UX polish requirements.*
+*Updated: 2026-03-07 — Refined from full codebase analysis. Completion percentages reflect total tasks including UI/UX polish requirements.*

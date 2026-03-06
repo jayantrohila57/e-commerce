@@ -17,17 +17,17 @@ export const InputCurrency: React.FC<FormInputProps> = (props) => {
   // Using Controller's render we will compute formatted display without calling setState in an effect.
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const raw = e.target.value.replace(/,/g, "");
+    const raw = e.target.value.replace(/,/g, "").trim();
 
-    // Allow blank
+    // Store as string so form/schema type is consistent (string); consumers can coerce to number if needed
     if (raw === "") {
-      setValue(props.name, "");
+      setValue(props.name, "", { shouldValidate: true });
       return;
     }
 
     const num = Number(raw);
     if (!Number.isNaN(num)) {
-      setValue(props.name, num); // raw numeric user data
+      setValue(props.name, raw, { shouldValidate: true });
     }
   };
   if (props?.hidden) return null;
@@ -59,7 +59,7 @@ export const InputCurrency: React.FC<FormInputProps> = (props) => {
                   value={
                     field.value === "" || field.value === null || field.value === undefined
                       ? ""
-                      : Number(field.value).toLocaleString("en-IN")
+                      : Number(String(field.value)).toLocaleString("en-IN")
                   }
                   onChange={handleChange}
                   type="text"

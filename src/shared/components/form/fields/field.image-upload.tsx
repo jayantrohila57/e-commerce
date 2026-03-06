@@ -1,7 +1,7 @@
 "use client";
 
 import { ImageUpIcon, XIcon } from "lucide-react";
-import { useId, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { useFormContext } from "react-hook-form";
 import { toast } from "sonner";
 import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/shared/components/ui/form";
@@ -21,6 +21,15 @@ export const ImageUploadText: React.FC<FormInputProps> = (props) => {
   const { control } = useFormContext();
   const [isUploading, setIsUploading] = useState(false);
   const [progress, setProgress] = useState<number>(0);
+  const rafIdRef = useRef<number | null>(null);
+  const uploadingRef = useRef(false);
+
+  useEffect(() => {
+    return () => {
+      if (rafIdRef.current != null) cancelAnimationFrame(rafIdRef.current);
+    };
+  }, []);
+
   const [
     { files, isDragging, errors },
     {
@@ -127,15 +136,25 @@ export const ImageUploadText: React.FC<FormInputProps> = (props) => {
                   disabled={isUploading || !files[0]}
                   onClick={async () => {
                     if (!files[0]) return;
+                    if (rafIdRef.current != null) {
+                      cancelAnimationFrame(rafIdRef.current);
+                      rafIdRef.current = null;
+                    }
+                    uploadingRef.current = true;
+                    setIsUploading(true);
+                    setProgress(5);
+                    const tick = () => {
+                      setProgress((p) => (p < 90 ? p + 5 : p));
+                      if (uploadingRef.current) rafIdRef.current = requestAnimationFrame(tick);
+                    };
+                    rafIdRef.current = requestAnimationFrame(tick);
                     try {
-                      setIsUploading(true);
-                      setProgress(5);
-                      const tick = () => {
-                        setProgress((p) => (p < 90 ? p + 5 : p));
-                        if (isUploading) requestAnimationFrame(tick);
-                      };
-                      requestAnimationFrame(tick);
                       const result = await uploadFirst();
+                      uploadingRef.current = false;
+                      if (rafIdRef.current != null) {
+                        cancelAnimationFrame(rafIdRef.current);
+                        rafIdRef.current = null;
+                      }
                       setIsUploading(false);
                       setProgress(100);
                       if (result?.url) {
@@ -148,6 +167,11 @@ export const ImageUploadText: React.FC<FormInputProps> = (props) => {
                         });
                       }
                     } catch (e) {
+                      uploadingRef.current = false;
+                      if (rafIdRef.current != null) {
+                        cancelAnimationFrame(rafIdRef.current);
+                        rafIdRef.current = null;
+                      }
                       setIsUploading(false);
                       setProgress(0);
                       toast.error("Image upload error", {

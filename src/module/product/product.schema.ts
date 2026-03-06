@@ -16,8 +16,8 @@ export const baseProductSchema = z.object({
   subcategorySlug: z.string().min(1),
   seriesSlug: z.string().min(1),
 
-  // PRICING
-  basePrice: z.number().min(0),
+  // PRICING (currency field stores string; coerce for API/DB)
+  basePrice: z.coerce.number().min(0),
   baseCurrency: z.string().default("INR").nullable(),
   baseImage: z.string().nullable().optional(),
 

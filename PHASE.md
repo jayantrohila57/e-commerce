@@ -124,9 +124,9 @@ Enterprise (requires stable Post-MVP):
 | ✅ | Email Verification flow |
 | ✅ | GitHub OAuth + Passkey buttons |
 | ✅ | Sign-out (button, dropdown, icon variants) |
-| 🟡 | `adminProcedure` and `customerProcedure` defined but never enforced on mutations |
-| 🟡 | Permission check bug — `getServerUserPermission()` has inverted error logic |
-| 🟡 | Blob upload has no auth guard |
+| ✅ | `customerProcedure` enforced on customer-facing mutations; admin/staff guards available for studio APIs |
+| ✅ | Permission check helper (`getServerUserPermission()`) returns correct result on error/success |
+| ✅ | Blob upload API requires authenticated session |
 
 ---
 
@@ -354,9 +354,9 @@ Enterprise (requires stable Post-MVP):
 | ✅ | Add-to-cart UI flow wired on PDP |
 | ✅ | Account cart page renders items with quantity controls and summary |
 | ✅ | `useCart` hook for state management |
-| ✅ | Cart button component with badge and tooltip |
-| 🟡 | Cart button may still use hardcoded count in some places |
-| ❌ | No cart drawer/widget in header |
+| ✅ | Cart button component with badge and tooltip (wired to `useCart`) |
+| ✅ | Cart button no longer uses hardcoded count anywhere |
+| — | Cart drawer/widget in header (not planned for this release) |
 
 ---
 

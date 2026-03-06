@@ -33,10 +33,11 @@ export const getServerUserPermission = async (permission: Permission[]) => {
       },
     },
   });
-  if (!has.error) {
-    debugLog("USER:HAS_PERMISSION:ERROR");
+  if (has.error) {
+    debugLog("USER:HAS_PERMISSION:ERROR", has.error);
     return false;
   }
+
   return Boolean(has.success);
 };
 

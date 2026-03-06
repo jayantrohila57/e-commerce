@@ -1,4 +1,4 @@
-import { Heart, MapPin, Package, ShoppingBag, ShoppingCart, Star, Truck } from "lucide-react";
+import { CreditCard, Heart, MapPin, Package, ShoppingBag, ShoppingCart, Star, Truck } from "lucide-react";
 import { PATH } from "@/shared/config/routes";
 import { ContentStack } from "./account.stack";
 
@@ -32,6 +32,12 @@ export const accountSections = {
           description: "Track your order history and view invoice details.",
           icon: Package,
           link: PATH.ACCOUNT.ORDER,
+        },
+        {
+          name: "Payments",
+          description: "View payment statuses and receipts for your orders.",
+          icon: CreditCard,
+          link: PATH.ACCOUNT.PAYMENT,
         },
         {
           name: "Shipments",

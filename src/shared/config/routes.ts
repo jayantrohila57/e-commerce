@@ -20,6 +20,7 @@ export const PATH = {
     CART: "/account/commerce/cart" as Route,
     WISHLIST: "/account/commerce/wishlist" as Route,
     ORDER: "/account/commerce/order" as Route,
+    PAYMENT: "/account/commerce/payment" as Route,
     ADDRESS: "/account/commerce/address" as Route,
     ADDRESS_NEW: "/account/commerce/address/new" as Route,
     ADDRESS_EDIT: (id: string) => `/account/commerce/address/${id}/edit`,

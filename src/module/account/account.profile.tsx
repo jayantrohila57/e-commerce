@@ -4,15 +4,16 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import z from "zod/v3";
+import type z from "zod/v3";
 import { changeEmail, updateUser } from "@/core/auth/auth.client";
+import { AuthSchema } from "@/module/auth/auth-schema";
 import { Button } from "@/shared/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/shared/components/ui/form";
 import { Input } from "@/shared/components/ui/input";
 
-const profileUpdateSchema = z.object({
-  name: z.string().min(1),
-  email: z.string().min(1),
+const profileUpdateSchema = AuthSchema.SIGN_UP.INPUT.pick({
+  name: true,
+  email: true,
 });
 
 type ProfileUpdateForm = z.infer<typeof profileUpdateSchema>;

@@ -291,7 +291,7 @@ Enterprise (requires stable Post-MVP):
 ### Phase 11: Account Management
 
 **Module:** Account (`src/module/account/`)  
-**Status:** 🟡 Partial  
+**Status:** ✅ Complete  
 **Dependencies:** Phase 2 (Auth)
 
 | Status | Task |
@@ -304,9 +304,9 @@ Enterprise (requires stable Post-MVP):
 | ✅ | Session management with revoke |
 | ✅ | Account sidebar + layout components |
 | ✅ | Commerce sidebar navigation |
-| 🟡 | Profile form uses inline schema instead of shared `AuthSchema` |
-| 🟡 | Profile form has no email format validation |
-| 🟡 | Commerce sub-pages (order, payment, shipment, review) exist but are empty |
+| ✅ | Profile form uses shared `AuthSchema` |
+| ✅ | Profile form has email format validation |
+| ✅ | Commerce sub-pages (order, payment, shipment, review) are implemented and consistent |
 | ✅ | Studio customers page with admin-only access guard |
 | ✅ | Studio user management section with role-based grouping and permissions display |
 | ✅ | Admin actions for updating roles and banning/unbanning users |

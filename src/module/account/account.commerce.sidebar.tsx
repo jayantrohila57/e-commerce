@@ -1,6 +1,6 @@
 "use client";
 
-import { Boxes, Heart, LocateIcon, ShoppingCart } from "lucide-react";
+import { Boxes, CreditCard, Heart, LocateIcon, ShoppingCart } from "lucide-react";
 import type { Route } from "next";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -26,6 +26,7 @@ const sections: NavItem<Route>[] = [
   { id: "cart", label: "Cart", href: PATH.ACCOUNT.CART, icon: <ShoppingCart size={14} /> },
   { id: "wishlist", label: "Wishlist", href: PATH.ACCOUNT.WISHLIST, icon: <Heart size={14} /> },
   { id: "order", label: "Order", href: PATH.ACCOUNT.ORDER, icon: <Boxes size={14} /> },
+  { id: "payment", label: "Payment", href: PATH.ACCOUNT.PAYMENT, icon: <CreditCard size={14} /> },
   { id: "address", label: "Address", href: PATH.ACCOUNT.ADDRESS, icon: <LocateIcon size={14} /> },
   {
     id: "shipment",

@@ -2,8 +2,8 @@
 
 import { Ban, Shield, ShieldCheck } from "lucide-react";
 import { useRouter } from "next/navigation";
-import type { AppRole } from "@/core/auth/auth.roles";
 import { apiClient } from "@/core/api/api.client";
+import { APP_ROLE, type AppRole } from "@/core/auth/auth.roles";
 import type { BulkAction } from "@/shared/components/table/custom-action/bulk-operations.factory";
 import type { StudioManagedUser } from "./user-management.types";
 
@@ -52,7 +52,7 @@ export function useUserBulkActions(): BulkAction<StudioManagedUser>[] {
       requiresConfirmation: true,
       confirmationMessage: (rows) => `Promote ${rows.length} user${rows.length !== 1 ? "s" : ""} to staff?`,
       run: async (rows) => {
-        await setRole("STAFF", rows);
+        await setRole(APP_ROLE.STAFF, rows);
         await refresh();
       },
     },
@@ -64,7 +64,7 @@ export function useUserBulkActions(): BulkAction<StudioManagedUser>[] {
       requiresConfirmation: true,
       confirmationMessage: (rows) => `Promote ${rows.length} user${rows.length !== 1 ? "s" : ""} to admin?`,
       run: async (rows) => {
-        await setRole("ADMIN", rows);
+        await setRole(APP_ROLE.ADMIN, rows);
         await refresh();
       },
     },

@@ -2,6 +2,7 @@ import { z } from "zod/v3";
 import { detailedResponse, paginationInput } from "@/shared/schema";
 
 export const orderStatusEnum = z.enum(["pending", "paid", "shipped", "delivered", "cancelled"]);
+export type OrderStatus = z.infer<typeof orderStatusEnum>;
 
 export const addressSnapshotSchema = z.object({
   fullName: z.string().min(1),

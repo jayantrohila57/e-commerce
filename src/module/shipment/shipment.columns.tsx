@@ -8,16 +8,17 @@ import { DataTableColumnHeader } from "@/shared/components/table/data-table-colu
 import { commonColumns } from "@/shared/components/table/data-table-columns";
 import { Badge } from "@/shared/components/ui/badge";
 import { cn } from "@/shared/utils/lib/utils";
-import type { Shipment } from "./shipment.schema";
-import type { shipmentStatusEnum } from "./shipment.schema";
+import type { Shipment, shipmentStatusEnum } from "./shipment.schema";
 import { shipmentTableConfig } from "./shipment.table.config";
 
 const statusColors: Record<ReturnType<(typeof shipmentStatusEnum)["parse"]>, string> = {
   pending: "bg-amber-100 text-amber-800 border-amber-200",
-  in_transit: "bg-sky-100 text-sky-800 border-sky-200",
+  label_created: "bg-sky-100 text-sky-800 border-sky-200",
   picked_up: "bg-sky-100 text-sky-800 border-sky-200",
+  in_transit: "bg-sky-100 text-sky-800 border-sky-200",
+  out_for_delivery: "bg-blue-100 text-blue-800 border-blue-200",
   delivered: "bg-emerald-100 text-emerald-800 border-emerald-200",
-  failed: "bg-rose-100 text-rose-800 border-rose-200",
+  exception: "bg-rose-100 text-rose-800 border-rose-200",
   returned: "bg-slate-100 text-slate-800 border-slate-200",
 };
 

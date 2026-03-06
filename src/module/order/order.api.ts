@@ -1,16 +1,16 @@
 import { and, eq, ilike, inArray, sql } from "drizzle-orm";
 import { v4 as uuidv4 } from "uuid";
-import { createTRPCRouter, adminProcedure, customerProcedure, staffProcedure } from "@/core/api/api.methods";
+import { adminProcedure, createTRPCRouter, customerProcedure, staffProcedure } from "@/core/api/api.methods";
 import { APP_ROLE, normalizeRole } from "@/core/auth/auth.roles";
 import { db } from "@/core/db/db";
 import { cart, cartLine, inventoryItem, order, orderItem, user as userTable } from "@/core/db/db.schema";
 import { notifyLowStock, notifyOrderStatusChange } from "@/shared/components/mail/notification.service";
 import { MESSAGE, STATUS } from "@/shared/config/api.config";
 import { API_RESPONSE } from "@/shared/config/api.utils";
-import { buildPagination, buildPaginationMeta } from "@/shared/schema";
 import { siteConfig } from "@/shared/config/site";
+import { buildPagination, buildPaginationMeta } from "@/shared/schema";
 import { debugError } from "@/shared/utils/lib/logger.utils";
-import { type Order, orderContract } from "./order.schema";
+import { type Order, type OrderStatus, orderContract } from "./order.schema";
 
 export const orderRouter = createTRPCRouter({
   /**
@@ -82,7 +82,14 @@ export const orderRouter = createTRPCRouter({
     .output(orderContract.getManyAdmin.output)
     .query(async ({ input }) => {
       try {
-        const query = input.query ?? {};
+        const query = {
+          page: 1,
+          limit: 20,
+          sortOrder: "desc" as const,
+          status: undefined as OrderStatus | undefined,
+          q: undefined as string | undefined,
+          ...input.query,
+        };
         const { status, q } = query;
 
         const pageInput = {

@@ -9,8 +9,7 @@ import { DataTableColumnHeader } from "@/shared/components/table/data-table-colu
 import { commonColumns } from "@/shared/components/table/data-table-columns";
 import { Badge } from "@/shared/components/ui/badge";
 import { cn } from "@/shared/utils/lib/utils";
-import type { Order } from "./order.schema";
-import type { orderStatusEnum } from "./order.schema";
+import type { Order, orderStatusEnum } from "./order.schema";
 import { orderTableConfig } from "./order.table.config";
 
 const statusColors: Record<ReturnType<(typeof orderStatusEnum)["parse"]>, string> = {

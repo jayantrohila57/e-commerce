@@ -4,9 +4,9 @@ import { Book, PencilIcon, Tag } from "lucide-react";
 import { EmptyState } from "@/shared/components/common/empty-state";
 import { DataTable } from "@/shared/components/table/data-table";
 import { filters as tableFilters } from "@/shared/components/table/data-table-filter.config";
-import type { StudioManagedUserList } from "./user-management.types";
 import { useUserBulkActions } from "./user.bulk-actions";
 import { useUserColumns } from "./user.columns";
+import type { StudioManagedUserList } from "./user-management.types";
 
 export default function UserTable({ data }: { data: StudioManagedUserList }) {
   const columns = useUserColumns();

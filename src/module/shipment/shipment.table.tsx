@@ -4,9 +4,9 @@ import { Book, PencilIcon, Tag } from "lucide-react";
 import { EmptyState } from "@/shared/components/common/empty-state";
 import { DataTable } from "@/shared/components/table/data-table";
 import { filters as tableFilters } from "@/shared/components/table/data-table-filter.config";
-import type { GetManyShipmentsOutput } from "./shipment.types";
 import { useShipmentBulkActions } from "./shipment.bulk-actions";
 import { useShipmentColumns } from "./shipment.columns";
+import type { GetManyShipmentsOutput } from "./shipment.types";
 
 export default function ShipmentTable({ data }: { data: GetManyShipmentsOutput }) {
   const columns = useShipmentColumns();

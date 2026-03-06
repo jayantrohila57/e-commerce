@@ -79,10 +79,7 @@ export const inventoryRouter = createTRPCRouter({
         const baseConditions = [
           isNull(inventoryItem.deletedAt),
           query?.search
-            ? or(
-                ilike(inventoryItem.sku, `%${query.search}%`),
-                ilike(inventoryItem.barcode, `%${query.search}%`),
-              )
+            ? or(ilike(inventoryItem.sku, `%${query.search}%`), ilike(inventoryItem.barcode, `%${query.search}%`))
             : undefined,
         ].filter((c): c is NonNullable<typeof c> => Boolean(c));
 

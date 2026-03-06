@@ -4,12 +4,12 @@ import type { ColumnDef, Row } from "@tanstack/react-table";
 import type { Route } from "next";
 import { useRouter } from "next/navigation";
 import { useMemo } from "react";
-import { Badge } from "@/shared/components/ui/badge";
-import { cn } from "@/shared/utils/lib/utils";
-import type { StudioManagedUser } from "./user-management.types";
-import { userTableConfig } from "./user.table.config";
 import { DataTableColumnHeader } from "@/shared/components/table/data-table-column-header";
 import { commonColumns } from "@/shared/components/table/data-table-columns";
+import { Badge } from "@/shared/components/ui/badge";
+import { cn } from "@/shared/utils/lib/utils";
+import { userTableConfig } from "./user.table.config";
+import type { StudioManagedUser } from "./user-management.types";
 
 const roleColors: Record<string, string> = {
   ADMIN: "bg-red-100 text-red-800 border-red-200",

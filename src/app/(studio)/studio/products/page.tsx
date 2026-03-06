@@ -28,7 +28,7 @@ export default async function ProductsPage({
 
   const result = await apiServer.product.getMany({
     query: {
-      page: listQuery.pagination.page,
+      offset: listQuery.pagination.offset,
       limit: listQuery.pagination.limit,
       search: listQuery.search.q,
     },

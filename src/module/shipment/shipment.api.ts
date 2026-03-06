@@ -42,7 +42,13 @@ export const shipmentRouter = createTRPCRouter({
     .output(shipmentContract.getMany.output)
     .query(async ({ input }) => {
       try {
-        const query = input?.query ?? {};
+        const query = {
+          page: 1,
+          limit: 20,
+          sortOrder: "desc" as const,
+          sortBy: undefined as string | undefined,
+          ...input?.query,
+        };
 
         const { offset, limit } = buildPagination({
           page: query.page ?? 1,

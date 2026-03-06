@@ -7,8 +7,8 @@ import { useMemo } from "react";
 import { apiClient } from "@/core/api/api.client";
 import { DataTableColumnHeader } from "@/shared/components/table/data-table-column-header";
 import { commonColumns } from "@/shared/components/table/data-table-columns";
-import type { InventoryBase } from "./inventory.types";
 import { inventoryTableConfig } from "./inventory.table.config";
+import type { InventoryBase } from "./inventory.types";
 
 const baseColumns: ColumnDef<InventoryBase>[] = [
   {

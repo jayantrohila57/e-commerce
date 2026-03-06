@@ -4,9 +4,9 @@ import { Book, PencilIcon, Tag } from "lucide-react";
 import { EmptyState } from "@/shared/components/common/empty-state";
 import { DataTable } from "@/shared/components/table/data-table";
 import { filters as tableFilters } from "@/shared/components/table/data-table-filter.config";
+import type { DetailedResponse } from "@/shared/schema";
 import { useOrderBulkActions } from "./order.bulk-actions";
 import { useOrderColumns } from "./order.columns";
-import type { DetailedResponse } from "@/shared/schema";
 import type { Order } from "./order.schema";
 
 type AdminOrdersOutput = DetailedResponse<Order[]>;

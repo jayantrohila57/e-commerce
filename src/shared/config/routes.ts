@@ -59,6 +59,9 @@ export const PATH = {
       EDIT: (slug: string, id: string) => `/studio/products/${slug}/edit?id=${id}`,
       VARIANTS: {
         NEW: (productId: string, slug: string) => `/studio/products/${slug}/new?id=${productId}`,
+        VIEW: (productSlug: string, variantSlug: string) => `/studio/products/${productSlug}/${variantSlug}`,
+        EDIT: (productSlug: string, variantSlug: string, variantId: string) =>
+          `/studio/products/${productSlug}/${variantSlug}/edit?id=${variantId}`,
       },
     },
     CATEGORIES: {

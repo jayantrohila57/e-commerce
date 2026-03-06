@@ -3,7 +3,7 @@
 import { Minus, Plus } from "lucide-react";
 import type { Route } from "next";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import type { z } from "zod/v3";
 import { apiClient } from "@/core/api/api.client";
@@ -16,15 +16,22 @@ import { STATUS } from "@/shared/config/api.config";
 import { clientEnv } from "@/shared/config/env.client";
 import { PATH } from "@/shared/config/routes";
 import { productVariantContract } from "./product-variant.schema";
+import ProductVariantDelete from "./product-variant-delete";
 
-const formSchema = productVariantContract.create.input;
+const formSchema = productVariantContract.update.input;
 type FormValues = z.infer<typeof formSchema>;
 
-interface VariantFormProps {
-  productSlug: string;
+type VariantLike = {
+  id: string;
+  slug: string;
   productId: string;
-  seriesAttributes?: { title: string; type: string; value: string }[];
-}
+  title: string;
+  priceModifierType: "flat_increase" | "flat_decrease" | "percent_increase" | "percent_decrease";
+  priceModifierValue: string;
+  media: { url: string }[] | null;
+  attributes: { title: string; type: string; value: string }[] | null;
+  inventory?: { id: string; sku: string } | null;
+};
 
 function parseSelectOptions(raw: string) {
   const parts = raw
@@ -34,12 +41,41 @@ function parseSelectOptions(raw: string) {
   return Array.from(new Set(parts));
 }
 
-export default function VariantForm({ productSlug, productId, seriesAttributes = [] }: VariantFormProps) {
+function buildMergedAttributes(
+  seriesAttributes: { title: string; type: string; value: string }[],
+  existing: { title: string; type: string; value: string }[] | null | undefined,
+) {
+  const existingMap = new Map((existing ?? []).map((a) => [a.title, a]));
+  const merged = seriesAttributes.map((def) => {
+    const match = existingMap.get(def.title);
+    return match ? { ...def, value: match.value } : def;
+  });
+  const seriesTitles = new Set(seriesAttributes.map((a) => a.title));
+  const extras = (existing ?? []).filter((a) => !seriesTitles.has(a.title));
+  return [...merged, ...extras];
+}
+
+export default function VariantEditForm({
+  productSlug,
+  variantSlug,
+  variant,
+  seriesAttributes,
+}: {
+  productSlug: string;
+  variantSlug: string;
+  variant: VariantLike;
+  seriesAttributes: { title: string; type: string; value: string }[];
+}) {
   const router = useRouter();
   const [toastId, setToastId] = useState<string | number>("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const createVariant = apiClient.productVariant.create.useMutation({
+  const mergedAttributes = useMemo(
+    () => buildMergedAttributes(seriesAttributes, variant.attributes),
+    [seriesAttributes, variant.attributes],
+  );
+
+  const updateVariant = apiClient.productVariant.update.useMutation({
     onSuccess: async ({ status, message }) => {
       if (status === STATUS.SUCCESS) {
         toast.success(message, { id: toastId });
@@ -51,35 +87,27 @@ export default function VariantForm({ productSlug, productId, seriesAttributes =
       }
       setIsLoading(false);
     },
-
     onError: ({ message }) => {
-      toast.error(message || "Error while creating variant", { id: toastId });
+      toast.error(message || "Error while updating variant", { id: toastId });
       setToastId("");
       setIsLoading(false);
     },
   });
 
   function onSubmit(data: FormValues) {
-    const id = toast.loading("Creating variant with inventory...");
+    const id = toast.loading("Saving variant...");
     setToastId(id);
     setIsLoading(true);
 
-    createVariant.mutate({
+    updateVariant.mutate({
+      params: { id: variant.id },
       body: {
-        productId,
         slug: data.body.slug,
         title: data.body.title,
         priceModifierType: data.body.priceModifierType,
         priceModifierValue: data.body.priceModifierValue,
         attributes: data.body.attributes,
         media: data.body.media,
-        inventory: {
-          sku: data.body.inventory.sku,
-          barcode: data.body.inventory.barcode,
-          quantity: data.body.inventory.quantity,
-          incoming: data.body.inventory.incoming,
-          reserved: data.body.inventory.reserved,
-        },
       },
     });
   }
@@ -87,29 +115,19 @@ export default function VariantForm({ productSlug, productId, seriesAttributes =
   return (
     <Form
       defaultValues={{
+        params: { id: variant.id },
         body: {
-          productId,
-          slug: "",
-          title: "",
-          priceModifierType: "flat_increase",
-          priceModifierValue: "0",
-          attributes: seriesAttributes.map((a) => ({
+          productId: variant.productId,
+          slug: variant.slug,
+          title: variant.title,
+          priceModifierType: variant.priceModifierType,
+          priceModifierValue: variant.priceModifierValue,
+          attributes: mergedAttributes.map((a) => ({
             title: a.title,
             type: a.type,
             value: a.value,
           })),
-          media: [
-            {
-              url: "",
-            },
-          ],
-          inventory: {
-            sku: "",
-            barcode: "",
-            quantity: 0,
-            incoming: 0,
-            reserved: 0,
-          },
+          media: (variant.media ?? []).length ? (variant.media ?? []) : [{ url: "" }],
         },
       }}
       schema={formSchema}
@@ -117,28 +135,18 @@ export default function VariantForm({ productSlug, productId, seriesAttributes =
       className="grid h-full grid-cols-4 gap-4 p-4"
     >
       <div className="col-span-4 space-y-6">
-        <FormSection title="Basic Info" description="Define your variant identity">
-          <Form.Field
-            {...{
-              name: "body.title",
-              label: "Variant Title",
-              type: "text",
-              placeholder: "e.g. 128GB / Black",
-              required: true,
-            }}
-          />
+        <FormSection title="Basic Info" description="Update variant identity">
+          <Form.Field name="body.title" label="Variant Title" type="text" placeholder="e.g. 128GB / Black" required />
 
           <Form.Field
-            {...{
-              name: "body.slug",
-              label: "Slug",
-              type: "slug",
-              slugField: "body.title",
-              inlinePrefix: `${clientEnv.NEXT_PUBLIC_BASE_URL}/product/${productSlug}/`,
-              required: true,
-              placeholder: "variant-name",
-              description: "URL-friendly identifier for the variant",
-            }}
+            name="body.slug"
+            label="Slug"
+            type="slug"
+            slugField="body.title"
+            inlinePrefix={`${clientEnv.NEXT_PUBLIC_BASE_URL}/product/${productSlug}/`}
+            required
+            placeholder="variant-name"
+            description="URL-friendly identifier for the variant"
           />
         </FormSection>
 
@@ -147,29 +155,25 @@ export default function VariantForm({ productSlug, productId, seriesAttributes =
         <FormSection title="Pricing Logic" description="Control how this variant modifies base price">
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <Form.Field
-              {...{
-                name: "body.priceModifierType",
-                label: "Price Modifier Type",
-                type: "select",
-                required: true,
-                options: [
-                  { label: "Flat Increase", value: "flat_increase" },
-                  { label: "Flat Decrease", value: "flat_decrease" },
-                  { label: "Percent Increase", value: "percent_increase" },
-                  { label: "Percent Decrease", value: "percent_decrease" },
-                ],
-              }}
+              name="body.priceModifierType"
+              label="Price Modifier Type"
+              type="select"
+              required
+              options={[
+                { label: "Flat Increase", value: "flat_increase" },
+                { label: "Flat Decrease", value: "flat_decrease" },
+                { label: "Percent Increase", value: "percent_increase" },
+                { label: "Percent Decrease", value: "percent_decrease" },
+              ]}
             />
 
             <Form.Field
-              {...{
-                name: "body.priceModifierValue",
-                label: "Modifier Value",
-                type: "number",
-                required: true,
-                description: "Value depends on modifier type (amount or %)",
-                placeholder: "0",
-              }}
+              name="body.priceModifierValue"
+              label="Modifier Value"
+              type="number"
+              required
+              description="Value depends on modifier type (amount or %)"
+              placeholder="0"
             />
           </div>
         </FormSection>
@@ -182,12 +186,10 @@ export default function VariantForm({ productSlug, productId, seriesAttributes =
                 <FormItem key={index} className="flex flex-row items-center justify-center gap-4">
                   <div className="h-full min-h-80 w-full">
                     <Form.Field
-                      {...{
-                        name: `body.media.${index}.url`,
-                        label: "Variant Media",
-                        type: "image",
-                        description: "Upload product images for this variant",
-                      }}
+                      name={`body.media.${index}.url`}
+                      label="Variant Media"
+                      type="image"
+                      description="Upload product images for this variant"
                     />
                   </div>
 
@@ -229,9 +231,9 @@ export default function VariantForm({ productSlug, productId, seriesAttributes =
           title={`Attributes (${seriesAttributes.length})`}
           description="These fields are pulled dynamically from Attribute Management for this product’s series."
         >
-          {seriesAttributes.length ? (
+          {mergedAttributes.length ? (
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-              {seriesAttributes.map((attr, index) => {
+              {mergedAttributes.map((attr, index) => {
                 const baseName = `body.attributes.${index}` as const;
                 const selectOptions = attr.type === "select" ? parseSelectOptions(attr.value) : [];
 
@@ -284,65 +286,6 @@ export default function VariantForm({ productSlug, productId, seriesAttributes =
             </p>
           )}
         </FormSection>
-        <Separator className="my-4" />
-
-        <FormSection title="Inventory" description="Manage stock levels, SKU, and barcode">
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <Form.Field
-              {...{
-                name: "body.inventory.sku",
-                label: "SKU",
-                type: "text",
-                required: true,
-                placeholder: "e.g. SKU-001-BLK-128GB",
-                description: "Unique stock keeping unit identifier",
-              }}
-            />
-
-            <Form.Field
-              {...{
-                name: "body.inventory.barcode",
-                label: "Barcode",
-                type: "text",
-                placeholder: "e.g. 123456789012",
-                description: "Optional barcode for scanning",
-              }}
-            />
-
-            <Form.Field
-              {...{
-                name: "body.inventory.quantity",
-                label: "Available Quantity",
-                type: "number",
-                required: true,
-                placeholder: "0",
-                description: "Current stock available for sale",
-              }}
-            />
-
-            <Form.Field
-              {...{
-                name: "body.inventory.incoming",
-                label: "Incoming Quantity",
-                type: "number",
-                required: true,
-                placeholder: "0",
-                description: "Stock on order/in transit",
-              }}
-            />
-
-            <Form.Field
-              {...{
-                name: "body.inventory.reserved",
-                label: "Reserved Quantity",
-                type: "number",
-                required: true,
-                placeholder: "0",
-                description: "Stock reserved for orders",
-              }}
-            />
-          </div>
-        </FormSection>
       </div>
 
       <div className="col-span-4 flex h-full min-h-20 w-full flex-col justify-between gap-4 border-t pt-4 sm:flex-row sm:items-center">
@@ -351,11 +294,11 @@ export default function VariantForm({ productSlug, productId, seriesAttributes =
         </div>
 
         <div className="flex flex-col-reverse gap-2 sm:flex-row sm:items-center">
+          <ProductVariantDelete variantId={variant.id} productSlug={productSlug} />
           <Button variant="outline" type="button" onClick={() => router.back()} disabled={isLoading}>
             Cancel
           </Button>
-
-          <Form.Submit label="Create Variant" disabled={isLoading} isLoading={isLoading} />
+          <Form.Submit label="Save Changes" disabled={isLoading} isLoading={isLoading} />
         </div>
       </div>
     </Form>

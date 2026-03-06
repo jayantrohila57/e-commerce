@@ -1,4 +1,5 @@
 import { FormSection } from "@/shared/components/form/form.helper";
+import { PATH } from "@/shared/config/routes";
 import type { ProductVariantBase } from "./product-variant.types";
 import { ProductVariantCard } from "./product-variant-card";
 
@@ -22,7 +23,7 @@ export const ProductVariantSection = ({
       {products && products?.length > 0 ? (
         products?.map((product) => (
           <ProductVariantCard
-            href={`/studio/products/${productSlug}/${product.slug}`}
+            href={PATH.STUDIO.PRODUCTS.VARIANTS.VIEW(productSlug, product.slug)}
             key={product.id}
             productVariant={product}
           />

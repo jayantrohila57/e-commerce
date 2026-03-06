@@ -29,14 +29,14 @@ export const productVariantBaseSchema = z.object({
   title: z.string().min(1),
 
   priceModifierType: priceModifierTypeEnum.default("flat_decrease"),
-  priceModifierValue: z.string().default("0"),
+  priceModifierValue: z.coerce.string().default("0"),
 
   attributes: z
     .array(
       z.object({
         title: z.string(),
         type: z.string(),
-        value: z.string(),
+        value: z.union([z.string(), z.number(), z.boolean()]).transform((v) => String(v)),
       }),
     )
     .nullable()

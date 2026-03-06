@@ -251,7 +251,7 @@ Enterprise (requires stable Post-MVP):
 ### Phase 9: Product Variant Management
 
 **Module:** Product Variant (`src/module/product-variant/`)  
-**Status:** 🟡 Partial  
+**Status:** ✅ Complete  
 **Dependencies:** Phase 8 (Product)
 
 | Status | Task |
@@ -260,8 +260,10 @@ Enterprise (requires stable Post-MVP):
 | ✅ | tRPC API: full CRUD + `getBySlug` (atomic creation with inventory via transaction) |
 | ✅ | Studio admin: create variant page nested under product |
 | ✅ | UI components: form, listing |
-| 🟡 | `priceModifierValue` type mismatch — Zod schema uses `z.string()` but DB uses `numeric(10,2)` |
-| 🟡 | Media array default value bug (`add()` uses `{ title: '' }` instead of `{ url: '' }`) |
+| ✅ | `priceModifierValue` contract accepts numeric input (coerces to string) and works with number field |
+| ✅ | Media array default value fixed (`add()` now uses `{ url: '' }`) |
+| ✅ | Dynamic attributes integrated from Attribute module (series-scoped fields in variant create/edit) |
+| ✅ | Studio admin: variant detail + edit pages (manage media/pricing/attributes; inventory linked) |
 
 ---
 
@@ -775,7 +777,7 @@ Enterprise (requires stable Post-MVP):
 | 6 | Series Management | Phase 5 | ✅ Complete | 90% |
 | 7 | Attribute Management | Phase 6 | ✅ Complete | 95% |
 | 8 | Product Management | Phase 4, 5, 6 | ✅ Complete | 85% |
-| 9 | Product Variant | Phase 8 | 🟡 Partial | 80% |
+| 9 | Product Variant | Phase 8 | ✅ Complete | 95% |
 | 10 | Inventory Management | Phase 9 | 🟡 Partial | 70% |
 | 11 | Account Management | Phase 2 | 🟡 Partial | 85% |
 | 12 | Address Management | Phase 11 | ✅ Complete | 95% |

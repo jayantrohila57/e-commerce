@@ -1,5 +1,5 @@
 import { notFound, redirect } from "next/navigation";
-import { HydrateClient } from "@/core/api/api.server";
+import { apiServer, HydrateClient } from "@/core/api/api.server";
 import { getServerSession } from "@/core/auth/auth.server";
 import VariantForm from "@/module/product-variant/product-variant-add-form";
 import DashboardSection from "@/shared/components/layout/section/section-dashboard";
@@ -24,12 +24,28 @@ export default async function NewVariantPage({
     notFound();
   }
 
+  const { data: product } = await apiServer.product.get({
+    params: {
+      id: String(id),
+    },
+  });
+
+  if (!product) notFound();
+
+  const { data: seriesAttributes } = await apiServer.attribute.getMany({
+    query: {
+      seriesSlug: product.seriesSlug,
+      limit: 100,
+      offset: 0,
+    },
+  });
+
   return (
     <HydrateClient>
       <Shell>
         <Shell.Section variant="dashboard">
           <DashboardSection title="Create New Variant" description="Add a new variant to organize your products">
-            <VariantForm productSlug={slug} productId={id as string} />
+            <VariantForm productSlug={slug} productId={id as string} seriesAttributes={seriesAttributes ?? []} />
           </DashboardSection>
         </Shell.Section>
       </Shell>

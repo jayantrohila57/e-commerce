@@ -1,5 +1,5 @@
-import type { subcategoryContract } from "./subcategory.schema";
 import type z from "zod/v3";
+import type { subcategoryContract } from "./subcategory.schema";
 
 export type GetSubcategoryBySlugInput = z.infer<typeof subcategoryContract.getBySlug.input>;
 export type GetSubcategoryBySlugOutput = z.infer<typeof subcategoryContract.getBySlug.output>;

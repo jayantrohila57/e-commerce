@@ -1,9 +1,9 @@
 "use client";
 
-import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/shared/components/ui/card";
-import { policyContent } from "./policy-content";
 import { Button } from "@/shared/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/components/ui/card";
 import { Separator } from "@/shared/components/ui/separator";
+import { policyContent } from "./policy-content";
 
 interface TableOfContentsProps {
   activeSection: string;

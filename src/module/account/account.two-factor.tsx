@@ -1,16 +1,16 @@
 "use client";
 
-import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import z from "zod/v3";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/shared/components/ui/form";
-import { Button } from "@/shared/components/ui/button";
-import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { Input } from "@/shared/components/ui/input";
+import { useForm } from "react-hook-form";
 import QRCode from "react-qr-code";
+import { toast } from "sonner";
+import z from "zod/v3";
 import { twoFactor } from "@/core/auth/auth.client";
+import { Button } from "@/shared/components/ui/button";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/shared/components/ui/form";
+import { Input } from "@/shared/components/ui/input";
 
 const twoFactorAuthSchema = z.object({
   password: z.string().min(1),

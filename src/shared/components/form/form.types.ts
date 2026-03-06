@@ -1,10 +1,10 @@
+import type { VariantProps } from "class-variance-authority";
+import type { LucideIcon } from "lucide-react";
 import type { ReactNode } from "react";
-import type { Fields } from "./fields.config";
 import type { DefaultValues, FieldErrors, FieldValues, Path, UseFormReturn } from "react-hook-form";
 import type z from "zod/v3";
-import type { VariantProps } from "class-variance-authority";
 import type { buttonVariants } from "../ui/button";
-import type { LucideIcon } from "lucide-react";
+import type { Fields } from "./fields.config";
 
 export type FieldType = keyof typeof Fields;
 

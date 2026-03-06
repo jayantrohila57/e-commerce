@@ -1,9 +1,9 @@
+import type { Route } from "next";
+import Link from "next/link";
 import { cn } from "@/shared/utils/lib/utils";
 import { Button } from "../../ui/button";
 import { Card, CardAction, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../../ui/card";
 import { Separator } from "../../ui/separator";
-import Link from "next/link";
-import type { Route } from "next";
 
 interface SectionProps {
   title?: string;

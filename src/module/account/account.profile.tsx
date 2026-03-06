@@ -1,14 +1,14 @@
 "use client";
 
-import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import z from "zod/v3";
+import { changeEmail, updateUser } from "@/core/auth/auth.client";
+import { Button } from "@/shared/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/shared/components/ui/form";
 import { Input } from "@/shared/components/ui/input";
-import { Button } from "@/shared/components/ui/button";
-import { toast } from "sonner";
-import { useRouter } from "next/navigation";
-import { changeEmail, updateUser } from "@/core/auth/auth.client";
 
 const profileUpdateSchema = z.object({
   name: z.string().min(1),

@@ -1,7 +1,10 @@
 "use client";
 
+import { HomeIcon } from "lucide-react";
+import type { Route } from "next";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import React from "react";
-
 import {
   Breadcrumb,
   BreadcrumbEllipsis,
@@ -11,24 +14,16 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/shared/components/ui/breadcrumb";
-
-import { cn } from "@/shared/utils/lib/utils";
-import { HomeIcon } from "lucide-react";
-import { usePathname } from "next/navigation";
-import Link from "next/link";
-import type { Route } from "next";
-import { PATH } from "@/shared/config/routes";
-
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/shared/components/ui/tooltip";
-
 import {
   DropdownMenu,
-  DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuTrigger,
 } from "@/shared/components/ui/dropdown-menu";
-
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/shared/components/ui/tooltip";
+import { PATH } from "@/shared/config/routes";
 import { slugToTitle } from "@/shared/utils/lib/url.utils";
+import { cn } from "@/shared/utils/lib/utils";
 
 type BreadcrumbItem = {
   href: string;

@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { db } from "@/core/db/db";
 import { order, payment } from "@/core/db/db.schema";
 import { verifyWebhookSignature } from "@/core/payment/razorpay.verify";
+import { notifyOrderConfirmation } from "@/shared/components/mail/notification.service";
 import { serverEnv } from "@/shared/config/env.server";
 import { debugError, debugLog } from "@/shared/utils/lib/logger.utils";
 
@@ -103,6 +104,8 @@ export async function POST(request: Request) {
           paymentId: paymentRow.id,
           orderId: paymentRow.orderId,
         });
+
+        await notifyOrderConfirmation(paymentRow.orderId);
       }
     } else if (event === "payment.failed" && body.payload?.payment?.entity) {
       const entity = body.payload.payment.entity;

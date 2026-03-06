@@ -3,8 +3,8 @@
 import Link from "next/link";
 import { useCart } from "@/module/cart/use-cart";
 import { Button } from "@/shared/components/ui/button";
-import { cn } from "@/shared/utils/lib/utils";
 import { PATH } from "@/shared/config/routes";
+import { cn } from "@/shared/utils/lib/utils";
 
 interface ViewCartButtonProps {
   variantId: string;

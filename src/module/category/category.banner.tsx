@@ -1,19 +1,19 @@
 "use client";
 
-import * as React from "react";
 import Autoplay from "embla-carousel-autoplay";
-import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/components/ui/card";
 import { ChevronRightCircle, Squircle } from "lucide-react";
+import * as React from "react";
+import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/components/ui/card";
 import {
   Carousel,
+  type CarouselApi,
   CarouselContent,
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
-  type CarouselApi,
 } from "@/shared/components/ui/carousel";
-import { cn } from "@/shared/utils/lib/utils";
 import { BlurImage } from "@/shared/components/ui/image";
+import { cn } from "@/shared/utils/lib/utils";
 import type { CategoryBase } from "./category.types";
 
 export function CategoryBanner({ data }: { data: CategoryBase[] | null }) {

@@ -1,9 +1,9 @@
 "use client";
 
 import { Separator } from "@/shared/components/ui/separator";
+import GoBackButton from "../../common/go-back";
 import { Breadcrumbs } from "../breadcrumb/breadcrumbs";
 import { SidebarHeaderActions } from "./sidebar.header-action";
-import GoBackButton from "../../common/go-back";
 
 export const SidebarHeader = () => {
   return (

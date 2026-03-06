@@ -1,6 +1,5 @@
+import { Heart, MapPin, Package, ShoppingBag, ShoppingCart, Star, Truck } from "lucide-react";
 import { PATH } from "@/shared/config/routes";
-
-import { ShoppingBag, Heart, MapPin, Package, Truck, Star, ShoppingCart } from "lucide-react";
 import { ContentStack } from "./account.stack";
 
 export const accountSections = {

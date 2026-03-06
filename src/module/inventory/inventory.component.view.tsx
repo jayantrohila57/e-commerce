@@ -1,9 +1,9 @@
 "use client";
 
+import { Info } from "lucide-react";
 import { Badge } from "@/shared/components/ui/badge";
 import { Card, CardContent, CardHeader } from "@/shared/components/ui/card";
 import { cn } from "@/shared/utils/lib/utils";
-import { Info } from "lucide-react";
 
 type Inventory = {
   id: string;

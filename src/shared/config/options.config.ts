@@ -1,13 +1,13 @@
 import {
-  GlobeIcon,
-  EyeOffIcon,
-  StarIcon,
-  ListIcon,
-  SparklesIcon,
   ActivityIcon,
   BoltIcon,
-  type LucideIcon,
   CheckIcon,
+  EyeOffIcon,
+  GlobeIcon,
+  ListIcon,
+  type LucideIcon,
+  SparklesIcon,
+  StarIcon,
 } from "lucide-react";
 
 export interface FilterOption<T> {

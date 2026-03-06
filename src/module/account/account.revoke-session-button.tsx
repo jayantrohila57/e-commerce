@@ -1,11 +1,11 @@
 "use client";
 
-import { useTransition } from "react";
+import { Loader } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useTransition } from "react";
+import { toast } from "sonner";
 import { revokeOtherSessions } from "@/core/auth/auth.client";
 import { Button } from "@/shared/components/ui/button";
-import { toast } from "sonner";
-import { Loader } from "lucide-react";
 import { debugError } from "@/shared/utils/lib/logger.utils";
 
 export function RevokeSessionButton() {

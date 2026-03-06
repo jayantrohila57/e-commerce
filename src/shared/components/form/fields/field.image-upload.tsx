@@ -1,16 +1,16 @@
 "use client";
 
-import { useFormContext } from "react-hook-form";
-import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/shared/components/ui/form";
-import type { FormInputProps } from "../form.types";
-import { cn } from "@/shared/utils/lib/utils";
-import { useId, useState } from "react";
-import { useFileUpload } from "@/shared/utils/hooks/use-file-upload";
 import { ImageUpIcon, XIcon } from "lucide-react";
-import { Button } from "../../ui/button";
-import { Skeleton } from "../../ui/skeleton";
+import { useId, useState } from "react";
+import { useFormContext } from "react-hook-form";
 import { toast } from "sonner";
+import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/shared/components/ui/form";
+import { useFileUpload } from "@/shared/utils/hooks/use-file-upload";
+import { cn } from "@/shared/utils/lib/utils";
+import { Button } from "../../ui/button";
 import { BlurImage } from "../../ui/image";
+import { Skeleton } from "../../ui/skeleton";
+import type { FormInputProps } from "../form.types";
 
 export const ImageUploadText: React.FC<FormInputProps> = (props) => {
   const maxSizeMB = props.type === "image" ? props?.maxSizeMB : 5;

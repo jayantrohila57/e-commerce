@@ -1,9 +1,8 @@
 "use client";
 
 import dynamic from "next/dynamic";
-
-import { Skeleton } from "@/shared/components/ui/skeleton";
 import { useSession } from "@/core/auth/auth.client";
+import { Skeleton } from "@/shared/components/ui/skeleton";
 
 const UserDropdown = dynamic(async () => await import("../user/nav-user").then((mod) => mod.UserDropdown), {
   ssr: false,

@@ -1,7 +1,7 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { debugError } from "@/shared/utils/lib/logger.utils";
-import { useState, useEffect } from "react";
 
 interface CookiePreferences {
   essential: boolean;

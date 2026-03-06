@@ -11,6 +11,7 @@ import {
   Package,
   Settings2,
   ShoppingBag,
+  Truck,
   Users,
 } from "lucide-react";
 import type { Route } from "next";
@@ -98,7 +99,10 @@ export function NavMain() {
       title: "Orders",
       url: PATH.STUDIO.ORDERS.ROOT,
       icon: ShoppingBag,
-      items: [{ title: "All Orders", url: PATH.STUDIO.ORDERS.ROOT, icon: ShoppingBag }],
+      items: [
+        { title: "All Orders", url: PATH.STUDIO.ORDERS.ROOT, icon: ShoppingBag },
+        { title: "Shipping", url: PATH.STUDIO.SHIPPING.ROOT, icon: Truck },
+      ],
     },
     ...(role === APP_ROLE.ADMIN
       ? [

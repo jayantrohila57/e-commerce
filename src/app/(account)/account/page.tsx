@@ -1,8 +1,8 @@
+import { redirect } from "next/navigation";
 import { getServerSession } from "@/core/auth/auth.server";
 import AccountRootComponent from "@/module/account/account.layout";
-import { PATH } from "@/shared/config/routes";
-import { redirect } from "next/navigation";
 import Section from "@/shared/components/layout/section/section";
+import { PATH } from "@/shared/config/routes";
 
 export const metadata = {
   title: "Account",

@@ -1,11 +1,3 @@
-import { FormSection } from "@/shared/components/form/form.helper";
-import { Button } from "@/shared/components/ui/button";
-import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/components/ui/card";
-import { BlurImage } from "@/shared/components/ui/image";
-import { Separator } from "@/shared/components/ui/separator";
-import { Table, TableBody, TableCell, TableRow } from "@/shared/components/ui/table";
-import { PATH } from "@/shared/config/routes";
-import { cn, truncateString } from "@/shared/utils/lib/utils";
 import { format } from "date-fns";
 import {
   Box,
@@ -24,6 +16,14 @@ import {
 } from "lucide-react";
 import type { Route } from "next";
 import Link from "next/link";
+import { FormSection } from "@/shared/components/form/form.helper";
+import { Button } from "@/shared/components/ui/button";
+import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/components/ui/card";
+import { BlurImage } from "@/shared/components/ui/image";
+import { Separator } from "@/shared/components/ui/separator";
+import { Table, TableBody, TableCell, TableRow } from "@/shared/components/ui/table";
+import { PATH } from "@/shared/config/routes";
+import { cn, truncateString } from "@/shared/utils/lib/utils";
 import { CategoryDelete } from "./category.component.delete";
 import type { GetCategoryOutput } from "./category.types";
 

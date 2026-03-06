@@ -1,8 +1,8 @@
+import type { Route } from "next";
+import Link from "next/link";
 import { Badge } from "@/shared/components/ui/badge";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/shared/components/ui/card";
 import { PATH } from "@/shared/config/routes";
-import type { Route } from "next";
-import Link from "next/link";
 
 type Inventory = {
   id: string;

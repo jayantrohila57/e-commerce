@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import { apiServer, HydrateClient } from "@/core/api/api.server";
 import { getServerSession } from "@/core/auth/auth.server";
 import InventoryEditForm from "@/module/inventory/inventory.component.edit-form";
@@ -5,7 +6,6 @@ import InventoryViewCard from "@/module/inventory/inventory.component.view";
 import DashboardSection from "@/shared/components/layout/section/section-dashboard";
 import Shell from "@/shared/components/layout/shell";
 import { PATH } from "@/shared/config/routes";
-import { redirect } from "next/navigation";
 
 export default async function InventoryEditPage({
   params,

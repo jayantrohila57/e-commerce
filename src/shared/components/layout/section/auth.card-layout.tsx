@@ -1,14 +1,14 @@
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/shared/components/ui/card";
-import type { ReactNode } from "react";
-import Link from "next/link";
-import Image from "next/image";
 import { Copyright } from "lucide-react";
 import type { Route } from "next";
-import { Separator } from "../../ui/separator";
+import Image from "next/image";
+import Link from "next/link";
+import type { ReactNode } from "react";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/shared/components/ui/card";
 import CardSwap, { Card as CardSwapCard } from "@/shared/components/ui/card-swap";
-import { Alert, AlertDescription, AlertTitle } from "../../ui/alert";
 import { site } from "@/shared/config/site";
 import SaleAlert from "../../common/sale-alert";
+import { Alert, AlertDescription, AlertTitle } from "../../ui/alert";
+import { Separator } from "../../ui/separator";
 export function AuthCard({
   title,
   description,

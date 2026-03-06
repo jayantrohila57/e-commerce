@@ -1,10 +1,9 @@
 import { RssIcon } from "lucide-react";
-
-import { Button } from "../ui/button";
-import Link from "next/link";
-import { PATH } from "@/shared/config/routes";
 import type { Route } from "next";
-import { TooltipProvider, Tooltip, TooltipContent } from "@/shared/components/ui/tooltip";
+import Link from "next/link";
+import { Tooltip, TooltipContent, TooltipProvider } from "@/shared/components/ui/tooltip";
+import { PATH } from "@/shared/config/routes";
+import { Button } from "../ui/button";
 
 function RSS() {
   return (

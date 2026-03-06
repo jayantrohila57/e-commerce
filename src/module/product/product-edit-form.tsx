@@ -1,28 +1,26 @@
 "use client";
-import Form from "@/shared/components/form/form";
-import { FormSection } from "@/shared/components/form/form.helper";
-import { Button } from "@/shared/components/ui/button";
-import { Separator } from "@/shared/components/ui/separator";
+
+import { Minus, Plus } from "lucide-react";
 import type { Route } from "next";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 import type { z } from "zod/v3";
-
 import { apiClient } from "@/core/api/api.client";
+import Form from "@/shared/components/form/form";
+import { FormSection } from "@/shared/components/form/form.helper";
+import { Button } from "@/shared/components/ui/button";
+import { FormItem } from "@/shared/components/ui/form";
+import { Separator } from "@/shared/components/ui/separator";
 import { STATUS } from "@/shared/config/api.config";
 import { clientEnv } from "@/shared/config/env.client";
-import { PATH } from "@/shared/config/routes";
-
-import { FormItem } from "@/shared/components/ui/form";
 import { statusOptions } from "@/shared/config/options.config";
+import { PATH } from "@/shared/config/routes";
+import { productContract } from "./product.schema";
+import type { ProductUpdate } from "./product.types";
 import { CategorySelect } from "./product-form.category";
 import { SeriesSelect } from "./product-form.series";
 import { SubCategorySelect } from "./product-form.subcategory";
-
-import { Minus, Plus } from "lucide-react";
-import { productContract } from "./product.schema";
-import type { ProductUpdate } from "./product.types";
 
 const formSchema = productContract.update.input;
 type FormValues = z.infer<typeof formSchema>;

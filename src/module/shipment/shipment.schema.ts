@@ -1,7 +1,7 @@
 import { z } from "zod/v3";
-import { detailedResponse } from "@/shared/schema";
+import { detailedResponse, paginationInput, shipmentStatusEnum as sharedShipmentStatusEnum } from "@/shared/schema";
 
-export const shipmentStatusEnum = z.enum(["pending", "in_transit", "delivered"]);
+export const shipmentStatusEnum = sharedShipmentStatusEnum;
 
 export const shipmentBaseSchema = z.object({
   id: z.string().min(1),
@@ -11,6 +11,10 @@ export const shipmentBaseSchema = z.object({
   carrier: z.string().nullable().optional(),
   shippedAt: z.date().nullable().optional(),
   deliveredAt: z.date().nullable().optional(),
+  estimatedDeliveryAt: z.date().nullable().optional(),
+  shippingRate: z.number().int().nullable().optional(),
+  weight: z.string().nullable().optional(),
+  notes: z.string().nullable().optional(),
   createdAt: z.date(),
   updatedAt: z.date().nullable().optional(),
 });
@@ -21,6 +25,10 @@ export const shipmentCreateInputSchema = z.object({
   orderId: z.string().min(1),
   trackingNumber: z.string().optional(),
   carrier: z.string().optional(),
+  notes: z.string().optional(),
+  estimatedDeliveryAt: z.coerce.date().optional(),
+  shippingRate: z.number().int().min(0).optional(),
+  weight: z.string().optional(),
 });
 
 export const shipmentUpdateStatusInputSchema = z.object({
@@ -30,6 +38,26 @@ export const shipmentUpdateStatusInputSchema = z.object({
 });
 
 export const shipmentContract = {
+  get: {
+    input: z.object({
+      params: z.object({ id: z.string().min(1) }),
+    }),
+    output: detailedResponse(shipmentSelectSchema),
+  },
+  getMany: {
+    input: z
+      .object({
+        query: paginationInput.optional(),
+      })
+      .optional(),
+    output: detailedResponse(z.array(shipmentSelectSchema)),
+  },
+  getByTracking: {
+    input: z.object({
+      params: z.object({ trackingNumber: z.string().min(1) }),
+    }),
+    output: detailedResponse(shipmentSelectSchema.nullable()),
+  },
   create: {
     input: z.object({
       body: shipmentCreateInputSchema,

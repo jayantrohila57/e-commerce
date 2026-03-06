@@ -1,10 +1,10 @@
 "use client";
 
-import { useFormContext } from "react-hook-form";
-import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/shared/components/ui/form";
-import type { FormInputProps } from "@/shared/components/form/form.types";
-import { cn } from "@/shared/utils/lib/utils";
 import { useId } from "react";
+import { useFormContext } from "react-hook-form";
+import type { FormInputProps } from "@/shared/components/form/form.types";
+import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/shared/components/ui/form";
+import { cn } from "@/shared/utils/lib/utils";
 import MultipleSelector from "../../ui/multiselect";
 
 export const InputMultiDropdown: React.FC<FormInputProps> = (props) => {

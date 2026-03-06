@@ -1,10 +1,10 @@
 "use client";
 
-import Form from "@/shared/components/form/form";
-import { apiClient } from "@/core/api/api.client";
-import type { Option } from "@/shared/components/form/form.types";
-import { useFormContext, useWatch } from "react-hook-form";
 import { useEffect } from "react";
+import { useFormContext, useWatch } from "react-hook-form";
+import { apiClient } from "@/core/api/api.client";
+import Form from "@/shared/components/form/form";
+import type { Option } from "@/shared/components/form/form.types";
 
 export function SubCategorySelect() {
   const form = useFormContext();

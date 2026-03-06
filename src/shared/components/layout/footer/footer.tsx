@@ -1,15 +1,14 @@
-import Social from "@/shared/components/common/social";
-import { Icons } from "@/shared/components/common/icons";
-import { Input } from "@/shared/components/ui/input";
-import { Button } from "@/shared/components/ui/button";
-import { ThemeToggle } from "@/shared/components/theme/theme-toggle";
-import RSS from "@/shared/components/common/rss";
-import { Separator } from "@/shared/components/ui/separator";
+import type { Route } from "next";
 import Link from "next/link";
+import { Icons } from "@/shared/components/common/icons";
+import RSS from "@/shared/components/common/rss";
+import Social from "@/shared/components/common/social";
+import { ThemeToggle } from "@/shared/components/theme/theme-toggle";
+import { Button } from "@/shared/components/ui/button";
+import { Input } from "@/shared/components/ui/input";
+import { Separator } from "@/shared/components/ui/separator";
 import { PATH } from "@/shared/config/routes";
 import { site } from "@/shared/config/site";
-
-import type { Route } from "next";
 import { AppBrand } from "../section/auth.card-layout";
 
 type NavItem<T extends string = string> = {

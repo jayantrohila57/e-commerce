@@ -1,6 +1,5 @@
+import { KeyRound, Settings, Shield, User, UserCog } from "lucide-react";
 import { PATH } from "@/shared/config/routes";
-
-import { User, Shield, Settings, KeyRound, UserCog } from "lucide-react";
 import { ContentStack } from "./account.stack";
 
 export const accountSections = {

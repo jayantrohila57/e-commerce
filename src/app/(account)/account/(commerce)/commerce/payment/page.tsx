@@ -1,10 +1,9 @@
+import { redirect } from "next/navigation";
 import { getServerSession } from "@/core/auth/auth.server";
-
+import { CommerceSidebar } from "@/module/account/account.commerce.sidebar";
 import Section from "@/shared/components/layout/section/section";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/components/ui/card";
-import { redirect } from "next/navigation";
 import { PATH } from "@/shared/config/routes";
-import { CommerceSidebar } from "@/module/account/account.commerce.sidebar";
 
 export const metadata = {
   title: "Payments",

@@ -1,6 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 import { apiServer } from "@/core/api/api.server";
 import { OrderDetailSection } from "@/module/order/order-detail.section";
+import { ShipmentTrackingSection } from "@/module/shipment/components/shipment-tracking-section";
 import Section from "@/shared/components/layout/section/section";
 import { PATH } from "@/shared/config/routes";
 
@@ -41,6 +42,7 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
         </div>
 
         <OrderDetailSection order={order} />
+        <ShipmentTrackingSection orderId={order.id} />
       </div>
     </Section>
   );

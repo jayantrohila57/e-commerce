@@ -1,12 +1,12 @@
 "use client";
 
-import type z from "zod/v3";
-import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { signIn } from "@/core/auth/auth.client";
-import { PATH } from "@/shared/config/routes";
-import Form from "@/shared/components/form/form";
 import { useTransition } from "react";
+import { toast } from "sonner";
+import type z from "zod/v3";
+import { signIn } from "@/core/auth/auth.client";
+import Form from "@/shared/components/form/form";
+import { PATH } from "@/shared/config/routes";
 import { AuthSchema } from "./auth-schema";
 
 type FormValues = z.infer<typeof AuthSchema.SIGN_IN.INPUT>;

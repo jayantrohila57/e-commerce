@@ -1,17 +1,17 @@
 "use client";
 
-import type z from "zod/v3";
-import { Button } from "@/shared/components/ui/button";
-import { toast } from "sonner";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/components/ui/card";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useTransition } from "react";
+import { toast } from "sonner";
+import type z from "zod/v3";
 import { resetPassword } from "@/core/auth/auth.client";
+import Form from "@/shared/components/form/form";
+import { Button } from "@/shared/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/components/ui/card";
+import { Separator } from "@/shared/components/ui/separator";
 import { PATH } from "@/shared/config/routes";
 import { AuthSchema } from "./auth-schema";
-import Form from "@/shared/components/form/form";
-import { useTransition } from "react";
-import { Separator } from "@/shared/components/ui/separator";
 
 type FormValues = z.infer<typeof AuthSchema.CHANGE_PASSWORD.INPUT>;
 

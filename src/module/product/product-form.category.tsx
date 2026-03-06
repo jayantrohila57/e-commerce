@@ -1,7 +1,7 @@
 "use client";
 
-import Form from "@/shared/components/form/form";
 import { apiClient } from "@/core/api/api.client";
+import Form from "@/shared/components/form/form";
 import type { Option } from "@/shared/components/form/form.types";
 
 export function CategorySelect() {

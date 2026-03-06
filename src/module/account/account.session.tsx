@@ -1,14 +1,14 @@
 "use client";
 
-import { Badge } from "@/shared/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/card";
 import type { Session } from "better-auth";
 import { Monitor, Smartphone, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { UAParser } from "ua-parser-js";
-import { RevokeSessionButton } from "./account.revoke-session-button";
 import { revokeSession } from "@/core/auth/auth.client";
+import { Badge } from "@/shared/components/ui/badge";
 import { Button } from "@/shared/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/card";
+import { RevokeSessionButton } from "./account.revoke-session-button";
 
 export function SessionManagement({
   sessions,

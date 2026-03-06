@@ -1,11 +1,11 @@
+import type z from "zod/v3";
 import type {
-  productContract,
   baseProductSchema,
+  productContract,
   productInsertSchema,
   productSelectSchema,
   productUpdateSchema,
 } from "./product.schema";
-import type z from "zod/v3";
 
 // CORE
 export type ProductBase = z.infer<typeof baseProductSchema>;

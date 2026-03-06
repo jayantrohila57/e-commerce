@@ -1,11 +1,11 @@
-import { getServerSession } from "@/core/auth/auth.server";
-import { SignInForm } from "@/module/auth/auth.sign-in";
-import Shell from "@/shared/components/layout/shell";
 import { redirect } from "next/navigation";
-import { PATH } from "@/shared/config/routes";
+import { getServerSession } from "@/core/auth/auth.server";
 import { AuthProviders } from "@/module/auth/auth.providers";
-import { Separator } from "@/shared/components/ui/separator";
+import { SignInForm } from "@/module/auth/auth.sign-in";
 import { AuthCard, AuthFooterNote } from "@/shared/components/layout/section/auth.card-layout";
+import Shell from "@/shared/components/layout/shell";
+import { Separator } from "@/shared/components/ui/separator";
+import { PATH } from "@/shared/config/routes";
 
 export const metadata = {
   title: "Sign In",

@@ -1,6 +1,6 @@
 import { SocialIcon } from "react-social-icons";
-import { Button } from "../ui/button";
 import { site } from "@/shared/config/site";
+import { Button } from "../ui/button";
 
 function Social() {
   return (

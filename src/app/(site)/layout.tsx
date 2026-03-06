@@ -1,9 +1,8 @@
-import Shell from "@/shared/components/layout/shell";
-import Header from "@/shared/components/layout/header/header";
-import Footer from "@/shared/components/layout/footer/footer";
-import ScrollToTopButton from "@/shared/components/common/scroll-to-top";
-
 import { ScrollProgress } from "@/shared/components/common/scroll-progress";
+import ScrollToTopButton from "@/shared/components/common/scroll-to-top";
+import Footer from "@/shared/components/layout/footer/footer";
+import Header from "@/shared/components/layout/header/header";
+import Shell from "@/shared/components/layout/shell";
 
 export default async function Layout({ children }: { children: React.ReactNode }) {
   return (

@@ -1,6 +1,6 @@
+import { FormSection } from "@/shared/components/form/form.helper";
 import { Separator } from "@/shared/components/ui/separator";
 import type { ProductBase } from "./product.types";
-import { FormSection } from "@/shared/components/form/form.helper";
 import { ProductCard } from "./product-card";
 
 type Product = ProductBase;

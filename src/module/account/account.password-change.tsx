@@ -1,13 +1,13 @@
 "use client";
 
-import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import z from "zod/v3";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/shared/components/ui/form";
-import { Button } from "@/shared/components/ui/button";
+import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { Checkbox } from "@/shared/components/ui/checkbox";
+import z from "zod/v3";
 import { changePassword } from "@/core/auth/auth.client";
+import { Button } from "@/shared/components/ui/button";
+import { Checkbox } from "@/shared/components/ui/checkbox";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/shared/components/ui/form";
 import { Input } from "@/shared/components/ui/input";
 
 const changePasswordSchema = z.object({

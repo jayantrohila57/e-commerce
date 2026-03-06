@@ -1,3 +1,4 @@
+import type { Route } from "next";
 import { apiServer, HydrateClient } from "@/core/api/api.server";
 import { SeriesSection } from "@/module/series/series-section";
 import { SubCategoryPreviewCard } from "@/module/subcategory/subcategory-preview";
@@ -6,7 +7,6 @@ import Shell from "@/shared/components/layout/shell";
 import { Separator } from "@/shared/components/ui/separator";
 import { PATH } from "@/shared/config/routes";
 import { slugToTitle } from "@/shared/utils/lib/url.utils";
-import type { Route } from "next";
 
 export default async function SubCategoryPage({
   params,

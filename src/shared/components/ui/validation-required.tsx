@@ -1,10 +1,10 @@
 "use client";
 
-import { useWatch, useFormContext } from "react-hook-form";
-import { useId } from "react";
 import { CheckIcon, InfoIcon, XIcon } from "lucide-react";
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/shared/components/ui/hover-card";
+import { useId } from "react";
+import { useFormContext, useWatch } from "react-hook-form";
 import type { FormInputProps } from "@/shared/components/form/form.types";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/shared/components/ui/hover-card";
 
 const checkStrength = (pass: string) => {
   const requirements = [

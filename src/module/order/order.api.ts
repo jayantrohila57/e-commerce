@@ -1,11 +1,13 @@
-import { and, eq, sql } from "drizzle-orm";
+import { and, eq, inArray, sql } from "drizzle-orm";
 import { v4 as uuidv4 } from "uuid";
 import { createTRPCRouter, customerProcedure, staffProcedure } from "@/core/api/api.methods";
 import { APP_ROLE, normalizeRole } from "@/core/auth/auth.roles";
 import { db } from "@/core/db/db";
 import { cart, cartLine, inventoryItem, order, orderItem, user as userTable } from "@/core/db/db.schema";
+import { notifyLowStock, notifyOrderStatusChange } from "@/shared/components/mail/notification.service";
 import { MESSAGE, STATUS } from "@/shared/config/api.config";
 import { API_RESPONSE } from "@/shared/config/api.utils";
+import { siteConfig } from "@/shared/config/site";
 import { debugError } from "@/shared/utils/lib/logger.utils";
 import { type Order, orderContract } from "./order.schema";
 
@@ -181,6 +183,26 @@ export const orderRouter = createTRPCRouter({
           await db.update(userTable).set({ role: APP_ROLE.CUSTOMER }).where(eq(userTable.id, userId));
         }
 
+        // 8. Low stock alerts (fire-and-forget)
+        const variantIds = [...new Set(result.items.map((i) => i.variantId))];
+        if (variantIds.length > 0) {
+          const inventories = await db.query.inventoryItem.findMany({
+            where: inArray(inventoryItem.variantId, variantIds),
+          });
+          for (const inv of inventories) {
+            if (inv.quantity > 10) continue;
+            const item = result.items.find((i) => i.variantId === inv.variantId);
+            if (!item) continue;
+            notifyLowStock({
+              variantId: inv.variantId,
+              currentStock: inv.quantity,
+              productName: item.productTitle,
+              variantTitle: item.variantTitle,
+              sku: inv.sku ?? undefined,
+            }).catch((err) => debugError("ORDER:CREATE:LOW_STOCK_ALERT:ERROR", err));
+          }
+        }
+
         return API_RESPONSE(STATUS.SUCCESS, MESSAGE.ORDER.CREATE.SUCCESS, result);
       } catch (err) {
         debugError("ORDER:CREATE:ERROR", err);
@@ -194,15 +216,24 @@ export const orderRouter = createTRPCRouter({
   updateStatus: staffProcedure
     .input(orderContract.updateStatus.input)
     .output(orderContract.updateStatus.output)
-    .mutation(async ({ input, ctx }) => {
+    .mutation(async ({ input }) => {
       try {
         const { id } = input.params;
-        const { status } = input.body;
+        const { status: newStatus } = input.body;
+
+        const existingOrder = await db.query.order.findFirst({
+          where: eq(order.id, id),
+          with: { user: true },
+        });
+        if (!existingOrder) {
+          return API_RESPONSE(STATUS.FAILED, "Order not found", null);
+        }
+        const oldStatus = existingOrder.status;
 
         const [updatedOrder] = await db
           .update(order)
           .set({
-            status,
+            status: newStatus,
             updatedAt: new Date(),
           })
           .where(eq(order.id, id))
@@ -210,6 +241,10 @@ export const orderRouter = createTRPCRouter({
 
         if (!updatedOrder) {
           return API_RESPONSE(STATUS.FAILED, "Order not found", null);
+        }
+
+        if (oldStatus !== newStatus && existingOrder.userId) {
+          await notifyOrderStatusChange(id, oldStatus, newStatus);
         }
 
         return API_RESPONSE(STATUS.SUCCESS, MESSAGE.ORDER.UPDATE.SUCCESS, updatedOrder);

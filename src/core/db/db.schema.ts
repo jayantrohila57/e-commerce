@@ -32,7 +32,16 @@ export const discountTypeEnum = pgEnum("discount_type", ["flat", "percent"]);
 export const orderStatusEnum = pgEnum("order_status", ["pending", "paid", "shipped", "delivered", "cancelled"]);
 export const paymentStatusEnum = pgEnum("payment_status", ["pending", "completed", "failed", "refunded"]);
 export const paymentProviderEnum = pgEnum("payment_provider", ["stripe", "razorpay", "paypal", "cod"]);
-export const shipmentStatusEnum = pgEnum("shipment_status", ["pending", "in_transit", "delivered"]);
+export const shipmentStatusEnum = pgEnum("shipment_status", [
+  "pending",
+  "label_created",
+  "picked_up",
+  "in_transit",
+  "out_for_delivery",
+  "delivered",
+  "exception",
+  "returned",
+]);
 export const displayTypeEnum = pgEnum("display_type", ["grid", "carousel", "banner", "list", "featured"]);
 export const visibilityEnum = pgEnum("visibility", ["public", "private", "hidden"]);
 export const productStatusEnum = pgEnum("product_status", ["draft", "archive", "live"]);
@@ -610,6 +619,10 @@ export const shipment = pgTable(
     carrier: text("carrier"),
     shippedAt: timestamp("shipped_at", { withTimezone: true }),
     deliveredAt: timestamp("delivered_at", { withTimezone: true }),
+    estimatedDeliveryAt: timestamp("estimated_delivery_at", { withTimezone: true }),
+    shippingRate: integer("shipping_rate"), // paise
+    weight: numeric("weight", { precision: 10, scale: 2 }),
+    notes: text("notes"),
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
     updatedAt: timestamp("updated_at", { withTimezone: true })
       .defaultNow()

@@ -1,6 +1,6 @@
+import { FormSection } from "@/shared/components/form/form.helper";
 import { Separator } from "@/shared/components/ui/separator";
 import { CategoryCard } from "./category.component.card";
-import { FormSection } from "@/shared/components/form/form.helper";
 import type { CategoryBase } from "./category.types";
 
 type Category = CategoryBase;

@@ -1,13 +1,13 @@
 "use client";
 
-import { useFormContext, useWatch } from "react-hook-form";
-import { Input } from "@/shared/components/ui/input";
-import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/shared/components/ui/form";
-import type { FormInputProps } from "../form.types";
-import { cn } from "@/shared/utils/lib/utils";
-import { useId, useEffect, useRef } from "react";
 import { LinkIcon } from "lucide-react";
+import { useEffect, useId, useRef } from "react";
+import { useFormContext, useWatch } from "react-hook-form";
+import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/shared/components/ui/form";
+import { Input } from "@/shared/components/ui/input";
 import { nameToSlug } from "@/shared/utils/lib/url.utils";
+import { cn } from "@/shared/utils/lib/utils";
+import type { FormInputProps } from "../form.types";
 
 export const InputSlug: React.FC<FormInputProps> = (props) => {
   const reactId = useId();

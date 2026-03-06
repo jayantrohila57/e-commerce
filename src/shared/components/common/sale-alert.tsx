@@ -1,10 +1,10 @@
 "use client";
 
-import { Alert, AlertTitle, AlertDescription } from "@/shared/components/ui/alert";
 import { BadgePercentIcon } from "lucide-react";
-import { cn } from "@/shared/utils/lib/utils";
 import Link from "next/link";
+import { Alert, AlertDescription, AlertTitle } from "@/shared/components/ui/alert";
 import { PATH } from "@/shared/config/routes";
+import { cn } from "@/shared/utils/lib/utils";
 
 type SaleAlertProps = {
   title?: string;

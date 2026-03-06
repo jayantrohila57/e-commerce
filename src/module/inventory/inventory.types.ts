@@ -1,10 +1,10 @@
 import type z from "zod/v3";
 import type {
   inventoryBaseSchema,
+  inventoryContract,
   inventoryInsertSchema,
   inventorySelectSchema,
   inventoryUpdateSchema,
-  inventoryContract,
 } from "./inventory.schema";
 
 // =========================

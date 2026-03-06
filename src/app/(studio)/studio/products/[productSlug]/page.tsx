@@ -1,12 +1,12 @@
+import type { Route } from "next";
 import { apiServer, HydrateClient } from "@/core/api/api.server";
-import { ProductVariantSection } from "@/module/product-variant/product-variant-section";
 import { ProductPreviewCard } from "@/module/product/product-preview";
+import { ProductVariantSection } from "@/module/product-variant/product-variant-section";
 import DashboardSection from "@/shared/components/layout/section/section-dashboard";
 import Shell from "@/shared/components/layout/shell";
 import { Separator } from "@/shared/components/ui/separator";
 import { PATH } from "@/shared/config/routes";
 import { slugToTitle } from "@/shared/utils/lib/url.utils";
-import type { Route } from "next";
 
 export default async function ProductPage({ params }: PageProps<"/studio/products/[productSlug]">) {
   const { productSlug: slug } = await params;

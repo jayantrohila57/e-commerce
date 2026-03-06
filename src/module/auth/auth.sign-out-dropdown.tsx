@@ -1,14 +1,14 @@
 "use client";
 
-import * as React from "react";
 import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu";
-import { cn } from "@/shared/utils/lib/utils";
-import { toast } from "sonner";
 import { Loader, LogOut } from "lucide-react";
-import { signOut } from "@/core/auth/auth.client";
-import { debugError } from "@/shared/utils/lib/logger.utils";
 import { useRouter } from "next/navigation";
+import * as React from "react";
+import { toast } from "sonner";
+import { signOut } from "@/core/auth/auth.client";
 import { PATH } from "@/shared/config/routes";
+import { debugError } from "@/shared/utils/lib/logger.utils";
+import { cn } from "@/shared/utils/lib/utils";
 
 export const SignOutDropdownMenuItem = React.forwardRef<
   React.ElementRef<typeof DropdownMenuPrimitive.Item>,

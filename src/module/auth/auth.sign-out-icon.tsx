@@ -1,15 +1,14 @@
 "use client";
 
-import { LogOut, Loader } from "lucide-react";
+import { Loader, LogOut } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 import { toast } from "sonner";
-
+import { signOut } from "@/core/auth/auth.client";
 import { Button } from "@/shared/components/ui/button";
-import { Tooltip, TooltipTrigger, TooltipContent } from "@/shared/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/shared/components/ui/tooltip";
 import { PATH } from "@/shared/config/routes";
 import { debugError } from "@/shared/utils/lib/logger.utils";
-import { signOut } from "@/core/auth/auth.client";
-import { useRouter } from "next/navigation";
 
 interface SignOutButtonProps {
   variant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link";

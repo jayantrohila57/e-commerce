@@ -1,9 +1,9 @@
+import { redirect } from "next/navigation";
 import { getServerSession } from "@/core/auth/auth.server";
-import { AccountSidebar } from "@/module/account/account-sidebar";
 import AccountUserComponent from "@/module/account/account.user-layout";
+import { AccountSidebar } from "@/module/account/account-sidebar";
 import Section from "@/shared/components/layout/section/section";
 import { PATH } from "@/shared/config/routes";
-import { redirect } from "next/navigation";
 
 export const metadata = {
   title: "Account",

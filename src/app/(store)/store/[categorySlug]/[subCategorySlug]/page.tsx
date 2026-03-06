@@ -1,8 +1,8 @@
+import { notFound } from "next/navigation";
 import { apiServer, HydrateClient } from "@/core/api/api.server";
+import { SubCategoryItem } from "@/module/subcategory/subcategory-listing";
 import Section from "@/shared/components/layout/section/section";
 import { clientEnv } from "@/shared/config/env.client";
-import { notFound } from "next/navigation";
-import { SubCategoryItem } from "@/module/subcategory/subcategory-listing";
 
 export async function generateMetadata({ params }: PageProps<"/store/[categorySlug]/[subCategorySlug]">) {
   const { categorySlug, subCategorySlug: slug } = await params;

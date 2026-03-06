@@ -1,10 +1,10 @@
 "use client";
 
-import { memo, useCallback } from "react";
 import { ChevronLeft } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { memo, useCallback } from "react";
 import { Button } from "@/shared/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/shared/components/ui/tooltip";
-import { useRouter } from "next/navigation";
 
 const GoBackButton = memo(() => {
   const router = useRouter();

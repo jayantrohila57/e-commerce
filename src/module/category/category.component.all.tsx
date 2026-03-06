@@ -1,8 +1,8 @@
+import type { Route } from "next";
+import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/components/ui/card";
 import { BlurImage } from "@/shared/components/ui/image";
 import { Separator } from "@/shared/components/ui/separator";
-import type { Route } from "next";
-import Link from "next/link";
 import type { GetCategoryWithSubcategoriesOutput } from "./category.types";
 
 export const CategoryItem = ({ data }: { data: GetCategoryWithSubcategoriesOutput["data"] }) => {

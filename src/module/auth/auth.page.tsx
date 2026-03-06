@@ -1,6 +1,6 @@
+import { KeyRound, LogIn, UserPlus } from "lucide-react";
 import Link from "next/link";
-import { Card, CardHeader, CardTitle, CardDescription, CardAction } from "@/shared/components/ui/card";
-import { LogIn, UserPlus, KeyRound } from "lucide-react";
+import { Card, CardAction, CardDescription, CardHeader, CardTitle } from "@/shared/components/ui/card";
 import { PATH } from "@/shared/config/routes";
 
 const sections = [

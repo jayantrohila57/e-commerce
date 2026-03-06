@@ -1,12 +1,11 @@
 "use client";
 
-import { useFormContext } from "react-hook-form";
-
-import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/shared/components/ui/form";
-import type { FormInputProps } from "../form.types";
-import { cn } from "@/shared/utils/lib/utils";
 import { useId } from "react";
+import { useFormContext } from "react-hook-form";
+import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/shared/components/ui/form";
+import { cn } from "@/shared/utils/lib/utils";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "../../ui/input-otp";
+import type { FormInputProps } from "../form.types";
 
 export const InputOtp: React.FC<FormInputProps> = (props) => {
   const reactId = useId();

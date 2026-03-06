@@ -1,5 +1,5 @@
-import React, { ViewTransition, type ReactNode } from "react";
 import { cva, type VariantProps } from "class-variance-authority";
+import React, { type ReactNode, ViewTransition } from "react";
 import { cn } from "@/shared/utils/lib/utils";
 
 interface ShellTypes {

@@ -1,8 +1,7 @@
-import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/shared/components/ui/accordion";
 import type { LucideIcon } from "lucide-react";
-
-import { Card, CardContent, CardTitle } from "@/shared/components/ui/card";
 import Image from "next/image";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/shared/components/ui/accordion";
+import { Card, CardContent, CardTitle } from "@/shared/components/ui/card";
 
 export function FAQSection({ data }: { data: { id: string; title: string; content: string; icon: LucideIcon }[] }) {
   return (

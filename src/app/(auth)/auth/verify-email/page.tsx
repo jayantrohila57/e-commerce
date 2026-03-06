@@ -1,9 +1,9 @@
+import { redirect } from "next/navigation";
 import { getServerSession } from "@/core/auth/auth.server";
 import { EmailVerification } from "@/module/auth/auth.verify-email";
-import { redirect } from "next/navigation";
+import { AuthCard, AuthFooterNote } from "@/shared/components/layout/section/auth.card-layout";
 import Shell from "@/shared/components/layout/shell";
 import { PATH } from "@/shared/config/routes";
-import { AuthCard, AuthFooterNote } from "@/shared/components/layout/section/auth.card-layout";
 
 export const metadata = {
   title: "Verify Email",

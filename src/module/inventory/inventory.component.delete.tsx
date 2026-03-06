@@ -1,5 +1,10 @@
 "use client";
 
+import { Loader, Trash } from "lucide-react";
+import type { Route } from "next";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { toast } from "sonner";
 import { apiClient } from "@/core/api/api.client";
 import {
   AlertDialog,
@@ -16,11 +21,6 @@ import { Button } from "@/shared/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/shared/components/ui/tooltip";
 import { STATUS } from "@/shared/config/api.config";
 import { PATH } from "@/shared/config/routes";
-import { Loader, Trash } from "lucide-react";
-import type { Route } from "next";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { toast } from "sonner";
 
 interface InventoryDeleteProps {
   inventoryId: string;

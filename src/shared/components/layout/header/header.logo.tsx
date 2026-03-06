@@ -1,7 +1,7 @@
+import Link from "next/link";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/shared/components/ui/tooltip";
 import { PATH } from "@/shared/config/routes";
 import { site } from "@/shared/config/site";
-import Link from "next/link";
 
 export default function HeaderLogo() {
   return (

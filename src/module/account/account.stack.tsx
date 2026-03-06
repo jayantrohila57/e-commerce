@@ -1,3 +1,6 @@
+import { ChevronRight, type LucideIcon } from "lucide-react";
+import type { Route } from "next";
+import Link from "next/link";
 import {
   Card,
   CardAction,
@@ -7,9 +10,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/shared/components/ui/card";
-import { ChevronRight, type LucideIcon } from "lucide-react";
-import type { Route } from "next";
-import Link from "next/link";
 
 type SectionItem = {
   name: string;

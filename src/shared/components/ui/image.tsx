@@ -1,8 +1,8 @@
 "use client";
 
-import * as React from "react";
 import Image from "next/image";
 import type { ComponentProps } from "react";
+import * as React from "react";
 import { cn } from "@/shared/utils/lib/utils";
 
 interface BlurImageProps extends Omit<ComponentProps<typeof Image>, "src"> {

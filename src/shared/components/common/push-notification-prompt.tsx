@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { Bell, X } from "lucide-react";
+import { useEffect, useState } from "react";
 import { Button } from "@/shared/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/card";
-import { Bell, X } from "lucide-react";
 import { debugError } from "@/shared/utils/lib/logger.utils";
 
 export function PushNotificationPrompt() {

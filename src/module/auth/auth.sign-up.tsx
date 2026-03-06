@@ -1,17 +1,17 @@
 "use client";
 
-import type z from "zod/v3";
-import { toast } from "sonner";
-import { signUp } from "@/core/auth/auth.client";
-import { useRouter } from "next/navigation";
-import { AuthSchema } from "./auth-schema";
-import Form from "@/shared/components/form/form";
-import { useTransition } from "react";
-import { Separator } from "@/shared/components/ui/separator";
 import { Shield } from "lucide-react";
 import Link from "next/link";
-import { PATH } from "@/shared/config/routes";
+import { useRouter } from "next/navigation";
+import { useTransition } from "react";
+import { toast } from "sonner";
+import type z from "zod/v3";
+import { signUp } from "@/core/auth/auth.client";
+import Form from "@/shared/components/form/form";
 import { Button } from "@/shared/components/ui/button";
+import { Separator } from "@/shared/components/ui/separator";
+import { PATH } from "@/shared/config/routes";
+import { AuthSchema } from "./auth-schema";
 
 type FormValues = z.infer<typeof AuthSchema.SIGN_UP.INPUT>;
 

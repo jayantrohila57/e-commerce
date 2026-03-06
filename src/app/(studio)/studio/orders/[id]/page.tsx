@@ -5,6 +5,7 @@ import { APP_ROLE, normalizeRole } from "@/core/auth/auth.roles";
 import { getServerSession } from "@/core/auth/auth.server";
 import { OrderStatusActions } from "@/module/order/components/order-status-actions";
 import { OrderDetailSection } from "@/module/order/order-detail.section";
+import { OrderShipmentSection } from "@/module/shipment/components/order-shipment-section";
 import Section from "@/shared/components/layout/section/section";
 import Shell from "@/shared/components/layout/shell";
 import { Button } from "@/shared/components/ui/button";
@@ -36,6 +37,8 @@ export default async function StudioOrderDetailPage({ params }: StudioOrderDetai
   }
 
   const order = res.data;
+  const shipRes = await apiServer.shipment.getByOrder({ params: { orderId: id } });
+  const shipments = shipRes?.data ?? [];
 
   return (
     <Shell>
@@ -56,6 +59,7 @@ export default async function StudioOrderDetailPage({ params }: StudioOrderDetai
             </div>
 
             <OrderDetailSection order={order} />
+            <OrderShipmentSection order={order} shipments={Array.isArray(shipments) ? shipments : []} />
           </div>
         </Section>
       </Shell.Section>

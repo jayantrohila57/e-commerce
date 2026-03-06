@@ -1,7 +1,7 @@
 "use client";
 
-import { debugLog } from "@/shared/utils/lib/logger.utils";
 import { useReportWebVitals } from "next/web-vitals";
+import { debugLog } from "@/shared/utils/lib/logger.utils";
 
 export function WebVitals() {
   useReportWebVitals((metric) => {

@@ -1,8 +1,8 @@
 "use client";
 
+import { Sparkles, X } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/shared/components/ui/button";
-import { X, Sparkles } from "lucide-react";
 
 export function PromoBanner() {
   const [isVisible, setIsVisible] = useState(true);

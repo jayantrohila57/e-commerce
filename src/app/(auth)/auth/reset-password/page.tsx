@@ -1,9 +1,9 @@
+import { redirect } from "next/navigation";
 import { getServerSession } from "@/core/auth/auth.server";
 import ResetPasswordForm from "@/module/auth/auth.reset-password";
-import { redirect } from "next/navigation";
+import { AuthCard, AuthFooterNote } from "@/shared/components/layout/section/auth.card-layout";
 import Shell from "@/shared/components/layout/shell";
 import { PATH } from "@/shared/config/routes";
-import { AuthCard, AuthFooterNote } from "@/shared/components/layout/section/auth.card-layout";
 
 export const metadata = {
   title: "Reset Password",

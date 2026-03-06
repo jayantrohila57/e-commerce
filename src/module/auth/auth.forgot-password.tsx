@@ -1,12 +1,12 @@
 "use client";
 
+import { useTransition } from "react";
 import { toast } from "sonner";
+import type z from "zod/v3";
 import { requestPasswordReset } from "@/core/auth/auth.client";
-import { AuthSchema } from "./auth-schema";
 import Form from "@/shared/components/form/form";
 import { Separator } from "@/shared/components/ui/separator";
-import { useTransition } from "react";
-import type z from "zod/v3";
+import { AuthSchema } from "./auth-schema";
 
 type FormValues = z.infer<typeof AuthSchema.FORGOT_PASSWORD.INPUT>;
 

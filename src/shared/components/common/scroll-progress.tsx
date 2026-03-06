@@ -1,7 +1,7 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { cn } from "@/shared/utils/lib/utils";
-import { useState, useEffect } from "react";
 
 export function ScrollProgress({ className }: { className?: string }) {
   const [progress, setProgress] = useState(0);

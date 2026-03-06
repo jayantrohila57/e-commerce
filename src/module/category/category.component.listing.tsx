@@ -1,10 +1,10 @@
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/shared/components/ui/card";
-import type { GetCategoriesOutput } from "./category.types";
-import { BlurImage } from "@/shared/components/ui/image";
+import type { Route } from "next";
 import Link from "next/link";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/shared/components/ui/card";
+import { BlurImage } from "@/shared/components/ui/image";
 import { Separator } from "@/shared/components/ui/separator";
 import { truncateString } from "@/shared/utils/lib/utils";
-import type { Route } from "next";
+import type { GetCategoriesOutput } from "./category.types";
 
 export default function CategoriesListing({ data }: { data: GetCategoriesOutput["data"] }) {
   return (

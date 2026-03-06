@@ -22,7 +22,6 @@
     "format": "biome format --write .",
     "format:check": "biome format .",
     "check": "biome check . && pnpm run typecheck",
-    "test": "tsx --test",
     "email:dev": "react-email dev"
   },
   "dependencies": {

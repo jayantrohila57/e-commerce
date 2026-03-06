@@ -1,7 +1,7 @@
-import { Separator } from "@/shared/components/ui/separator";
-import { SubCategoryCard } from "./subcategory-card";
 import { FormSection } from "@/shared/components/form/form.helper";
+import { Separator } from "@/shared/components/ui/separator";
 import type { SubcategoryBase } from "./subcategory.schema";
+import { SubCategoryCard } from "./subcategory-card";
 
 type SubCategory = SubcategoryBase;
 

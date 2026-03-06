@@ -1,8 +1,8 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import { sendVerificationEmail } from "@/core/auth/auth.client";
 import { Button } from "@/shared/components/ui/button";
-import { useEffect, useRef, useState } from "react";
 
 export function EmailVerification({ email }: { email: string }) {
   const [timeToNextResend, setTimeToNextResend] = useState(30);

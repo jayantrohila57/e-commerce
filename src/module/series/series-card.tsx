@@ -1,10 +1,10 @@
+import { ChevronRight, GripVertical } from "lucide-react";
+import type { Route } from "next";
+import Link from "next/link";
 import { Badge } from "@/shared/components/ui/badge";
 import { Button } from "@/shared/components/ui/button";
 import { Separator } from "@/shared/components/ui/separator";
 import { cn } from "@/shared/utils/lib/utils";
-import { ChevronRight, GripVertical } from "lucide-react";
-import type { Route } from "next";
-import Link from "next/link";
 import type { GetManySeriesOutput } from "./series.types";
 
 interface SeriesCardProps {

@@ -1,3 +1,8 @@
+import { ChevronRight, GripVertical } from "lucide-react";
+import type { Route } from "next";
+import Link from "next/link";
+import { Badge } from "@/shared/components/ui/badge";
+import { Button } from "@/shared/components/ui/button";
 import {
   Card,
   CardAction,
@@ -7,14 +12,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/shared/components/ui/card";
-import { Badge } from "@/shared/components/ui/badge";
-import { ChevronRight, GripVertical } from "lucide-react";
-import { cn, truncateString } from "@/shared/utils/lib/utils";
-import Link from "next/link";
-import type { Route } from "next";
-import { Button } from "@/shared/components/ui/button";
-import { Separator } from "@/shared/components/ui/separator";
 import { BlurImage } from "@/shared/components/ui/image";
+import { Separator } from "@/shared/components/ui/separator";
+import { cn, truncateString } from "@/shared/utils/lib/utils";
 
 type Category = {
   visibility: "public" | "private" | "hidden";

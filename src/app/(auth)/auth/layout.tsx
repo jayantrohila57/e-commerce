@@ -1,8 +1,8 @@
-import Shell from "@/shared/components/layout/shell";
-import Header from "@/shared/components/layout/header/header";
-import { SubNavHeader } from "@/shared/components/layout/section/section.header";
-import Section from "@/shared/components/layout/section/section";
 import Footer from "@/shared/components/layout/footer/footer";
+import Header from "@/shared/components/layout/header/header";
+import Section from "@/shared/components/layout/section/section";
+import { SubNavHeader } from "@/shared/components/layout/section/section.header";
+import Shell from "@/shared/components/layout/shell";
 
 export default async function Layout({ children }: { children: React.ReactNode }) {
   return (

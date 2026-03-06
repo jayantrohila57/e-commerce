@@ -1,13 +1,13 @@
 "use client";
 
-import { Button } from "@/shared/components/ui/button";
-import { signOut } from "@/core/auth/auth.client";
 import { Loader, LogOut } from "lucide-react";
-import { toast } from "sonner";
-import { debugError } from "@/shared/utils/lib/logger.utils";
-import { useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { useTransition } from "react";
+import { toast } from "sonner";
+import { signOut } from "@/core/auth/auth.client";
+import { Button } from "@/shared/components/ui/button";
 import { PATH } from "@/shared/config/routes";
+import { debugError } from "@/shared/utils/lib/logger.utils";
 
 export const AuthSignOutButton = () => {
   const [isLoading, startTransition] = useTransition();

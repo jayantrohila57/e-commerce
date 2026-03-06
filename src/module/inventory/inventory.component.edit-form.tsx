@@ -1,5 +1,10 @@
 "use client";
 
+import type { Route } from "next";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { toast } from "sonner";
+import type { z } from "zod/v3";
 import { apiClient } from "@/core/api/api.client";
 import Form from "@/shared/components/form/form";
 import { FormSection } from "@/shared/components/form/form.helper";
@@ -7,11 +12,6 @@ import { Button } from "@/shared/components/ui/button";
 import { Separator } from "@/shared/components/ui/separator";
 import { STATUS } from "@/shared/config/api.config";
 import { PATH } from "@/shared/config/routes";
-import type { Route } from "next";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { toast } from "sonner";
-import type { z } from "zod/v3";
 import { inventoryContract } from "./inventory.schema";
 
 const formSchema = inventoryContract.update.input;

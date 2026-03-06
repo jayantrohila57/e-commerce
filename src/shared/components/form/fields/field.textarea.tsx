@@ -1,11 +1,11 @@
 "use client";
 
+import { useId } from "react";
 import { useFormContext } from "react-hook-form";
 import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/shared/components/ui/form";
 import { Textarea } from "@/shared/components/ui/textarea";
 import { cn } from "@/shared/utils/lib/utils";
 import type { FormInputProps } from "../form.types";
-import { useId } from "react";
 
 export const InputTextArea: React.FC<FormInputProps> = (props) => {
   const reactId = useId();

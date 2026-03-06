@@ -1,14 +1,14 @@
 "use client";
 
+import { Github, Loader } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useTransition } from "react";
-import { Button } from "@/shared/components/ui/button";
+import { toast } from "sonner";
 import { signIn } from "@/core/auth/auth.client";
 import { SUPPORTED_OAUTH_PROVIDER_DETAILS } from "@/core/auth/auth.providers";
-import { Github, Loader } from "lucide-react";
-import { toast } from "sonner";
-import { debugError } from "@/shared/utils/lib/logger.utils";
-import { useRouter } from "next/navigation";
+import { Button } from "@/shared/components/ui/button";
 import { PATH } from "@/shared/config/routes";
+import { debugError } from "@/shared/utils/lib/logger.utils";
 
 export function GitHubSignIn() {
   const [isLoading, startTransition] = useTransition();

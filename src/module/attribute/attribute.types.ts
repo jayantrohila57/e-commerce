@@ -1,5 +1,5 @@
-import type { attributeContract } from "./attribute.schema";
 import type z from "zod/v3";
+import type { attributeContract } from "./attribute.schema";
 
 export type GetAttributeInput = z.infer<typeof attributeContract.get.input>;
 export type GetAttributeOutput = z.infer<typeof attributeContract.get.output>;

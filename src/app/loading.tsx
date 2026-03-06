@@ -1,6 +1,6 @@
+import { Loader } from "lucide-react";
 import Header from "@/shared/components/layout/header/header";
 import { Shell } from "@/shared/components/layout/shell";
-import { Loader } from "lucide-react";
 
 export const metadata = {
   title: "Loading",

@@ -1,11 +1,11 @@
 "use client";
 
-import { useFormContext } from "react-hook-form";
-import { Switch } from "@/shared/components/ui/switch";
-import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/shared/components/ui/form";
-import type { FormInputProps } from "../form.types";
-import { cn } from "@/shared/utils/lib/utils";
 import { useId } from "react";
+import { useFormContext } from "react-hook-form";
+import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/shared/components/ui/form";
+import { Switch } from "@/shared/components/ui/switch";
+import { cn } from "@/shared/utils/lib/utils";
+import type { FormInputProps } from "../form.types";
 
 export const InputSwitch: React.FC<FormInputProps> = (props) => {
   const reactId = useId();

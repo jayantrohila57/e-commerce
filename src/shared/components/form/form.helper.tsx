@@ -1,6 +1,6 @@
+import { CheckCircle, XCircle } from "lucide-react";
 import type * as React from "react";
 import { cn } from "@/shared/utils/lib/utils";
-import { CheckCircle, XCircle } from "lucide-react";
 
 type FormSectionProps = {
   title: string;

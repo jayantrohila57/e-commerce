@@ -1,9 +1,9 @@
 "use client";
 
-import { Card, CardContent, CardFooter, CardHeader } from "@/shared/components/ui/card";
+import { Calendar, Printer, Share2 } from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
+import { Card, CardContent, CardFooter, CardHeader } from "@/shared/components/ui/card";
 import { Separator } from "@/shared/components/ui/separator";
-import { Printer, Share2, Calendar } from "lucide-react";
 import { policyContent } from "./policy-content";
 
 interface LegalContentProps {

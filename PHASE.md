@@ -3,7 +3,7 @@
 > **Generated:** 2026-03-05  
 > **Platform:** Single-Merchant Enterprise Commerce  
 > **Stack:** Next.js 16 · tRPC · Drizzle ORM · Neon Postgres · Better Auth · Radix UI · Tailwind CSS v4  
-> **Overall Completion:** ~82%
+> **Overall Completion:** ~85%
 
 ---
 
@@ -282,7 +282,7 @@ Enterprise (requires stable Post-MVP):
 | 🟡 | No business rule validation: `reserved <= quantity` |
 | 🟡 | Null safety issue in edit form (spreads potentially null inventory data) |
 | ❌ | Reservation logic not connected to cart/checkout flow |
-| ❌ | No low-stock alerts and notifications |
+| ✅ | Low-stock alerts wired (admin email when inventory drops below threshold after order) |
 
 ---
 
@@ -445,39 +445,45 @@ Enterprise (requires stable Post-MVP):
 ### Phase 18: Shipment & Fulfillment
 
 **Module:** Shipment (`src/module/shipment/`)  
-**Status:** 🟡 Partial  
+**Status:** ✅ Complete  
 **Dependencies:** Phase 15 (Order)
 
 | Status | Task |
 |--------|------|
-| ✅ | DB schema: `shipment` table with `shipmentStatusEnum` and order relation |
-| ✅ | tRPC API: `create`, `updateStatus`, `getByOrder` |
+| ✅ | DB schema: `shipment` table with expanded `shipmentStatusEnum` (8 values) and order relation |
+| ✅ | DB migration: `0003_shipment_status_and_columns.sql` (enum + estimatedDeliveryAt, shippingRate, weight, notes) |
+| ✅ | tRPC API: `create`, `updateStatus`, `getByOrder`, `get`, `getMany`, `getByTracking` |
+| ✅ | Zod contracts: `get`, `getMany`, `getByTracking` with pagination; `shipment.types.ts` |
 | ✅ | API message constants and routes defined |
-| 🟡 | Account shipment page exists but content is empty |
-| ❌ | No Studio fulfillment management UI |
+| ✅ | Account shipment page with proper content (orders + shipments list) |
+| ✅ | Studio fulfillment: `/studio/shipping` list and `/studio/shipping/[id]` detail pages |
+| ✅ | Studio sidebar: Shipping under Orders section |
+| ✅ | Studio order detail: `OrderShipmentSection` with create shipment dialog, status form, timeline |
+| ✅ | UI components: status-badge, timeline, card, list, tracking-section, shipment-form, status-form |
+| ✅ | `useShipment` hook with getByOrder, createShipment, updateStatus |
+| ✅ | Customer-facing tracking: `ShipmentTrackingSection` on account and store order detail pages |
 | ❌ | No shipping rate calculation |
 | ❌ | No carrier integration (Shippo/EasyPost) |
-| ❌ | No customer-facing tracking page |
 
 ---
 
 ### Phase 19: Email & Notifications
 
-**Module:** Email (`src/core/mail/`)  
-**Status:** 🟡 Partial  
+**Module:** Email (`src/shared/components/mail/`, `src/core/mail/`)  
+**Status:** ✅ Complete  
 **Dependencies:** Phase 15 (Order), Phase 16 (Payment)
 
 | Status | Task |
 |--------|------|
 | ✅ | Resend client integration |
 | ✅ | Templates: welcome, verification, password reset, delete account |
-| ✅ | Order confirmation template designed |
+| ✅ | Order confirmation template + wired to `payment.confirm` and Razorpay webhook |
+| ✅ | Payment confirmation email template + `sendPaymentConfirmationEmail` |
+| ✅ | Shipment notification email template + wired on shipment create/updateStatus |
+| ✅ | Order status change email template + wired in `order.updateStatus` |
+| ✅ | Low stock alert email (admin) + wired after inventory deduction in order.create |
+| ✅ | Centralized `notification.service.ts` (in `src/shared/components/mail/`) |
 | ✅ | Professional ShopHub branding |
-| ❌ | Order confirmation email not wired to order/payment events |
-| ❌ | Payment confirmation email |
-| ❌ | Shipment notification email |
-| ❌ | Low stock alert email (admin) |
-| ❌ | Order status change notification |
 
 ---
 
@@ -748,7 +754,7 @@ Enterprise (requires stable Post-MVP):
 | **Foundation** | 1–3 | 2 weeks | ✅ Done |
 | **Product Catalog** | 4–10 | 3 weeks | ✅ Mostly Done |
 | **Account & Commerce APIs** | 11–16 | 2–3 weeks | 🟡 APIs Done, UIs mostly wired |
-| **Checkout & Fulfillment** | 17–19 | 2–3 weeks | ✅ Phase 17 done; 18–19 partial |
+| **Checkout & Fulfillment** | 17–19 | 2–3 weeks | ✅ Phases 17–19 complete |
 | **Polish & Launch** | 20–23 | 2 weeks | 🟡 Partial |
 | **Post-MVP** | 24–26 | 4–6 weeks | ❌ Not Started |
 | **Enterprise** | 27–31 | 12–16 weeks | ❌ Not Started |
@@ -778,13 +784,13 @@ Enterprise (requires stable Post-MVP):
 | 15 | Order Management | Phase 13, 12 | 🟡 Partial | 75% |
 | 16 | Payment Processing | Phase 15 | ✅ Complete (Razorpay) | 85% |
 | 17 | Checkout Flow | Phase 13, 12, 15, 16 | ✅ Complete | 90% |
-| 18 | Shipment & Fulfillment | Phase 15 | 🟡 Partial | 35% |
-| 19 | Email & Notifications | Phase 15, 16 | 🟡 Partial | 50% |
+| 18 | Shipment & Fulfillment | Phase 15 | ✅ Complete | 90% |
+| 19 | Email & Notifications | Phase 15, 16 | ✅ Complete | 95% |
 | 20 | Legal & Cookies | Phase 1 | ✅ Complete | 90% |
 | 21 | Site & Marketing Pages | Phase 8 | 🟡 Partial | 55% |
 | 22 | SEO & Production Readiness | Phase 17, 21 | 🟡 Partial | 30% |
 | 23 | Testing Infrastructure | Phase 17 | ❌ Not Started | 0% |
-| **MVP Subtotal** | | | | **~75%** |
+| **MVP Subtotal** | | | | **~78%** |
 | 24 | Discount & Coupon System | Phase 15, 8 | 🟡 Schema Only | 20% |
 | 25 | Product Reviews & Ratings | Phase 8, 15 | 🟡 Schema Only | 15% |
 | 26 | Refund Management | Phase 16, 15 | ❌ Not Started | 0% |

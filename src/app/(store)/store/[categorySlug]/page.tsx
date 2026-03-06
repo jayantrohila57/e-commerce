@@ -1,8 +1,8 @@
-import { apiServer, HydrateClient } from "@/core/api/api.server";
-import Section from "@/shared/components/layout/section/section";
-import { CategoryItem } from "@/module/category/category.component.all";
-import { clientEnv } from "@/shared/config/env.client";
 import { notFound } from "next/navigation";
+import { apiServer, HydrateClient } from "@/core/api/api.server";
+import { CategoryItem } from "@/module/category/category.component.all";
+import Section from "@/shared/components/layout/section/section";
+import { clientEnv } from "@/shared/config/env.client";
 
 export async function generateMetadata({ params }: PageProps<"/store/[categorySlug]">) {
   const { categorySlug: slug } = await params;

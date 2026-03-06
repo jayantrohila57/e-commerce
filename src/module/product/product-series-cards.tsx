@@ -1,7 +1,7 @@
-import { BlurImage } from "@/shared/components/ui/image";
-import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/card";
-import Link from "next/link";
 import type { Route } from "next";
+import Link from "next/link";
+import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/card";
+import { BlurImage } from "@/shared/components/ui/image";
 import type { GetProductsBySeriesSlugOutput } from "./product.types";
 
 const computePrice = (basePrice: number, priceModifierValue: number, priceModifierType: string): number => {

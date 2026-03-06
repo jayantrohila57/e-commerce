@@ -1,14 +1,14 @@
+import { findIp } from "@arcjet/ip";
 import arcjet, {
   type BotOptions,
   type EmailOptions,
   protectSignup,
+  type SlidingWindowRateLimitOptions,
   shield,
   slidingWindow,
-  type SlidingWindowRateLimitOptions,
 } from "@arcjet/next";
-import { findIp } from "@arcjet/ip";
-import { serverEnv } from "@/shared/config/env.server";
 import { getServerSession } from "@/core/auth/auth.server";
+import { serverEnv } from "@/shared/config/env.server";
 
 const aj = arcjet({
   key: serverEnv.ARKJET_API_KEY,

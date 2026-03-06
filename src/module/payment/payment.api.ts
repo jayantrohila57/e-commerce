@@ -6,6 +6,7 @@ import { order, payment } from "@/core/db/db.schema";
 import { razorpay } from "@/core/payment/razorpay.client";
 import { buildRazorpayOrderOptions } from "@/core/payment/razorpay.options";
 import { verifyCheckoutSignature } from "@/core/payment/razorpay.verify";
+import { notifyOrderConfirmation } from "@/shared/components/mail/notification.service";
 import { STATUS } from "@/shared/config/api.config";
 import { API_RESPONSE } from "@/shared/config/api.utils";
 import { serverEnv } from "@/shared/config/env.server";
@@ -179,6 +180,8 @@ export const paymentRouter = createTRPCRouter({
             .update(order)
             .set({ status: "paid", updatedAt: new Date() })
             .where(eq(order.id, updatedPayment.orderId));
+
+          await notifyOrderConfirmation(updatedPayment.orderId);
         }
 
         return API_RESPONSE(STATUS.SUCCESS, "Payment confirmed", toPaymentDto(updatedPayment));

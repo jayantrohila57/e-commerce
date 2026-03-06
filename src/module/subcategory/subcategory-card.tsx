@@ -1,12 +1,12 @@
-import { Badge } from "@/shared/components/ui/badge";
 import { ChevronRight, GripVertical } from "lucide-react";
-import { cn, truncateString } from "@/shared/utils/lib/utils";
-import Link from "next/link";
 import type { Route } from "next";
+import Link from "next/link";
+import { Badge } from "@/shared/components/ui/badge";
 import { Button } from "@/shared/components/ui/button";
-import { Separator } from "@/shared/components/ui/separator";
-import type { SubcategoryBase } from "./subcategory.schema";
 import { BlurImage } from "@/shared/components/ui/image";
+import { Separator } from "@/shared/components/ui/separator";
+import { cn, truncateString } from "@/shared/utils/lib/utils";
+import type { SubcategoryBase } from "./subcategory.schema";
 
 interface SubCategoryCardProps {
   data: SubcategoryBase;

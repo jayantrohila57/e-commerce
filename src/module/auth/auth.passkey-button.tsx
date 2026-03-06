@@ -1,12 +1,12 @@
 "use client";
 
-import { signIn, useSession } from "@/core/auth/auth.client";
-import { Button } from "@/shared/components/ui/button";
-import { debugError } from "@/shared/utils/lib/logger.utils";
 import { KeyIcon, Loader } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 import { toast } from "sonner";
+import { signIn, useSession } from "@/core/auth/auth.client";
+import { Button } from "@/shared/components/ui/button";
+import { debugError } from "@/shared/utils/lib/logger.utils";
 
 export function PasskeyButton() {
   const router = useRouter();

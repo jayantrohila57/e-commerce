@@ -1,12 +1,11 @@
+import type z from "zod/v3";
 import type {
   categoryBaseSchema,
+  categoryContract,
   categoryInsertSchema,
   categorySelectSchema,
   categoryUpdateSchema,
-  categoryContract,
 } from "./category.schema";
-
-import type z from "zod/v3";
 
 export type CategoryBase = z.infer<typeof categoryBaseSchema>;
 export type CategorySelect = z.infer<typeof categorySelectSchema>;

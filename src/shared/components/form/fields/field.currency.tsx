@@ -1,10 +1,10 @@
 "use client";
 
+import { useId } from "react";
+import { Controller, useFormContext } from "react-hook-form";
 import { FormControl, FormDescription, FormItem, FormLabel, FormMessage } from "@/shared/components/ui/form";
 import { Input } from "@/shared/components/ui/input";
 import { cn } from "@/shared/utils/lib/utils";
-import { useId } from "react";
-import { Controller, useFormContext } from "react-hook-form";
 import type { FormInputProps } from "../form.types";
 
 export const InputCurrency: React.FC<FormInputProps> = (props) => {

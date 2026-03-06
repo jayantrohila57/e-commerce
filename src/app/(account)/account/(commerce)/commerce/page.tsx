@@ -1,9 +1,9 @@
-import { getServerSession } from "@/core/auth/auth.server";
-import AccountCommerceComponent from "@/module/account/account.commerce-layout";
-import { PATH } from "@/shared/config/routes";
 import { redirect } from "next/navigation";
-import Section from "@/shared/components/layout/section/section";
+import { getServerSession } from "@/core/auth/auth.server";
 import { CommerceSidebar } from "@/module/account/account.commerce.sidebar";
+import AccountCommerceComponent from "@/module/account/account.commerce-layout";
+import Section from "@/shared/components/layout/section/section";
+import { PATH } from "@/shared/config/routes";
 
 export const metadata = {
   title: "Account",

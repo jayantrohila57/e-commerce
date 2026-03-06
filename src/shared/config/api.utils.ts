@@ -1,6 +1,6 @@
+import type { ZodError } from "zod/v3";
 import { debugError, debugLog, debugWarn } from "../utils/lib/logger.utils";
 import { STATUS } from "./api.config";
-import type { ZodError } from "zod/v3";
 
 export const prettyZodError = (error: ZodError) => {
   return error.issues

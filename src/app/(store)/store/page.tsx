@@ -1,3 +1,5 @@
+import type { Route } from "next";
+import Link from "next/link";
 import { apiServer } from "@/core/api/api.server";
 import CodePreview from "@/shared/components/common/code-preview";
 import Section from "@/shared/components/layout/section/section";
@@ -5,8 +7,6 @@ import Shell from "@/shared/components/layout/shell";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/components/ui/card";
 import { BlurImage } from "@/shared/components/ui/image";
 import { PATH } from "@/shared/config/routes";
-import type { Route } from "next";
-import Link from "next/link";
 
 export const metadata = {
   title: "Store",

@@ -1,9 +1,9 @@
 "use client";
 
+import { BarChart3, Settings, Shield, Target, X } from "lucide-react";
 import { useState } from "react";
-import { X, Settings, Shield, BarChart3, Target } from "lucide-react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/components/ui/card";
 import { Button } from "@/shared/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/components/ui/card";
 import { Switch } from "@/shared/components/ui/switch";
 import { debugError, debugLog } from "@/shared/utils/lib/logger.utils";
 

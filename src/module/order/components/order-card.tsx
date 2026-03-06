@@ -1,13 +1,13 @@
 "use client";
 
 import { format } from "date-fns";
+import type { Route } from "next";
 import Link from "next/link";
 import { OrderStatusBadge } from "@/module/order/components/order-status-badge";
 import type { Order } from "@/module/order/order.schema";
 import { Button } from "@/shared/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/shared/components/ui/card";
 import { Separator } from "@/shared/components/ui/separator";
-import type { Route } from "next";
 import { PATH } from "@/shared/config/routes";
 
 interface OrderCardProps {

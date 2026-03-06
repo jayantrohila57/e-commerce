@@ -5,22 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1772526359271,
-      "tag": "0000_omniscient_titanium_man",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1772526666506,
-      "tag": "0001_abandoned_peter_parker",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1772529695945,
-      "tag": "0002_sweet_ulik",
+      "when": 1772768315663,
+      "tag": "0000_wooden_scarlet_spider",
       "breakpoints": true
     }
   ]

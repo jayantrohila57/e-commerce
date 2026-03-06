@@ -1,5 +1,5 @@
-import Section from "@/shared/components/layout/section/section";
 import { apiServer } from "@/core/api/api.server";
+import Section from "@/shared/components/layout/section/section";
 import { CategoryBanner } from "../category/category.banner";
 
 export default async function SiteHero() {

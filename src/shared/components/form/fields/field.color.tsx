@@ -1,12 +1,12 @@
 "use client";
 
-import { Controller, useFormContext } from "react-hook-form";
-import { RadioGroup, RadioGroupItem } from "@/shared/components/ui/radio-group";
-import { FormControl, FormDescription, FormItem, FormLabel, FormMessage } from "@/shared/components/ui/form";
-import type { FormInputProps } from "../form.types";
-import { cn } from "@/shared/utils/lib/utils";
-import { useId } from "react";
 import type { LucideIcon } from "lucide-react";
+import { useId } from "react";
+import { Controller, useFormContext } from "react-hook-form";
+import { FormControl, FormDescription, FormItem, FormLabel, FormMessage } from "@/shared/components/ui/form";
+import { RadioGroup, RadioGroupItem } from "@/shared/components/ui/radio-group";
+import { cn } from "@/shared/utils/lib/utils";
+import type { FormInputProps } from "../form.types";
 
 export const InputRadio: React.FC<FormInputProps> = (props) => {
   const reactId = useId();

@@ -1,6 +1,6 @@
-import { PATH } from "@/shared/config/routes";
-import { FileText, Lock, Truck, Undo, ShoppingBag, User, Shield, Mail } from "lucide-react";
+import { FileText, Lock, Mail, Shield, ShoppingBag, Truck, Undo, User } from "lucide-react";
 import type { Route } from "next";
+import { PATH } from "@/shared/config/routes";
 
 interface PolicySection {
   heading: string;

@@ -1,14 +1,13 @@
 "use client";
 
-import { Button } from "@/shared/components/ui/button";
-import { usePathname } from "next/navigation";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/shared/components/ui/card";
-
-import type { Route } from "next";
-import { PATH } from "@/shared/config/routes";
-import { Separator } from "@/shared/components/ui/separator";
-import Link from "next/link";
 import { Boxes, Heart, LocateIcon, ShoppingCart } from "lucide-react";
+import type { Route } from "next";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { Button } from "@/shared/components/ui/button";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/shared/components/ui/card";
+import { Separator } from "@/shared/components/ui/separator";
+import { PATH } from "@/shared/config/routes";
 
 type NavItem<T extends string = string> = {
   href: T;

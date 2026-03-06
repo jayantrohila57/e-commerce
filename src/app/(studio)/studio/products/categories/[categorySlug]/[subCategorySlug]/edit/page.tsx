@@ -1,9 +1,9 @@
-import { PATH } from "@/shared/config/routes";
-import { slugToTitle } from "@/shared/utils/lib/url.utils";
 import type { Route } from "next";
+import { HydrateClient } from "@/core/api/api.server";
 import DashboardSection from "@/shared/components/layout/section/section-dashboard";
 import Shell from "@/shared/components/layout/shell";
-import { HydrateClient } from "@/core/api/api.server";
+import { PATH } from "@/shared/config/routes";
+import { slugToTitle } from "@/shared/utils/lib/url.utils";
 
 export default async function CategoryEdit({
   params,

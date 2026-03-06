@@ -1,15 +1,11 @@
 "use client";
 
-import { Trash, Loader } from "lucide-react";
+import { Loader, Trash } from "lucide-react";
+import type { Route } from "next";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
-import { Button } from "@/shared/components/ui/button";
-import { Tooltip, TooltipTrigger, TooltipContent } from "@/shared/components/ui/tooltip";
-import { PATH } from "@/shared/config/routes";
 import { apiClient } from "@/core/api/api.client";
-import { STATUS } from "@/shared/config/api.config";
-import type { Route } from "next";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -21,6 +17,10 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/shared/components/ui/alert-dialog";
+import { Button } from "@/shared/components/ui/button";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/shared/components/ui/tooltip";
+import { STATUS } from "@/shared/config/api.config";
+import { PATH } from "@/shared/config/routes";
 
 interface CategoryDeleteProps {
   categoryId: string;

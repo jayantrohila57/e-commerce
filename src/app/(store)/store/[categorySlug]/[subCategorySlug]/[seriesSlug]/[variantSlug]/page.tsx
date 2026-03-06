@@ -1,7 +1,7 @@
-import { apiServer, HydrateClient } from "@/core/api/api.server";
-import Section from "@/shared/components/layout/section/section";
 import { notFound } from "next/navigation";
+import { apiServer, HydrateClient } from "@/core/api/api.server";
 import { PDPProduct } from "@/module/product/product-pdp";
+import Section from "@/shared/components/layout/section/section";
 
 export const revalidate = 300;
 

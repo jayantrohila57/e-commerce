@@ -1,12 +1,11 @@
 "use client";
 
-import * as React from "react";
-import { useEffect } from "react";
 import { Command as CommandPrimitive, useCommandState } from "cmdk";
 import { CircleXIcon, DeleteIcon } from "lucide-react";
-
-import { cn } from "@/shared/utils/lib/utils";
+import * as React from "react";
+import { useEffect } from "react";
 import { Command, CommandGroup, CommandItem, CommandList } from "@/shared/components/ui/command";
+import { cn } from "@/shared/utils/lib/utils";
 
 export interface Option {
   value: string;

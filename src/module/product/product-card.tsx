@@ -1,8 +1,8 @@
-import { truncateString } from "@/shared/utils/lib/utils";
-import Link from "next/link";
 import type { Route } from "next";
-import { Separator } from "@/shared/components/ui/separator";
+import Link from "next/link";
 import { BlurImage } from "@/shared/components/ui/image";
+import { Separator } from "@/shared/components/ui/separator";
+import { truncateString } from "@/shared/utils/lib/utils";
 import type { ProductBase } from "./product.types";
 
 interface ProductCardProps {

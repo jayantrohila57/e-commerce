@@ -1,13 +1,13 @@
 "use client";
 
-import { Controller, useFormContext } from "react-hook-form";
+import type { LucideIcon } from "lucide-react";
 import type React from "react";
 import { useId } from "react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/components/ui/select";
+import { Controller, useFormContext } from "react-hook-form";
 import { FormControl, FormDescription, FormItem, FormLabel, FormMessage } from "@/shared/components/ui/form";
-import type { FormInputProps } from "../form.types";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/components/ui/select";
 import { cn } from "@/shared/utils/lib/utils";
-import type { LucideIcon } from "lucide-react";
+import type { FormInputProps } from "../form.types";
 
 export const InputDropdown: React.FC<FormInputProps> = (props) => {
   const reactId = useId();

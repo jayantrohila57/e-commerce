@@ -76,7 +76,10 @@ export function InventoryDelete({ inventoryId }: InventoryDeleteProps) {
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Delete this inventory item?</AlertDialogTitle>
-          <AlertDialogDescription>This action cannot be undone.</AlertDialogDescription>
+          <AlertDialogDescription>
+            This will hide the inventory item (soft delete). If items are currently reserved in carts, deletion will be
+            blocked.
+          </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>

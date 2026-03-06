@@ -270,7 +270,7 @@ Enterprise (requires stable Post-MVP):
 ### Phase 10: Inventory Management
 
 **Module:** Inventory (`src/module/inventory/`)  
-**Status:** 🟡 Partial  
+**Status:** ✅ Complete  
 **Dependencies:** Phase 9 (Product Variant)
 
 | Status | Task |
@@ -279,11 +279,11 @@ Enterprise (requires stable Post-MVP):
 | ✅ | tRPC API: full CRUD + `getByVariantId`, `getBySku`, `updateStock`, `search` |
 | ✅ | Studio admin: inventory list, detail, edit pages |
 | ✅ | UI components: card, form, listing |
-| 🟡 | Uses **hard delete** instead of soft delete (inconsistent with other modules) |
-| 🟡 | No non-negative validation on `quantity`, `incoming`, `reserved` |
-| 🟡 | No business rule validation: `reserved <= quantity` |
-| 🟡 | Null safety issue in edit form (spreads potentially null inventory data) |
-| ❌ | Reservation logic not connected to cart/checkout flow |
+| ✅ | Uses soft delete (consistent with other modules) |
+| ✅ | Non-negative validation on `quantity`, `incoming`, `reserved` |
+| ✅ | Business rule enforced: `reserved <= quantity` |
+| ✅ | Edit form null safety improved (typed defaults) |
+| ✅ | Reservation logic connected to cart (add/update/remove/clear) and order placement (deduct reserved) |
 | ✅ | Low-stock alerts wired (admin email when inventory drops below threshold after order) |
 
 ---
@@ -778,7 +778,7 @@ Enterprise (requires stable Post-MVP):
 | 7 | Attribute Management | Phase 6 | ✅ Complete | 95% |
 | 8 | Product Management | Phase 4, 5, 6 | ✅ Complete | 85% |
 | 9 | Product Variant | Phase 8 | ✅ Complete | 95% |
-| 10 | Inventory Management | Phase 9 | 🟡 Partial | 70% |
+| 10 | Inventory Management | Phase 9 | ✅ Complete | 90% |
 | 11 | Account Management | Phase 2 | 🟡 Partial | 85% |
 | 12 | Address Management | Phase 11 | ✅ Complete | 95% |
 | 13 | Cart | Phase 9, 10 | 🟡 Partial | 80% |

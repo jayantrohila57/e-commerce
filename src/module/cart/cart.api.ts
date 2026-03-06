@@ -89,7 +89,7 @@ async function getCartWithItems(cartId: string) {
  */
 async function reserveInventory(variantId: string, quantity: number, userId?: string) {
   const inventory = await db.query.inventoryItem.findFirst({
-    where: eq(inventoryItem.variantId, variantId),
+    where: (inv, { and, eq, isNull }) => and(eq(inv.variantId, variantId), isNull(inv.deletedAt)),
   });
 
   if (!inventory) {
@@ -366,15 +366,15 @@ export const cartRouter = createTRPCRouter({
         // Handle quantity change
         const diff = quantity - line.quantity;
         if (diff !== 0) {
-          const inventory = await db.query.inventoryItem.findFirst({
-            where: eq(inventoryItem.variantId, line.variantId),
-          });
-
-          if (!inventory) {
-            return API_RESPONSE(STATUS.FAILED, "Inventory not found", null);
-          }
-
           if (diff > 0) {
+            const inventory = await db.query.inventoryItem.findFirst({
+              where: (inv, { and, eq, isNull }) => and(eq(inv.variantId, line.variantId), isNull(inv.deletedAt)),
+            });
+
+            if (!inventory) {
+              return API_RESPONSE(STATUS.FAILED, "Inventory not found", null);
+            }
+
             // Reserve more
             const availableQuantity = inventory.quantity - inventory.reserved;
             if (availableQuantity < diff) {
@@ -386,8 +386,14 @@ export const cartRouter = createTRPCRouter({
             }
             await reserveInventory(line.variantId, diff, userId);
           } else {
+            const inventory = await db.query.inventoryItem.findFirst({
+              where: eq(inventoryItem.variantId, line.variantId),
+            });
+
             // Release some
-            await releaseReservation(inventory.id, Math.abs(diff));
+            if (inventory) {
+              await releaseReservation(inventory.id, Math.abs(diff));
+            }
           }
         }
 
@@ -476,6 +482,19 @@ export const cartRouter = createTRPCRouter({
 
         if (!cartData) {
           return API_RESPONSE(STATUS.SUCCESS, MESSAGE.CART.CLEAR_CART.SUCCESS, { success: true });
+        }
+
+        // Release reservations for all lines before clearing
+        const lines = await db.query.cartLine.findMany({
+          where: eq(cartLine.cartId, cartData.id),
+        });
+        for (const line of lines) {
+          const inventory = await db.query.inventoryItem.findFirst({
+            where: eq(inventoryItem.variantId, line.variantId),
+          });
+          if (inventory) {
+            await releaseReservation(inventory.id, line.quantity);
+          }
         }
 
         // Delete all cart lines

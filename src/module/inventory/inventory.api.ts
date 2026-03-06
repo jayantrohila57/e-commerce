@@ -1,4 +1,4 @@
-import { eq, ilike } from "drizzle-orm";
+import { and, eq, ilike, isNull } from "drizzle-orm";
 import { v4 as uuidv4 } from "uuid";
 import { createTRPCRouter, publicProcedure, staffProcedure } from "@/core/api/api.methods";
 
@@ -7,6 +7,16 @@ import { inventoryItem } from "@/core/db/db.schema";
 import { STATUS } from "@/shared/config/api.config";
 import { API_RESPONSE } from "@/shared/config/api.utils";
 import { inventoryContract } from "./inventory.schema";
+
+function validateInventoryNumbers(input: { quantity: number; reserved: number; incoming: number }) {
+  if (input.quantity < 0 || input.reserved < 0 || input.incoming < 0) {
+    return "Inventory values cannot be negative";
+  }
+  if (input.reserved > input.quantity) {
+    return "Reserved quantity cannot exceed available quantity";
+  }
+  return null;
+}
 
 export const inventoryRouter = createTRPCRouter({
   // =========================
@@ -24,12 +34,11 @@ export const inventoryRouter = createTRPCRouter({
         }
 
         const output = await db.query.inventoryItem.findFirst({
-          where: (inv, { eq, and }) => {
-            // use local eq / and helpers directly so types match
-            if (id && sku) return and(eq(inv.id, id), eq(inv.sku, sku));
-            if (id) return eq(inv.id, id);
-            if (sku) return eq(inv.sku, sku);
-            return undefined;
+          where: (inv, { and, eq, isNull }) => {
+            const conditions = [isNull(inv.deletedAt)];
+            if (id) conditions.push(eq(inv.id, id));
+            if (sku) conditions.push(eq(inv.sku, sku));
+            return and(...conditions);
           },
         });
 
@@ -57,7 +66,13 @@ export const inventoryRouter = createTRPCRouter({
 
         // build where clause inline so we don't need a typed array
         const output = await db.query.inventoryItem.findMany({
-          where: query?.search ? ilike(inventoryItem.sku, `%${query.search}%`) : undefined,
+          where: (inv, { and, ilike, isNull, or }) => {
+            const conditions = [isNull(inv.deletedAt)];
+            if (query?.search) {
+              conditions.push(or(ilike(inv.sku, `%${query.search}%`), ilike(inv.barcode, `%${query.search}%`))!);
+            }
+            return and(...conditions);
+          },
           limit: Math.min(limit, 100),
           offset,
           orderBy: (inv, { desc }) => [desc(inv.updatedAt)],
@@ -84,7 +99,7 @@ export const inventoryRouter = createTRPCRouter({
         const { variantId } = input.params;
 
         const output = await db.query.inventoryItem.findFirst({
-          where: (inv, { eq }) => eq(inv.variantId, variantId),
+          where: (inv, { and, eq, isNull }) => and(eq(inv.variantId, variantId), isNull(inv.deletedAt)),
         });
 
         return API_RESPONSE(
@@ -108,7 +123,7 @@ export const inventoryRouter = createTRPCRouter({
         const { sku } = input.params;
 
         const output = await db.query.inventoryItem.findFirst({
-          where: (inv, { eq }) => eq(inv.sku, sku),
+          where: (inv, { and, eq, isNull }) => and(eq(inv.sku, sku), isNull(inv.deletedAt)),
         });
 
         return API_RESPONSE(
@@ -131,6 +146,15 @@ export const inventoryRouter = createTRPCRouter({
       try {
         const { data } = input;
         const id = uuidv4();
+
+        const message = validateInventoryNumbers({
+          quantity: data.quantity ?? 0,
+          incoming: data.incoming ?? 0,
+          reserved: data.reserved ?? 0,
+        });
+        if (message) {
+          return API_RESPONSE(STATUS.FAILED, message, null);
+        }
 
         const output = await db
           .insert(inventoryItem)
@@ -166,6 +190,24 @@ export const inventoryRouter = createTRPCRouter({
         const { id } = input.params;
         const { data } = input;
 
+        const existing = await db.query.inventoryItem.findFirst({
+          where: (inv, { and, eq, isNull }) => and(eq(inv.id, id), isNull(inv.deletedAt)),
+        });
+        if (!existing) {
+          return API_RESPONSE(STATUS.FAILED, "Inventory not found", null);
+        }
+
+        const next = {
+          quantity: data.quantity ?? existing.quantity,
+          incoming: data.incoming ?? existing.incoming,
+          reserved: data.reserved ?? existing.reserved,
+        };
+
+        const message = validateInventoryNumbers(next);
+        if (message) {
+          return API_RESPONSE(STATUS.FAILED, message, null);
+        }
+
         const updateData: Record<string, unknown> = {};
         if (data.sku !== undefined) updateData.sku = data.sku;
         if (data.barcode !== undefined) updateData.barcode = data.barcode;
@@ -173,7 +215,11 @@ export const inventoryRouter = createTRPCRouter({
         if (data.incoming !== undefined) updateData.incoming = data.incoming;
         if (data.reserved !== undefined) updateData.reserved = data.reserved;
 
-        const output = await db.update(inventoryItem).set(updateData).where(eq(inventoryItem.id, id)).returning();
+        const output = await db
+          .update(inventoryItem)
+          .set({ ...updateData, updatedAt: new Date() })
+          .where(eq(inventoryItem.id, id))
+          .returning();
 
         return API_RESPONSE(
           output?.length ? STATUS.SUCCESS : STATUS.FAILED,
@@ -195,13 +241,24 @@ export const inventoryRouter = createTRPCRouter({
       try {
         const { id } = input.params;
 
-        // Find first to check existence, then delete
-        await db.query.inventoryItem.findFirst({
-          where: (inv, { eq }) => eq(inv.id, id),
+        const existing = await db.query.inventoryItem.findFirst({
+          where: (inv, { and, eq, isNull }) => and(eq(inv.id, id), isNull(inv.deletedAt)),
         });
+        if (!existing) {
+          return API_RESPONSE(STATUS.FAILED, "Inventory not found", { deleted: false });
+        }
 
-        // Delete the record using delete syntax available in drizzle
-        const result = await db.delete(inventoryItem).where(eq(inventoryItem.id, id)).returning();
+        if (existing.reserved > 0) {
+          return API_RESPONSE(STATUS.FAILED, "Cannot delete inventory while items are reserved in carts", {
+            deleted: false,
+          });
+        }
+
+        const result = await db
+          .update(inventoryItem)
+          .set({ deletedAt: new Date(), updatedAt: new Date() })
+          .where(eq(inventoryItem.id, id))
+          .returning();
 
         return API_RESPONSE(
           result?.length ? STATUS.SUCCESS : STATUS.FAILED,
@@ -226,11 +283,15 @@ export const inventoryRouter = createTRPCRouter({
 
         // Get current inventory
         const currentInventory = await db.query.inventoryItem.findFirst({
-          where: (inv, { eq }) => eq(inv.id, id),
+          where: (inv, { and, eq, isNull }) => and(eq(inv.id, id), isNull(inv.deletedAt)),
         });
 
         if (!currentInventory) {
           return API_RESPONSE(STATUS.FAILED, "Inventory not found", null);
+        }
+
+        if (quantity < 0 || (incoming !== undefined && incoming < 0)) {
+          return API_RESPONSE(STATUS.FAILED, "Quantity values cannot be negative", null);
         }
 
         let newQuantity = currentInventory.quantity;
@@ -243,11 +304,16 @@ export const inventoryRouter = createTRPCRouter({
           newQuantity = quantity;
         }
 
+        if (newQuantity < currentInventory.reserved) {
+          return API_RESPONSE(STATUS.FAILED, "New quantity cannot be less than reserved quantity", null);
+        }
+
         const output = await db
           .update(inventoryItem)
           .set({
             quantity: newQuantity,
             incoming: incoming ?? currentInventory.incoming,
+            updatedAt: new Date(),
           })
           .where(eq(inventoryItem.id, id))
           .returning();

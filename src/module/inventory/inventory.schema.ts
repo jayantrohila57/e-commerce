@@ -6,9 +6,9 @@ export const inventoryBaseSchema = z.object({
   variantId: z.string().min(1),
   sku: z.string().min(1),
   barcode: z.string().nullable().optional(),
-  quantity: z.number().int(),
-  incoming: z.number().int(),
-  reserved: z.number().int(),
+  quantity: z.number().int().min(0),
+  incoming: z.number().int().min(0),
+  reserved: z.number().int().min(0),
   updatedAt: z
     .date()
     .default(() => new Date())

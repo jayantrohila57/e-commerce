@@ -17,7 +17,16 @@ import { inventoryContract } from "./inventory.schema";
 const formSchema = inventoryContract.update.input;
 type FormValues = z.infer<typeof formSchema>;
 
-export default function InventoryEditForm({ inventory }: { inventory: Record<string, unknown> | null }) {
+type InventoryLike = {
+  id: string;
+  sku: string;
+  barcode?: string | null;
+  quantity: number;
+  incoming: number;
+  reserved: number;
+};
+
+export default function InventoryEditForm({ inventory }: { inventory: InventoryLike }) {
   const router = useRouter();
   const [toastId, setToastId] = useState<string | number>("");
 
@@ -39,11 +48,6 @@ export default function InventoryEditForm({ inventory }: { inventory: Record<str
   });
 
   function onSubmit(data: FormValues) {
-    if (!inventory) {
-      toast.error("Inventory not found");
-      return;
-    }
-
     setToastId("");
     const id = toast.loading("Updating inventory");
     setToastId(id);
@@ -64,7 +68,13 @@ export default function InventoryEditForm({ inventory }: { inventory: Record<str
     <Form
       defaultValues={{
         params: { id: String(inventory?.id) },
-        data: { ...inventory },
+        data: {
+          sku: inventory.sku,
+          barcode: inventory.barcode ?? null,
+          quantity: inventory.quantity,
+          incoming: inventory.incoming,
+          reserved: inventory.reserved,
+        },
       }}
       schema={formSchema}
       onSubmitAction={onSubmit}

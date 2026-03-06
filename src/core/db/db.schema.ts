@@ -376,6 +376,7 @@ export const inventoryItem = pgTable(
     quantity: integer("quantity").notNull().default(0),
     incoming: integer("incoming").notNull().default(0),
     reserved: integer("reserved").notNull().default(0),
+    deletedAt: timestamp("deleted_at", { withTimezone: true }),
     updatedAt: timestamp("updated_at", { withTimezone: true })
       .defaultNow()
       .$onUpdate(() => new Date()),

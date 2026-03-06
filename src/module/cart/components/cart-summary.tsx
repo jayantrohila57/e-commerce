@@ -1,10 +1,12 @@
 "use client";
 
 import { Loader2 } from "lucide-react";
+import Link from "next/link";
 import { useCart } from "@/module/cart/use-cart";
 import { Button } from "@/shared/components/ui/button";
 import { Separator } from "@/shared/components/ui/separator";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/shared/components/ui/tooltip";
+import { PATH } from "@/shared/config/routes";
 
 export function CartSummary() {
   const { cart, isLoading, clearCart, isClearing } = useCart();
@@ -71,8 +73,8 @@ export function CartSummary() {
 
       <Tooltip>
         <TooltipTrigger asChild>
-          <Button className="w-full mt-2" size="lg">
-            Proceed to Checkout
+          <Button className="w-full mt-2" size="lg" asChild>
+            <Link href={PATH.STORE.CHECKOUT.ROOT}>Proceed to Checkout</Link>
           </Button>
         </TooltipTrigger>
         <TooltipContent>

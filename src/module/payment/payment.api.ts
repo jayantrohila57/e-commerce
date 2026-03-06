@@ -3,21 +3,53 @@ import { v4 as uuidv4 } from "uuid";
 import { createTRPCRouter, customerProcedure } from "@/core/api/api.methods";
 import { db } from "@/core/db/db";
 import { order, payment } from "@/core/db/db.schema";
+import { razorpay } from "@/core/payment/razorpay.client";
+import { buildRazorpayOrderOptions } from "@/core/payment/razorpay.options";
+import { verifyCheckoutSignature } from "@/core/payment/razorpay.verify";
 import { STATUS } from "@/shared/config/api.config";
 import { API_RESPONSE } from "@/shared/config/api.utils";
+import { serverEnv } from "@/shared/config/env.server";
 import { debugError } from "@/shared/utils/lib/logger.utils";
 import { type Payment, type PaymentProviderMetadata, paymentContract } from "./payment.schema";
 
+function toPaymentDto(row: {
+  id: string;
+  orderId: string;
+  provider: string;
+  status: string;
+  amount: number;
+  currency: string | null;
+  providerPaymentId: string | null;
+  providerMetadata: unknown;
+  createdAt: Date | null;
+  updatedAt: Date | null;
+}): Payment {
+  return {
+    id: row.id,
+    orderId: row.orderId,
+    provider: row.provider as Payment["provider"],
+    status: row.status as Payment["status"],
+    amount: row.amount,
+    currency: row.currency ?? "INR",
+    providerPaymentId: row.providerPaymentId ?? undefined,
+    providerMetadata: (row.providerMetadata ?? undefined) as PaymentProviderMetadata | null | undefined,
+    createdAt: row.createdAt ?? undefined,
+    updatedAt: row.updatedAt ?? undefined,
+  };
+}
+
 export const paymentRouter = createTRPCRouter({
   /**
-   * Create a payment intent for an order
+   * Create a payment intent for an order. For Razorpay, creates a Razorpay order and returns
+   * razorpayOrderId for checkout.js. Amount is taken from order.grandTotal (paise).
    */
   createIntent: customerProcedure
     .input(paymentContract.createIntent.input)
     .output(paymentContract.createIntent.output)
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       try {
         const { orderId, provider } = input.body;
+        const userId = ctx.user.id;
 
         const orderData = await db.query.order.findFirst({
           where: eq(order.id, orderId),
@@ -27,10 +59,27 @@ export const paymentRouter = createTRPCRouter({
           return API_RESPONSE(STATUS.FAILED, "Order not found", null);
         }
 
-        const paymentId = uuidv4();
+        if (orderData.userId && orderData.userId !== userId) {
+          return API_RESPONSE(STATUS.FAILED, "Unauthorized", null);
+        }
 
-        // In a real app, this is where we'd call Stripe/Razorpay API
-        // const intent = await stripe.paymentIntents.create({ ... });
+        if (orderData.status !== "pending") {
+          return API_RESPONSE(STATUS.FAILED, "Order is not in pending state", null);
+        }
+
+        const paymentId = uuidv4();
+        let razorpayOrderId: string | undefined;
+
+        if (provider === "razorpay") {
+          const options = buildRazorpayOrderOptions({
+            amount: orderData.grandTotal,
+            currency: orderData.currency ?? "INR",
+            receipt: orderId,
+            notes: { orderId },
+          });
+          const rzOrder = await razorpay.orders.create(options);
+          razorpayOrderId = rzOrder.id;
+        }
 
         const [newPayment] = await db
           .insert(payment)
@@ -41,25 +90,18 @@ export const paymentRouter = createTRPCRouter({
             status: "pending",
             amount: orderData.grandTotal,
             currency: orderData.currency,
+            providerMetadata: razorpayOrderId != null ? { razorpayOrderId } : undefined,
             createdAt: new Date(),
             updatedAt: new Date(),
           })
           .returning();
 
-        const payload: Payment = {
-          id: newPayment.id,
-          orderId: newPayment.orderId,
-          provider: newPayment.provider,
-          status: newPayment.status,
-          amount: newPayment.amount,
-          currency: newPayment.currency ?? "INR",
-          providerPaymentId: newPayment.providerPaymentId ?? undefined,
-          providerMetadata: (newPayment.providerMetadata ?? undefined) as PaymentProviderMetadata | null | undefined,
-          createdAt: newPayment.createdAt ?? undefined,
-          updatedAt: newPayment.updatedAt ?? undefined,
-        };
+        const payload = toPaymentDto(newPayment);
 
-        return API_RESPONSE(STATUS.SUCCESS, "Payment intent created", payload);
+        return API_RESPONSE(STATUS.SUCCESS, "Payment intent created", {
+          payment: payload,
+          razorpayOrderId,
+        });
       } catch (err) {
         debugError("PAYMENT:CREATE_INTENT:ERROR", err);
         return API_RESPONSE(STATUS.ERROR, "Error creating payment intent", null, err as Error);
@@ -67,14 +109,55 @@ export const paymentRouter = createTRPCRouter({
     }),
 
   /**
-   * Confirm a payment
+   * Confirm a payment. For Razorpay, razorpayOrderId/razorpayPaymentId/razorpaySignature
+   * must be provided; signature is verified before updating. Idempotent if already completed.
    */
   confirm: customerProcedure
     .input(paymentContract.confirm.input)
     .output(paymentContract.confirm.output)
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       try {
-        const { paymentId, providerPaymentId, status, metadata } = input.body;
+        const {
+          paymentId,
+          providerPaymentId,
+          status,
+          metadata,
+          razorpayOrderId,
+          razorpayPaymentId,
+          razorpaySignature,
+        } = input.body;
+
+        const paymentRow = await db.query.payment.findFirst({
+          where: eq(payment.id, paymentId),
+          with: { order: true },
+        });
+
+        if (!paymentRow || !paymentRow.order) {
+          return API_RESPONSE(STATUS.FAILED, "Payment record not found", null);
+        }
+
+        if (paymentRow.order.userId && paymentRow.order.userId !== ctx.user.id) {
+          return API_RESPONSE(STATUS.FAILED, "Unauthorized", null);
+        }
+
+        if (paymentRow.status === "completed") {
+          return API_RESPONSE(STATUS.SUCCESS, "Payment already confirmed", toPaymentDto(paymentRow));
+        }
+
+        if (paymentRow.provider === "razorpay") {
+          if (!razorpayOrderId || !razorpayPaymentId || !razorpaySignature) {
+            return API_RESPONSE(STATUS.FAILED, "Razorpay verification fields required", null);
+          }
+          const valid = verifyCheckoutSignature(
+            razorpayOrderId,
+            razorpayPaymentId,
+            razorpaySignature,
+            serverEnv.RAZORPAY_API_SECRET,
+          );
+          if (!valid) {
+            return API_RESPONSE(STATUS.FAILED, "Invalid payment signature", null);
+          }
+        }
 
         const [updatedPayment] = await db
           .update(payment)
@@ -91,7 +174,6 @@ export const paymentRouter = createTRPCRouter({
           return API_RESPONSE(STATUS.FAILED, "Payment record not found", null);
         }
 
-        // If payment completed, update order status
         if (status === "completed") {
           await db
             .update(order)
@@ -99,23 +181,7 @@ export const paymentRouter = createTRPCRouter({
             .where(eq(order.id, updatedPayment.orderId));
         }
 
-        const payload: Payment = {
-          id: updatedPayment.id,
-          orderId: updatedPayment.orderId,
-          provider: updatedPayment.provider,
-          status: updatedPayment.status,
-          amount: updatedPayment.amount,
-          currency: updatedPayment.currency ?? "INR",
-          providerPaymentId: updatedPayment.providerPaymentId ?? undefined,
-          providerMetadata: (updatedPayment.providerMetadata ?? undefined) as
-            | PaymentProviderMetadata
-            | null
-            | undefined,
-          createdAt: updatedPayment.createdAt ?? undefined,
-          updatedAt: updatedPayment.updatedAt ?? undefined,
-        };
-
-        return API_RESPONSE(STATUS.SUCCESS, "Payment confirmed", payload);
+        return API_RESPONSE(STATUS.SUCCESS, "Payment confirmed", toPaymentDto(updatedPayment));
       } catch (err) {
         debugError("PAYMENT:CONFIRM:ERROR", err);
         return API_RESPONSE(STATUS.ERROR, "Error confirming payment", null, err as Error);

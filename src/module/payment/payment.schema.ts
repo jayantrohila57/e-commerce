@@ -31,6 +31,16 @@ export const paymentConfirmInputSchema = z.object({
   providerPaymentId: z.string().min(1),
   status: paymentStatusEnum,
   metadata: z.record(z.any()).optional(),
+  /** Razorpay: required for signature verification when provider is razorpay */
+  razorpayOrderId: z.string().min(1).optional(),
+  razorpayPaymentId: z.string().min(1).optional(),
+  razorpaySignature: z.string().min(1).optional(),
+});
+
+/** createIntent returns payment record + optional Razorpay order id for checkout.js */
+export const createIntentOutputDataSchema = z.object({
+  payment: paymentSelectSchema,
+  razorpayOrderId: z.string().optional(),
 });
 
 export const paymentContract = {
@@ -38,7 +48,7 @@ export const paymentContract = {
     input: z.object({
       body: paymentIntentInputSchema,
     }),
-    output: detailedResponse(paymentSelectSchema),
+    output: detailedResponse(createIntentOutputDataSchema),
   },
   confirm: {
     input: z.object({

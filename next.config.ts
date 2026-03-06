@@ -1,6 +1,22 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  async headers() {
+    return [
+      {
+        source: "/:path*",
+        headers: [
+          {
+            key: "Permissions-Policy",
+            value: [
+              'accelerometer=(self "https://checkout.razorpay.com" "https://api.razorpay.com" "https://razorpay.com")',
+              'gyroscope=(self "https://checkout.razorpay.com" "https://api.razorpay.com" "https://razorpay.com")',
+            ].join(", "),
+          },
+        ],
+      },
+    ];
+  },
   experimental: {
     authInterrupts: true,
     typedEnv: true,

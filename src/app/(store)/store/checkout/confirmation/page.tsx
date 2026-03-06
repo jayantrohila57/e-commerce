@@ -8,9 +8,7 @@ import { Button } from "@/shared/components/ui/button";
 import { PATH } from "@/shared/config/routes";
 
 interface ConfirmationPageProps {
-  searchParams: {
-    orderId?: string;
-  };
+  searchParams: Promise<{ orderId?: string }>;
 }
 
 export const metadata = {
@@ -19,7 +17,8 @@ export const metadata = {
 };
 
 export default async function CheckoutConfirmationPage({ searchParams }: ConfirmationPageProps) {
-  const orderId = searchParams.orderId;
+  const params = await searchParams;
+  const orderId = params.orderId;
 
   if (!orderId) {
     return redirect(PATH.STORE.ROOT);
@@ -30,13 +29,13 @@ export default async function CheckoutConfirmationPage({ searchParams }: Confirm
   });
 
   if (res.status !== "success" || !res.data) {
-    return redirect(PATH.STORE.ROOT);
+    redirect(PATH.STORE.ROOT);
   }
 
   const order = res.data;
 
   return (
-    <Section className="bg-muted p-4" {...metadata}>
+    <Section className="bg-muted p-4" title={metadata.title} description={metadata.description}>
       <div className="mx-auto flex max-w-5xl flex-col gap-6">
         <div className="space-y-2 text-center">
           <h1 className="text-2xl font-semibold tracking-tight">Thank you for your order!</h1>

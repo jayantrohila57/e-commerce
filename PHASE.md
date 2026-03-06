@@ -3,7 +3,7 @@
 > **Generated:** 2026-03-05  
 > **Platform:** Single-Merchant Enterprise Commerce  
 > **Stack:** Next.js 16 · tRPC · Drizzle ORM · Neon Postgres · Better Auth · Radix UI · Tailwind CSS v4  
-> **Overall Completion:** ~78%
+> **Overall Completion:** ~82%
 
 ---
 
@@ -402,39 +402,43 @@ Enterprise (requires stable Post-MVP):
 ### Phase 16: Payment Processing
 
 **Module:** Payment (`src/module/payment/`)  
-**Status:** 🟡 Partial  
+**Status:** ✅ Complete (Razorpay)  
 **Dependencies:** Phase 15 (Order)
 
 | Status | Task |
 |--------|------|
 | ✅ | DB schema: `payment` table with order relation, provider enums, metadata |
 | ✅ | DB enums: `payment_status`, `payment_provider` (stripe/razorpay/paypal/cod) |
-| ✅ | tRPC API: `createIntent`, `confirm`, `getStatus` |
+| ✅ | tRPC API: `createIntent`, `confirm`, `getStatus` with Razorpay order + signature verification |
 | ✅ | Routes defined (`PATH.STUDIO.PAYMENTS`) |
+| ✅ | Razorpay SDK integration: `razorpay.client`, `razorpay.options`, `razorpay.verify`, `razorpay.provider` (checkout.js) |
+| ✅ | Env: `RAZORPAY_API_KEY`, `RAZORPAY_API_SECRET`, `NEXT_PUBLIC_RAZORPAY_KEY_ID`, `RAZORPAY_WEBHOOK_SECRET` |
+| ✅ | Webhook handler `/api/webhooks/razorpay` (signature verification, payment.captured/failed) |
+| ✅ | Payment flow UI in checkout (Place order / Pay with Razorpay) |
 | 🟡 | Account payment page exists but content is empty |
-| ❌ | No payment gateway integration (Stripe/Razorpay/PayPal SDK) |
-| ❌ | No webhook handlers (`/api/webhooks/stripe` or `/api/webhooks/razorpay`) |
-| ❌ | No payment form UI component |
+| — | Stripe/PayPal out of scope; Razorpay only |
 
 ---
 
 ### Phase 17: Checkout Flow
 
-**Module:** Checkout (combined: Cart + Address + Order + Payment)  
-**Status:** 🟡 Partial  
+**Module:** Checkout (`src/module/checkout/`) + store checkout pages  
+**Status:** ✅ Complete  
 **Dependencies:** Phase 13 (Cart), Phase 12 (Address), Phase 15 (Order), Phase 16 (Payment)
 
 | Status | Task |
 |--------|------|
-| 🟡 | Checkout page route exists (`/store/checkout`) — stub with incorrect metadata |
-| ❌ | Checkout multi-step form (shipping → billing → payment → review) |
-| ❌ | Address selection / new address form integration |
-| ❌ | Order summary component (cart items + totals) |
-| ❌ | Payment method selection and payment form |
-| ❌ | Cart-to-order conversion UI trigger |
-| ✅ | Order confirmation page with order details (`/store/checkout/confirmation`) |
-| ❌ | Guest checkout flow |
+| ✅ | Checkout page route (`/store/checkout`) with auth guard, Shell, metadata |
+| ✅ | Checkout module: `checkout.schema`, `use-checkout`, `CheckoutForm` with Form + validation |
+| ✅ | Multi-step form: cart review → address selection → order summary → place order (Razorpay) |
+| ✅ | Address selection: shipping/billing radio, same-as-shipping switch, "Add new address" link |
+| ✅ | Cart review section (items, images, qty, price) and order summary (subtotal, tax, shipping, total) |
+| ✅ | Payment: Razorpay checkout.js via Place order button; terms agreement required |
+| ✅ | Cart-to-order conversion: `initiateCheckout` → order.create + payment.createIntent → Razorpay → confirm → redirect |
+| ✅ | Order confirmation page with order details (`/store/checkout/confirmation`) + loading state |
+| ✅ | Cart summary "Proceed to Checkout" links to `/store/checkout` |
 | ❌ | Coupon code input (deferred to Phase 24) |
+| — | Guest checkout deferred to later phase |
 
 ---
 
@@ -539,6 +543,7 @@ Enterprise (requires stable Post-MVP):
 | ❌ | No CI/CD pipeline configuration |
 | ❌ | No staging environment setup |
 | ❌ | Replace all placeholder branding site-wide |
+| — | Guest checkout flow (deferred from Phase 17; planned for later release) |
 
 ---
 
@@ -743,7 +748,7 @@ Enterprise (requires stable Post-MVP):
 | **Foundation** | 1–3 | 2 weeks | ✅ Done |
 | **Product Catalog** | 4–10 | 3 weeks | ✅ Mostly Done |
 | **Account & Commerce APIs** | 11–16 | 2–3 weeks | 🟡 APIs Done, UIs mostly wired |
-| **Checkout & Fulfillment** | 17–19 | 2–3 weeks | 🟡 Early UI work started |
+| **Checkout & Fulfillment** | 17–19 | 2–3 weeks | ✅ Phase 17 done; 18–19 partial |
 | **Polish & Launch** | 20–23 | 2 weeks | 🟡 Partial |
 | **Post-MVP** | 24–26 | 4–6 weeks | ❌ Not Started |
 | **Enterprise** | 27–31 | 12–16 weeks | ❌ Not Started |
@@ -771,15 +776,15 @@ Enterprise (requires stable Post-MVP):
 | 13 | Cart | Phase 9, 10 | 🟡 Partial | 80% |
 | 14 | Wishlist | Phase 9 | ✅ Complete | 85% |
 | 15 | Order Management | Phase 13, 12 | 🟡 Partial | 75% |
-| 16 | Payment Processing | Phase 15 | 🟡 Partial | 35% |
-| 17 | Checkout Flow | Phase 13, 12, 15, 16 | 🟡 Partial | 20% |
+| 16 | Payment Processing | Phase 15 | ✅ Complete (Razorpay) | 85% |
+| 17 | Checkout Flow | Phase 13, 12, 15, 16 | ✅ Complete | 90% |
 | 18 | Shipment & Fulfillment | Phase 15 | 🟡 Partial | 35% |
 | 19 | Email & Notifications | Phase 15, 16 | 🟡 Partial | 50% |
 | 20 | Legal & Cookies | Phase 1 | ✅ Complete | 90% |
 | 21 | Site & Marketing Pages | Phase 8 | 🟡 Partial | 55% |
 | 22 | SEO & Production Readiness | Phase 17, 21 | 🟡 Partial | 30% |
 | 23 | Testing Infrastructure | Phase 17 | ❌ Not Started | 0% |
-| **MVP Subtotal** | | | | **~70%** |
+| **MVP Subtotal** | | | | **~75%** |
 | 24 | Discount & Coupon System | Phase 15, 8 | 🟡 Schema Only | 20% |
 | 25 | Product Reviews & Ratings | Phase 8, 15 | 🟡 Schema Only | 15% |
 | 26 | Refund Management | Phase 16, 15 | ❌ Not Started | 0% |

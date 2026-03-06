@@ -1,19 +1,26 @@
-import Section from "@/shared/components/layout/section/section";
+import type { Metadata } from "next";
+import Link from "next/link";
+import { redirect } from "next/navigation";
+import { getServerSession } from "@/core/auth/auth.server";
 import Shell from "@/shared/components/layout/shell";
+import { PATH } from "@/shared/config/routes";
+import { CheckoutClient } from "./checkout-client";
 
-export const metadata = {
-  title: "Contact Support",
-  description: "Get in touch with us to discuss your project, ask a question, or simply to say hello.",
+export const metadata: Metadata = {
+  title: "Checkout",
+  description: "Complete your purchase securely with Razorpay",
 };
 
-export default function Page() {
+export default async function CheckoutPage() {
+  const { session, user } = await getServerSession();
+  if (!session || !user) {
+    redirect(PATH.AUTH.SIGN_IN);
+  }
+
   return (
     <Shell>
       <Shell.Section>
-        <Section {...metadata}>
-          <h1>{metadata.title}</h1>
-          <p>{metadata.description}</p>
-        </Section>
+        <CheckoutClient />
       </Shell.Section>
     </Shell>
   );

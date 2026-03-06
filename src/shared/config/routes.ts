@@ -30,6 +30,7 @@ export const PATH = {
   STORE: {
     ROOT: "/store",
     CHECKOUT: {
+      ROOT: "/store/checkout" as Route,
       CONFIRMATION: "/store/checkout/confirmation" as Route,
     },
     ORDER: {

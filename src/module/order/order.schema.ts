@@ -87,6 +87,17 @@ export const orderContract = {
       .optional(),
     output: detailedResponse(z.array(orderSelectSchema)),
   },
+  getManyAdmin: {
+    input: z.object({
+      query: paginationInput
+        .extend({
+          status: orderStatusEnum.optional(),
+          q: z.string().optional(),
+        })
+        .optional(),
+    }),
+    output: detailedResponse(z.array(orderSelectSchema)),
+  },
   create: {
     input: z.object({
       body: orderCreateInputSchema,

@@ -1,4 +1,4 @@
-import { and, eq, ilike, isNull } from "drizzle-orm";
+import { and, eq, ilike, isNull, or, sql } from "drizzle-orm";
 import { v4 as uuidv4 } from "uuid";
 import { createTRPCRouter, publicProcedure, staffProcedure } from "@/core/api/api.methods";
 
@@ -6,6 +6,7 @@ import { db } from "@/core/db/db";
 import { inventoryItem } from "@/core/db/db.schema";
 import { STATUS } from "@/shared/config/api.config";
 import { API_RESPONSE } from "@/shared/config/api.utils";
+import { buildPagination, buildPaginationMeta } from "@/shared/schema";
 import { inventoryContract } from "./inventory.schema";
 
 function validateInventoryNumbers(input: { quantity: number; reserved: number; incoming: number }) {
@@ -64,7 +65,33 @@ export const inventoryRouter = createTRPCRouter({
         const limit = query?.limit ?? 20;
         const offset = query?.offset ?? 0;
 
-        // build where clause inline so we don't need a typed array
+        const pageInput = {
+          page: Math.floor(offset / limit) + 1,
+          limit,
+          sortBy: undefined as string | undefined,
+          sortOrder: "desc" as const,
+        };
+
+        const paging = buildPagination(pageInput);
+        const effectiveOffset = paging.offset;
+        const effectiveLimit = paging.limit;
+
+        const baseConditions = [
+          isNull(inventoryItem.deletedAt),
+          query?.search
+            ? or(
+                ilike(inventoryItem.sku, `%${query.search}%`),
+                ilike(inventoryItem.barcode, `%${query.search}%`),
+              )
+            : undefined,
+        ].filter((c): c is NonNullable<typeof c> => Boolean(c));
+
+        const [{ count: totalRaw = 0 } = { count: 0 }] = await db
+          .select({ count: sql<number>`count(*)` })
+          .from(inventoryItem)
+          .where(baseConditions.length ? and(...baseConditions) : undefined);
+        const total = Number(totalRaw ?? 0);
+
         const output = await db.query.inventoryItem.findMany({
           where: (inv, { and, ilike, isNull, or }) => {
             const conditions = [isNull(inv.deletedAt)];
@@ -73,16 +100,22 @@ export const inventoryRouter = createTRPCRouter({
             }
             return and(...conditions);
           },
-          limit: Math.min(limit, 100),
-          offset,
+          limit: Math.min(effectiveLimit, 100),
+          offset: effectiveOffset,
           orderBy: (inv, { desc }) => [desc(inv.updatedAt)],
         });
 
-        return API_RESPONSE(
-          output?.length ? STATUS.SUCCESS : STATUS.FAILED,
-          output?.length ? "Inventories fetched successfully" : "No inventories found",
-          output,
-        );
+        const metaPagination = buildPaginationMeta(total, pageInput);
+
+        return {
+          status: output?.length ? STATUS.SUCCESS : STATUS.FAILED,
+          message: output?.length ? "Inventories fetched successfully" : "No inventories found",
+          data: output,
+          meta: {
+            count: total,
+            pagination: metaPagination,
+          },
+        };
       } catch (err) {
         return API_RESPONSE(STATUS.ERROR, "Error fetching inventories", null, err as Error);
       }

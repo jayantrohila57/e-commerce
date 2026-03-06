@@ -1,10 +1,11 @@
-import { eq, ilike, or } from "drizzle-orm";
+import { and, eq, ilike, isNull, or, sql } from "drizzle-orm";
 import { v4 as uuidv4 } from "uuid";
 import { createTRPCRouter, publicProcedure, staffProcedure } from "@/core/api/api.methods";
 import { db } from "@/core/db/db";
 import { attribute } from "@/core/db/db.schema";
 import { STATUS } from "@/shared/config/api.config";
 import { API_RESPONSE } from "@/shared/config/api.utils";
+import { buildPagination, buildPaginationMeta } from "@/shared/schema";
 import { debugError } from "@/shared/utils/lib/logger.utils";
 import { attributeContract } from "./attribute.schema";
 
@@ -58,8 +59,34 @@ export const attributeRouter = createTRPCRouter({
         const { seriesSlug, search, limit = 20, offset = 0 } = input.query || {};
         const q = search?.trim();
 
+        const pageInput = {
+          page: Math.floor(offset / limit) + 1,
+          limit,
+          sortBy: undefined as string | undefined,
+          sortOrder: "asc" as const,
+        };
+
+        const paging = buildPagination(pageInput);
+        const effectiveOffset = paging.offset;
+        const effectiveLimit = paging.limit;
+
+        const baseConditions = [
+          isNull(attribute.deletedAt),
+          seriesSlug ? eq(attribute.seriesSlug, seriesSlug) : undefined,
+          q
+            ? or(ilike(attribute.title, `%${q}%`), ilike(attribute.slug, `%${q}%`), ilike(attribute.value, `%${q}%`))
+            : undefined,
+        ].filter((condition): condition is NonNullable<typeof condition> => Boolean(condition));
+
+        const [{ count: totalRaw = 0 } = { count: 0 }] = await db
+          .select({ count: sql<number>`count(*)` })
+          .from(attribute)
+          .where(baseConditions.length ? and(...baseConditions) : undefined);
+        const total = Number(totalRaw ?? 0);
+
         const data = await db.query.attribute.findMany({
-          where: (a, { and, eq, isNull }) => {
+          where: (a, helpers) => {
+            const { and, eq, isNull, or } = helpers;
             const conditions = [isNull(a.deletedAt)];
             if (seriesSlug) conditions.push(eq(a.seriesSlug, seriesSlug));
             if (q) {
@@ -67,12 +94,22 @@ export const attributeRouter = createTRPCRouter({
             }
             return and(...conditions);
           },
-          orderBy: (attribute, { asc }) => [asc(attribute.displayOrder)],
-          limit,
-          offset,
+          orderBy: (attr, { asc }) => [asc(attr.displayOrder)],
+          limit: effectiveLimit,
+          offset: effectiveOffset,
         });
 
-        return API_RESPONSE(STATUS.SUCCESS, "Attributes retrieved", data);
+        const metaPagination = buildPaginationMeta(total, pageInput);
+
+        return {
+          status: STATUS.SUCCESS,
+          message: "Attributes retrieved",
+          data,
+          meta: {
+            count: total,
+            pagination: metaPagination,
+          },
+        };
       } catch (err) {
         debugError("ATTRIBUTE:GET_MANY:ERROR", err);
         return API_RESPONSE(STATUS.ERROR, "Error retrieving attributes", [], err as Error);

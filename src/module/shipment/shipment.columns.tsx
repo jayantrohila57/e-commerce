@@ -1,0 +1,98 @@
+"use client";
+
+import type { ColumnDef, Row } from "@tanstack/react-table";
+import type { Route } from "next";
+import { useRouter } from "next/navigation";
+import { useMemo } from "react";
+import { DataTableColumnHeader } from "@/shared/components/table/data-table-column-header";
+import { commonColumns } from "@/shared/components/table/data-table-columns";
+import { Badge } from "@/shared/components/ui/badge";
+import { cn } from "@/shared/utils/lib/utils";
+import type { Shipment } from "./shipment.schema";
+import type { shipmentStatusEnum } from "./shipment.schema";
+import { shipmentTableConfig } from "./shipment.table.config";
+
+const statusColors: Record<ReturnType<(typeof shipmentStatusEnum)["parse"]>, string> = {
+  pending: "bg-amber-100 text-amber-800 border-amber-200",
+  in_transit: "bg-sky-100 text-sky-800 border-sky-200",
+  picked_up: "bg-sky-100 text-sky-800 border-sky-200",
+  delivered: "bg-emerald-100 text-emerald-800 border-emerald-200",
+  failed: "bg-rose-100 text-rose-800 border-rose-200",
+  returned: "bg-slate-100 text-slate-800 border-slate-200",
+};
+
+export function useShipmentColumns() {
+  const router = useRouter();
+
+  return useMemo(() => {
+    const handleEdit = (row: Row<Shipment>) => {
+      const id = row.getValue(shipmentTableConfig.fields.id);
+      if (id && typeof id === "string") {
+        router.push(shipmentTableConfig.routes.edit(id) as Route);
+      }
+    };
+
+    const baseColumns: ColumnDef<Shipment>[] = [
+      {
+        accessorKey: "orderId",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Order ID" />,
+        cell: ({ row }) => (
+          <div className="w-[200px] truncate text-xs text-muted-foreground">{row.getValue("orderId")}</div>
+        ),
+      },
+      {
+        accessorKey: "trackingNumber",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Tracking Number" />,
+        cell: ({ row }) => (
+          <div className="w-[200px] truncate text-xs text-muted-foreground">
+            {row.getValue("trackingNumber") ?? "—"}
+          </div>
+        ),
+      },
+      {
+        accessorKey: "carrier",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Carrier" />,
+        cell: ({ row }) => (
+          <div className="w-[160px] truncate text-xs text-muted-foreground">{row.getValue("carrier") ?? "—"}</div>
+        ),
+      },
+      {
+        accessorKey: "status",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Status" />,
+        cell: ({ row }) => {
+          const status = row.getValue("status") as Shipment["status"];
+          return (
+            <div className="w-[120px]">
+              <Badge
+                variant="outline"
+                className={cn("border px-2 py-0.5 text-xs capitalize", statusColors[status] ?? "")}
+              >
+                {status.replace("_", " ")}
+              </Badge>
+            </div>
+          );
+        },
+      },
+      {
+        accessorKey: "createdAt",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Created" />,
+        cell: ({ row }) => {
+          const date = row.getValue("createdAt") as Date;
+          return (
+            <div className="w-[160px] text-xs text-muted-foreground">
+              {date ? new Date(date).toLocaleString() : "—"}
+            </div>
+          );
+        },
+      },
+    ];
+
+    return [
+      ...commonColumns.selectColumn<Shipment>(),
+      ...baseColumns,
+      ...commonColumns.actionsColumn<Shipment>({
+        onEdit: handleEdit,
+      }),
+    ];
+  }, [router]);
+}

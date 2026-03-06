@@ -30,9 +30,7 @@ export function DataTablePagination<TData>() {
   return (
     <div className="flex w-full items-center justify-between px-2">
       <div className="text-muted-foreground flex-1 text-sm">
-        {total > 0
-          ? `Showing ${start}-${end} of ${total} items`
-          : "No items to display"}
+        {total > 0 ? `Showing ${start}-${end} of ${total} items` : "No items to display"}
       </div>
       <div className="flex items-center space-x-6 lg:space-x-8">
         <div className="flex items-center space-x-2">

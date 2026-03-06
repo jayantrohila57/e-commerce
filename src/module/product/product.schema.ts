@@ -86,11 +86,15 @@ export const productContract = {
   },
   getMany: {
     input: z.object({
-      query: offsetPaginationSchema.extend({
-        categorySlug: z.string().optional(),
-        seriesSlug: z.string().optional(),
-        isActive: z.boolean().optional(),
-      }),
+      query: offsetPaginationSchema
+        .extend({
+          categorySlug: z.string().optional(),
+          seriesSlug: z.string().optional(),
+          isActive: z.boolean().optional(),
+        })
+        .extend({
+          search: z.string().optional(),
+        }),
     }),
     output: detailedResponse(z.array(productSelectSchema)),
   },

@@ -242,16 +242,18 @@ export function DataTable<TData, TValue>({
                 </TableRow>
               )}
             </TableBody>
-            <TableFooter>
-              {table.getFooterGroups().map((footerGroup) => (
-                <TableRow key={footerGroup.id}>
-                  {footerGroup.headers.map((header) => (
-                    <TableCell key={header.id}>
-                      {flexRender(header.column.columnDef.footer, header.getContext())}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))}
+            <TableFooter className="p-0 m-0">
+              {table?.getFooterGroups()?.length
+                ? table?.getFooterGroups()?.map((footerGroup) => (
+                    <TableRow key={footerGroup.id}>
+                      {footerGroup.headers.map((header) => (
+                        <TableCell key={header.id}>
+                          {flexRender(header.column.columnDef.footer, header.getContext())}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  ))
+                : null}
             </TableFooter>
           </Table>
         </CardContent>

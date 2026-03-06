@@ -13,8 +13,7 @@ import type { CategoryBase } from "./category.types";
 
 const baseCategoryColumns = [
   ...commonColumns.selectColumn<CategoryBase>(),
-  ...commonColumns.idColumn<CategoryBase>(),
-  ...commonColumns.titleColumn<CategoryBase>(),
+  ...commonColumns.titleColumn<CategoryBase>(categoryTableConfig.routes.studio),
   ...commonColumns.slugColumn<CategoryBase>(categoryTableConfig.routes.viewStorePrefix),
   ...commonColumns.descriptionColumn<CategoryBase>(),
   ...commonColumns.displayTypeColumn<CategoryBase>(),

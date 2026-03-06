@@ -2,22 +2,36 @@ import { forbidden, redirect } from "next/navigation";
 import { apiServer, HydrateClient } from "@/core/api/api.server";
 import { APP_ROLE, normalizeRole } from "@/core/auth/auth.roles";
 import { getServerSession } from "@/core/auth/auth.server";
-import InventorySection from "@/module/inventory/inventory.component.section";
+import InventoryTable from "@/module/inventory/inventory.table";
 import DashboardSection from "@/shared/components/layout/section/section-dashboard";
 import Shell from "@/shared/components/layout/shell";
 import { PATH } from "@/shared/config/routes";
+import { getListQueryFromSearchParams } from "@/shared/utils/lib/list-query.utils";
 
 export const metadata = {
   title: "Inventory",
   description: "Inventory Description",
 };
 
-export default async function Home() {
+export default async function InventoryPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
   const { session, user } = await getServerSession();
   if (!session) return redirect(PATH.ROOT);
   if (normalizeRole(user?.role) === APP_ROLE.CUSTOMER) forbidden();
 
-  const { data } = await apiServer.inventory.getMany({ query: {} });
+  const input = await searchParams;
+  const listQuery = getListQueryFromSearchParams(input);
+
+  const result = await apiServer.inventory.getMany({
+    query: {
+      offset: listQuery.pagination.offset,
+      limit: listQuery.pagination.limit,
+      search: listQuery.search.q,
+    },
+  });
 
   return (
     <HydrateClient>
@@ -28,7 +42,7 @@ export default async function Home() {
             // action="Add Inventory"
             // actionUrl={PATH.STUDIO.INVENTORY.NEW as Route}
           >
-            <InventorySection data={data} />
+            <InventoryTable data={result} />
           </DashboardSection>
         </Shell.Section>
       </Shell>

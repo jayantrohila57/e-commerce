@@ -1,10 +1,11 @@
-import { and, eq, ilike, isNull } from "drizzle-orm";
+import { and, eq, ilike, isNull, sql } from "drizzle-orm";
 import { v4 as uuidv4 } from "uuid";
 import { createTRPCRouter, publicProcedure, staffProcedure } from "@/core/api/api.methods";
 import { db } from "@/core/db/db";
 import { product } from "@/core/db/db.schema";
 import { MESSAGE, STATUS } from "@/shared/config/api.config";
 import { API_RESPONSE } from "@/shared/config/api.utils";
+import { buildPagination, buildPaginationMeta } from "@/shared/schema";
 import { debugError } from "@/shared/utils/lib/logger.utils";
 import { productContract } from "./product.schema";
 
@@ -79,22 +80,51 @@ export const productRouter = createTRPCRouter({
     .query(async ({ input }) => {
       try {
         const { query } = input;
-        const { limit, offset, categorySlug, seriesSlug, isActive } = query;
+        const { limit, offset, categorySlug, seriesSlug, isActive, search } = query;
+
+        const conditions = [isNull(product.deletedAt)];
+        if (categorySlug) conditions.push(eq(product.categorySlug, categorySlug));
+        if (seriesSlug) conditions.push(eq(product.seriesSlug, seriesSlug));
+        if (isActive !== undefined) conditions.push(eq(product.isActive, isActive));
+        if (search) conditions.push(ilike(product.title, `%${search}%`));
+
+        const where = conditions.length ? and(...conditions) : undefined;
+
+        const pageInput = {
+          page: offset && limit ? Math.floor(offset / limit) + 1 : 1,
+          limit: limit ?? 20,
+          sortBy: undefined as string | undefined,
+          sortOrder: "desc" as const,
+        };
+
+        const paging = buildPagination(pageInput);
+        const effectiveOffset = offset ?? paging.offset;
+        const effectiveLimit = paging.limit;
+
+        const [{ count: totalRaw = 0 } = { count: 0 }] = await db
+          .select({ count: sql<number>`count(*)` })
+          .from(product)
+          .where(where);
+        const total = Number(totalRaw ?? 0);
 
         const products = await db.query.product.findMany({
-          limit,
-          offset,
-          where: (p, { and, eq, isNull }) => {
-            const conditions = [isNull(p.deletedAt)];
-            if (categorySlug) conditions.push(eq(p.categorySlug, categorySlug));
-            if (seriesSlug) conditions.push(eq(p.seriesSlug, seriesSlug));
-            if (isActive !== undefined) conditions.push(eq(p.isActive, isActive));
-            return and(...conditions);
-          },
+          limit: effectiveLimit,
+          offset: effectiveOffset,
+          where,
           orderBy: (p, { desc }) => [desc(p.createdAt)],
         });
 
-        return API_RESPONSE(STATUS.SUCCESS, MESSAGE.PRODUCT.GET_MANY.SUCCESS, products);
+        const metaPagination = buildPaginationMeta(total, pageInput);
+
+        return {
+          status: STATUS.SUCCESS,
+          message: MESSAGE.PRODUCT.GET_MANY.SUCCESS,
+          data: products,
+          meta: {
+            count: total,
+            pagination: metaPagination,
+          },
+        };
       } catch (err) {
         debugError("PRODUCT:GET_MANY:ERROR", err);
         return API_RESPONSE(STATUS.ERROR, MESSAGE.PRODUCT.GET_MANY.ERROR, null, err as Error);

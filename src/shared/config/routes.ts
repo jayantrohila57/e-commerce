@@ -50,6 +50,10 @@ export const PATH = {
       ROOT: (categorySlug: string) => `/store/${categorySlug}`,
       SUBCATEGORY: (subcategorySlug: string, categorySlug: string) => `/store/${categorySlug}/${subcategorySlug}`,
     },
+    ATTRIBUTES: {
+      ROOT: "/store/attributes",
+      ATTRIBUTE: (attributeSlug: string) => `/store/attributes/${attributeSlug}`,
+    },
   },
   STUDIO: {
     ROOT: "/studio",

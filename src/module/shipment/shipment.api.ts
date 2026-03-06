@@ -1,4 +1,4 @@
-import { desc, eq } from "drizzle-orm";
+import { desc, eq, sql } from "drizzle-orm";
 import { v4 as uuidv4 } from "uuid";
 import { createTRPCRouter, customerProcedure, publicProcedure, staffProcedure } from "@/core/api/api.methods";
 import { db } from "@/core/db/db";
@@ -7,6 +7,7 @@ import { buildPagination } from "@/core/db/utils/query.utils";
 import { notifyShipmentUpdate } from "@/shared/components/mail/notification.service";
 import { MESSAGE, STATUS } from "@/shared/config/api.config";
 import { API_RESPONSE } from "@/shared/config/api.utils";
+import { buildPaginationMeta } from "@/shared/schema";
 import { debugError } from "@/shared/utils/lib/logger.utils";
 import { shipmentContract } from "./shipment.schema";
 
@@ -41,18 +42,42 @@ export const shipmentRouter = createTRPCRouter({
     .output(shipmentContract.getMany.output)
     .query(async ({ input }) => {
       try {
+        const query = input?.query ?? {};
+
         const { offset, limit } = buildPagination({
-          page: 1,
-          limit: 20,
-          sortOrder: "desc",
-          ...input?.query,
+          page: query.page ?? 1,
+          limit: query.limit ?? 20,
+          sortOrder: query.sortOrder ?? "desc",
+          sortBy: query.sortBy,
         });
+
+        const [{ count: totalRaw = 0 } = { count: 0 }] = await db
+          .select({ count: sql<number>`count(*)` })
+          .from(shipment);
+        const total = Number(totalRaw ?? 0);
+
         const data = await db.query.shipment.findMany({
           orderBy: [desc(shipment.createdAt)],
           limit: Math.min(limit, 100),
           offset,
         });
-        return API_RESPONSE(STATUS.SUCCESS, MESSAGE.SHIPMENT.GET_MANY.SUCCESS, data);
+
+        const metaPagination = buildPaginationMeta(total, {
+          page: query.page ?? 1,
+          limit: query.limit ?? 20,
+          sortBy: query.sortBy,
+          sortOrder: query.sortOrder ?? "desc",
+        });
+
+        return {
+          status: STATUS.SUCCESS,
+          message: MESSAGE.SHIPMENT.GET_MANY.SUCCESS,
+          data,
+          meta: {
+            count: total,
+            pagination: metaPagination,
+          },
+        };
       } catch (err) {
         debugError("SHIPMENT:GET_MANY:ERROR", err);
         return API_RESPONSE(STATUS.ERROR, MESSAGE.SHIPMENT.GET_MANY.ERROR, [], err as Error);

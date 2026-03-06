@@ -20,7 +20,7 @@ interface EmptyStateProps {
 
 export function EmptyState({ title, description, icons = [], action, className }: EmptyStateProps) {
   return (
-    <Card className="h-[calc(100vh-10.2rem)]">
+    <Card className="h-[calc(100vh-10.5rem)] p-0">
       <div
         className={cn(
           "bg-background border-border hover:border-border/80 text-center",

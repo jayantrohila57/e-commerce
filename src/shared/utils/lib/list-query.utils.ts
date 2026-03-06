@@ -10,7 +10,7 @@ export type ListQuery = {
   };
 };
 
-type SearchParamsLike = Record<string, string | string[] | undefined>;
+export type SearchParamsLike = Record<string, string | string[] | undefined>;
 
 function first(val: string | string[] | undefined): string | undefined {
   return Array.isArray(val) ? val[0] : val;

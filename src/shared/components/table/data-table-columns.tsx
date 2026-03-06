@@ -1,5 +1,5 @@
 import type { ColumnDef, Row } from "@tanstack/react-table";
-import { Clock, ImageIcon, Mail, SquareArrowOutUpRight, Star } from "lucide-react";
+import { Clock, ImageIcon, IndianRupee, SquareArrowOutUpRight, Star } from "lucide-react";
 import type { Route } from "next";
 import Link from "next/link";
 import { colorClass, displayTypeOptions, statusOptions, visibilityOptions } from "@/shared/config/options.config";
@@ -8,6 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import { Checkbox } from "../ui/checkbox";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import { DataTableColumnHeader } from "./data-table-column-header";
 import { DataTableRowActions } from "./data-table-row-actions";
 
@@ -35,6 +36,8 @@ const keys = {
   COLOR: "color",
   IS_FEATURED: "isFeatured",
   POPULARITY: "popularity",
+  VALUE: "value",
+  CURRENCY: "currency",
 };
 
 function idColumn<T>(): ColumnDef<T>[] {
@@ -42,16 +45,46 @@ function idColumn<T>(): ColumnDef<T>[] {
     {
       accessorKey: keys.ID,
       header: ({ column }) => <DataTableColumnHeader column={column} title="ID" />,
-      cell: ({ row }) => <ColumnCell className="w-[200px] truncate">{String(row.getValue(keys.ID))}</ColumnCell>,
+      cell: ({ row }) => {
+        const id = String(row.getValue(keys.ID));
+        return (
+          <ColumnCell className="w-[80px]">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div className="max-w-[80px] truncate text-sm text-muted-foreground">{id}</div>
+              </TooltipTrigger>
+              <TooltipContent>{id}</TooltipContent>
+            </Tooltip>
+          </ColumnCell>
+        );
+      },
     },
   ];
 }
-function titleColumn<T>(): ColumnDef<T>[] {
+function titleColumn<T>(url: string): ColumnDef<T>[] {
   return [
     {
       accessorKey: keys.TITLE,
       header: ({ column }) => <DataTableColumnHeader column={column} title="Title" />,
-      cell: ({ row }) => <ColumnCell className="w-[200px] truncate">{String(row.getValue(keys.TITLE))}</ColumnCell>,
+      cell: ({ row }) => {
+        const title = String(row.getValue(keys.TITLE) ?? "N/A");
+        const slug = row.getValue(keys.SLUG) as string;
+        return (
+          <ColumnCell className="min-w-[220px]">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Link
+                  href={`${url}/${slug}` as Route}
+                  className="max-w-[260px] truncate text-sm font-medium underline-offset-4 hover:underline"
+                >
+                  {title}
+                </Link>
+              </TooltipTrigger>
+              <TooltipContent>{title}</TooltipContent>
+            </Tooltip>
+          </ColumnCell>
+        );
+      },
     },
   ];
 }
@@ -64,7 +97,7 @@ function selectColumn<T>(): ColumnDef<T>[] {
           checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")}
           onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
           aria-label="Select all"
-          className="ml-0.5"
+          className="ml-2.5"
         />
       ),
       cell: ({ row }) => (
@@ -87,11 +120,19 @@ function descriptionColumn<T>(): ColumnDef<T>[] {
     {
       accessorKey: keys.DESCRIPTION,
       header: ({ column }) => <DataTableColumnHeader column={column} title="Description" />,
-      cell: ({ row }) => (
-        <ColumnCell className="flex w-[260px] gap-2">
-          <span className="max-w-[220px] truncate">{row.getValue(keys.DESCRIPTION) ?? "No description found"}</span>
-        </ColumnCell>
-      ),
+      cell: ({ row }) => {
+        const description = String(row.getValue(keys.DESCRIPTION) ?? "No description found");
+        return (
+          <ColumnCell className="min-w-[260px]">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div className="max-w-[260px] truncate text-sm text-muted-foreground">{description}</div>
+              </TooltipTrigger>
+              <TooltipContent>{description}</TooltipContent>
+            </Tooltip>
+          </ColumnCell>
+        );
+      },
     },
   ];
 }
@@ -381,17 +422,22 @@ function emailColumn<T>(): ColumnDef<T>[] {
       accessorKey: keys.EMAIL,
       header: ({ column }) => <DataTableColumnHeader column={column} title="Email" />,
       cell: ({ row }) => {
-        const email = String(row.getValue(keys.EMAIL));
+        const email = String(row.getValue(keys.EMAIL) ?? "");
+        if (!email) {
+          return (
+            <ColumnCell className="min-w-[240px]">
+              <span className="text-sm text-muted-foreground">{" — "}</span>
+            </ColumnCell>
+          );
+        }
         return (
-          <ColumnCell className="flex w-[220px]">
-            {email ? (
-              <div className="flex flex-row items-start gap-2">
-                <Mail className="h-4 w-4" />
-                <span className="truncate pr-2 text-xs">{email}</span>
-              </div>
-            ) : (
-              <span className="text-muted-foreground">{" — "}</span>
-            )}
+          <ColumnCell className="min-w-[240px]">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div className="max-w-[260px] truncate text-sm text-muted-foreground">{email}</div>
+              </TooltipTrigger>
+              <TooltipContent>{email}</TooltipContent>
+            </Tooltip>
           </ColumnCell>
         );
       },
@@ -405,8 +451,17 @@ function nameColumn<T>(): ColumnDef<T>[] {
       accessorKey: keys.NAME,
       header: ({ column }) => <DataTableColumnHeader column={column} title="Name" />,
       cell: ({ row }) => {
-        const name = String(row.getValue(keys.NAME));
-        return <ColumnCell className="flex w-[220px]">{name}</ColumnCell>;
+        const name = String(row.getValue(keys.NAME) ?? "");
+        return (
+          <ColumnCell className="min-w-[220px]">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div className="max-w-[260px] truncate text-sm font-medium">{name}</div>
+              </TooltipTrigger>
+              <TooltipContent>{name}</TooltipContent>
+            </Tooltip>
+          </ColumnCell>
+        );
       },
     },
   ];
@@ -440,6 +495,31 @@ function displayTypeColumn<T>(): ColumnDef<T>[] {
   ];
 }
 
+function valueColumn<T>(): ColumnDef<T>[] {
+  return [
+    {
+      accessorKey: keys.VALUE,
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Value" />,
+      cell: ({ row }) => {
+        return <ColumnCell className="flex w-[220px]">{String(row.getValue(keys.VALUE))}</ColumnCell>;
+      },
+    },
+  ];
+}
+function currencyColumn<T>(): ColumnDef<T>[] {
+  return [
+    {
+      accessorKey: keys.CURRENCY,
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Currency" />,
+      cell: ({ row }) => {
+        const currency = String(row.getValue(keys.CURRENCY));
+        return (
+          <ColumnCell className="flex w-[220px]">{currency ? <IndianRupee className="h-4 w-4" /> : "N/A"}</ColumnCell>
+        );
+      },
+    },
+  ];
+}
 export const commonColumns = {
   keys,
   idColumn,
@@ -462,4 +542,6 @@ export const commonColumns = {
   displayTypeColumn,
   deletedAtColumn,
   visibilityColumn,
+  valueColumn,
+  currencyColumn,
 };

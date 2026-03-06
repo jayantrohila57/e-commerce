@@ -1,12 +1,13 @@
-import { and, eq, inArray, sql } from "drizzle-orm";
+import { and, eq, ilike, inArray, sql } from "drizzle-orm";
 import { v4 as uuidv4 } from "uuid";
-import { createTRPCRouter, customerProcedure, staffProcedure } from "@/core/api/api.methods";
+import { createTRPCRouter, adminProcedure, customerProcedure, staffProcedure } from "@/core/api/api.methods";
 import { APP_ROLE, normalizeRole } from "@/core/auth/auth.roles";
 import { db } from "@/core/db/db";
 import { cart, cartLine, inventoryItem, order, orderItem, user as userTable } from "@/core/db/db.schema";
 import { notifyLowStock, notifyOrderStatusChange } from "@/shared/components/mail/notification.service";
 import { MESSAGE, STATUS } from "@/shared/config/api.config";
 import { API_RESPONSE } from "@/shared/config/api.utils";
+import { buildPagination, buildPaginationMeta } from "@/shared/schema";
 import { siteConfig } from "@/shared/config/site";
 import { debugError } from "@/shared/utils/lib/logger.utils";
 import { type Order, orderContract } from "./order.schema";
@@ -69,6 +70,66 @@ export const orderRouter = createTRPCRouter({
         return API_RESPONSE(STATUS.SUCCESS, "Orders retrieved successfully", data);
       } catch (err) {
         debugError("ORDER:GET_MANY:ERROR", err);
+        return API_RESPONSE(STATUS.ERROR, "Error retrieving orders", [], err as Error);
+      }
+    }),
+
+  /**
+   * Admin/staff: list all orders with pagination & optional filters
+   */
+  getManyAdmin: adminProcedure
+    .input(orderContract.getManyAdmin.input)
+    .output(orderContract.getManyAdmin.output)
+    .query(async ({ input }) => {
+      try {
+        const query = input.query ?? {};
+        const { status, q } = query;
+
+        const pageInput = {
+          page: query.page ?? 1,
+          limit: query.limit ?? 20,
+          sortBy: query.sortBy,
+          sortOrder: query.sortOrder ?? "desc",
+        };
+
+        const paging = buildPagination(pageInput);
+        const offset = paging.offset;
+        const limit = paging.limit;
+
+        // Build where conditions using drizzle top-level helpers
+        const whereConditions = [
+          status ? eq(order.status, status) : undefined,
+          q ? ilike(order.id, `%${q}%`) : undefined,
+        ].filter((condition): condition is NonNullable<typeof condition> => Boolean(condition));
+
+        const where = whereConditions.length ? and(...whereConditions) : undefined;
+
+        const [{ count: totalRaw = 0 } = { count: 0 }] = await db
+          .select({ count: sql<number>`count(*)` })
+          .from(order)
+          .where(where);
+        const total = Number(totalRaw ?? 0);
+
+        const data = await db.query.order.findMany({
+          where,
+          orderBy: (o, { desc }) => [desc(o.placedAt)],
+          limit,
+          offset,
+        });
+
+        const metaPagination = buildPaginationMeta(total, pageInput);
+
+        return {
+          status: STATUS.SUCCESS,
+          message: "Orders retrieved successfully",
+          data,
+          meta: {
+            count: total,
+            pagination: metaPagination,
+          },
+        };
+      } catch (err) {
+        debugError("ORDER:GET_MANY_ADMIN:ERROR", err);
         return API_RESPONSE(STATUS.ERROR, "Error retrieving orders", [], err as Error);
       }
     }),

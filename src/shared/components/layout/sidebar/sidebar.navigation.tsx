@@ -11,6 +11,7 @@ import {
   Package,
   Settings2,
   ShoppingBag,
+  Tags,
   Truck,
   Users,
 } from "lucide-react";
@@ -92,6 +93,7 @@ export function NavMain() {
       items: [
         { title: "All Products", url: PATH.STUDIO.PRODUCTS.ROOT, icon: Package },
         { title: "Categories", url: PATH.STUDIO.CATEGORIES.ROOT, icon: Package },
+        { title: "Attributes", url: PATH.STUDIO.ATTRIBUTES.ROOT, icon: Tags },
         { title: "Inventory", url: PATH.STUDIO.INVENTORY.ROOT, icon: Package },
       ],
     },

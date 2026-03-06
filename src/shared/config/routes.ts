@@ -87,6 +87,11 @@ export const PATH = {
       SLUG: (id: string) => `/studio/products/inventory/${id}`,
       EDIT: (id: string) => `/studio/products/inventory/${id}/edit`,
     },
+    ATTRIBUTES: {
+      ROOT: "/studio/products/attributes",
+      NEW: "/studio/products/attributes/new",
+      EDIT: (slug: string, id: string) => `/studio/products/attributes/${slug}/edit?id=${id}`,
+    },
 
     ORDERS: {
       ROOT: "/studio/orders",

@@ -1,6 +1,6 @@
 import z from "zod/v3";
 import { subcategorySelectSchema } from "@/module/subcategory/subcategory.schema";
-import { detailedResponse, offsetPaginationSchema, visibilityEnum } from "@/shared/schema";
+import { detailedResponse, paginationInput, visibilityEnum } from "@/shared/schema";
 
 export const displayTypeEnum = z.enum(["grid", "carousel", "banner", "list", "featured"]);
 
@@ -41,6 +41,9 @@ const searchSchema = z.object({
   search: z.string().min(2).max(100).optional(),
   visibility: z.enum(["public", "private", "hidden"]).optional(),
   isFeatured: z.boolean().optional(),
+  displayType: displayTypeEnum.optional(),
+  deleted: z.boolean().optional(),
+  color: z.string().optional(),
 });
 
 export const categoryContract = {
@@ -56,7 +59,7 @@ export const categoryContract = {
 
   getMany: {
     input: z.object({
-      query: searchSchema.merge(offsetPaginationSchema).optional(),
+      query: searchSchema.merge(paginationInput).optional(),
     }),
     output: detailedResponse(z.array(categorySelectSchema)),
   },
@@ -66,7 +69,7 @@ export const categoryContract = {
   },
   getManyWithSubcategories: {
     input: z.object({
-      query: searchSchema.merge(offsetPaginationSchema).optional(),
+      query: searchSchema.merge(paginationInput).optional(),
     }),
     output: detailedResponse(
       z.array(
@@ -79,7 +82,7 @@ export const categoryContract = {
 
   getManyByTypes: {
     input: z.object({
-      query: searchSchema.merge(offsetPaginationSchema).optional(),
+      query: searchSchema.merge(paginationInput).optional(),
     }),
     output: detailedResponse(
       z.object({

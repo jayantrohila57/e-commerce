@@ -1,10 +1,11 @@
-import { and, eq, ilike } from "drizzle-orm";
+import { and, eq, ilike, isNull, not, sql } from "drizzle-orm";
 import { v4 as uuidv4 } from "uuid";
 import { createTRPCRouter, publicProcedure, staffProcedure } from "@/core/api/api.methods";
 import { db } from "@/core/db/db";
 import { category } from "@/core/db/db.schema";
 import { MESSAGE, STATUS } from "@/shared/config/api.config";
 import { API_RESPONSE } from "@/shared/config/api.utils";
+import { buildPagination, buildPaginationMeta } from "@/shared/schema";
 import { debugError } from "@/shared/utils/lib/logger.utils";
 import { categoryContract } from "./category.schema";
 
@@ -40,17 +41,61 @@ export const categoryRouter = createTRPCRouter({
         if (input.query?.search) conditions.push(ilike(category.title, `%${input.query.search}%`));
         if (input.query?.visibility) conditions.push(eq(category.visibility, input.query.visibility));
         if (input.query?.isFeatured !== undefined) conditions.push(eq(category.isFeatured, input.query.isFeatured));
+        if (input.query?.displayType) conditions.push(eq(category.displayType, input.query.displayType));
+        if (input.query?.color) conditions.push(eq(category.color, input.query.color));
+
+        // Default to non-deleted results unless explicitly requested
+        if (input.query?.deleted === true) {
+          conditions.push(not(isNull(category.deletedAt)));
+        } else {
+          conditions.push(isNull(category.deletedAt));
+        }
+
+        const where = conditions.length ? and(...conditions) : undefined;
+
+        const pageInput = {
+          page: input.query?.page ?? 1,
+          limit: input.query?.limit ?? 20,
+          sortBy: input.query?.sortBy,
+          sortOrder: input.query?.sortOrder ?? "desc",
+        };
+
+        const paging = buildPagination(pageInput);
+        const offset = paging.offset;
+        const limit = paging.limit;
+
+        const [{ count: totalRaw = 0 } = { count: 0 }] = await db
+          .select({ count: sql<number>`count(*)` })
+          .from(category)
+          .where(where);
+        const total = Number(totalRaw ?? 0);
+
         const output = await db.query.category.findMany({
-          where: conditions.length ? and(...conditions) : undefined,
-          limit: input.query?.limit ?? 50,
-          offset: input.query?.offset ?? 0,
+          where,
+          limit,
+          offset,
           orderBy: (c, { asc }) => [asc(c.displayOrder)],
         });
-        return API_RESPONSE(
-          output?.length ? STATUS.SUCCESS : STATUS.FAILED,
-          output?.length ? MESSAGE.CATEGORY.GET_MANY.SUCCESS : MESSAGE.CATEGORY.GET_MANY.FAILED,
-          output,
-        );
+
+        const metaPagination = buildPaginationMeta(total, pageInput);
+
+        return {
+          status: output?.length ? STATUS.SUCCESS : STATUS.FAILED,
+          message: output?.length ? MESSAGE.CATEGORY.GET_MANY.SUCCESS : MESSAGE.CATEGORY.GET_MANY.FAILED,
+          data: output,
+          meta: {
+            count: total,
+            pagination: metaPagination,
+            filters: {
+              visibility: input.query?.visibility,
+              isFeatured: input.query?.isFeatured,
+              displayType: input.query?.displayType,
+              color: input.query?.color,
+              deleted: input.query?.deleted ?? false,
+              search: input.query?.search,
+            },
+          },
+        };
       } catch (err) {
         return API_RESPONSE(STATUS.ERROR, MESSAGE.CATEGORY.GET_MANY.ERROR, null, err as Error);
       }

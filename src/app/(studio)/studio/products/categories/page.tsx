@@ -1,13 +1,30 @@
 import type { Route } from "next";
 import { apiServer, HydrateClient } from "@/core/api/api.server";
-import { CategoriesSection } from "@/module/category/category.component.section";
+import CategoryTable from "@/module/category/category.table";
 import DashboardSection from "@/shared/components/layout/section/section-dashboard";
 import Shell from "@/shared/components/layout/shell";
 import { PATH } from "@/shared/config/routes";
+import { getListQueryFromSearchParams } from "@/shared/utils/lib/list-query.utils";
 
-export default async function CategoriesPage() {
-  const { data } = await apiServer.category.getManyByTypes({
-    query: {},
+export default async function CategoriesPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
+  const input = await searchParams;
+  const listQuery = getListQueryFromSearchParams(input);
+
+  const result = await apiServer.category.getMany({
+    query: {
+      search: listQuery.search.q,
+      visibility: listQuery.filters.visibility,
+      displayType: listQuery.filters.displayType,
+      isFeatured: listQuery.filters.isFeatured,
+      deleted: listQuery.filters.deleted,
+      color: listQuery.filters.color,
+      page: listQuery.pagination.page,
+      limit: listQuery.pagination.limit,
+    },
   });
   return (
     <HydrateClient>
@@ -19,7 +36,7 @@ export default async function CategoriesPage() {
             action="Add Category"
             actionUrl={PATH.STUDIO.CATEGORIES.NEW as Route}
           >
-            <CategoriesSection data={data} />
+            <CategoryTable data={result} />
           </DashboardSection>
         </Shell.Section>
       </Shell>

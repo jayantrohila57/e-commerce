@@ -33,7 +33,7 @@ export default function DashboardSection({ title, description, action, actionUrl
         </CardHeader>
       )}
       <div className="motion-all p-2 pt-0">
-        <CardContent className="bg-secondary motion-all h-[calc(100vh-9.4rem)] overflow-auto rounded-md border p-2 pb-20">
+        <CardContent className="bg-input/30 motion-all h-[calc(100vh-9.4rem)] overflow-auto rounded-md border p-2">
           {children}
         </CardContent>
       </div>

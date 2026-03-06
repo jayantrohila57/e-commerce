@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/components/ui/card";
 import { BlurImage } from "@/shared/components/ui/image";
 import { Separator } from "@/shared/components/ui/separator";
+import { getImageSrc } from "@/shared/utils/lib/image.utils";
 import type { GetCategoryWithSubcategoriesOutput } from "./category.types";
 
 export const CategoryItem = ({ data }: { data: GetCategoryWithSubcategoriesOutput["data"] }) => {
@@ -21,8 +22,8 @@ export const CategoryItem = ({ data }: { data: GetCategoryWithSubcategoriesOutpu
               <Card className="border-none bg-transparent shadow-none">
                 <CardContent className="flex w-full items-center justify-center">
                   <BlurImage
-                    src={String(subcategory.image)}
-                    alt={subcategory.title}
+                    src={getImageSrc(subcategory.image)}
+                    alt={subcategory.title ?? "Subcategory"}
                     width={500}
                     height={500}
                     className="motion-all bg-secondary aspect-square h-auto w-full rounded-full border object-cover group-hover:drop-shadow"

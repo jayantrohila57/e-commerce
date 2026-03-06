@@ -1,11 +1,12 @@
 import type { Route } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { PDPWishlistToggle } from "@/module/product/product-pdp-wishlist-toggle";
 import { AddToCartButton } from "@/shared/components/common/add-to-cart-button";
 import { ViewCartButton } from "@/shared/components/common/view-cart-button";
 import { Badge } from "@/shared/components/ui/badge";
 import { Button } from "@/shared/components/ui/button";
+import { BlurImage } from "@/shared/components/ui/image";
+import { getImageSrc } from "@/shared/utils/lib/image.utils";
 import type { GetPDPProductOutput } from "./product.types";
 import { extractAttributeGroups, isOptionAvailable, resolveNextVariant } from "./product-utility";
 
@@ -31,23 +32,15 @@ export const PDPProduct = ({ data, slug }: { data: GetPDPProductOutput["data"]; 
           ? basePrice + priceModifier
           : basePrice - priceModifier;
 
+  const pdpImageSrc = getImageSrc(selectedVariant?.media?.[0]?.url) ?? getImageSrc(product?.baseImage);
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
         {/* Images */}
         <div className="space-y-4">
-          <div className="relative aspect-square w-full overflow-hidden rounded-lg bg-gray-100">
-            {selectedVariant?.media?.[0]?.url ? (
-              <Image
-                src={selectedVariant?.media?.[0].url}
-                alt={product?.title}
-                fill
-                className="object-cover"
-                priority
-              />
-            ) : (
-              <div className="flex h-full items-center justify-center text-gray-400">No image available</div>
-            )}
+          <div className="relative aspect-square w-full overflow-hidden rounded-lg bg-muted">
+            <BlurImage src={pdpImageSrc} alt={product?.title ?? "Product"} fill className="object-cover" priority />
             <div className="absolute right-3 top-3 z-10">
               <PDPWishlistToggle variantId={selectedVariant.id} />
             </div>

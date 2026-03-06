@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { apiServer, HydrateClient } from "@/core/api/api.server";
 import { PDPProduct } from "@/module/product/product-pdp";
 import Section from "@/shared/components/layout/section/section";
+import { getImageSrc } from "@/shared/utils/lib/image.utils";
 
 export const revalidate = 300;
 
@@ -21,19 +22,18 @@ export async function generateMetadata({ params }: PageProps<ROUTE>) {
     };
   }
 
-  return {
+  const imageUrl = getImageSrc(data.product.baseImage);
+  const meta = {
     title: data.product.metaTitle ?? data.product.title,
     description: data.product.metaDescription ?? data.product.description,
-    openGraph: {
-      title: data.product.metaTitle ?? data.product.title,
-      description: data.product.metaDescription ?? data.product.description,
-      image: data.product.baseImage,
-    },
+  };
+  return {
+    ...meta,
+    openGraph: { ...meta, ...(imageUrl && { image: imageUrl }) },
     twitter: {
-      card: "summary_large_image",
-      title: data.product.metaTitle ?? data.product.title,
-      description: data.product.metaDescription ?? data.product.description,
-      image: data.product.baseImage,
+      card: "summary_large_image" as const,
+      ...meta,
+      ...(imageUrl && { image: imageUrl }),
     },
   };
 }

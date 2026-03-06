@@ -6,6 +6,7 @@ import { useFormContext } from "react-hook-form";
 import { toast } from "sonner";
 import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/shared/components/ui/form";
 import { useFileUpload } from "@/shared/utils/hooks/use-file-upload";
+import { PLACEHOLDER_IMAGE } from "@/shared/utils/lib/image.utils";
 import { cn } from "@/shared/utils/lib/utils";
 import { Button } from "../../ui/button";
 import { BlurImage } from "../../ui/image";
@@ -76,7 +77,8 @@ export const ImageUploadText: React.FC<FormInputProps> = (props) => {
                 {(field.value as string) || files[0]?.preview ? (
                   <div className="absolute inset-0 cursor-pointer">
                     <BlurImage
-                      src={(field.value as string) ?? files[0]?.preview ?? ""}
+                      src={(field.value as string) || files[0]?.preview || undefined}
+                      fallbackSrc={PLACEHOLDER_IMAGE}
                       alt={files[0]?.file?.name || "Uploaded image"}
                       className="aspect-video size-full w-full rounded-md border object-cover"
                       width={1920}

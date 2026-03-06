@@ -2,6 +2,7 @@ import type { Route } from "next";
 import Link from "next/link";
 import { BlurImage } from "@/shared/components/ui/image";
 import { Separator } from "@/shared/components/ui/separator";
+import { getImageSrc } from "@/shared/utils/lib/image.utils";
 import { truncateString } from "@/shared/utils/lib/utils";
 import type { ProductVariantBase } from "./product-variant.types";
 
@@ -11,18 +12,17 @@ interface ProductVariantCardProps {
 }
 
 export function ProductVariantCard({ productVariant, href }: ProductVariantCardProps) {
+  const mediaItems = productVariant?.media ?? [];
+  const firstMediaUrl = getImageSrc(mediaItems[0]?.url);
   const content = (
     <div className="bg-secondary flex flex-row items-center justify-start rounded-md border p-2 shadow-xs">
-      {productVariant?.media?.map((media, id) => (
-        <BlurImage
-          key={id}
-          src={String(media?.url)}
-          alt={productVariant?.title}
-          width={500}
-          height={500}
-          className="motion-all bg-secondary aspect-square h-auto w-12 rounded-full border object-cover group-hover:drop-shadow"
-        />
-      ))}
+      <BlurImage
+        src={firstMediaUrl}
+        alt={productVariant?.title ?? "Variant"}
+        width={500}
+        height={500}
+        className="motion-all bg-secondary aspect-square h-auto w-12 rounded-full border object-cover group-hover:drop-shadow"
+      />
       <Separator orientation="vertical" className="mx-4 data-[orientation=vertical]:h-8" />
       <div className="flex h-full flex-col">
         <h3 className="text-base font-semibold capitalize">{productVariant.title}</h3>

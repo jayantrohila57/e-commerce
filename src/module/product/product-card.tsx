@@ -2,6 +2,7 @@ import type { Route } from "next";
 import Link from "next/link";
 import { BlurImage } from "@/shared/components/ui/image";
 import { Separator } from "@/shared/components/ui/separator";
+import { getImageSrc } from "@/shared/utils/lib/image.utils";
 import { truncateString } from "@/shared/utils/lib/utils";
 import type { ProductBase } from "./product.types";
 
@@ -14,8 +15,8 @@ export function ProductCard({ product, href }: ProductCardProps) {
   const content = (
     <div className="bg-secondary flex flex-row items-center justify-start rounded-md border p-2 shadow-xs">
       <BlurImage
-        src={String(product?.baseImage)}
-        alt={product?.title}
+        src={getImageSrc(product?.baseImage)}
+        alt={product?.title ?? "Product"}
         width={500}
         height={500}
         className="motion-all bg-secondary aspect-square h-auto w-12 rounded-full border object-cover group-hover:drop-shadow"

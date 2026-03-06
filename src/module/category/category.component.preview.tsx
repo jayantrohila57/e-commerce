@@ -23,6 +23,7 @@ import { BlurImage } from "@/shared/components/ui/image";
 import { Separator } from "@/shared/components/ui/separator";
 import { Table, TableBody, TableCell, TableRow } from "@/shared/components/ui/table";
 import { PATH } from "@/shared/config/routes";
+import { getImageSrc } from "@/shared/utils/lib/image.utils";
 import { cn, truncateString } from "@/shared/utils/lib/utils";
 import { CategoryDelete } from "./category.component.delete";
 import type { GetCategoryOutput } from "./category.types";
@@ -81,8 +82,8 @@ export function CategoryPreviewCard({ data }: CategoryPreviewCardProps) {
         <div className="flex flex-row gap-4">
           <CardContent className="flex w-fit items-start justify-start p-0">
             <BlurImage
-              src={String(data.image)}
-              alt={data.title}
+              src={getImageSrc(data.image)}
+              alt={data.title ?? "Category"}
               width={500}
               height={500}
               className="motion-all bg-secondary aspect-square h-auto w-26 rounded-full border object-cover group-hover:drop-shadow hover:w-40"

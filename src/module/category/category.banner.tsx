@@ -13,6 +13,7 @@ import {
   CarouselPrevious,
 } from "@/shared/components/ui/carousel";
 import { BlurImage } from "@/shared/components/ui/image";
+import { getImageSrc } from "@/shared/utils/lib/image.utils";
 import { cn } from "@/shared/utils/lib/utils";
 import type { CategoryBase } from "./category.types";
 
@@ -52,8 +53,8 @@ export function CategoryBanner({ data }: { data: CategoryBase[] | null }) {
                 <Card key={category?.title} className="bg-secondary group aspect-21/9 text-balance">
                   <CardContent className="flex h-auto w-full items-center justify-center overflow-hidden">
                     <BlurImage
-                      src={String(category?.image)}
-                      alt={category?.title}
+                      src={getImageSrc(category?.image)}
+                      alt={category?.title ?? "Category"}
                       width={1920}
                       height={1080}
                       className="motion-all aspect-21/9 h-auto w-full object-contain"

@@ -2,6 +2,7 @@ import type { Route } from "next";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/card";
 import { BlurImage } from "@/shared/components/ui/image";
+import { getImageSrc } from "@/shared/utils/lib/image.utils";
 import type { GetProductsBySeriesSlugOutput } from "./product.types";
 
 const computePrice = (basePrice: number, priceModifierValue: number, priceModifierType: string): number => {
@@ -31,16 +32,13 @@ export const VariantCardList = ({ data }: { data: GetProductsBySeriesSlugOutput[
           <Link key={product?.variant.slug} href={href as Route}>
             <Card className="pt-0">
               <CardHeader className="p-0">
-                {product?.variant?.media?.map((media) => (
-                  <BlurImage
-                    key={media.url}
-                    src={String(media?.url)}
-                    alt={product?.title}
-                    width={500}
-                    height={500}
-                    className="bg-secondary motion-all aspect-square w-full rounded-md rounded-b-none object-cover group-hover:drop-shadow"
-                  />
-                ))}
+                <BlurImage
+                  src={getImageSrc(product?.variant?.media?.[0]?.url)}
+                  alt={product?.title ?? "Product"}
+                  width={500}
+                  height={500}
+                  className="bg-secondary motion-all aspect-square w-full rounded-md rounded-b-none object-cover group-hover:drop-shadow"
+                />
               </CardHeader>
 
               <CardContent className="flex flex-col gap-3 p-4">

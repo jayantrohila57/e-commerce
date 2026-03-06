@@ -3,6 +3,7 @@
 import Image from "next/image";
 import type { ComponentProps } from "react";
 import * as React from "react";
+import { getImageSrc, PLACEHOLDER_IMAGE } from "@/shared/utils/lib/image.utils";
 import { cn } from "@/shared/utils/lib/utils";
 
 interface BlurImageProps extends Omit<ComponentProps<typeof Image>, "src"> {
@@ -11,47 +12,49 @@ interface BlurImageProps extends Omit<ComponentProps<typeof Image>, "src"> {
 }
 
 function normalizeSrc(value?: string | null) {
-  if (!value) return null;
-
-  const trimmed = value.trim();
-
-  if (!trimmed) return null;
+  const safe = getImageSrc(value);
+  if (!safe) return null;
 
   // Absolute URL
-  if (/^https?:\/\//.test(trimmed)) return trimmed;
+  if (/^https?:\/\//.test(safe)) return safe;
 
   // Root-relative
-  if (trimmed.startsWith("/")) return trimmed;
+  if (safe.startsWith("/")) return safe;
 
   // If it's something like "uploads/image.jpg"
-  return `/${trimmed}`;
+  return `/${safe}`;
 }
 
-export function BlurImage({ className, alt, src, fallbackSrc = "/fallback.png", ...props }: BlurImageProps) {
-  const safeInitialSrc = normalizeSrc(src) ?? fallbackSrc;
+const safeFallback = (s?: string) => (s && s.trim() ? s : PLACEHOLDER_IMAGE);
 
-  const [currentSrc, setCurrentSrc] = React.useState(safeInitialSrc);
+export function BlurImage({ className, alt, src, fallbackSrc = PLACEHOLDER_IMAGE, ...props }: BlurImageProps) {
+  const resolvedFallback = safeFallback(fallbackSrc);
+  const safeInitialSrc = normalizeSrc(src) ?? resolvedFallback;
+
+  const [currentSrc, setCurrentSrc] = React.useState(() => safeInitialSrc);
   const [isLoading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
     setLoading(true);
-    const normalized = normalizeSrc(src) ?? fallbackSrc;
+    const normalized = normalizeSrc(src) ?? resolvedFallback;
     setCurrentSrc(normalized);
     setLoading(false);
-  }, [src, fallbackSrc]);
+  }, [src, resolvedFallback]);
 
   const handleError = () => {
-    if (currentSrc !== fallbackSrc) {
-      setCurrentSrc(fallbackSrc);
+    if (currentSrc !== resolvedFallback) {
+      setCurrentSrc(resolvedFallback);
     }
     setLoading(false);
   };
 
+  const srcToUse = currentSrc ?? resolvedFallback;
+
   return (
     <Image
       {...props}
-      alt={alt}
-      src={currentSrc}
+      alt={alt ?? ""}
+      src={srcToUse}
       className={cn(
         className,
         "transition-all duration-300",

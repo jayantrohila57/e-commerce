@@ -5,6 +5,7 @@ import { Badge } from "@/shared/components/ui/badge";
 import { Button } from "@/shared/components/ui/button";
 import { BlurImage } from "@/shared/components/ui/image";
 import { Separator } from "@/shared/components/ui/separator";
+import { getImageSrc } from "@/shared/utils/lib/image.utils";
 import { cn, truncateString } from "@/shared/utils/lib/utils";
 import type { SubcategoryBase } from "./subcategory.schema";
 
@@ -18,8 +19,8 @@ export function SubCategoryCard({ data, href, className }: SubCategoryCardProps)
   const content = (
     <div className="bg-secondary flex flex-row items-center justify-start rounded-md border p-2 shadow-xs">
       <BlurImage
-        src={String(data?.image)}
-        alt={data?.title}
+        src={getImageSrc(data?.image)}
+        alt={data?.title ?? "Subcategory"}
         width={500}
         height={500}
         className="motion-all bg-secondary aspect-square h-auto w-12 rounded-full border object-cover group-hover:drop-shadow"

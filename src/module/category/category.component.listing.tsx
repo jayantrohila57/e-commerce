@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/shared/components/ui/card";
 import { BlurImage } from "@/shared/components/ui/image";
 import { Separator } from "@/shared/components/ui/separator";
+import { getImageSrc } from "@/shared/utils/lib/image.utils";
 import { truncateString } from "@/shared/utils/lib/utils";
 import type { GetCategoriesOutput } from "./category.types";
 
@@ -20,8 +21,8 @@ export default function CategoriesListing({ data }: { data: GetCategoriesOutput[
               <Card className="border-none bg-transparent shadow-none">
                 <CardContent className="flex w-full items-center justify-center">
                   <BlurImage
-                    src={String(category.image)}
-                    alt={category.title}
+                    src={getImageSrc(category.image)}
+                    alt={category.title ?? "Category"}
                     width={500}
                     height={500}
                     className="motion-all bg-secondary aspect-square h-auto w-full rounded-full border object-cover group-hover:drop-shadow"

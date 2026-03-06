@@ -5,6 +5,7 @@ import Section from "@/shared/components/layout/section/section";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/components/ui/card";
 import { BlurImage } from "@/shared/components/ui/image";
 import { PATH } from "@/shared/config/routes";
+import { getImageSrc } from "@/shared/utils/lib/image.utils";
 
 export default async function ShopByCategoryGrid() {
   const { data: categories } = await apiServer.category.getMany({
@@ -30,8 +31,8 @@ export default async function ShopByCategoryGrid() {
               <Card className="flex h-full flex-col justify-between pt-0 transition-shadow duration-300 hover:shadow-lg">
                 <CardContent className="overflow-hidden rounded-sm p-0">
                   <BlurImage
-                    src={String(category.image)}
-                    alt={category.title}
+                    src={getImageSrc(category.image)}
+                    alt={category.title ?? "Category"}
                     width={500}
                     height={500}
                     className="motion-all bg-secondary aspect-square h-auto w-full rounded-t-sm object-cover group-hover:drop-shadow"

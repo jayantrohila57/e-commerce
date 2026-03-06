@@ -14,6 +14,7 @@ import {
 } from "@/shared/components/ui/card";
 import { BlurImage } from "@/shared/components/ui/image";
 import { Separator } from "@/shared/components/ui/separator";
+import { getImageSrc } from "@/shared/utils/lib/image.utils";
 import { cn, truncateString } from "@/shared/utils/lib/utils";
 
 type Category = {
@@ -45,8 +46,8 @@ export function CategoryCard({ category, href, className }: CategoryCardProps) {
   const content = (
     <div className="bg-secondary flex flex-row items-center justify-start rounded-md border p-2 shadow-xs">
       <BlurImage
-        src={String(category?.image)}
-        alt={category?.title}
+        src={getImageSrc(category?.image)}
+        alt={category?.title ?? "Category"}
         width={500}
         height={500}
         className="motion-all bg-secondary aspect-square h-auto w-12 rounded-full border object-cover group-hover:drop-shadow"

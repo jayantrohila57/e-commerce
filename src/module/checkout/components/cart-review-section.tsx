@@ -1,9 +1,10 @@
 "use client";
 
-import Image from "next/image";
 import type { CartItem } from "@/module/cart/cart.schema";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/card";
+import { BlurImage } from "@/shared/components/ui/image";
 import { Skeleton } from "@/shared/components/ui/skeleton";
+import { getImageSrc } from "@/shared/utils/lib/image.utils";
 
 interface CartReviewSectionProps {
   items: CartItem[];
@@ -13,15 +14,9 @@ interface CartReviewSectionProps {
 function CartReviewItem({ item }: { item: CartItem }) {
   return (
     <div className="flex items-center gap-4 border-b border-border py-4 last:border-0 last:pb-0 first:pt-0">
-      {item.image ? (
-        <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-md border border-border">
-          <Image src={item.image} alt={item.productTitle} fill className="object-cover" />
-        </div>
-      ) : (
-        <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-md border border-border bg-muted text-center text-xs text-muted-foreground">
-          No image
-        </div>
-      )}
+      <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-md border border-border">
+        <BlurImage src={getImageSrc(item.image)} alt={item.productTitle ?? "Product"} fill className="object-cover" />
+      </div>
       <div className="min-w-0 flex-1">
         <h3 className="text-sm font-medium text-foreground">{item.productTitle}</h3>
         <p className="text-xs text-muted-foreground">{item.variantTitle}</p>

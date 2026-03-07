@@ -16,6 +16,7 @@
     "db:studio": "npx drizzle-kit studio --config ./src/core/db/drizzle.ts",
     "db:drop": "npx drizzle-kit drop --config ./src/core/db/drizzle.ts",
     "db:reset": "pnpm db:drop && pnpm db:push",
+    "db:seed": "tsx src/core/db/seed.ts",
     "typecheck": "tsc --noEmit",
     "lint": "biome lint .",
     "lint:fix": "biome lint --write .",
@@ -101,6 +102,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.4.4",
+    "@faker-js/faker": "^10.3.0",
     "@t3-oss/env-nextjs": "0.13.8",
     "@tailwindcss/postcss": "4",
     "@types/node": "20",

@@ -209,6 +209,7 @@ CREATE TABLE "inventory_item" (
 	"quantity" integer DEFAULT 0 NOT NULL,
 	"incoming" integer DEFAULT 0 NOT NULL,
 	"reserved" integer DEFAULT 0 NOT NULL,
+	"deleted_at" timestamp with time zone,
 	"updated_at" timestamp with time zone DEFAULT now(),
 	CONSTRAINT "inventory_item_sku_unique" UNIQUE("sku")
 );

@@ -26,6 +26,11 @@
       "sourceType": "github",
       "computedHash": "c5132317134698624d023cbbbb612b99d2b20f532f6d1417639607cf401f03cd"
     },
+    "fake-content": {
+      "source": "profpowell/vanilla-breeze",
+      "sourceType": "github",
+      "computedHash": "143ca3398e88762caae37d3e28d41cbcaa07d1099878612e4efd46595e9ee334"
+    },
     "find-skills": {
       "source": "vercel-labs/skills",
       "sourceType": "github",

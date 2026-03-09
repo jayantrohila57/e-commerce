@@ -83,7 +83,7 @@ export function Breadcrumbs({ className }: { className?: string }) {
   const { visible: breadcrumbs } = compressBreadcrumbs(raw);
 
   return (
-    <Breadcrumb className="flex w-full flex-row">
+    <Breadcrumb className="flex w-auto flex-row">
       <BreadcrumbList className={cn("", className)}>
         {/* Home */}
         <BreadcrumbItem>

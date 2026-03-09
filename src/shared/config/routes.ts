@@ -130,6 +130,26 @@ export const PATH = {
     MARKETING: {
       ROOT: "/studio/marketing",
       CAMPAIGNS: "/studio/marketing/campaigns",
+      NEWSLETTERS: {
+        ROOT: "/studio/marketing/newsletters",
+        NEW: "/studio/marketing/newsletters/new",
+        EDIT: (id: string) => `/studio/marketing/newsletters/${id}/edit`,
+      },
+      PROMOTIONS: {
+        ROOT: "/studio/marketing/promotions",
+        NEW: "/studio/marketing/promotions/new",
+        EDIT: (id: string) => `/studio/marketing/promotions/${id}/edit`,
+      },
+      COUPONS: {
+        ROOT: "/studio/marketing/coupons",
+        NEW: "/studio/marketing/coupons/new",
+        EDIT: (id: string) => `/studio/marketing/coupons/${id}/edit`,
+      },
+      EMAIL_TEMPLATES: {
+        ROOT: "/studio/marketing/email-templates",
+        NEW: "/studio/marketing/email-templates/new",
+        EDIT: (id: string) => `/studio/marketing/email-templates/${id}/edit`,
+      },
     },
 
     ANALYTICS: {
@@ -140,8 +160,41 @@ export const PATH = {
 
     SETTINGS: {
       ROOT: "/studio/settings",
-      PROFILE: "/studio/settings/profile",
-      TEAM: "/studio/settings/team",
+      ACCOUNT: {
+        ROOT: "/studio/settings/account",
+        PROFILE: "/studio/settings/account/profile",
+        TEAM: "/studio/settings/account/team",
+      },
+      USERS: {
+        ROOT: "/studio/settings/users",
+        NEW: "/studio/settings/users/new",
+        EDIT: (id: string) => `/studio/settings/users/${id}/edit`,
+      },
+      GENERAL: {
+        ROOT: "/studio/settings/general",
+        APPEARANCE: "/studio/settings/general/appearance",
+        LANGUAGE: "/studio/settings/general/language",
+        TIMEZONE: "/studio/settings/general/timezone",
+        DATE_FORMAT: "/studio/settings/general/date-format",
+        TIME_FORMAT: "/studio/settings/general/time-format",
+        CURRENCY: "/studio/settings/general/currency",
+        CURRENCY_SYMBOL: "/studio/settings/general/currency-symbol",
+        CURRENCY_SYMBOL_POSITION: "/studio/settings/general/currency-symbol-position",
+      },
+      NOTIFICATIONS: {
+        ROOT: "/studio/settings/notifications",
+        EMAIL: "/studio/settings/notifications/email",
+      },
+      SECURITY: {
+        ROOT: "/studio/settings/security",
+        TWO_FACTOR_AUTH: "/studio/settings/security/two-factor-auth",
+        PASSWORD: "/studio/settings/security/password",
+        DEVICE_SESSIONS: "/studio/settings/security/device-sessions",
+        DEVICE_SESSIONS_NEW: "/studio/settings/security/device-sessions/new",
+        DEVICE_SESSIONS_EDIT: (id: string) => `/studio/settings/security/device-sessions/${id}/edit`,
+        DEVICE_SESSIONS_VIEW: (id: string) => `/studio/settings/security/device-sessions/${id}`,
+        DEVICE_SESSIONS_DELETE: (id: string) => `/studio/settings/security/device-sessions/${id}/delete`,
+      },
     },
   },
   BLOG: {

@@ -4,6 +4,7 @@ import { TRPCReactProvider } from "@/core/api/api.client";
 import RazorpayProvider from "@/core/payment/razorpay.provider";
 import { ThemeProvider } from "@/core/theme/theme.provider";
 import { Toaster } from "@/shared/components/ui/sonner";
+import { TooltipProvider } from "@/shared/components/ui/tooltip";
 import { className, viewport } from "@/shared/utils/methods/font";
 
 export { viewport };
@@ -14,7 +15,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body suppressHydrationWarning className={className}>
         <TRPCReactProvider>
           <ThemeProvider>
-            <RazorpayProvider>{children}</RazorpayProvider>
+            <TooltipProvider>
+              <RazorpayProvider>{children}</RazorpayProvider>
+            </TooltipProvider>
             <Toaster />
           </ThemeProvider>
         </TRPCReactProvider>

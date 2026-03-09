@@ -4,12 +4,19 @@ import { ImageUpIcon, XIcon } from "lucide-react";
 import { useEffect, useId, useRef, useState } from "react";
 import { useFormContext } from "react-hook-form";
 import { toast } from "sonner";
-import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/shared/components/ui/form";
+import {
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/shared/components/common/form";
 import { useFileUpload } from "@/shared/utils/hooks/use-file-upload";
 import { PLACEHOLDER_IMAGE } from "@/shared/utils/lib/image.utils";
 import { cn } from "@/shared/utils/lib/utils";
+import { BlurImage } from "../../common/image";
 import { Button } from "../../ui/button";
-import { BlurImage } from "../../ui/image";
 import { Skeleton } from "../../ui/skeleton";
 import type { FormInputProps } from "../form.types";
 

@@ -27,7 +27,7 @@ export default function Section({
   actionLink,
 }: SectionProps) {
   return (
-    <Card className={cn("bg-card/0 gap-0 border-none p-0 shadow-none", className)}>
+    <Card className={cn("bg-card/0 ring-0 gap-0 border-none p-0 shadow-none", className)}>
       {title && description && (
         <div className={variant === "full" ? "w-full" : "max-w-9xl container mx-auto mb-4"}>
           <CardHeader className="px-0">

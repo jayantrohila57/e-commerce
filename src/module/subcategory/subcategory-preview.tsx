@@ -16,10 +16,10 @@ import {
 } from "lucide-react";
 import type { Route } from "next";
 import Link from "next/link";
+import { BlurImage } from "@/shared/components/common/image";
 import { FormSection } from "@/shared/components/form/form.helper";
 import { Button } from "@/shared/components/ui/button";
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/components/ui/card";
-import { BlurImage } from "@/shared/components/ui/image";
 import { Separator } from "@/shared/components/ui/separator";
 import { Table, TableBody, TableCell, TableRow } from "@/shared/components/ui/table";
 import { PATH } from "@/shared/config/routes";

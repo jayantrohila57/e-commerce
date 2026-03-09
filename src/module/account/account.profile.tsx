@@ -7,8 +7,8 @@ import { toast } from "sonner";
 import type z from "zod/v3";
 import { changeEmail, updateUser } from "@/core/auth/auth.client";
 import { AuthSchema } from "@/module/auth/auth-schema";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/shared/components/common/form";
 import { Button } from "@/shared/components/ui/button";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/shared/components/ui/form";
 import { Input } from "@/shared/components/ui/input";
 
 const profileUpdateSchema = AuthSchema.SIGN_UP.INPUT.pick({

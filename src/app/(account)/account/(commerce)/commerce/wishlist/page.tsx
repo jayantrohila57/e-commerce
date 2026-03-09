@@ -11,13 +11,13 @@ export const metadata = {
 
 export default async function WishlistPage() {
   return (
-    <Section className="bg-muted p-4" {...metadata}>
+    <Section   {...metadata}>
       <div className="grid h-full w-full grid-cols-12 gap-4">
         <div className="col-span-2 hidden lg:block h-full w-full">
           <CommerceSidebar />
         </div>
         <div className="col-span-12 lg:col-span-10 grid grid-cols-1 lg:grid-cols-12 gap-6">
-          <div className="lg:col-span-8">
+          <div className="lg:col-span-12">
             <Card className="h-full w-full border-none">
               <CardHeader>
                 <CardTitle>Wishlist</CardTitle>
@@ -27,8 +27,6 @@ export default async function WishlistPage() {
                 <WishlistItemList />
               </CardContent>
             </Card>
-          </div>
-          <div className="lg:col-span-4">
             <WishlistSummary />
           </div>
         </div>

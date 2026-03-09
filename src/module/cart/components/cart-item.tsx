@@ -3,8 +3,8 @@
 import { Loader2, Minus, Plus, Trash2 } from "lucide-react";
 import type { CartItem as CartItemType } from "@/module/cart/cart.schema";
 import { useCart } from "@/module/cart/use-cart";
+import { BlurImage } from "@/shared/components/common/image";
 import { Button } from "@/shared/components/ui/button";
-import { BlurImage } from "@/shared/components/ui/image";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/shared/components/ui/tooltip";
 import { getImageSrc } from "@/shared/utils/lib/image.utils";
 

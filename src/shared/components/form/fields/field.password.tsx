@@ -3,12 +3,19 @@
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { useId, useState } from "react";
 import { useFormContext } from "react-hook-form";
-import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/shared/components/ui/form";
+import {
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/shared/components/common/form";
 import { Input } from "@/shared/components/ui/input";
 import { cn } from "@/shared/utils/lib/utils";
+import { ValidationRequired } from "../../common/validation-required";
 import { Button } from "../../ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../../ui/tooltip";
-import { ValidationRequired } from "../../ui/validation-required";
 import type { FormInputProps } from "../form.types";
 
 export const InputPassword: React.FC<FormInputProps> = (props) => {

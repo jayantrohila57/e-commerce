@@ -34,7 +34,7 @@ export default async function StoreOrderDetailPage({ params }: StoreOrderDetailP
   const order = res.data;
 
   return (
-    <Section className="bg-muted p-4" {...metadata}>
+    <Section   {...metadata}>
       <div className="mx-auto flex max-w-5xl flex-col gap-6">
         <div className="flex flex-col gap-2">
           <h1 className="text-xl font-semibold">Order #{order.id.slice(0, 8)}</h1>

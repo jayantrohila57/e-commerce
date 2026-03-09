@@ -11,20 +11,18 @@ export const metadata = {
 
 export default async function CartPage() {
   return (
-    <Section className="bg-muted p-4" {...metadata}>
+    <Section   {...metadata}>
       <div className="grid h-full w-full grid-cols-12 gap-4">
         <div className="col-span-2 hidden lg:block h-full w-full">
           <CommerceSidebar />
         </div>
         <div className="col-span-12 lg:col-span-10 grid grid-cols-1 lg:grid-cols-12 gap-6">
-          <div className="lg:col-span-8">
+          <div className="lg:col-span-12">
             <Card className="h-full w-full border-none ">
               <CardContent className="p-0 sm:p-6   backdrop-blur-sm">
                 <CartItemList />
               </CardContent>
             </Card>
-          </div>
-          <div className="lg:col-span-4">
             <CartSummary />
           </div>
         </div>

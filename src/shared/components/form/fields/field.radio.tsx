@@ -2,7 +2,7 @@
 
 import { useId } from "react";
 import { Controller, useFormContext } from "react-hook-form";
-import { FormControl, FormDescription, FormItem, FormLabel, FormMessage } from "@/shared/components/ui/form";
+import { FormControl, FormDescription, FormItem, FormLabel, FormMessage } from "@/shared/components/common/form";
 import { Label } from "@/shared/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/shared/components/ui/radio-group";
 import { cn } from "@/shared/utils/lib/utils";
@@ -32,7 +32,14 @@ export const InputRadio: React.FC<FormInputProps> = (props) => {
               {props?.options?.map((option) => (
                 <FormItem key={option.value} className="flex flex-row items-center space-x-3">
                   <FormControl>
-                    <RadioGroupItem label={option.label} value={String(option.value)} />
+                    <RadioGroupItem value={String(option.value)}>
+                      {option.icon && typeof option.icon === "function" && (
+                        <option.icon className={cn("h-4 w-4", option.color)} />
+                      )}
+                      {option.label && (
+                        <Label className="text-xs">{option.label}</Label>
+                      )}
+                    </RadioGroupItem>
                   </FormControl>
                   <Label className="items-center">{option.label}</Label>
                 </FormItem>

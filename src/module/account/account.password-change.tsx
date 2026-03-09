@@ -5,9 +5,9 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import z from "zod/v3";
 import { changePassword } from "@/core/auth/auth.client";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/shared/components/common/form";
 import { Button } from "@/shared/components/ui/button";
 import { Checkbox } from "@/shared/components/ui/checkbox";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/shared/components/ui/form";
 import { Input } from "@/shared/components/ui/input";
 
 const changePasswordSchema = z.object({

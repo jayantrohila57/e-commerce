@@ -1,8 +1,8 @@
 "use client";
 
 import type { CartItem } from "@/module/cart/cart.schema";
+import { BlurImage } from "@/shared/components/common/image";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/card";
-import { BlurImage } from "@/shared/components/ui/image";
 import { Skeleton } from "@/shared/components/ui/skeleton";
 import { getImageSrc } from "@/shared/utils/lib/image.utils";
 

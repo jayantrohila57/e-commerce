@@ -2,8 +2,8 @@
 
 import { useId } from "react";
 import { Controller, useFormContext } from "react-hook-form";
+import { FormControl, FormDescription, FormItem, FormLabel, FormMessage } from "@/shared/components/common/form";
 import { Checkbox } from "@/shared/components/ui/checkbox";
-import { FormControl, FormDescription, FormItem, FormLabel, FormMessage } from "@/shared/components/ui/form";
 import { Label } from "@/shared/components/ui/label";
 import { cn } from "@/shared/utils/lib/utils";
 import type { FormInputProps } from "../form.types";

@@ -1,7 +1,7 @@
 import type { Route } from "next";
 import Link from "next/link";
+import { BlurImage } from "@/shared/components/common/image";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/card";
-import { BlurImage } from "@/shared/components/ui/image";
 import { getImageSrc } from "@/shared/utils/lib/image.utils";
 import type { GetProductsBySeriesSlugOutput } from "./product.types";
 

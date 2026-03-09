@@ -5,8 +5,6 @@ import type { Route } from "next";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "@/shared/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/shared/components/ui/card";
-import { Separator } from "@/shared/components/ui/separator";
 import { PATH } from "@/shared/config/routes";
 
 type NavItem<T extends string = string> = {
@@ -50,7 +48,7 @@ export function CommerceSidebar() {
               <Link href={section.href}>
                 <Button
                   variant={isActive ? "outline" : "ghost"}
-                  className="flex w-full items-center justify-start rounded-sm text-left text-xs"
+                  className="flex w-full items-center justify-start text-left text-xs"
                 >
                   {section.icon}
                   <span className="font-medium">{section.label}</span>

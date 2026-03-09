@@ -2,10 +2,10 @@
 
 import { ShoppingCart } from "lucide-react";
 import { useCart } from "@/module/cart/use-cart";
-import { Button, type ButtonProps } from "@/shared/components/ui/button";
+import { Button } from "@/shared/components/ui/button";
 import { cn } from "@/shared/utils/lib/utils";
 
-interface AddToCartButtonProps extends ButtonProps {
+interface AddToCartButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variantId: string;
   showIcon?: boolean;
 }

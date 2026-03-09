@@ -1,6 +1,6 @@
 import type { Route } from "next";
 import Link from "next/link";
-import { BlurImage } from "@/shared/components/ui/image";
+import { BlurImage } from "@/shared/components/common/image";
 import { Separator } from "@/shared/components/ui/separator";
 import { getImageSrc } from "@/shared/utils/lib/image.utils";
 import { truncateString } from "@/shared/utils/lib/utils";

@@ -4,7 +4,7 @@ import type { LucideIcon } from "lucide-react";
 import type React from "react";
 import { useId } from "react";
 import { Controller, useFormContext } from "react-hook-form";
-import { FormControl, FormDescription, FormItem, FormLabel, FormMessage } from "@/shared/components/ui/form";
+import { FormControl, FormDescription, FormItem, FormLabel, FormMessage } from "@/shared/components/common/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/components/ui/select";
 import { cn } from "@/shared/utils/lib/utils";
 import type { FormInputProps } from "../form.types";

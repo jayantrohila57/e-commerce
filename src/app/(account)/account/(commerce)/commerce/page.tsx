@@ -14,7 +14,7 @@ export default async function AccountPage() {
   const session = await getServerSession();
   if (!session) return redirect(PATH.ROOT);
   return (
-    <Section className="bg-muted p-4" {...metadata}>
+    <Section {...metadata}>
       <div className="grid h-full min-h-[800px] w-full grid-cols-12 gap-4 shadow-none">
         <div className="col-span-2 h-full w-full">
           <CommerceSidebar />

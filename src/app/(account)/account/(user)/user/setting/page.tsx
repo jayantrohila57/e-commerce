@@ -15,7 +15,7 @@ export default async function SettingPage() {
   if (!session) return redirect(PATH.ROOT);
 
   return (
-    <Section className="bg-muted p-4" {...metadata}>
+    <Section   {...metadata}>
       <div className="grid h-full w-full grid-cols-12 gap-4">
         <div className="col-span-2 h-full w-full">
           <AccountSidebar />

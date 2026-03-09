@@ -1,6 +1,7 @@
 import { ChevronRight, GripVertical } from "lucide-react";
 import type { Route } from "next";
 import Link from "next/link";
+import { BlurImage } from "@/shared/components/common/image";
 import { Badge } from "@/shared/components/ui/badge";
 import { Button } from "@/shared/components/ui/button";
 import {
@@ -12,7 +13,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/shared/components/ui/card";
-import { BlurImage } from "@/shared/components/ui/image";
 import { Separator } from "@/shared/components/ui/separator";
 import { getImageSrc } from "@/shared/utils/lib/image.utils";
 import { cn, truncateString } from "@/shared/utils/lib/utils";

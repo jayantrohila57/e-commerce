@@ -2,10 +2,10 @@ import type { Route } from "next";
 import Link from "next/link";
 import { PDPWishlistToggle } from "@/module/product/product-pdp-wishlist-toggle";
 import { AddToCartButton } from "@/shared/components/common/add-to-cart-button";
+import { BlurImage } from "@/shared/components/common/image";
 import { ViewCartButton } from "@/shared/components/common/view-cart-button";
 import { Badge } from "@/shared/components/ui/badge";
 import { Button } from "@/shared/components/ui/button";
-import { BlurImage } from "@/shared/components/ui/image";
 import { getImageSrc } from "@/shared/utils/lib/image.utils";
 import type { GetPDPProductOutput } from "./product.types";
 import { extractAttributeGroups, isOptionAvailable, resolveNextVariant } from "./product-utility";
@@ -123,7 +123,7 @@ export const PDPProduct = ({ data, slug }: { data: GetPDPProductOutput["data"]; 
 
           <div className="flex flex-col gap-3 pt-4">
             <div className="flex gap-4">
-              <AddToCartButton variantId={selectedVariant.id} size="lg" className="flex-1" />
+              <AddToCartButton variantId={selectedVariant.id} />
               <ViewCartButton variantId={selectedVariant.id} className="flex-1" />
               <Button size="lg" variant="outline">
                 Buy Now

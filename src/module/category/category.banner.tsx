@@ -3,6 +3,7 @@
 import Autoplay from "embla-carousel-autoplay";
 import { ChevronRightCircle, Squircle } from "lucide-react";
 import * as React from "react";
+import { BlurImage } from "@/shared/components/common/image";
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/components/ui/card";
 import {
   Carousel,
@@ -12,7 +13,6 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/shared/components/ui/carousel";
-import { BlurImage } from "@/shared/components/ui/image";
 import { getImageSrc } from "@/shared/utils/lib/image.utils";
 import { cn } from "@/shared/utils/lib/utils";
 import type { CategoryBase } from "./category.types";

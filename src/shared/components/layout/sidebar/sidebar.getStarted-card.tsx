@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/sha
 
 export function SidebarGetStartedCard() {
   return (
-    <Card className="block gap-2 py-4 shadow-none data-[state=open]:hidden">
+    <Card className="block gap-2 py-4 overflow-hidden shadow-none data-[state=open]:hidden">
       <CardHeader className="px-4">
         <CardTitle className="text-sm font-medium">Get Started</CardTitle>
         <CardDescription>Kick off your journey. Build faster. Ship smarter.</CardDescription>

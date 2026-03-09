@@ -13,7 +13,7 @@ export default async function AccountPage() {
   const session = await getServerSession();
   if (!session) return redirect(PATH.ROOT);
   return (
-    <Section className="bg-muted p-4" {...metadata}>
+    <Section {...metadata}>
       <AccountRootComponent />
     </Section>
   );

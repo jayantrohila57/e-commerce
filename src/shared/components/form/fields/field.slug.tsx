@@ -3,7 +3,14 @@
 import { LinkIcon } from "lucide-react";
 import { useEffect, useId, useRef } from "react";
 import { useFormContext, useWatch } from "react-hook-form";
-import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/shared/components/ui/form";
+import {
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/shared/components/common/form";
 import { Input } from "@/shared/components/ui/input";
 import { nameToSlug } from "@/shared/utils/lib/url.utils";
 import { cn } from "@/shared/utils/lib/utils";

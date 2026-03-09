@@ -1,9 +1,9 @@
 import type { Route } from "next";
 import Link from "next/link";
 import { apiServer, HydrateClient } from "@/core/api/api.server";
+import { BlurImage } from "@/shared/components/common/image";
 import Section from "@/shared/components/layout/section/section";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/components/ui/card";
-import { BlurImage } from "@/shared/components/ui/image";
 import { PATH } from "@/shared/config/routes";
 import { getImageSrc } from "@/shared/utils/lib/image.utils";
 

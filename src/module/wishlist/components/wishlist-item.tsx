@@ -4,8 +4,8 @@ import { Loader2, ShoppingCart, Trash2 } from "lucide-react";
 import { useCart } from "@/module/cart/use-cart";
 import { useWishlist } from "@/module/wishlist/use-wishlist";
 import type { Wishlist } from "@/module/wishlist/wishlist.schema";
+import { BlurImage } from "@/shared/components/common/image";
 import { Button } from "@/shared/components/ui/button";
-import { BlurImage } from "@/shared/components/ui/image";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/shared/components/ui/tooltip";
 import { getImageSrc } from "@/shared/utils/lib/image.utils";
 

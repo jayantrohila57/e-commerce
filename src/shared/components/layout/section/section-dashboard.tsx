@@ -27,7 +27,9 @@ export default function DashboardSection({ title, description, action, actionUrl
         </CardAction>
       </CardHeader>
       <div className="">
-        <CardContent className="p-0 h-[calc(100vh-9.4rem)] motion-all border-b w-full overflow-auto">{children}</CardContent>
+        <CardContent className="p-0 h-[calc(100vh-9.4rem)] motion-all border-b w-full overflow-auto">
+          {children}
+        </CardContent>
       </div>
     </Card>
   );

@@ -6,6 +6,7 @@ import { DataTable } from "@/shared/components/table/data-table";
 import { filters as tableFilters } from "@/shared/components/table/data-table-filter.config";
 import type { FilterOption } from "@/shared/config/options.config";
 import { displayTypeOptions, visibilityOptions } from "@/shared/config/options.config";
+import { PATH } from "@/shared/config/routes";
 import { useCategoryBulkActions } from "./category.bulk-actions";
 import { useCategoryColumns } from "./category.columns";
 import type { GetCategoriesOutput } from "./category.types";
@@ -52,7 +53,7 @@ export default function CategoryTable({ data }: { data: GetCategoriesOutput }) {
         icons: [Book, PencilIcon, Tag],
         action: {
           label: "Create Category",
-          url: "/studio/products/categories/new",
+          url: PATH.STUDIO.CATEGORIES.NEW,
         },
       }}
     />

@@ -1,5 +1,7 @@
+import type { Route } from "next";
 import { FormSection } from "@/shared/components/form/form.helper";
 import { Separator } from "@/shared/components/ui/separator";
+import { PATH } from "@/shared/config/routes";
 import { CategoryCard } from "./category.component.card";
 import type { CategoryBase } from "./category.types";
 
@@ -28,7 +30,7 @@ const CategorySection = ({ title, description, categories, emptyMessage = "No ca
     <div className="grid grid-cols-1 gap-2">
       {categories?.length > 0 ? (
         categories?.map((cat) => (
-          <CategoryCard href={`/studio/products/categories/${cat.slug}`} key={cat.id} category={cat} />
+          <CategoryCard href={PATH.STUDIO.SUB_CATEGORIES.ROOT(cat.slug) as Route} key={cat.id} category={cat} />
         ))
       ) : (
         <p className="text-muted-foreground px-2 text-sm">{emptyMessage}</p>

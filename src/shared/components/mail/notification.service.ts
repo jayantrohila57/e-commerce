@@ -3,6 +3,7 @@ import "server-only";
 import { eq, or } from "drizzle-orm";
 import { db } from "@/core/db/db";
 import { order, shipment, user as userTable } from "@/core/db/db.schema";
+import { PATH } from "@/shared/config/routes";
 import { siteConfig } from "@/shared/config/site";
 import { debugError } from "@/shared/utils/lib/logger.utils";
 import {
@@ -108,7 +109,7 @@ export async function notifyLowStock(params: {
   try {
     if (params.currentStock > LOW_STOCK_THRESHOLD) return;
     const baseUrl = siteConfig.urls?.base ?? "";
-    const dashboardUrl = baseUrl ? `${baseUrl}/studio/products/inventory` : "#";
+    const dashboardUrl = baseUrl ? `${baseUrl}${PATH.STUDIO.INVENTORY.ROOT}` : "#";
     const adminUsers = await db.query.user.findMany({
       where: or(eq(userTable.role, "admin"), eq(userTable.role, "staff")),
       columns: { email: true },

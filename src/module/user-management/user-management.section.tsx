@@ -65,10 +65,7 @@ export function UserManagementSection({ users, description }: { users: StudioMan
                     <div key={user.id} className="rounded-md border bg-card/40 p-3">
                       <div className="flex flex-wrap items-start justify-between gap-3">
                         <div className="space-y-1">
-                          <Link
-                            href={PATH.STUDIO.CUSTOMERS.VIEW(user.id) as Route}
-                            className="font-medium hover:underline"
-                          >
+                          <Link href={PATH.STUDIO.USERS.VIEW(user.id) as Route} className="font-medium hover:underline">
                             {user.name}
                           </Link>
                           <p className="text-sm text-muted-foreground">{user.email}</p>

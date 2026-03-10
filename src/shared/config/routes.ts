@@ -58,47 +58,47 @@ export const PATH = {
   STUDIO: {
     ROOT: "/studio",
     PRODUCTS: {
-      ROOT: "/studio/products",
-      NEW: "/studio/products/new",
-      VIEW: (slug: string) => `/studio/products/${slug}`,
-      EDIT: (slug: string, id: string) => `/studio/products/${slug}/edit?id=${id}`,
+      ROOT: "/studio/catalog/products",
+      NEW: "/studio/catalog/products/add-new-product",
+      VIEW: (slug: string) => `/studio/catalog/products/${slug}`,
+      EDIT: (slug: string, id: string) => `/studio/catalog/products/${slug}/edit-product?id=${id}`,
       VARIANTS: {
-        NEW: (productId: string, slug: string) => `/studio/products/${slug}/new?id=${productId}`,
-        VIEW: (productSlug: string, variantSlug: string) => `/studio/products/${productSlug}/${variantSlug}`,
+        NEW: (productId: string, slug: string) => `/studio/catalog/products/${slug}/add-new-variant?id=${productId}`,
+        VIEW: (productSlug: string, variantSlug: string) => `/studio/catalog/products/${productSlug}/${variantSlug}`,
         EDIT: (productSlug: string, variantSlug: string, variantId: string) =>
-          `/studio/products/${productSlug}/${variantSlug}/edit?id=${variantId}`,
+          `/studio/catalog/products/${productSlug}/${variantSlug}/edit-variant?id=${variantId}`,
       },
     },
     CATEGORIES: {
-      ROOT: "/studio/products/categories",
-      NEW: "/studio/products/categories/new",
-      EDIT: (slug: string, id: string) => `/studio/products/categories/${slug}/edit?id=${id}`,
+      ROOT: "/studio/catalog/categories",
+      NEW: "/studio/catalog/categories/add-new-category",
+      EDIT: (slug: string, id: string) => `/studio/catalog/categories/${slug}/edit-category?id=${id}`,
     },
     SUB_CATEGORIES: {
-      ROOT: (categorySlug: string) => `/studio/products/categories/${categorySlug}`,
+      ROOT: (categorySlug: string) => `/studio/catalog/categories/${categorySlug}`,
       NEW: (categoryId: string, categorySlug: string) =>
-        `/studio/products/categories/${categorySlug}/new?id=${categoryId}`,
+        `/studio/catalog/categories/${categorySlug}/add-new-subcategory?id=${categoryId}`,
       EDIT: (subcategorySlug: string, categorySlug: string, subcategoryId: string) =>
-        `/studio/products/categories/${categorySlug}/${subcategorySlug}/edit?id=${subcategoryId}`,
+        `/studio/catalog/categories/${categorySlug}/${subcategorySlug}/edit-subcategory?id=${subcategoryId}`,
     },
     SERIES: {
       ROOT: (categorySlug: string, subCategorySlug: string, seriesSlug: string) =>
-        `/studio/products/categories/${categorySlug}/${subCategorySlug}/${seriesSlug}`,
+        `/studio/catalog/categories/${categorySlug}/${subCategorySlug}/${seriesSlug}`,
       NEW: (categorySlug: string, subCategorySlug: string, subCategoryId: string) =>
-        `/studio/products/categories/${categorySlug}/${subCategorySlug}/new?id=${subCategoryId}`,
+        `/studio/catalog/categories/${categorySlug}/${subCategorySlug}/add-new-series?id=${subCategoryId}`,
       EDIT: (categorySlug: string, subCategorySlug: string, seriesSlug: string) =>
-        `/studio/products/categories/${categorySlug}/${subCategorySlug}/${seriesSlug}/edit`,
+        `/studio/catalog/categories/${categorySlug}/${subCategorySlug}/${seriesSlug}/edit`,
     },
     INVENTORY: {
-      ROOT: "/studio/products/inventory",
-      NEW: "/studio/products/inventory/new",
-      SLUG: (id: string) => `/studio/products/inventory/${id}`,
-      EDIT: (id: string) => `/studio/products/inventory/${id}/edit`,
+      ROOT: "/studio/inventory",
+      NEW: "/studio/inventory/new",
+      SLUG: (id: string) => `/studio/inventory/${id}`,
+      EDIT: (id: string) => `/studio/inventory/${id}/edit-inventory`,
     },
     ATTRIBUTES: {
-      ROOT: "/studio/products/attributes",
-      NEW: "/studio/products/attributes/new",
-      EDIT: (slug: string, id: string) => `/studio/products/attributes/${slug}/edit?id=${id}`,
+      ROOT: "/studio/catalog/attributes",
+      NEW: "/studio/catalog/attributes/add-new-attribute",
+      EDIT: (slug: string, id: string) => `/studio/catalog/attributes/${slug}/edit-attribute?id=${id}`,
     },
 
     ORDERS: {
@@ -106,9 +106,9 @@ export const PATH = {
       VIEW: (id: string) => `/studio/orders/${id}`,
     },
 
-    CUSTOMERS: {
-      ROOT: "/studio/customers",
-      VIEW: (id: string) => `/studio/customers/${id}`,
+    USERS: {
+      ROOT: "/studio/users",
+      VIEW: (id: string) => `/studio/users/${id}`,
     },
 
     DISCOUNTS: {
@@ -119,12 +119,13 @@ export const PATH = {
 
     SHIPPING: {
       ROOT: "/studio/shipping",
+      VIEW: (id: string) => `/studio/shipping/${id}`,
       EDIT: (id: string) => `/studio/shipping/${id}/edit`,
     },
 
-    PAYMENTS: {
-      ROOT: "/studio/payments",
-      VIEW: (id: string) => `/studio/payments/${id}`,
+    PAYMENT: {
+      ROOT: "/studio/payment",
+      VIEW: (id: string) => `/studio/payment/${id}`,
     },
 
     MARKETING: {

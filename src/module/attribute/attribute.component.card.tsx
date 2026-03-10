@@ -3,11 +3,12 @@ import type { Route } from "next";
 import Link from "next/link";
 import { Badge } from "@/shared/components/ui/badge";
 import { Separator } from "@/shared/components/ui/separator";
+import { PATH } from "@/shared/config/routes";
 import type { AttributeSelect } from "./attribute.schema";
 
 export function AttributeCard({ attribute, seriesTitle }: { attribute: AttributeSelect; seriesTitle?: string }) {
   return (
-    <Link href={`/studio/products/attributes/${attribute.slug}/edit?id=${attribute.id}` as Route}>
+    <Link href={PATH.STUDIO.ATTRIBUTES.EDIT(attribute.slug, attribute.id) as Route}>
       <div className="bg-secondary hover:bg-secondary/80 motion-all flex w-full items-center justify-between gap-3 rounded-md border p-2 shadow-xs">
         <div className="flex min-w-0 items-center gap-3">
           <div className="bg-muted flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-xs font-semibold">

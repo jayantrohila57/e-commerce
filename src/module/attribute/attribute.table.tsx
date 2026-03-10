@@ -4,6 +4,7 @@ import { Book, PencilIcon, Tag } from "lucide-react";
 import { EmptyState } from "@/shared/components/common/empty-state";
 import { DataTable } from "@/shared/components/table/data-table";
 import { filters as tableFilters } from "@/shared/components/table/data-table-filter.config";
+import { PATH } from "@/shared/config/routes";
 import { useAttributeBulkActions } from "./attribute.bulk-actions";
 import { useAttributeColumns } from "./attribute.columns";
 import type { GetManyAttributesOutput } from "./attribute.types";
@@ -31,7 +32,7 @@ export default function AttributeTable({ data }: { data: GetManyAttributesOutput
         icons: [Book, PencilIcon, Tag],
         action: {
           label: "Create Attribute",
-          url: "/studio/products/attributes/new",
+          url: PATH.STUDIO.ATTRIBUTES.NEW,
         },
       }}
     />

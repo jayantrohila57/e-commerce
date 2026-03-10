@@ -104,7 +104,7 @@ export function Breadcrumbs({ className }: { className?: string }) {
         {breadcrumbs.map((node, index) => (
           <React.Fragment key={index}>
             <BreadcrumbSeparator className="first:hidden">
-              <SlashIcon className="mx-1 -rotate-12"/>
+              <SlashIcon className="mx-1 -rotate-12" />
             </BreadcrumbSeparator>
             <BreadcrumbItem>
               {/* Ellipses dropdown node */}

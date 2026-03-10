@@ -4,6 +4,7 @@ import { Book, PencilIcon, Tag } from "lucide-react";
 import { EmptyState } from "@/shared/components/common/empty-state";
 import { DataTable } from "@/shared/components/table/data-table";
 import { filters as tableFilters } from "@/shared/components/table/data-table-filter.config";
+import { PATH } from "@/shared/config/routes";
 import { useProductBulkActions } from "./product.bulk-actions";
 import { useProductColumns } from "./product.columns";
 import type { GetManyProductsOutput } from "./product.types";
@@ -31,7 +32,7 @@ export default function ProductTable({ data }: { data: GetManyProductsOutput }) 
         icons: [Book, PencilIcon, Tag],
         action: {
           label: "Create Product",
-          url: "/studio/products/new",
+          url: PATH.STUDIO.PRODUCTS.NEW,
         },
       }}
     />

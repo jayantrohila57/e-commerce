@@ -1,4 +1,6 @@
+import type { Route } from "next";
 import { FormSection } from "@/shared/components/form/form.helper";
+import { PATH } from "@/shared/config/routes";
 import type { GetManySeriesOutput } from "./series.types";
 import { SeriesCard } from "./series-card";
 
@@ -25,7 +27,7 @@ export const SeriesSection = ({
         series?.map((srs) => (
           <SeriesCard
             key={srs.id}
-            href={`/studio/products/categories/${categorySlug}/${subcategorySlug}/${srs.slug}`}
+            href={PATH.STUDIO.SERIES.ROOT(categorySlug, subcategorySlug, srs.slug) as Route}
             data={srs}
           />
         ))

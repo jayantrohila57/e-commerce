@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeftIcon} from "lucide-react";
+import { ArrowLeftIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { memo, useCallback } from "react";
 import { Button } from "@/shared/components/ui/button";

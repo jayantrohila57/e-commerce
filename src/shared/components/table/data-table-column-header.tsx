@@ -32,10 +32,7 @@ export function DataTableColumnHeader<TData, TValue>({
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <div className="w-full h-full">
-            <Button
-              variant="secondary"
-              className="data-[state=open]:bg-accent flex w-full flex-row justify-between"
-            >
+            <Button variant="secondary" className="data-[state=open]:bg-accent flex w-full flex-row justify-between">
               <span>{title}</span>
               {column.getIsSorted() === "desc" ? (
                 <ArrowDown />

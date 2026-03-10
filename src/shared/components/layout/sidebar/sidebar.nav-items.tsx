@@ -88,19 +88,19 @@ export const getOrdersItems = (role?: string): NavItem[] => [
     items: [
       { title: "All Orders", url: PATH.STUDIO.ORDERS.ROOT, icon: ShoppingBag },
       { title: "Returns", url: PATH.STUDIO.SHIPPING.ROOT, icon: Truck },
-      { title: "Refunds", url: PATH.STUDIO.PAYMENTS.ROOT, icon: CreditCard },
+      { title: "Refunds", url: PATH.STUDIO.PAYMENT.ROOT, icon: CreditCard },
     ],
   },
 ];
 export const getCustomersItems = (role?: string): NavItem[] => [
   {
     title: "Users",
-    url: PATH.STUDIO.CUSTOMERS.ROOT,
+    url: PATH.STUDIO.USERS.ROOT,
     icon: Users,
     items: [
-      { title: "All Users", url: PATH.STUDIO.CUSTOMERS.ROOT, icon: Users },
-      { title: "Customers", url: PATH.STUDIO.CUSTOMERS.ROOT, icon: Users },
-      { title: "Staff", url: PATH.STUDIO.CUSTOMERS.ROOT, icon: Users },
+      { title: "All Users", url: PATH.STUDIO.USERS.ROOT, icon: Users },
+      { title: "Customers", url: PATH.STUDIO.USERS.ROOT, icon: Users },
+      { title: "Staff", url: PATH.STUDIO.USERS.ROOT, icon: Users },
     ],
   },
 ];
@@ -161,13 +161,13 @@ export const getSettingsItems = (role?: string): NavItem[] => [
 export const getPaymentsItems = (role?: string): NavItem[] => [
   {
     title: "Payments",
-    url: PATH.STUDIO.PAYMENTS.ROOT,
+    url: PATH.STUDIO.PAYMENT.ROOT,
     icon: CreditCard,
     items: [
-      { title: "All Payments", url: PATH.STUDIO.PAYMENTS.ROOT, icon: CreditCard },
-      { title: "Transactions", url: PATH.STUDIO.PAYMENTS.ROOT, icon: CreditCard },
-      { title: "Refunds", url: PATH.STUDIO.PAYMENTS.ROOT, icon: CreditCard },
-      { title: "Payouts", url: PATH.STUDIO.PAYMENTS.ROOT, icon: CreditCard },
+      { title: "All Payments", url: PATH.STUDIO.PAYMENT.ROOT, icon: CreditCard },
+      { title: "Transactions", url: PATH.STUDIO.PAYMENT.ROOT, icon: CreditCard },
+      { title: "Refunds", url: PATH.STUDIO.PAYMENT.ROOT, icon: CreditCard },
+      { title: "Payouts", url: PATH.STUDIO.PAYMENT.ROOT, icon: CreditCard },
     ],
   },
 ];

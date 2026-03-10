@@ -15,7 +15,6 @@ export default function InventoryTable({ data }: { data: GetInventoriesOutput })
   const items = data?.data ?? [];
   const pageCount = data?.meta?.pagination?.totalPages;
   const rowCount = data?.meta?.pagination?.total;
- 
 
   return (
     <DataTable

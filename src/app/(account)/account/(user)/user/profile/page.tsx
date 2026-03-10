@@ -17,7 +17,7 @@ export default async function ProfilePage() {
   if (!session) return redirect(PATH.ROOT);
 
   return (
-    <Section   {...metadata}>
+    <Section {...metadata}>
       <div className="grid h-full min-h-[800px] w-full grid-cols-12 gap-4 shadow-none">
         <div className="col-span-2 h-full w-full">
           <AccountSidebar />

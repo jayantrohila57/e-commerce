@@ -36,9 +36,7 @@ export const InputRadio: React.FC<FormInputProps> = (props) => {
                       {option.icon && typeof option.icon === "function" && (
                         <option.icon className={cn("h-4 w-4", option.color)} />
                       )}
-                      {option.label && (
-                        <Label className="text-xs">{option.label}</Label>
-                      )}
+                      {option.label && <Label className="text-xs">{option.label}</Label>}
                     </RadioGroupItem>
                   </FormControl>
                   <Label className="items-center">{option.label}</Label>

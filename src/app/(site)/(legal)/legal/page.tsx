@@ -10,7 +10,7 @@ export const metadata = {
 export default function Page() {
   return (
     <Shell>
-      <Section   {...metadata}>
+      <Section {...metadata}>
         <div className="grid h-full w-full grid-cols-12 gap-4">
           <div className="col-span-2 h-full w-full">
             <LegalSidebar activeSection={"legal"} />

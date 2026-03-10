@@ -35,18 +35,14 @@ export const InputRadio: React.FC<FormInputProps> = (props) => {
                   <FormControl>
                     <RadioGroupItem
                       value={String(value)}
-                       className={cn(
+                      className={cn(
                         "rounded shadow-none transition-all duration-300",
                         "h-5 w-5 data-[state=checked]:h-5 data-[state=checked]:w-12",
                         color,
                       )}
                     >
-                      {Icon && typeof Icon === "function" && (
-                        <Icon className={cn("h-4 w-4", color)} />
-                      )}
-                      {label && (
-                        <Label className="text-xs">{label}</Label>
-                      )}
+                      {Icon && typeof Icon === "function" && <Icon className={cn("h-4 w-4", color)} />}
+                      {label && <Label className="text-xs">{label}</Label>}
                     </RadioGroupItem>
                   </FormControl>
                 </FormItem>

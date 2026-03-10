@@ -35,7 +35,7 @@ export default async function CheckoutConfirmationPage({ searchParams }: Confirm
   const order = res.data;
 
   return (
-    <Section   title={metadata.title} description={metadata.description}>
+    <Section title={metadata.title} description={metadata.description}>
       <div className="mx-auto flex max-w-5xl flex-col gap-6">
         <div className="space-y-2 text-center">
           <h1 className="text-2xl font-semibold tracking-tight">Thank you for your order!</h1>

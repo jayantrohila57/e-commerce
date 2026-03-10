@@ -10,7 +10,7 @@ export const metadata = {
 
 export default async function AddressEditPage() {
   return (
-    <Section   {...metadata}>
+    <Section {...metadata}>
       <div className="grid h-full w-full grid-cols-12 gap-4">
         <div className="col-span-2 hidden lg:block h-full w-full">
           <CommerceSidebar />

@@ -59,7 +59,7 @@ export function NavMain() {
 
   return sections && sections?.length > 0
     ? sections.map((section, sectionIndex) => (
-        <SidebarGroup key={sectionIndex}>
+        <SidebarGroup key={sectionIndex} className="border-b p-2 min-h-16 px-4">
           <SidebarGroupLabel>{section.title}</SidebarGroupLabel>
           <SidebarMenu key={sectionIndex}>
             {section.section.map((item, itemIndex) => {
@@ -72,7 +72,7 @@ export function NavMain() {
                 return (
                   <SidebarMenuItem key={item.title}>
                     <Link href={item.url as Route}>
-                      <SidebarMenuButton data-active={isItemActive ? "true" : "false"} tooltip={item.title}>
+                      <SidebarMenuButton isActive={isItemActive} tooltip={item.title}>
                         {item.icon && <item.icon className="h-4 w-4" />}
                         <span>{item.title}</span>
                       </SidebarMenuButton>
@@ -93,7 +93,11 @@ export function NavMain() {
                 >
                   <SidebarMenuItem>
                     <CollapsibleTrigger asChild>
-                      <SidebarMenuButton tooltip={item.title} data-active={isItemActive ? "true" : "false"}>
+                      <SidebarMenuButton
+                        isActive={isItemActive}
+                        tooltip={item.title}
+                        data-active={isItemActive ? "true" : "false"}
+                      >
                         {item.icon && <item.icon className="h-4 w-4" />}
                         <span className="truncate">{item.title}</span>
                         <ChevronRight
@@ -107,12 +111,11 @@ export function NavMain() {
                           const isSubItemActive = isActive(subItem.url, true);
                           return (
                             <SidebarMenuSubItem key={subItem.title}>
-                              <SidebarMenuSubButton
-                                data-active={isSubItemActive ? "true" : "false"}
-                                href={subItem.url as Route}
-                              >
-                                {subItem.icon && <subItem.icon className="h-4 w-4" />}
-                                {subItem.title}
+                              <SidebarMenuSubButton asChild isActive={isSubItemActive}>
+                                <Link href={subItem.url as Route}>
+                                  {subItem.icon && <subItem.icon className="h-4 w-4" />}
+                                  {subItem.title}
+                                </Link>
                               </SidebarMenuSubButton>
                             </SidebarMenuSubItem>
                           );

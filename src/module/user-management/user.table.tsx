@@ -20,16 +20,6 @@ export default function UserTable({ data }: { data: StudioManagedUserList }) {
   const page = limit > 0 ? Math.floor(offset / limit) + 1 : 1;
   const totalPages = limit > 0 ? Math.max(1, Math.ceil(total / limit)) : 1;
 
-  if (items.length === 0) {
-    return (
-      <EmptyState
-        title="No Users Found"
-        description="There are no users to manage yet."
-        icons={[Book, PencilIcon, Tag]}
-      />
-    );
-  }
-
   return (
     <DataTable
       data={items}
@@ -39,6 +29,15 @@ export default function UserTable({ data }: { data: StudioManagedUserList }) {
       bulkActions={bulkActions}
       pageCount={totalPages}
       rowCount={total}
+      emptyState={{
+        title: "No Users Found",
+        description: "There are no users to manage yet.",
+        icons: [Book, PencilIcon, Tag],
+        action: {
+          label: "Create Customer",
+          url: "/studio/users/new",
+        },
+      }}
     />
   );
 }

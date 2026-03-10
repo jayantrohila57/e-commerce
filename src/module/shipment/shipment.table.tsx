@@ -16,16 +16,6 @@ export default function ShipmentTable({ data }: { data: GetManyShipmentsOutput }
   const pageCount = data?.meta?.pagination?.totalPages;
   const rowCount = data?.meta?.pagination?.total;
 
-  if (items.length === 0) {
-    return (
-      <EmptyState
-        title="No Shipments Found"
-        description="There are no shipments yet."
-        icons={[Book, PencilIcon, Tag]}
-      />
-    );
-  }
-
   return (
     <DataTable
       data={items}
@@ -35,6 +25,15 @@ export default function ShipmentTable({ data }: { data: GetManyShipmentsOutput }
       bulkActions={bulkActions}
       pageCount={pageCount}
       rowCount={rowCount}
+      emptyState={{
+        title: "No Shipments Found",
+        description: "There are no shipments yet.",
+        icons: [Book, PencilIcon, Tag],
+        action: {
+          label: "Create Shipment",
+          url: "/studio/shipments/new",
+        },
+      }}
     />
   );
 }

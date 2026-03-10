@@ -14,28 +14,20 @@ interface SectionProps<T extends string = string> {
 
 export default function DashboardSection({ title, description, action, actionUrl, children }: SectionProps<Route>) {
   return (
-    <Card className="bg-card motion-all h-full w-full gap-0 rounded-md p-0 shadow-none">
-      {title && description && (
-        <CardHeader className="flex flex-row items-center justify-between p-3">
-          <div className="flex h-full w-full flex-row items-center justify-end gap-2">
-            <div className="h-full w-full">
-              {title && <CardTitle className="text-2xl">{slugToTitle(title)}</CardTitle>}
-              {description && <CardDescription className="">{description}</CardDescription>}
-            </div>
-            <CardAction>
-              {action && (
-                <Button variant={"default"} asChild={actionUrl ? true : false}>
-                  {actionUrl && <Link href={actionUrl}>{action}</Link>}
-                </Button>
-              )}
-            </CardAction>
-          </div>
-        </CardHeader>
-      )}
-      <div className="motion-all p-2 pt-0">
-        <CardContent className="bg-input/30 motion-all h-[calc(100vh-9.4rem)] overflow-auto rounded-md border p-2">
-          {children}
-        </CardContent>
+    <Card className="bg-transparent p-0 gap-0 shadow-none border-0 ring-0 motion-all">
+      <CardHeader className="border-b p-2 px-4 gap-1">
+        <CardTitle className="text-3xl">{slugToTitle(title)}</CardTitle>
+        <CardDescription className="">{description}</CardDescription>
+        <CardAction>
+          {action && (
+            <Button variant={"default"} asChild={actionUrl ? true : false}>
+              {actionUrl && <Link href={actionUrl}>{action}</Link>}
+            </Button>
+          )}
+        </CardAction>
+      </CardHeader>
+      <div className="">
+        <CardContent className="p-0 h-[calc(100vh-9.4rem)] motion-all border-b w-full overflow-auto">{children}</CardContent>
       </div>
     </Card>
   );

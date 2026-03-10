@@ -14,6 +14,7 @@ import {
   useReactTable,
   type VisibilityState,
 } from "@tanstack/react-table";
+import type { LucideIcon } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { type ComponentType, useMemo, useState } from "react";
 import {
@@ -36,6 +37,7 @@ import {
   TableRow,
 } from "@/shared/components/ui/table";
 import { useTableUrlSync } from "@/shared/utils/hooks/use-table-url-sync";
+import { EmptyState } from "../common/empty-state";
 import { Card, CardContent, CardFooter } from "../ui/card";
 import { Separator } from "../ui/separator";
 import type { BulkAction } from "./custom-action/bulk-operations.factory";
@@ -81,6 +83,15 @@ interface DataTableProps<TData, TValue> {
   }[];
   pageCount?: number;
   rowCount?: number;
+  emptyState?: {
+    title: string;
+    description: string;
+    icons?: LucideIcon[];
+    action: {
+      label: string;
+      url: string;
+    };
+  };
 }
 
 export function DataTable<TData, TValue>({
@@ -95,6 +106,7 @@ export function DataTable<TData, TValue>({
   bulkActions,
   pageCount,
   rowCount,
+  emptyState,
 }: DataTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
@@ -206,11 +218,11 @@ export function DataTable<TData, TValue>({
         rowCount: rowCount ?? data.length,
       }}
     >
-      <Card className="p-0 bg-transparent border-none shadow-none">
-        <CardContent className="p-0">
+      <Card className="bg-transparent justify-between h-full p-0 gap-0 shadow-none border-0 ring-0 ">
+        <CardContent className="p-0 border-b">
           <DataTableToolbar />
         </CardContent>
-        <CardContent className="relative overflow-x-hidden p-0">
+        <CardContent className="p-0 relative border-b h-[calc(100vh-17.6rem)] w-full overflow-auto">
           <Table>
             <TableHeader className="sticky top-0 z-10 rounded-md">
               {table?.getHeaderGroups()?.map((headerGroup) => (
@@ -237,7 +249,15 @@ export function DataTable<TData, TValue>({
               ) : (
                 <TableRow>
                   <TableCell colSpan={columns.length} className="h-[60vh] text-center">
-                    No results found
+                    <EmptyState
+                      title="No Categories Found"
+                      description="You don't have any categories yet. Categories help you organize products."
+                      icons={emptyState?.icons}
+                      action={{
+                        label: emptyState?.action?.label ?? "Create",
+                        url: emptyState?.action?.url ?? "/",
+                      }}
+                    />
                   </TableCell>
                 </TableRow>
               )}
@@ -257,7 +277,7 @@ export function DataTable<TData, TValue>({
             </TableFooter>
           </Table>
         </CardContent>
-        <CardFooter className="w-full p-0">
+        <CardFooter className="w-full h-16 p-0">
           <DataTablePagination />
         </CardFooter>
       </Card>

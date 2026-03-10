@@ -3,7 +3,8 @@ import { Oswald as Font } from "next/font/google";
 const font = Font({
   subsets: ["latin"],
   variable: "--font-oswald-sans",
-  weight: ["400"],
+  weight: ["200", "300", "400", "500", "600", "700"],
+  style: ["normal"],
 });
 
 const viewport = {
@@ -15,6 +16,6 @@ const viewport = {
   initialScale: 1,
 };
 
-const className = `${font.variable} antialiased`;
+const className = `${font.variable} font-oswald antialiased`;
 
 export { font, viewport, className };

@@ -27,10 +27,13 @@ export function SidebarHeaderActions() {
 
   if (session) {
     return (
-      <div className="flex flex-row gap-1 sm:gap-2 md:gap-4">
-        <ModeToggle />
-        <UserDropdown user={session?.user} />
-        <SignOutIcon />
+      <div className="flex flex-row">
+        <div className="h-16 w-16 border-x flex items-center justify-center">
+          <ModeToggle />
+        </div>
+        <div className="h-16 w-16 border-r flex items-center justify-center">
+          <UserDropdown user={session?.user} />
+        </div>
       </div>
     );
   }

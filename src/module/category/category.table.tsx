@@ -2,7 +2,6 @@
 
 import { Book, PencilIcon, Tag } from "lucide-react";
 import type { ComponentType } from "react";
-import { EmptyState } from "@/shared/components/common/empty-state";
 import { DataTable } from "@/shared/components/table/data-table";
 import { filters as tableFilters } from "@/shared/components/table/data-table-filter.config";
 import type { FilterOption } from "@/shared/config/options.config";
@@ -35,20 +34,6 @@ export default function CategoryTable({ data }: { data: GetCategoriesOutput }) {
   const pageCount = data?.meta?.pagination?.totalPages;
   const rowCount = data?.meta?.pagination?.total;
 
-  if (items.length === 0) {
-    return (
-      <EmptyState
-        title="No Categories Found"
-        description="You don't have any categories yet. Categories help you organize products."
-        icons={[Book, PencilIcon, Tag]}
-        action={{
-          label: "Create Category",
-          url: "/studio/products/categories/new",
-        }}
-      />
-    );
-  }
-
   return (
     <DataTable
       data={items}
@@ -61,6 +46,15 @@ export default function CategoryTable({ data }: { data: GetCategoriesOutput }) {
       bulkActions={bulkActions}
       pageCount={pageCount}
       rowCount={rowCount}
+      emptyState={{
+        title: "No Categories Found",
+        description: "You don't have any categories yet. Categories help you organize products.",
+        icons: [Book, PencilIcon, Tag],
+        action: {
+          label: "Create Category",
+          url: "/studio/products/categories/new",
+        },
+      }}
     />
   );
 }

@@ -97,7 +97,6 @@ function selectColumn<T>(): ColumnDef<T>[] {
           checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")}
           onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
           aria-label="Select all"
-          className="ml-2.5"
         />
       ),
       cell: ({ row }) => (
@@ -151,7 +150,7 @@ function actionsColumn<T>(config?: {
       id: keys.ACTIONS,
       enableSorting: false,
       enableHiding: false,
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Action" />,
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Action" className="" />,
       cell: ({ row }) => (
         <DataTableRowActions
           row={row}

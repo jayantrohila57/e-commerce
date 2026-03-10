@@ -31,10 +31,9 @@ export function DataTableColumnHeader<TData, TValue>({
     <div className={cn("flex items-center space-x-2", className)}>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <div className="p-1 w-full">
+          <div className="w-full h-full">
             <Button
-              variant="ghost"
-              size="sm"
+              variant="secondary"
               className="data-[state=open]:bg-accent flex w-full flex-row justify-between"
             >
               <span>{title}</span>

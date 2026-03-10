@@ -19,12 +19,6 @@ export default function OrderTable({ data }: { data: AdminOrdersOutput }) {
   const pageCount = data?.meta?.pagination?.totalPages;
   const rowCount = data?.meta?.pagination?.total;
 
-  if (items.length === 0) {
-    return (
-      <EmptyState title="No Orders Found" description="There are no orders yet." icons={[Book, PencilIcon, Tag]} />
-    );
-  }
-
   return (
     <DataTable
       data={items}
@@ -34,6 +28,15 @@ export default function OrderTable({ data }: { data: AdminOrdersOutput }) {
       bulkActions={bulkActions}
       pageCount={pageCount}
       rowCount={rowCount}
+      emptyState={{
+        title: "No Orders Found",
+        description: "There are no orders yet.",
+        icons: [Book, PencilIcon, Tag],
+        action: {
+          label: "Create Order",
+          url: "/studio/orders/new",
+        },
+      }}
     />
   );
 }

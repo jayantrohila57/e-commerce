@@ -1,3 +1,4 @@
+import type { Route } from "next";
 import { forbidden, redirect } from "next/navigation";
 import { apiServer, HydrateClient } from "@/core/api/api.server";
 import { APP_ROLE, normalizeRole } from "@/core/auth/auth.roles";
@@ -37,11 +38,7 @@ export default async function InventoryPage({
     <HydrateClient>
       <Shell>
         <Shell.Section variant="dashboard">
-          <DashboardSection
-            {...metadata}
-            // action="Add Inventory"
-            // actionUrl={PATH.STUDIO.INVENTORY.NEW as Route}
-          >
+          <DashboardSection {...metadata} action="Add Inventory" actionUrl={PATH.STUDIO.INVENTORY.NEW as Route}>
             <InventoryTable data={result} />
           </DashboardSection>
         </Shell.Section>

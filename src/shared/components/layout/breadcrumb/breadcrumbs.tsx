@@ -1,6 +1,6 @@
 "use client";
 
-import { HomeIcon } from "lucide-react";
+import { ArrowRightIcon, HomeIcon, SlashIcon } from "lucide-react";
 import type { Route } from "next";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -103,8 +103,9 @@ export function Breadcrumbs({ className }: { className?: string }) {
         {/* Dynamic nodes */}
         {breadcrumbs.map((node, index) => (
           <React.Fragment key={index}>
-            <BreadcrumbSeparator className="first:hidden">/</BreadcrumbSeparator>
-
+            <BreadcrumbSeparator className="first:hidden">
+              <SlashIcon className="mx-1 -rotate-12"/>
+            </BreadcrumbSeparator>
             <BreadcrumbItem>
               {/* Ellipses dropdown node */}
               {node.label === "..." && (

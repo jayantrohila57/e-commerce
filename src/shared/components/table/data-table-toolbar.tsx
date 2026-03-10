@@ -1,9 +1,10 @@
 "use client";
 
-import { X } from "lucide-react";
+import { Search, X } from "lucide-react";
 
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
+import { InputGroup, InputGroupAddon, InputGroupInput } from "../ui/input-group";
 import { useDataTableContext } from "./data-table-context";
 import { DataTableFacetedFilter } from "./data-table-faceted-filter";
 import { EnhancedDataTableSelectedActions } from "./data-table-selection-action";
@@ -29,85 +30,106 @@ export function DataTableToolbar<TData>() {
     Object.values(filters ?? {}).some((v) => v !== null && v !== undefined);
 
   return (
-    <div className="flex w-full items-center justify-between">
-      <div className="flex flex-1 items-center space-x-2">
+    <div className="flex w-full h-16 items-center justify-between">
+      <div className="flex flex-1 h-full  ">
         {(() => {
           try {
             const column = table.getColumn(displayKey as string);
             return column ? (
-              <Input
-                placeholder={`Filter by ${displayKey.toString()}...`}
-                value={filters?.q ?? (column.getFilterValue() as string) ?? ""}
-                onChange={(event) => {
-                  const val = event.target.value;
-                  column.setFilterValue(val);
-                  setSearch?.(val);
-                }}
-                className="bg-input/30 h-8 w-[150px] lg:w-[250px]"
-              />
+              <div className="flex justify-center items-center px-4 h-full border-r">
+                <InputGroup className="max-w-xl w-full bg-transparent">
+                  <InputGroupInput
+                    value={filters?.q ?? (column.getFilterValue() as string) ?? ""}
+                    onChange={(event) => {
+                      const val = event.target.value;
+                      column.setFilterValue(val);
+                      setSearch?.(val);
+                    }}
+                    placeholder={`Filter by ${displayKey.toString()}...`}
+                  />
+                  <InputGroupAddon>
+                    <Search />
+                  </InputGroupAddon>
+                  <InputGroupAddon align="inline-end"> results</InputGroupAddon>
+                </InputGroup>
+              </div>
             ) : null;
           } catch (e) {
             return null;
           }
         })()}
         {statusOptions && statusOptions.length > 0 && (
-          <DataTableFacetedFilter
-            title="Status"
-            options={statusOptions}
-            value={filters?.status}
-            onSelect={(val) => setFilter?.("status", val)}
-          />
+          <div className="flex justify-center items-center px-4 h-full border-r">
+            <DataTableFacetedFilter
+              title="Status"
+              options={statusOptions}
+              value={filters?.status}
+              onSelect={(val) => setFilter?.("status", val)}
+            />
+          </div>
         )}
         {visibilityOptions && visibilityOptions.length > 0 && (
-          <DataTableFacetedFilter
-            title="Visibility"
-            options={visibilityOptions}
-            value={filters?.visibility}
-            onSelect={(val) => setFilter?.("visibility", val)}
-          />
+          <div className="flex justify-center items-center px-4 h-full border-r">
+            <DataTableFacetedFilter
+              title="Visibility"
+              options={visibilityOptions}
+              value={filters?.visibility}
+              onSelect={(val) => setFilter?.("visibility", val)}
+            />
+          </div>
         )}
         {typeOptions && typeOptions.length > 0 && (
-          <DataTableFacetedFilter
-            title="Display Type"
-            options={typeOptions}
-            value={filters?.displayType}
-            onSelect={(val) => setFilter?.("displayType", val)}
-          />
+          <div className="flex justify-center items-center px-4 h-full border-r">
+            <DataTableFacetedFilter
+              title="Display Type"
+              options={typeOptions}
+              value={filters?.displayType}
+              onSelect={(val) => setFilter?.("displayType", val)}
+            />
+          </div>
         )}
         {featuredOptions && featuredOptions.length > 0 && (
-          <DataTableFacetedFilter
-            title="Featured"
-            options={featuredOptions}
-            value={filters?.isFeatured}
-            onSelect={(val) => setFilter?.("isFeatured", val)}
-          />
+          <div className="flex justify-center items-center px-4 h-full border-r">
+            <DataTableFacetedFilter
+              title="Featured"
+              options={featuredOptions}
+              value={filters?.isFeatured}
+              onSelect={(val) => setFilter?.("isFeatured", val)}
+            />
+          </div>
         )}
         {deletionOptions && deletionOptions.length > 0 && (
-          <DataTableFacetedFilter
-            title="Deleted"
-            options={deletionOptions}
-            value={filters?.deleted}
-            onSelect={(val) => setFilter?.("deleted", val)}
-          />
+          <div className="flex justify-center items-center px-4 h-full border-r">
+            <DataTableFacetedFilter
+              title="Deleted"
+              options={deletionOptions}
+              value={filters?.deleted}
+              onSelect={(val) => setFilter?.("deleted", val)}
+            />
+          </div>
         )}
-
         {isFiltered && (
-          <Button
-            variant="ghost"
-            onClick={() => {
-              table?.resetColumnFilters();
-              clearFilters?.();
-            }}
-            className="h-7 px-2 lg:px-3"
-          >
-            Reset Filters
-            <X className="ml-2 h-4 w-4" />
-          </Button>
+          <div className="flex justify-center px-4 items-center h-full border-r">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => {
+                table?.resetColumnFilters();
+                clearFilters?.();
+              }}
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
         )}
       </div>
-      <div className="flex items-center space-x-2">
-        <EnhancedDataTableSelectedActions />
-        <DataTableViewOptions />
+      <div className="flex items-center h-full">
+        <div className="flex justify-center items-center px-4 h-full border-l">
+          <EnhancedDataTableSelectedActions />
+        </div>
+        <div className="flex justify-center items-center px-4 h-full border-l">
+          <DataTableViewOptions />
+        </div>
       </div>
     </div>
   );

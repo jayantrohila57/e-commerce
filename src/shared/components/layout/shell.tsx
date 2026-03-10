@@ -113,7 +113,7 @@ const SectionVariants = cva("", {
       default: "my-12 container mx-auto px-0 max-w-9xl ",
       full: "w-full",
       flexed: "my-12 flex container mx-auto px-0 max-w-9xl ",
-      dashboard: "flex flex-col gap-0 p-2 bg-background",
+      dashboard: "flex-1 gap-0 bg-background",
       center: "flex min-h-svh flex-col items-center justify-center p-2 md:p-10",
     },
   },

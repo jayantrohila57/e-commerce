@@ -25,7 +25,7 @@ export function UserDropdown({ user }: { user: User }) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="icon">
+        <Button variant="ghost" size="icon">
           <Avatar className="h-full w-full">
             <AvatarImage src={user?.image ?? ""} alt={user?.name ?? ""} />
             <AvatarFallback className="text-primary bg-background border-none">{fallbackName}</AvatarFallback>

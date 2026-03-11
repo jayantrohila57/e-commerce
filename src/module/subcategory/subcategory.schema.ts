@@ -48,6 +48,7 @@ const searchSchema = z.object({
   visibility: visibilityEnum.optional(),
   isFeatured: z.boolean().optional(),
   categorySlug: z.string().optional(),
+  deleted: z.boolean().optional(),
 });
 
 // --- Contract ---

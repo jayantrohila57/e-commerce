@@ -64,7 +64,6 @@ CREATE TABLE "analytics_session" (
 --> statement-breakpoint
 CREATE TABLE "attribute" (
 	"id" text PRIMARY KEY NOT NULL,
-	"series_slug" text NOT NULL,
 	"slug" text NOT NULL,
 	"title" text NOT NULL,
 	"type" text DEFAULT 'text' NOT NULL,
@@ -371,7 +370,6 @@ CREATE TABLE "product" (
 	"slug" text NOT NULL,
 	"category_slug" text NOT NULL,
 	"subcategory_slug" text NOT NULL,
-	"series_slug" text NOT NULL,
 	"tax_class_id" text,
 	"base_price" integer NOT NULL,
 	"base_currency" text DEFAULT 'INR',
@@ -463,27 +461,6 @@ CREATE TABLE "review" (
 	"is_approved" boolean DEFAULT false NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"updated_at" timestamp with time zone DEFAULT now()
-);
---> statement-breakpoint
-CREATE TABLE "series" (
-	"id" text PRIMARY KEY NOT NULL,
-	"subcategory_slug" text NOT NULL,
-	"slug" text NOT NULL,
-	"icon" text,
-	"title" text NOT NULL,
-	"description" text,
-	"meta_title" text,
-	"meta_description" text,
-	"display_type" "display_type" DEFAULT 'grid' NOT NULL,
-	"color" text DEFAULT '#FFFFFF',
-	"visibility" "visibility" DEFAULT 'public' NOT NULL,
-	"display_order" integer DEFAULT 0 NOT NULL,
-	"image" text,
-	"is_featured" boolean DEFAULT false NOT NULL,
-	"created_at" timestamp with time zone DEFAULT now(),
-	"deleted_at" timestamp with time zone,
-	"updated_at" timestamp with time zone DEFAULT now(),
-	CONSTRAINT "series_slug_unique" UNIQUE("slug")
 );
 --> statement-breakpoint
 CREATE TABLE "session" (
@@ -618,7 +595,6 @@ CREATE TABLE "wishlist" (
 ALTER TABLE "account" ADD CONSTRAINT "account_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "address" ADD CONSTRAINT "address_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "analytics_session" ADD CONSTRAINT "analytics_session_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "attribute" ADD CONSTRAINT "attribute_series_slug_series_slug_fk" FOREIGN KEY ("series_slug") REFERENCES "public"."series"("slug") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "audit_log" ADD CONSTRAINT "audit_log_actor_user_id_user_id_fk" FOREIGN KEY ("actor_user_id") REFERENCES "public"."user"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "cart" ADD CONSTRAINT "cart_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "cart_abandonment" ADD CONSTRAINT "cart_abandonment_cart_id_cart_id_fk" FOREIGN KEY ("cart_id") REFERENCES "public"."cart"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
@@ -658,7 +634,6 @@ ALTER TABLE "price_change_event" ADD CONSTRAINT "price_change_event_variant_id_p
 ALTER TABLE "price_change_event" ADD CONSTRAINT "price_change_event_changed_by_user_id_fk" FOREIGN KEY ("changed_by") REFERENCES "public"."user"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "product" ADD CONSTRAINT "product_category_slug_category_slug_fk" FOREIGN KEY ("category_slug") REFERENCES "public"."category"("slug") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "product" ADD CONSTRAINT "product_subcategory_slug_subcategory_slug_fk" FOREIGN KEY ("subcategory_slug") REFERENCES "public"."subcategory"("slug") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "product" ADD CONSTRAINT "product_series_slug_series_slug_fk" FOREIGN KEY ("series_slug") REFERENCES "public"."series"("slug") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "product" ADD CONSTRAINT "product_tax_class_id_tax_class_id_fk" FOREIGN KEY ("tax_class_id") REFERENCES "public"."tax_class"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "product_bundle_item" ADD CONSTRAINT "product_bundle_item_bundle_product_id_product_id_fk" FOREIGN KEY ("bundle_product_id") REFERENCES "public"."product"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "product_bundle_item" ADD CONSTRAINT "product_bundle_item_component_variant_id_product_variant_id_fk" FOREIGN KEY ("component_variant_id") REFERENCES "public"."product_variant"("id") ON DELETE restrict ON UPDATE no action;--> statement-breakpoint
@@ -674,7 +649,6 @@ ALTER TABLE "refund" ADD CONSTRAINT "refund_order_id_order_id_fk" FOREIGN KEY ("
 ALTER TABLE "refund" ADD CONSTRAINT "refund_payment_id_payment_id_fk" FOREIGN KEY ("payment_id") REFERENCES "public"."payment"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "review" ADD CONSTRAINT "review_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "review" ADD CONSTRAINT "review_product_id_product_id_fk" FOREIGN KEY ("product_id") REFERENCES "public"."product"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "series" ADD CONSTRAINT "series_subcategory_slug_subcategory_slug_fk" FOREIGN KEY ("subcategory_slug") REFERENCES "public"."subcategory"("slug") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "session" ADD CONSTRAINT "session_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "shipment" ADD CONSTRAINT "shipment_order_id_order_id_fk" FOREIGN KEY ("order_id") REFERENCES "public"."order"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "subcategory" ADD CONSTRAINT "subcategory_category_slug_category_slug_fk" FOREIGN KEY ("category_slug") REFERENCES "public"."category"("slug") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
@@ -686,7 +660,6 @@ ALTER TABLE "wishlist" ADD CONSTRAINT "wishlist_variant_id_product_variant_id_fk
 CREATE INDEX "analytics_session_user_idx" ON "analytics_session" USING btree ("user_id");--> statement-breakpoint
 CREATE INDEX "analytics_session_anonymous_idx" ON "analytics_session" USING btree ("anonymous_id");--> statement-breakpoint
 CREATE INDEX "analytics_session_started_at_idx" ON "analytics_session" USING btree ("started_at");--> statement-breakpoint
-CREATE INDEX "attribute_series_slug_idx" ON "attribute" USING btree ("series_slug");--> statement-breakpoint
 CREATE INDEX "audit_log_actor_idx" ON "audit_log" USING btree ("actor_user_id");--> statement-breakpoint
 CREATE INDEX "audit_log_entity_idx" ON "audit_log" USING btree ("entity_type","entity_id");--> statement-breakpoint
 CREATE INDEX "audit_log_action_idx" ON "audit_log" USING btree ("action");--> statement-breakpoint
@@ -744,7 +717,6 @@ CREATE INDEX "price_change_event_variant_effective_idx" ON "price_change_event" 
 CREATE INDEX "price_change_event_created_at_idx" ON "price_change_event" USING btree ("created_at");--> statement-breakpoint
 CREATE INDEX "product_category_slug_idx" ON "product" USING btree ("category_slug");--> statement-breakpoint
 CREATE INDEX "product_subcategory_slug_idx" ON "product" USING btree ("subcategory_slug");--> statement-breakpoint
-CREATE INDEX "product_series_slug_idx" ON "product" USING btree ("series_slug");--> statement-breakpoint
 CREATE INDEX "product_tax_class_id_idx" ON "product" USING btree ("tax_class_id");--> statement-breakpoint
 CREATE INDEX "product_status_idx" ON "product" USING btree ("status");--> statement-breakpoint
 CREATE INDEX "product_is_active_idx" ON "product" USING btree ("is_active");--> statement-breakpoint
@@ -769,9 +741,6 @@ CREATE INDEX "refund_status_idx" ON "refund" USING btree ("status");--> statemen
 CREATE INDEX "review_product_idx" ON "review" USING btree ("product_id");--> statement-breakpoint
 CREATE INDEX "review_user_idx" ON "review" USING btree ("user_id");--> statement-breakpoint
 CREATE INDEX "review_rating_idx" ON "review" USING btree ("rating");--> statement-breakpoint
-CREATE INDEX "series_subcategory_slug_idx" ON "series" USING btree ("subcategory_slug");--> statement-breakpoint
-CREATE INDEX "series_visibility_idx" ON "series" USING btree ("visibility");--> statement-breakpoint
-CREATE INDEX "series_is_featured_idx" ON "series" USING btree ("is_featured");--> statement-breakpoint
 CREATE INDEX "shipment_order_id_idx" ON "shipment" USING btree ("order_id");--> statement-breakpoint
 CREATE INDEX "shipment_tracking_idx" ON "shipment" USING btree ("tracking_number");--> statement-breakpoint
 CREATE INDEX "subcategory_category_slug_idx" ON "subcategory" USING btree ("category_slug");--> statement-breakpoint

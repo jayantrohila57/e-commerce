@@ -80,11 +80,10 @@ export const productRouter = createTRPCRouter({
     .query(async ({ input }) => {
       try {
         const { query } = input;
-        const { limit, offset, categorySlug, seriesSlug, isActive, search } = query;
+        const { limit, offset, categorySlug, isActive, search } = query;
 
         const conditions = [isNull(product.deletedAt)];
         if (categorySlug) conditions.push(eq(product.categorySlug, categorySlug));
-        if (seriesSlug) conditions.push(eq(product.seriesSlug, seriesSlug));
         if (isActive !== undefined) conditions.push(eq(product.isActive, isActive));
         if (search) conditions.push(ilike(product.title, `%${search}%`));
 
@@ -128,41 +127,6 @@ export const productRouter = createTRPCRouter({
       } catch (err) {
         debugError("PRODUCT:GET_MANY:ERROR", err);
         return API_RESPONSE(STATUS.ERROR, MESSAGE.PRODUCT.GET_MANY.ERROR, null, err as Error);
-      }
-    }),
-  getProductsBySeriesSlug: publicProcedure
-    .input(productContract.getProductsBySeriesSlug.input)
-    .output(productContract.getProductsBySeriesSlug.output)
-    .query(async ({ input }) => {
-      try {
-        const { slug } = input.params;
-
-        const products = await db.query.product.findMany({
-          where: (p, { eq, and, isNull }) => and(eq(p.seriesSlug, slug), isNull(p.deletedAt), eq(p.isActive, true)),
-          with: {
-            variants: {
-              where: (pv, { isNull }) => isNull(pv.deletedAt),
-              orderBy: (pv, { asc }) => [asc(pv.createdAt)],
-            },
-          },
-          orderBy: (p, { desc }) => [desc(p.createdAt)],
-        });
-
-        if (!products.length) {
-          return API_RESPONSE(STATUS.FAILED, MESSAGE.PRODUCT.GET_BY_SERIES.FAILED, []);
-        }
-
-        const flattened = products.flatMap((p) =>
-          p.variants.map((v) => ({
-            ...p,
-            variant: v,
-          })),
-        );
-
-        return API_RESPONSE(STATUS.SUCCESS, MESSAGE.PRODUCT.GET_BY_SERIES.SUCCESS, flattened);
-      } catch (err) {
-        debugError("PRODUCT:GET_BY_SERIES:ERROR", err);
-        return API_RESPONSE(STATUS.ERROR, MESSAGE.PRODUCT.GET_BY_SERIES.ERROR, null, err as Error);
       }
     }),
   getPDPProductByVariant: publicProcedure
@@ -256,7 +220,6 @@ export const productRouter = createTRPCRouter({
             // new required fields
             categorySlug: body.categorySlug,
             subcategorySlug: body.subcategorySlug,
-            seriesSlug: body.seriesSlug,
 
             basePrice: body.basePrice,
             baseCurrency: body.baseCurrency ?? "INR",

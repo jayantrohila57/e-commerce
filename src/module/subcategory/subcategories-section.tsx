@@ -37,7 +37,7 @@ export const SubCategorySection = ({
     <div className="grid grid-cols-1 gap-2">
       {categories?.length > 0 ? (
         categories?.map((cat) => (
-          <SubCategoryCard href={PATH.STUDIO.SUB_CATEGORIES.ROOT(slug) as Route} key={cat.id} data={cat} />
+          <SubCategoryCard href={PATH.STUDIO.SUB_CATEGORIES.ROOT(slug, cat.slug) as Route} key={cat.id} data={cat} />
         ))
       ) : (
         <p className="text-muted-foreground px-2 text-sm">{emptyMessage}</p>

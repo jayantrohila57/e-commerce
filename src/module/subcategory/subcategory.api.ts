@@ -50,13 +50,8 @@ export const subcategoryRouter = createTRPCRouter({
 
         if (!subcategoryData) return API_RESPONSE(STATUS.FAILED, MESSAGE.SUBCATEGORY.GET_BY_SLUG.FAILED, null);
 
-        const seriesData = await db.query.series.findMany({
-          where: (sr, { eq }) => eq(sr.subcategorySlug, subcategoryData.slug),
-        });
-
         return API_RESPONSE(STATUS.SUCCESS, MESSAGE.SUBCATEGORY.GET_BY_SLUG.SUCCESS, {
           subcategoryData,
-          seriesData,
         });
       } catch (err) {
         return API_RESPONSE(STATUS.ERROR, MESSAGE.SUBCATEGORY.GET_BY_SLUG.ERROR, null, err as Error);

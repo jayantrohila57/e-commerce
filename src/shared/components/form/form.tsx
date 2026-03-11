@@ -29,8 +29,8 @@ export const Form = <T extends z.ZodTypeAny>(props: FormProps<T>) => {
   const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
     defaultValues,
-    mode: "onChange",
-    reValidateMode: "onChange",
+    mode: "all",
+    reValidateMode: "onSubmit",
     criteriaMode: "all",
     shouldFocusError: true,
     progressive: true,
@@ -43,7 +43,7 @@ export const Form = <T extends z.ZodTypeAny>(props: FormProps<T>) => {
     })();
   };
 
-  const watch = form.watch();
+  const watch = useWatch({ control: form.control });
   useEffect(() => {
     debugLog("watch", watch);
   }, [watch]);

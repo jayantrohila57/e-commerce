@@ -1,6 +1,6 @@
 "use client";
 
-import { Separator } from "../../ui/separator";
+import { Badge } from "../../ui/badge";
 import {
   Sidebar,
   SidebarContent,
@@ -30,8 +30,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 <div className="flex aspect-square size-8 items-center justify-center rounded-lg">
                   <SidebarTrigger />
                 </div>
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate text-3xl ">{"Studio"}</span>
+                <div className="flex flex-row items-center text-left text-sm w-full justify-between leading-tight">
+                  <span className="truncate text-3xl">{"Studio"}</span>
+                  <Badge variant="outline" className="text-xs">
+                    Beta
+                  </Badge>
                 </div>
               </div>
             </SidebarMenuButton>
@@ -42,6 +45,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavMain />
       </SidebarContent>
       <SidebarFooter></SidebarFooter>
+      <SidebarRail />
     </Sidebar>
   );
 }

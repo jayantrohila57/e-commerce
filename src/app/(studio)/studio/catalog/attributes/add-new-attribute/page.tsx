@@ -9,7 +9,7 @@ import { PATH } from "@/shared/config/routes";
 
 export const metadata = {
   title: "Add Attribute",
-  description: "Create a new attribute for a series",
+  description: "Create a new attribute for product variants",
 };
 
 export default async function NewAttributePage() {
@@ -17,14 +17,12 @@ export default async function NewAttributePage() {
   if (!session) return redirect(PATH.ROOT);
   if (normalizeRole(user?.role) === APP_ROLE.CUSTOMER) forbidden();
 
-  const { data: series } = await apiServer.series.getMany({ query: { limit: 100, offset: 0 } });
-
   return (
     <HydrateClient>
       <Shell>
         <Shell.Section variant="dashboard">
           <DashboardSection {...metadata}>
-            <AttributeForm series={series ?? []} />
+            <AttributeForm />
           </DashboardSection>
         </Shell.Section>
       </Shell>

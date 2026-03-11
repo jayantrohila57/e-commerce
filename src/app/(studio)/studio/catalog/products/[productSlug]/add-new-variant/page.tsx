@@ -32,9 +32,9 @@ export default async function NewVariantPage({
 
   if (!product) notFound();
 
-  const { data: seriesAttributes } = await apiServer.attribute.getMany({
+  // Fetch all available attributes (no longer scoped to series)
+  const { data: defaultAttributes } = await apiServer.attribute.getMany({
     query: {
-      seriesSlug: product.seriesSlug,
       limit: 100,
       offset: 0,
     },
@@ -45,7 +45,7 @@ export default async function NewVariantPage({
       <Shell>
         <Shell.Section variant="dashboard">
           <DashboardSection title="Create New Variant" description="Add a new variant to organize your products">
-            <VariantForm productSlug={slug} productId={id as string} seriesAttributes={seriesAttributes ?? []} />
+            <VariantForm productSlug={slug} productId={id as string} defaultAttributes={defaultAttributes ?? []} />
           </DashboardSection>
         </Shell.Section>
       </Shell>

@@ -1,26 +1,14 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { apiClient } from "@/core/api/api.client";
 import { FormSection } from "@/shared/components/form/form.helper";
 import { Input } from "@/shared/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/components/ui/select";
 import { cn } from "@/shared/utils/lib/utils";
 import AttributeCard from "./attribute.component.card";
 import type { AttributeSelect } from "./attribute.schema";
 
-type SeriesLike = { slug: string; title: string };
-
-const ALL = "__all__";
-
-export default function AttributesSection({
-  initialAttributes,
-  initialSeries,
-}: {
-  initialAttributes: AttributeSelect[];
-  initialSeries: SeriesLike[];
-}) {
-  const [seriesSlug, setSeriesSlug] = useState<string>(ALL);
+export default function AttributesSection({ initialAttributes }: { initialAttributes: AttributeSelect[] }) {
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
 
@@ -29,25 +17,15 @@ export default function AttributesSection({
     return () => clearTimeout(t);
   }, [search]);
 
-  const seriesBySlug = useMemo(() => {
-    const map = new Map<string, string>();
-    for (const s of initialSeries ?? []) map.set(s.slug, s.title);
-    return map;
-  }, [initialSeries]);
+  const queryInput = {
+    query: {
+      limit: 100,
+      offset: 0,
+      ...(debouncedSearch ? { search: debouncedSearch } : {}),
+    },
+  };
 
-  const queryInput = useMemo(
-    () => ({
-      query: {
-        limit: 100,
-        offset: 0,
-        ...(seriesSlug !== ALL ? { seriesSlug } : {}),
-        ...(debouncedSearch ? { search: debouncedSearch } : {}),
-      },
-    }),
-    [seriesSlug, debouncedSearch],
-  );
-
-  const isDefaultKey = seriesSlug === ALL && !debouncedSearch;
+  const isDefaultKey = !debouncedSearch;
 
   const { data, isFetching } = apiClient.attribute.getMany.useQuery(queryInput, {
     ...(isDefaultKey
@@ -77,19 +55,6 @@ export default function AttributesSection({
               placeholder="Search by title, slug, or value…"
               className="sm:max-w-md"
             />
-            <Select value={seriesSlug} onValueChange={setSeriesSlug}>
-              <SelectTrigger className="sm:w-[280px]">
-                <SelectValue placeholder="Filter by series" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value={ALL}>All series</SelectItem>
-                {(initialSeries ?? []).map((s) => (
-                  <SelectItem key={s.slug} value={s.slug}>
-                    {s.title}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
           </div>
           <div className={cn("text-muted-foreground text-xs", isFetching && "animate-pulse")}>
             {isFetching ? "Refreshing…" : "Up to date"}
@@ -98,9 +63,7 @@ export default function AttributesSection({
 
         <div className="grid grid-cols-1 gap-2">
           {attributes.length ? (
-            attributes.map((a) => (
-              <AttributeCard key={a.id} attribute={a} seriesTitle={seriesBySlug.get(a.seriesSlug)} />
-            ))
+            attributes.map((a) => <AttributeCard key={a.id} attribute={a} />)
           ) : (
             <p className="text-muted-foreground px-2 text-sm">
               No attributes found. Try adjusting filters or create a new attribute.

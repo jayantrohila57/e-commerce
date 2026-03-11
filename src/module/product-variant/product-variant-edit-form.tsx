@@ -42,16 +42,16 @@ function parseSelectOptions(raw: string) {
 }
 
 function buildMergedAttributes(
-  seriesAttributes: { title: string; type: string; value: string }[],
+  defaultAttributes: { title: string; type: string; value: string }[],
   existing: { title: string; type: string; value: string }[] | null | undefined,
 ) {
   const existingMap = new Map((existing ?? []).map((a) => [a.title, a]));
-  const merged = seriesAttributes.map((def) => {
+  const merged = defaultAttributes.map((def) => {
     const match = existingMap.get(def.title);
     return match ? { ...def, value: match.value } : def;
   });
-  const seriesTitles = new Set(seriesAttributes.map((a) => a.title));
-  const extras = (existing ?? []).filter((a) => !seriesTitles.has(a.title));
+  const defaultTitles = new Set(defaultAttributes.map((a) => a.title));
+  const extras = (existing ?? []).filter((a) => !defaultTitles.has(a.title));
   return [...merged, ...extras];
 }
 
@@ -59,20 +59,20 @@ export default function VariantEditForm({
   productSlug,
   variantSlug,
   variant,
-  seriesAttributes,
+  defaultAttributes,
 }: {
   productSlug: string;
   variantSlug: string;
   variant: VariantLike;
-  seriesAttributes: { title: string; type: string; value: string }[];
+  defaultAttributes: { title: string; type: string; value: string }[];
 }) {
   const router = useRouter();
   const [toastId, setToastId] = useState<string | number>("");
   const [isLoading, setIsLoading] = useState(false);
 
   const mergedAttributes = useMemo(
-    () => buildMergedAttributes(seriesAttributes, variant.attributes),
-    [seriesAttributes, variant.attributes],
+    () => buildMergedAttributes(defaultAttributes, variant.attributes),
+    [defaultAttributes, variant.attributes],
   );
 
   const updateVariant = apiClient.productVariant.update.useMutation({
@@ -228,8 +228,8 @@ export default function VariantEditForm({
         <Separator className="my-4" />
 
         <FormSection
-          title={`Attributes (${seriesAttributes.length})`}
-          description="These fields are pulled dynamically from Attribute Management for this product’s series."
+          title={`Attributes (${defaultAttributes.length})`}
+          description="Configure variant-specific attributes."
         >
           {mergedAttributes.length ? (
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -282,7 +282,7 @@ export default function VariantEditForm({
             </div>
           ) : (
             <p className="text-muted-foreground px-2 text-sm">
-              No attributes found for this series. Create them in Studio → Products → Attributes.
+              No default attributes configured. Add attributes in Studio → Catalog → Attributes.
             </p>
           )}
         </FormSection>

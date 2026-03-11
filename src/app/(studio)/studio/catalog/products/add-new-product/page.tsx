@@ -22,7 +22,7 @@ export default async function Home() {
     <HydrateClient>
       <Shell>
         <Shell.Section variant="dashboard">
-          <DashboardSection {...metadata} action="Add Product" actionUrl={PATH.STUDIO.PRODUCTS.NEW as Route}>
+          <DashboardSection {...metadata}>
             <ProductForm />
           </DashboardSection>
         </Shell.Section>

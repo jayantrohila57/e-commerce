@@ -20,10 +20,7 @@ export default async function EditAttributePage({
 
   if (!id) notFound();
 
-  const [{ data: attr }, { data: series }] = await Promise.all([
-    apiServer.attribute.get({ params: { id: String(id) } }),
-    apiServer.series.getMany({ query: { limit: 100, offset: 0 } }),
-  ]);
+  const { data: attr } = await apiServer.attribute.get({ params: { id: String(id) } });
 
   if (!attr) notFound();
 
@@ -32,7 +29,7 @@ export default async function EditAttributePage({
       <Shell>
         <Shell.Section variant="dashboard">
           <DashboardSection {...metadata}>
-            <AttributeEditForm attribute={attr} series={series ?? []} />
+            <AttributeEditForm attribute={attr} />
           </DashboardSection>
         </Shell.Section>
       </Shell>

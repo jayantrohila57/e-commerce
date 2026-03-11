@@ -13,7 +13,7 @@ type FormSectionProps = {
 export function FormSection({ title, description, children, className, required }: FormSectionProps) {
   const id = title.toLowerCase().replace(/\s+/g, "-");
   return (
-    <div className={cn("grid p-1 md:grid-cols-[25rem_1fr]", className)} role="group" aria-labelledby={id}>
+    <div className={cn("flex flex-col gap-4 p-4", className)} role="group" aria-labelledby={id}>
       <div className="">
         <h2 id={id} className="leading-6 font-medium">
           {title}

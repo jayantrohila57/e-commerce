@@ -30,7 +30,7 @@ const CategorySection = ({ title, description, categories, emptyMessage = "No ca
     <div className="grid grid-cols-1 gap-2">
       {categories?.length > 0 ? (
         categories?.map((cat) => (
-          <CategoryCard href={PATH.STUDIO.SUB_CATEGORIES.ROOT(cat.slug) as Route} key={cat.id} category={cat} />
+          <CategoryCard href={PATH.STUDIO.CATEGORIES.EDIT(cat.slug, cat.id) as Route} key={cat.id} category={cat} />
         ))
       ) : (
         <p className="text-muted-foreground px-2 text-sm">{emptyMessage}</p>

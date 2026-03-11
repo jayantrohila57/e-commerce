@@ -10,7 +10,6 @@ import { paymentRouter } from "@/module/payment/payment.api";
 import { productRouter } from "@/module/product/product.api";
 import { productVariantRouter } from "@/module/product-variant/product-variant.api";
 import { reviewRouter } from "@/module/review/review.api";
-import { seriesRouter } from "@/module/series/series.api";
 import { shipmentRouter } from "@/module/shipment/shipment.api";
 import { subcategoryRouter } from "@/module/subcategory/subcategory.api";
 import { wishlistRouter } from "@/module/wishlist/wishlist.api";
@@ -21,7 +20,6 @@ export const appRouter = createTRPCRouter({
   cart: cartRouter,
   category: categoryRouter,
   subcategory: subcategoryRouter,
-  series: seriesRouter,
   product: productRouter,
   productVariant: productVariantRouter,
   review: reviewRouter,

@@ -106,7 +106,7 @@ export const PDPProduct = ({ data, slug }: { data: GetPDPProductOutput["data"]; 
                       <Link
                         key={value}
                         href={
-                          `/store/${product?.categorySlug}/${product?.subcategorySlug}/${product?.seriesSlug}/${nextVariant.slug}` as Route
+                          `/store/${product?.categorySlug}/${product?.subcategorySlug}/${product?.slug}/${nextVariant.slug}` as Route
                         }
                         prefetch={false}
                       >

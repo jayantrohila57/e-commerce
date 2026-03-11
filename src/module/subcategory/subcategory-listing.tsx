@@ -13,35 +13,8 @@ export const SubCategoryItem = ({ data }: { data: GetSubcategoryBySlugOutput["da
         <h2 className="text-4xl capitalize">{data?.subcategoryData?.title}</h2>
       </div>
       <Separator className="my-6" />
-      <div className="grid-rows-auto mx-auto grid h-full w-full max-w-4xl grid-cols-4 gap-4 rounded-md">
-        {data?.seriesData?.map((series) => (
-          <div key={series?.id} className="group col-span-1">
-            <Link
-              href={
-                `/store/${data?.subcategoryData?.categorySlug}/${data?.subcategoryData?.slug}/${series?.slug}` as Route
-              }
-            >
-              <Card className="border-none bg-transparent shadow-none">
-                <CardContent className="flex w-full items-center justify-center">
-                  <BlurImage
-                    src={getImageSrc(series?.image)}
-                    alt={series?.title ?? "Series"}
-                    width={500}
-                    height={500}
-                    className="motion-all bg-secondary aspect-square h-auto w-full rounded-full border object-cover group-hover:drop-shadow"
-                  />
-                </CardContent>
-                <CardHeader className="text-center">
-                  <CardTitle className="motion-all text-md text-center capitalize group-hover:text-blue-500">
-                    {series?.title}
-                  </CardTitle>
-                  <CardDescription className="motion-all text-center capitalize">{series?.description}</CardDescription>
-                </CardHeader>
-              </Card>
-            </Link>
-          </div>
-        ))}
-      </div>
+      {/* TODO: Replace with product listing - products now directly belong to subcategories */}
+      <p className="text-muted-foreground text-sm">Product listing will be implemented here.</p>
     </div>
   );
 };

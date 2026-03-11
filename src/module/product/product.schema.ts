@@ -14,7 +14,7 @@ export const baseProductSchema = z.object({
   // RELATIONS
   categorySlug: z.string().min(1),
   subcategorySlug: z.string().min(1),
-  seriesSlug: z.string().min(1),
+  taxClassId: z.string().nullable().optional(),
 
   // PRICING (currency field stores string; coerce for API/DB)
   basePrice: z.coerce.number().min(0),
@@ -89,7 +89,6 @@ export const productContract = {
       query: offsetPaginationSchema
         .extend({
           categorySlug: z.string().optional(),
-          seriesSlug: z.string().optional(),
           isActive: z.boolean().optional(),
         })
         .extend({
@@ -112,20 +111,6 @@ export const productContract = {
           }),
         })
         .nullable(),
-    ),
-  },
-  getProductsBySeriesSlug: {
-    input: z.object({
-      params: z.object({
-        slug: z.string().min(1),
-      }),
-    }),
-    output: detailedResponse(
-      z.array(
-        productSelectSchema.extend({
-          variant: productVariantBaseSchema,
-        }),
-      ),
     ),
   },
   getProductWithProductVariants: {

@@ -33,7 +33,6 @@ export function SubCategorySelect() {
   useEffect(() => {
     if (form && form.getValues("body.subcategorySlug")) {
       form.setValue("body.subcategorySlug", "");
-      form.setValue("body.seriesSlug", "");
     }
   }, [value]);
 

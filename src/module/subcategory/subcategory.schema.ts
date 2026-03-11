@@ -1,6 +1,5 @@
 import { z } from "zod/v3";
 import { detailedResponse, offsetPaginationSchema, visibilityEnum } from "@/shared/schema";
-// Note: seriesSelectSchema import has been removed to avoid circular dependency
 
 export const displayTypeEnum = z.enum(["grid", "carousel", "banner", "list", "featured"]);
 
@@ -70,7 +69,6 @@ export const subcategoryContract = {
       z
         .object({
           subcategoryData: subcategorySelectSchema,
-          seriesData: z.array(z.any()), // Using z.any() to avoid circular dependency
         })
         .nullable(),
     ),

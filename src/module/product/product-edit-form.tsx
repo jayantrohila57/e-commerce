@@ -19,7 +19,6 @@ import { PATH } from "@/shared/config/routes";
 import { productContract } from "./product.schema";
 import type { ProductUpdate } from "./product.types";
 import { CategorySelect } from "./product-form.category";
-import { SeriesSelect } from "./product-form.series";
 import { SubCategorySelect } from "./product-form.subcategory";
 
 const formSchema = productContract.update.input;
@@ -66,7 +65,6 @@ export default function ProductEditForm({ product }: { product: ProductUpdate | 
         description: data.body.description || undefined,
         metaTitle: data.body.title || undefined,
         metaDescription: data.body.description || undefined,
-        seriesSlug: data.body.seriesSlug,
         isActive: data.body.isActive,
         basePrice: data.body.basePrice,
         baseCurrency: data.body.baseCurrency,
@@ -91,7 +89,6 @@ export default function ProductEditForm({ product }: { product: ProductUpdate | 
           description: product?.description ?? "",
           metaTitle: product?.metaTitle ?? "",
           metaDescription: product?.metaDescription ?? "",
-          seriesSlug: product?.seriesSlug ?? "",
           categorySlug: product?.categorySlug ?? "",
           subcategorySlug: product?.subcategorySlug ?? "",
           isActive: product?.isActive ?? true,
@@ -153,14 +150,10 @@ export default function ProductEditForm({ product }: { product: ProductUpdate | 
 
         <Separator className="my-4" />
 
-        <FormSection
-          title="Product Category, Subcategory and Series"
-          description="Select how this product is organised"
-        >
+        <FormSection title="Product Category and Subcategory" description="Select how this product is organised">
           <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
             <CategorySelect />
             <SubCategorySelect />
-            <SeriesSelect />
           </div>
         </FormSection>
 

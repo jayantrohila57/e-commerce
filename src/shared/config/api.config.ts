@@ -346,11 +346,6 @@ export const MESSAGE = {
       FAILED: "Product not found.",
       ERROR: "Unexpected error while retrieving product.",
     },
-    GET_BY_SERIES: {
-      SUCCESS: "Products fetched for series successfully",
-      FAILED: "No products found for this series",
-      ERROR: "Unable to fetch products for series",
-    },
     GET_WITH_DETAILS: {
       SUCCESS: "Product with details retrieved successfully.",
       FAILED: "Product not found.",
@@ -418,28 +413,6 @@ export const MESSAGE = {
       SUCCESS: "Product variant deleted successfully.",
       FAILED: "Failed to delete product variant.",
       ERROR: "Unexpected error while deleting product variant.",
-    },
-  },
-  SERIES: {
-    GET_MANY: {
-      SUCCESS: "Series retrieved successfully.",
-      FAILED: "No series found.",
-      ERROR: "Unexpected error while retrieving series.",
-    },
-    CREATE: {
-      SUCCESS: "Series created successfully.",
-      FAILED: "Failed to create series.",
-      ERROR: "Unexpected error while creating series.",
-    },
-    UPDATE: {
-      SUCCESS: "Series updated successfully.",
-      FAILED: "Failed to update series.",
-      ERROR: "Unexpected error while updating series.",
-    },
-    DELETE: {
-      SUCCESS: "Series deleted successfully.",
-      FAILED: "Failed to delete series.",
-      ERROR: "Unexpected error while deleting series.",
     },
   },
   REVIEW: {

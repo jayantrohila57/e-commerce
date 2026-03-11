@@ -127,7 +127,6 @@ export function NavMain() {
               );
             })}
           </SidebarMenu>
-          {sectionIndex !== sections.length - 1 && <Separator className="mt-1" />}
         </SidebarGroup>
       ))
     : null;

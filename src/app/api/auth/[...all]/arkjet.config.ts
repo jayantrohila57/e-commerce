@@ -53,6 +53,10 @@ async function safeJson(request: Request) {
 }
 
 export async function checkArcjet(request: Request) {
+  if (serverEnv.NODE_ENV === "development") {
+    return { isAllowed: () => true, isDenied: () => false, reason: null };
+  }
+
   const url = new URL(request.url);
   const path = url.pathname;
   const body = await safeJson(request);

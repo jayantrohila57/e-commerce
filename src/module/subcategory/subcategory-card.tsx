@@ -25,7 +25,7 @@ export function SubCategoryCard({ data, href, className }: SubCategoryCardProps)
         height={500}
         className="motion-all bg-secondary aspect-square h-auto w-12 rounded-full border object-cover group-hover:drop-shadow"
       />
-      <Separator orientation="vertical" className="mx-2 data-[orientation=vertical]:h-10" />
+      <Separator orientation="vertical" className="mx-2 data-vertical:h-10" />
       <div className="flex h-full flex-col">
         <h3 className="text-base font-semibold capitalize">{data.title}</h3>
         <p className="text-muted-foreground text-xs">{truncateString(data.description, 80)}</p>

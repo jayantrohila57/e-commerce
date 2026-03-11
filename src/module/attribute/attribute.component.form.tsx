@@ -17,8 +17,6 @@ import { attributeContract } from "./attribute.schema";
 const formSchema = attributeContract.create.input;
 type FormValues = z.infer<typeof formSchema>;
 
-type SeriesLike = { slug: string; title: string };
-
 const attributeTypeOptions = [
   { label: "Text", value: "text" },
   { label: "Number", value: "number" },
@@ -27,19 +25,10 @@ const attributeTypeOptions = [
   { label: "Select", value: "select" },
 ] as const;
 
-export default function AttributeForm({ series }: { series: SeriesLike[] }) {
+export default function AttributeForm() {
   const router = useRouter();
   const [toastId, setToastId] = useState<string | number>("");
   const [isLoading, setIsLoading] = useState(false);
-
-  const seriesOptions = useMemo(
-    () =>
-      (series ?? []).map((s) => ({
-        label: s.title,
-        value: s.slug,
-      })),
-    [series],
-  );
 
   const createAttribute = apiClient.attribute.create.useMutation({
     onSuccess: async ({ status, message }) => {
@@ -68,7 +57,6 @@ export default function AttributeForm({ series }: { series: SeriesLike[] }) {
 
     createAttribute.mutate({
       body: {
-        seriesSlug: values.body.seriesSlug,
         title: values.body.title,
         slug: values.body.slug,
         type: values.body.type,
@@ -82,7 +70,6 @@ export default function AttributeForm({ series }: { series: SeriesLike[] }) {
     <Form
       defaultValues={{
         body: {
-          seriesSlug: seriesOptions?.[0]?.value ?? "",
           slug: "",
           title: "",
           type: "text",
@@ -96,15 +83,6 @@ export default function AttributeForm({ series }: { series: SeriesLike[] }) {
     >
       <div className="col-span-4 h-full w-full space-y-6">
         <FormSection title="Attribute Details" description="Attributes are reusable key/value metadata for variants.">
-          <Form.Field
-            name="body.seriesSlug"
-            label="Series"
-            type="select"
-            required
-            options={seriesOptions}
-            description="Attributes are scoped to a series"
-            helperText="Pick the series this attribute belongs to"
-          />
           <Form.Field name="body.title" label="Title" type="text" required placeholder="e.g. Material" />
           <Form.Field
             name="body.slug"

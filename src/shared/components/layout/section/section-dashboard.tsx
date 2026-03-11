@@ -15,7 +15,7 @@ interface SectionProps<T extends string = string> {
 export default function DashboardSection({ title, description, action, actionUrl, children }: SectionProps<Route>) {
   return (
     <Card className="bg-transparent p-0 gap-0 shadow-none border-0 ring-0 motion-all">
-      <CardHeader className="border-b p-2 px-4 gap-1">
+      <CardHeader className="border-b p-2 px-4 gap-0">
         <CardTitle className="text-3xl">{slugToTitle(title)}</CardTitle>
         <CardDescription className="">{description}</CardDescription>
         <CardAction>

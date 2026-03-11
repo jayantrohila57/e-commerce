@@ -47,9 +47,9 @@ export default async function EditVariantPage({
 
   if (!product) notFound();
 
-  const { data: seriesAttributes } = await apiServer.attribute.getMany({
+  // Fetch all available attributes (no longer scoped to series)
+  const { data: defaultAttributes } = await apiServer.attribute.getMany({
     query: {
-      seriesSlug: product.seriesSlug,
       limit: 100,
       offset: 0,
     },
@@ -64,7 +64,7 @@ export default async function EditVariantPage({
               productSlug={productSlug}
               variantSlug={variantSlug}
               variant={variant}
-              seriesAttributes={seriesAttributes ?? []}
+              defaultAttributes={defaultAttributes ?? []}
             />
           </DashboardSection>
         </Shell.Section>

@@ -250,8 +250,10 @@ export function DataTable<TData, TValue>({
                 <TableRow>
                   <TableCell colSpan={columns.length} className="h-[60vh] text-center">
                     <EmptyState
-                      title="No Categories Found"
-                      description="You don't have any categories yet. Categories help you organize products."
+                      title={emptyState?.title ?? "No Data Found"}
+                      description={
+                        emptyState?.description ?? "You don't have any data yet. Data helps you organize your data."
+                      }
                       icons={emptyState?.icons}
                       action={{
                         label: emptyState?.action?.label ?? "Create",

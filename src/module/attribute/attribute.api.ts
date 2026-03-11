@@ -49,14 +49,14 @@ export const attributeRouter = createTRPCRouter({
     }),
 
   /**
-   * Get all attributes, optionally filtered by series
+   * Get all attributes, optionally filtered by search
    */
   getMany: publicProcedure
     .input(attributeContract.getMany.input)
     .output(attributeContract.getMany.output)
     .query(async ({ input }) => {
       try {
-        const { seriesSlug, search, limit = 20, offset = 0 } = input.query || {};
+        const { search, limit = 20, offset = 0 } = input.query || {};
         const q = search?.trim();
 
         const pageInput = {
@@ -72,7 +72,6 @@ export const attributeRouter = createTRPCRouter({
 
         const baseConditions = [
           isNull(attribute.deletedAt),
-          seriesSlug ? eq(attribute.seriesSlug, seriesSlug) : undefined,
           q
             ? or(ilike(attribute.title, `%${q}%`), ilike(attribute.slug, `%${q}%`), ilike(attribute.value, `%${q}%`))
             : undefined,
@@ -86,9 +85,8 @@ export const attributeRouter = createTRPCRouter({
 
         const data = await db.query.attribute.findMany({
           where: (a, helpers) => {
-            const { and, eq, isNull, or } = helpers;
+            const { and, isNull, or } = helpers;
             const conditions = [isNull(a.deletedAt)];
-            if (seriesSlug) conditions.push(eq(a.seriesSlug, seriesSlug));
             if (q) {
               conditions.push(or(ilike(a.title, `%${q}%`), ilike(a.slug, `%${q}%`), ilike(a.value, `%${q}%`))!);
             }
@@ -117,31 +115,6 @@ export const attributeRouter = createTRPCRouter({
     }),
 
   /**
-   * Get attributes by series (param-based)
-   */
-  getBySeries: publicProcedure
-    .input(attributeContract.getBySeries.input)
-    .output(attributeContract.getBySeries.output)
-    .query(async ({ input }) => {
-      try {
-        const { limit = 20, offset = 0 } = input.query || {};
-        const { seriesSlug } = input.params;
-
-        const data = await db.query.attribute.findMany({
-          where: (a, { and, eq, isNull }) => and(eq(a.seriesSlug, seriesSlug), isNull(a.deletedAt)),
-          orderBy: (a, { asc }) => [asc(a.displayOrder)],
-          limit,
-          offset,
-        });
-
-        return API_RESPONSE(STATUS.SUCCESS, "Attributes retrieved", data);
-      } catch (err) {
-        debugError("ATTRIBUTE:GET_BY_SERIES:ERROR", err);
-        return API_RESPONSE(STATUS.ERROR, "Error retrieving attributes", [], err as Error);
-      }
-    }),
-
-  /**
    * Search attributes
    */
   search: publicProcedure
@@ -149,13 +122,12 @@ export const attributeRouter = createTRPCRouter({
     .output(attributeContract.search.output)
     .query(async ({ input }) => {
       try {
-        const { limit = 20, offset = 0, seriesSlug, search } = input.query;
+        const { limit = 20, offset = 0, search } = input.query;
         const q = search?.trim();
 
         const data = await db.query.attribute.findMany({
-          where: (a, { and, eq, isNull }) => {
+          where: (a, { and, isNull, or }) => {
             const conditions = [isNull(a.deletedAt)];
-            if (seriesSlug) conditions.push(eq(a.seriesSlug, seriesSlug));
             if (q) {
               conditions.push(or(ilike(a.title, `%${q}%`), ilike(a.slug, `%${q}%`), ilike(a.value, `%${q}%`))!);
             }

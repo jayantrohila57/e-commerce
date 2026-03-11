@@ -6,7 +6,7 @@ import { Separator } from "@/shared/components/ui/separator";
 import { PATH } from "@/shared/config/routes";
 import type { AttributeSelect } from "./attribute.schema";
 
-export function AttributeCard({ attribute, seriesTitle }: { attribute: AttributeSelect; seriesTitle?: string }) {
+export function AttributeCard({ attribute }: { attribute: AttributeSelect }) {
   return (
     <Link href={PATH.STUDIO.ATTRIBUTES.EDIT(attribute.slug, attribute.id) as Route}>
       <div className="bg-secondary hover:bg-secondary/80 motion-all flex w-full items-center justify-between gap-3 rounded-md border p-2 shadow-xs">
@@ -31,9 +31,6 @@ export function AttributeCard({ attribute, seriesTitle }: { attribute: Attribute
         </div>
 
         <div className="flex shrink-0 items-center gap-2">
-          <Badge variant="outline" className="hidden sm:inline-flex">
-            {seriesTitle ?? attribute.seriesSlug}
-          </Badge>
           <Badge variant="outline" className="hidden sm:inline-flex">
             Order: {attribute.displayOrder ?? 0}
           </Badge>

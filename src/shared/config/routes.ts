@@ -75,19 +75,12 @@ export const PATH = {
       EDIT: (slug: string, id: string) => `/studio/catalog/categories/${slug}/edit-category?id=${id}`,
     },
     SUB_CATEGORIES: {
-      ROOT: (categorySlug: string) => `/studio/catalog/categories/${categorySlug}`,
+      ROOT: (categorySlug: string, subcategorySlug: string) =>
+        `/studio/catalog/categories/${categorySlug}/${subcategorySlug}`,
       NEW: (categoryId: string, categorySlug: string) =>
         `/studio/catalog/categories/${categorySlug}/add-new-subcategory?id=${categoryId}`,
       EDIT: (subcategorySlug: string, categorySlug: string, subcategoryId: string) =>
         `/studio/catalog/categories/${categorySlug}/${subcategorySlug}/edit-subcategory?id=${subcategoryId}`,
-    },
-    SERIES: {
-      ROOT: (categorySlug: string, subCategorySlug: string, seriesSlug: string) =>
-        `/studio/catalog/categories/${categorySlug}/${subCategorySlug}/${seriesSlug}`,
-      NEW: (categorySlug: string, subCategorySlug: string, subCategoryId: string) =>
-        `/studio/catalog/categories/${categorySlug}/${subCategorySlug}/add-new-series?id=${subCategoryId}`,
-      EDIT: (categorySlug: string, subCategorySlug: string, seriesSlug: string) =>
-        `/studio/catalog/categories/${categorySlug}/${subCategorySlug}/${seriesSlug}/edit`,
     },
     INVENTORY: {
       ROOT: "/studio/inventory",

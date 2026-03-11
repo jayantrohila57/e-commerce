@@ -232,60 +232,19 @@ export const subcategory = pgTable(
     isFeaturedIdx: index("subcategory_is_featured_idx").on(table.isFeatured),
   }),
 );
-export const series = pgTable(
-  "series",
-  {
-    id: text("id").primaryKey(),
-    subcategorySlug: text("subcategory_slug")
-      .notNull()
-      .references(() => subcategory.slug),
-    slug: text("slug").notNull().unique(),
-    icon: text("icon"),
-    title: text("title").notNull(),
-    description: text("description"),
-    metaTitle: text("meta_title"),
-    metaDescription: text("meta_description"),
-    displayType: displayTypeEnum("display_type").default("grid").notNull(),
-    color: text("color").default("#FFFFFF"),
-    visibility: visibilityEnum("visibility").default("public").notNull(),
-    displayOrder: integer("display_order").default(0).notNull(),
-    image: text("image"),
-    isFeatured: boolean("is_featured").default(false).notNull(),
-    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
-    deletedAt: timestamp("deleted_at", { withTimezone: true }),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .defaultNow()
-      .$onUpdate(() => new Date()),
-  },
-  (table) => ({
-    subcategorySlugIdx: index("series_subcategory_slug_idx").on(table.subcategorySlug),
-    visibilityIdx: index("series_visibility_idx").on(table.visibility),
-    isFeaturedIdx: index("series_is_featured_idx").on(table.isFeatured),
-  }),
-);
-
-export const attribute = pgTable(
-  "attribute",
-  {
-    id: text("id").primaryKey(),
-    seriesSlug: text("series_slug")
-      .notNull()
-      .references(() => series.slug),
-    slug: text("slug").notNull().unique(),
-    title: text("title").notNull(),
-    type: text("type").default("text").notNull(),
-    value: text("value").notNull(),
-    displayOrder: integer("display_order").default(0).notNull(),
-    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
-    deletedAt: timestamp("deleted_at", { withTimezone: true }),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .defaultNow()
-      .$onUpdate(() => new Date()),
-  },
-  (table) => ({
-    seriesSlugIdx: index("attribute_series_slug_idx").on(table.seriesSlug),
-  }),
-);
+export const attribute = pgTable("attribute", {
+  id: text("id").primaryKey(),
+  slug: text("slug").notNull().unique(),
+  title: text("title").notNull(),
+  type: text("type").default("text").notNull(),
+  value: text("value").notNull(),
+  displayOrder: integer("display_order").default(0).notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+  deletedAt: timestamp("deleted_at", { withTimezone: true }),
+  updatedAt: timestamp("updated_at", { withTimezone: true })
+    .defaultNow()
+    .$onUpdate(() => new Date()),
+});
 
 export const media = pgTable("media", {
   id: text("id").primaryKey(),
@@ -310,9 +269,6 @@ export const product = pgTable(
     subcategorySlug: text("subcategory_slug")
       .notNull()
       .references(() => subcategory.slug),
-    seriesSlug: text("series_slug")
-      .notNull()
-      .references(() => series.slug),
     taxClassId: text("tax_class_id").references(() => taxClass.id, { onDelete: "set null" }),
     basePrice: integer("base_price").notNull(),
     baseCurrency: text("base_currency").default("INR"),
@@ -329,7 +285,6 @@ export const product = pgTable(
   (table) => ({
     categorySlugIdx: index("product_category_slug_idx").on(table.categorySlug),
     subcategorySlugIdx: index("product_subcategory_slug_idx").on(table.subcategorySlug),
-    seriesSlugIdx: index("product_series_slug_idx").on(table.seriesSlug),
     taxClassIdIdx: index("product_tax_class_id_idx").on(table.taxClassId),
     statusIdx: index("product_status_idx").on(table.status),
     isActiveIdx: index("product_is_active_idx").on(table.isActive),
@@ -1257,13 +1212,6 @@ export const orderDiscountRelations = relations(orderDiscount, ({ one }) => ({
   }),
 }));
 
-export const attributeRelations = relations(attribute, ({ one }) => ({
-  series: one(series, {
-    fields: [attribute.seriesSlug],
-    references: [series.slug],
-  }),
-}));
-
 export const taxClassRelations = relations(taxClass, ({ many }) => ({
   rules: many(taxRule),
   products: many(product),
@@ -1471,21 +1419,11 @@ export const categoryRelations = relations(category, ({ many }) => ({
   subcategories: many(subcategory),
 }));
 
-export const subcategoryRelations = relations(subcategory, ({ one, many }) => ({
+export const subcategoryRelations = relations(subcategory, ({ one }) => ({
   category: one(category, {
     fields: [subcategory.categorySlug],
     references: [category.slug],
   }),
-  series: many(series),
-}));
-
-export const seriesRelations = relations(series, ({ one, many }) => ({
-  subcategory: one(subcategory, {
-    fields: [series.subcategorySlug],
-    references: [subcategory.slug],
-  }),
-  attributes: many(attribute),
-  products: many(product),
 }));
 
 export const inventoryItemRelations = relations(inventoryItem, ({ one, many }) => ({

@@ -23,7 +23,7 @@ type FormValues = z.infer<typeof formSchema>;
 interface VariantFormProps {
   productSlug: string;
   productId: string;
-  seriesAttributes?: { title: string; type: string; value: string }[];
+  defaultAttributes?: { title: string; type: string; value: string }[];
 }
 
 function parseSelectOptions(raw: string) {
@@ -34,7 +34,7 @@ function parseSelectOptions(raw: string) {
   return Array.from(new Set(parts));
 }
 
-export default function VariantForm({ productSlug, productId, seriesAttributes = [] }: VariantFormProps) {
+export default function VariantForm({ productSlug, productId, defaultAttributes = [] }: VariantFormProps) {
   const router = useRouter();
   const [toastId, setToastId] = useState<string | number>("");
   const [isLoading, setIsLoading] = useState(false);
@@ -93,7 +93,7 @@ export default function VariantForm({ productSlug, productId, seriesAttributes =
           title: "",
           priceModifierType: "flat_increase",
           priceModifierValue: "0",
-          attributes: seriesAttributes.map((a) => ({
+          attributes: defaultAttributes.map((a) => ({
             title: a.title,
             type: a.type,
             value: a.value,
@@ -226,12 +226,12 @@ export default function VariantForm({ productSlug, productId, seriesAttributes =
         <Separator className="my-4" />
 
         <FormSection
-          title={`Attributes (${seriesAttributes.length})`}
-          description="These fields are pulled dynamically from Attribute Management for this product’s series."
+          title={`Attributes (${defaultAttributes.length})`}
+          description="Configure variant-specific attributes."
         >
-          {seriesAttributes.length ? (
+          {defaultAttributes.length ? (
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-              {seriesAttributes.map((attr, index) => {
+              {defaultAttributes.map((attr, index) => {
                 const baseName = `body.attributes.${index}` as const;
                 const selectOptions = attr.type === "select" ? parseSelectOptions(attr.value) : [];
 
@@ -280,7 +280,7 @@ export default function VariantForm({ productSlug, productId, seriesAttributes =
             </div>
           ) : (
             <p className="text-muted-foreground px-2 text-sm">
-              No attributes found for this series. Create them in Studio → Products → Attributes.
+              No default attributes configured. Add attributes in Studio → Catalog → Attributes.
             </p>
           )}
         </FormSection>
@@ -302,10 +302,10 @@ export default function VariantForm({ productSlug, productId, seriesAttributes =
             <Form.Field
               {...{
                 name: "body.inventory.barcode",
-                label: "Barcode",
+                label: "Barcode / ISBN",
                 type: "text",
                 placeholder: "e.g. 123456789012",
-                description: "Optional barcode for scanning",
+                description: "Scannable barcode for inventory tracking",
               }}
             />
 
@@ -325,37 +325,25 @@ export default function VariantForm({ productSlug, productId, seriesAttributes =
                 name: "body.inventory.incoming",
                 label: "Incoming Quantity",
                 type: "number",
-                required: true,
                 placeholder: "0",
-                description: "Stock on order/in transit",
-              }}
-            />
-
-            <Form.Field
-              {...{
-                name: "body.inventory.reserved",
-                label: "Reserved Quantity",
-                type: "number",
-                required: true,
-                placeholder: "0",
-                description: "Stock reserved for orders",
+                description: "Stock arriving soon (not available yet)",
               }}
             />
           </div>
         </FormSection>
-      </div>
 
-      <div className="col-span-4 flex h-full min-h-20 w-full flex-col justify-between gap-4 border-t pt-4 sm:flex-row sm:items-center">
-        <div className="text-muted-foreground text-sm">
-          <Form.StatusBadge />
-        </div>
+        <Separator className="my-4" />
 
-        <div className="flex flex-col-reverse gap-2 sm:flex-row sm:items-center">
-          <Button variant="outline" type="button" onClick={() => router.back()} disabled={isLoading}>
-            Cancel
-          </Button>
-
-          <Form.Submit label="Create Variant" disabled={isLoading} isLoading={isLoading} />
+        <div className="flex items-center justify-between">
+          <div className="text-muted-foreground text-sm">
+            <p>Review all fields before creating the variant.</p>
+          </div>
+          <div className="flex gap-2">
+            <Button variant="outline" type="button" onClick={() => router.back()} disabled={isLoading}>
+              Cancel
+            </Button>
+            <Form.Submit label="Create Variant" disabled={isLoading} isLoading={isLoading} />
+          </div>
         </div>
       </div>
     </Form>

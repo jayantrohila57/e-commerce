@@ -452,4 +452,11 @@ export const MESSAGE = {
       ERROR: "Unexpected error while deleting review.",
     },
   },
+  PAYMENT: {
+    GET_MANY: {
+      SUCCESS: "Payments retrieved successfully.",
+      FAILED: "No payments found.",
+      ERROR: "Unexpected error while retrieving payments.",
+    },
+  },
 } as const;

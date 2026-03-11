@@ -70,17 +70,39 @@ export const subcategoryContract = {
       z
         .object({
           subcategoryData: subcategorySelectSchema,
-          products: z.array(
+          variants: z.array(
             z.object({
+              // Variant data
               id: z.string(),
-              title: z.string(),
               slug: z.string(),
-              description: z.string().nullable(),
-              basePrice: z.number(),
-              baseImage: z.string().nullable(),
-              categorySlug: z.string(),
-              subcategorySlug: z.string(),
-              variants: z.array(productVariantBaseSchema),
+              title: z.string(),
+              priceModifierType: z.string(),
+              priceModifierValue: z.string(),
+              attributes: z
+                .array(
+                  z.object({
+                    title: z.string(),
+                    type: z.string(),
+                    value: z.string(),
+                  }),
+                )
+                .nullable(),
+              media: z
+                .array(
+                  z.object({
+                    url: z.string(),
+                  }),
+                )
+                .nullable(),
+              // Product base data
+              productId: z.string(),
+              productTitle: z.string(),
+              productSlug: z.string(),
+              productDescription: z.string().nullable(),
+              productBasePrice: z.number(),
+              productBaseImage: z.string().nullable(),
+              // Computed
+              finalPrice: z.number(),
             }),
           ),
         })
@@ -108,6 +130,26 @@ export const subcategoryContract = {
       params: z.object({ id: z.string() }),
     }),
     output: detailedResponse(subcategorySelectSchema.pick({ id: true }).nullable()),
+  },
+
+  getAvailable: {
+    input: z.object({
+      query: z.object({
+        excludeCategorySlug: z.string(),
+        search: z.string().min(2).max(100).optional(),
+      }),
+    }),
+    output: detailedResponse(z.array(subcategorySelectSchema)),
+  },
+
+  transfer: {
+    input: z.object({
+      params: z.object({ id: z.string() }),
+      body: z.object({
+        categorySlug: z.string().min(1),
+      }),
+    }),
+    output: detailedResponse(subcategorySelectSchema),
   },
 };
 

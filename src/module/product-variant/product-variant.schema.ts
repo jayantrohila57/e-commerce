@@ -139,9 +139,20 @@ export const productVariantContract = {
   update: {
     input: z.object({
       params: z.object({ id: z.string() }),
-      body: productVariantUpdateSchema,
+      body: productVariantUpdateSchema.extend({
+        inventory: z
+          .object({
+            id: z.string().optional(),
+            sku: z.string().min(1),
+            barcode: z.string().nullable().optional(),
+            quantity: z.number().int().min(0),
+            incoming: z.number().int().min(0),
+            reserved: z.number().int().min(0),
+          })
+          .optional(),
+      }),
     }),
-    output: detailedResponse(productVariantSelectSchema),
+    output: detailedResponse(variantWithInventorySchema),
   },
 
   delete: {

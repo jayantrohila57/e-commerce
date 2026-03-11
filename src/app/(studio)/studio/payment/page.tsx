@@ -1,27 +1,44 @@
 import { forbidden, redirect } from "next/navigation";
-import { HydrateClient } from "@/core/api/api.server";
+import { apiServer, HydrateClient } from "@/core/api/api.server";
 import { APP_ROLE, normalizeRole } from "@/core/auth/auth.roles";
 import { getServerSession } from "@/core/auth/auth.server";
+import PaymentTable from "@/module/payment/payment.table";
 import DashboardSection from "@/shared/components/layout/section/section-dashboard";
 import Shell from "@/shared/components/layout/shell";
 import { PATH } from "@/shared/config/routes";
+import { getListQueryFromSearchParams } from "@/shared/utils/lib/list-query.utils";
 
 export const metadata = {
-  title: "Payment",
-  description: "Payment Description",
+  title: "Payments",
+  description: "Manage and view payment transactions",
 };
 
-export default async function Home() {
+export default async function StudioPaymentsPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
   const { session, user } = await getServerSession();
   if (!session) return redirect(PATH.ROOT);
   if (normalizeRole(user?.role) === APP_ROLE.CUSTOMER) forbidden();
+
+  const input = await searchParams;
+  const listQuery = getListQueryFromSearchParams(input);
+
+  const result = await apiServer.payment.getManyAdmin({
+    query: {
+      page: listQuery.pagination.page,
+      limit: listQuery.pagination.limit,
+      search: listQuery.search.q,
+    },
+  });
 
   return (
     <HydrateClient>
       <Shell>
         <Shell.Section variant="dashboard">
           <DashboardSection {...metadata}>
-            <div className="">Payment</div>
+            <PaymentTable data={result} />
           </DashboardSection>
         </Shell.Section>
       </Shell>

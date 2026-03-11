@@ -6,38 +6,29 @@ import { Separator } from "@/shared/components/ui/separator";
 import { getImageSrc } from "@/shared/utils/lib/image.utils";
 import type { GetSubcategoryBySlugOutput } from "./subcategory.types";
 
-type ProductVariant = {
+type FlattenedVariant = {
   id: string;
   slug: string;
   title: string;
-  productId: string;
   priceModifierType: string;
   priceModifierValue: string;
   attributes: { title: string; type: string; value: string }[] | null;
   media: { url: string }[] | null;
-  createdAt: Date;
-  updatedAt: Date | null;
-  deletedAt: Date | null;
-};
-
-type ProductWithVariants = {
-  id: string;
-  title: string;
-  slug: string;
-  description: string | null;
-  basePrice: number;
-  baseImage: string | null;
-  categorySlug: string;
-  subcategorySlug: string;
-  variants: ProductVariant[];
+  productId: string;
+  productTitle: string;
+  productSlug: string;
+  productDescription: string | null;
+  productBasePrice: number;
+  productBaseImage: string | null;
+  finalPrice: number;
 };
 
 interface SubCategoryItemProps {
   data: GetSubcategoryBySlugOutput["data"];
-  products?: ProductWithVariants[];
+  variants?: FlattenedVariant[];
 }
 
-export const SubCategoryItem = ({ data, products }: SubCategoryItemProps) => {
+export const SubCategoryItem = ({ data, variants }: SubCategoryItemProps) => {
   const subcategory = data?.subcategoryData;
 
   return (
@@ -63,10 +54,10 @@ export const SubCategoryItem = ({ data, products }: SubCategoryItemProps) => {
 
       <Separator className="my-8" />
 
-      {/* Products Grid */}
+      {/* Variants Grid */}
       {subcategory && (
         <ProductSubcategoryCards
-          data={products || []}
+          data={variants || []}
           categorySlug={subcategory.categorySlug}
           subcategorySlug={subcategory.slug}
         />

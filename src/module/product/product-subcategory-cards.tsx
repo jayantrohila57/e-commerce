@@ -6,24 +6,6 @@ import { BlurImage } from "@/shared/components/common/image";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/card";
 import { getImageSrc } from "@/shared/utils/lib/image.utils";
 
-const computePrice = (basePrice: number, priceModifierValue: number, priceModifierType: string): number => {
-  const base = basePrice;
-  const val = Number(priceModifierValue);
-
-  switch (priceModifierType) {
-    case "flat_increase":
-      return base + val;
-    case "flat_decrease":
-      return base - val;
-    case "percent_increase":
-      return base + Math.round((base * val) / 100);
-    case "percent_decrease":
-      return base - Math.round((base * val) / 100);
-    default:
-      return base;
-  }
-};
-
 const formatPrice = (priceInPaise: number): string => {
   return new Intl.NumberFormat("en-IN", {
     style: "currency",
@@ -33,34 +15,25 @@ const formatPrice = (priceInPaise: number): string => {
   }).format(priceInPaise / 100);
 };
 
-type ProductVariant = {
+type FlattenedVariant = {
   id: string;
   slug: string;
   title: string;
-  productId: string;
   priceModifierType: string;
   priceModifierValue: string;
   attributes: { title: string; type: string; value: string }[] | null;
   media: { url: string }[] | null;
-  createdAt: Date;
-  updatedAt: Date | null;
-  deletedAt: Date | null;
-};
-
-type ProductWithVariants = {
-  id: string;
-  title: string;
-  slug: string;
-  description: string | null;
-  basePrice: number;
-  baseImage: string | null;
-  categorySlug: string;
-  subcategorySlug: string;
-  variants: ProductVariant[];
+  productId: string;
+  productTitle: string;
+  productSlug: string;
+  productDescription: string | null;
+  productBasePrice: number;
+  productBaseImage: string | null;
+  finalPrice: number;
 };
 
 interface ProductSubcategoryCardsProps {
-  data: ProductWithVariants[];
+  data: FlattenedVariant[];
   categorySlug: string;
   subcategorySlug: string;
 }
@@ -68,38 +41,36 @@ interface ProductSubcategoryCardsProps {
 export function ProductSubcategoryCards({ data, categorySlug, subcategorySlug }: ProductSubcategoryCardsProps) {
   if (!data || data.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-12">
+      <div className="flex flex-col items-center justify-center gap-2 py-12 text-center">
         <p className="text-muted-foreground text-sm">No products available in this category.</p>
+        <p className="text-muted-foreground text-xs max-w-md">
+          Products must be set to <strong>Live</strong> status and <strong>Active</strong> to appear here. Check your
+          product settings in the studio.
+        </p>
       </div>
     );
   }
 
   return (
     <div className="grid grid-cols-1 gap-6 p-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-      {data.map((product) => {
-        // If product has variants, show the first variant as the default
-        const defaultVariant = product.variants?.[0];
-
-        // Build the product URL - if there's a variant, link to variant page
-        const href = defaultVariant
-          ? (`/store/${categorySlug}/${subcategorySlug}/${product.slug}/${defaultVariant.slug}` as Route)
-          : (`/store/${categorySlug}/${subcategorySlug}/${product.slug}` as Route);
-
-        // Calculate display price
-        const displayPrice = defaultVariant
-          ? computePrice(product.basePrice, Number(defaultVariant.priceModifierValue), defaultVariant.priceModifierType)
-          : product.basePrice;
+      {data.map((variant) => {
+        // 3-segment URL: /store/category/subcategory/variantSlug
+        const href = `/store/${categorySlug}/${subcategorySlug}/${variant.slug}` as Route;
 
         // Get display image - variant media first, then product base image
-        const displayImage = defaultVariant?.media?.[0]?.url || product.baseImage;
+        const displayImage = variant.media?.[0]?.url || variant.productBaseImage;
+
+        // Display title: combine product title with variant title for clarity
+        const displayTitle =
+          variant.title !== variant.productTitle ? `${variant.productTitle} - ${variant.title}` : variant.productTitle;
 
         return (
-          <Link key={product.id} href={href} className="group">
+          <Link key={variant.id} href={href} className="group">
             <Card className="pt-0 transition-shadow hover:shadow-md">
               <CardHeader className="p-0">
                 <BlurImage
                   src={getImageSrc(displayImage)}
-                  alt={product.title ?? "Product"}
+                  alt={displayTitle}
                   width={500}
                   height={500}
                   className="bg-secondary motion-all aspect-square w-full rounded-md rounded-b-none object-cover group-hover:drop-shadow"
@@ -108,22 +79,20 @@ export function ProductSubcategoryCards({ data, categorySlug, subcategorySlug }:
 
               <CardContent className="flex flex-col gap-3 p-4">
                 <div className="flex flex-col gap-1">
-                  <CardTitle className="text-lg font-semibold line-clamp-1">{product.title}</CardTitle>
-                  <p className="text-lg font-medium text-primary">{formatPrice(displayPrice)}</p>
+                  <CardTitle className="text-lg font-semibold line-clamp-1">{displayTitle}</CardTitle>
+                  <p className="text-lg font-medium text-primary">{formatPrice(variant.finalPrice)}</p>
                 </div>
 
-                {defaultVariant?.attributes && defaultVariant.attributes.length > 0 && (
+                {variant.attributes && variant.attributes.length > 0 && (
                   <div className="mt-auto flex flex-col gap-1">
-                    {defaultVariant.attributes.slice(0, 3).map((attr) => (
+                    {variant.attributes.slice(0, 3).map((attr) => (
                       <p key={attr.title} className="flex justify-between text-xs text-muted-foreground">
                         <span>{attr.title}</span>
                         <span>{attr.value}</span>
                       </p>
                     ))}
-                    {defaultVariant.attributes.length > 3 && (
-                      <p className="text-xs text-muted-foreground">
-                        +{defaultVariant.attributes.length - 3} more options
-                      </p>
+                    {variant.attributes.length > 3 && (
+                      <p className="text-xs text-muted-foreground">+{variant.attributes.length - 3} more options</p>
                     )}
                   </div>
                 )}

@@ -10,13 +10,26 @@ import { getImageSrc } from "@/shared/utils/lib/image.utils";
 import type { GetPDPProductOutput } from "./product.types";
 import { extractAttributeGroups, isOptionAvailable, resolveNextVariant } from "./product-utility";
 
-export const PDPProduct = ({ data, slug }: { data: GetPDPProductOutput["data"]; slug: string }) => {
+interface PDPProductProps {
+  data: GetPDPProductOutput["data"];
+  slug: string;
+  categorySlug?: string;
+  subcategorySlug?: string;
+}
+
+export const PDPProduct = ({ data, slug, categorySlug, subcategorySlug }: PDPProductProps) => {
   if (!data?.product) return <div>Product not found</div>;
 
   const product = data.product;
-  const variants = product?.variants;
+  const variants = product?.variants ?? [];
 
-  const selectedVariant = variants.find((v) => v.slug === slug) ?? variants[0];
+  // Match by slug (case-insensitive, trimmed) - API puts URL-matched variant first
+  const selectedVariant =
+    variants.find((v) => v.slug?.toLowerCase().trim() === slug?.toLowerCase().trim()) ?? variants[0];
+
+  if (!selectedVariant) {
+    return <div>Variant not found</div>;
+  }
 
   const attributeGroups = extractAttributeGroups(variants);
 
@@ -33,6 +46,10 @@ export const PDPProduct = ({ data, slug }: { data: GetPDPProductOutput["data"]; 
           : basePrice - priceModifier;
 
   const pdpImageSrc = getImageSrc(selectedVariant?.media?.[0]?.url) ?? getImageSrc(product?.baseImage);
+
+  // Use provided slugs or fall back to product's slugs
+  const catSlug = categorySlug ?? product?.categorySlug;
+  const subcatSlug = subcategorySlug ?? product?.subcategorySlug;
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -106,7 +123,8 @@ export const PDPProduct = ({ data, slug }: { data: GetPDPProductOutput["data"]; 
                       <Link
                         key={value}
                         href={
-                          `/store/${product?.categorySlug}/${product?.subcategorySlug}/${product?.slug}/${nextVariant.slug}` as Route
+                          // 3-segment URL: /store/category/subcategory/variantSlug
+                          `/store/${catSlug}/${subcatSlug}/${nextVariant.slug}` as Route
                         }
                         prefetch={false}
                       >

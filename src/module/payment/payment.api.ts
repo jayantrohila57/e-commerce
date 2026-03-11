@@ -1,15 +1,16 @@
-import { desc, eq } from "drizzle-orm";
+import { and, desc, eq, ilike, sql } from "drizzle-orm";
 import { v4 as uuidv4 } from "uuid";
-import { createTRPCRouter, customerProcedure } from "@/core/api/api.methods";
+import { adminProcedure, createTRPCRouter, customerProcedure } from "@/core/api/api.methods";
 import { db } from "@/core/db/db";
 import { order, payment } from "@/core/db/db.schema";
 import { razorpay } from "@/core/payment/razorpay.client";
 import { buildRazorpayOrderOptions } from "@/core/payment/razorpay.options";
 import { verifyCheckoutSignature } from "@/core/payment/razorpay.verify";
 import { notifyOrderConfirmation } from "@/shared/components/mail/notification.service";
-import { STATUS } from "@/shared/config/api.config";
+import { MESSAGE, STATUS } from "@/shared/config/api.config";
 import { API_RESPONSE } from "@/shared/config/api.utils";
 import { serverEnv } from "@/shared/config/env.server";
+import { buildPagination, buildPaginationMeta } from "@/shared/schema";
 import { debugError } from "@/shared/utils/lib/logger.utils";
 import { type Payment, type PaymentProviderMetadata, paymentContract } from "./payment.schema";
 
@@ -223,6 +224,83 @@ export const paymentRouter = createTRPCRouter({
       } catch (err) {
         debugError("PAYMENT:GET_STATUS:ERROR", err);
         return API_RESPONSE(STATUS.ERROR, "Error retrieving payment status", [], err as Error);
+      }
+    }),
+
+  /**
+   * Admin: Get all payments with pagination and filtering
+   */
+  getManyAdmin: adminProcedure
+    .input(paymentContract.getManyAdmin.input)
+    .output(paymentContract.getManyAdmin.output)
+    .query(async ({ input }) => {
+      try {
+        const query = {
+          page: 1,
+          limit: 20,
+          sortOrder: "desc" as const,
+          status: undefined as Payment["status"] | undefined,
+          provider: undefined as Payment["provider"] | undefined,
+          q: undefined as string | undefined,
+          ...input.query,
+        };
+        const { status, provider, q } = query;
+
+        const pageInput = {
+          page: query.page ?? 1,
+          limit: query.limit ?? 20,
+          sortBy: query.sortBy,
+          sortOrder: query.sortOrder ?? "desc",
+        };
+
+        const paging = buildPagination(pageInput);
+        const offset = paging.offset;
+        const limit = paging.limit;
+
+        // Build where conditions using drizzle top-level helpers
+        const whereConditions = [
+          status ? eq(payment.status, status) : undefined,
+          provider ? eq(payment.provider, provider) : undefined,
+          q ? ilike(payment.orderId, `%${q}%`) : undefined,
+        ].filter((condition): condition is NonNullable<typeof condition> => Boolean(condition));
+
+        const where = whereConditions.length ? and(...whereConditions) : undefined;
+
+        const [{ count: totalRaw = 0 } = { count: 0 }] = await db
+          .select({ count: sql<number>`count(*)` })
+          .from(payment)
+          .where(where);
+        const total = Number(totalRaw ?? 0);
+
+        const data = await db.query.payment.findMany({
+          where,
+          orderBy: (p, { desc }) => [desc(p.createdAt)],
+          limit,
+          offset,
+          with: {
+            order: true,
+          },
+        });
+
+        const metaPagination = buildPaginationMeta(total, pageInput);
+
+        const formattedData = data.map((p) => ({
+          ...p,
+          providerMetadata: (p.providerMetadata ?? undefined) as Record<string, unknown> | null | undefined,
+        }));
+
+        return {
+          status: STATUS.SUCCESS,
+          message: MESSAGE.PAYMENT.GET_MANY.SUCCESS,
+          data: formattedData,
+          meta: {
+            count: total,
+            pagination: metaPagination,
+          },
+        };
+      } catch (err) {
+        debugError("PAYMENT:GET_MANY_ADMIN:ERROR", err);
+        return API_RESPONSE(STATUS.ERROR, MESSAGE.PAYMENT.GET_MANY.ERROR, [], err as Error);
       }
     }),
 });

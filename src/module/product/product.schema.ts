@@ -128,6 +128,24 @@ export const productContract = {
         .nullable(),
     ),
   },
+  getPDPProductByVariantFullPath: {
+    input: z.object({
+      params: z.object({
+        categorySlug: z.string().min(1),
+        subcategorySlug: z.string().min(1),
+        variantSlug: z.string().min(1),
+      }),
+    }),
+    output: detailedResponse(
+      z
+        .object({
+          product: productSelectSchema.extend({
+            variants: z.array(productVariantBaseSchema),
+          }),
+        })
+        .nullable(),
+    ),
+  },
   getProductWithProductVariants: {
     input: z.object({
       params: z.object({

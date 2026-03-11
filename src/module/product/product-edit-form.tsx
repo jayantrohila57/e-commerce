@@ -65,7 +65,7 @@ export default function ProductEditForm({ product }: { product: ProductUpdate | 
         description: data.body.description || undefined,
         metaTitle: data.body.title || undefined,
         metaDescription: data.body.description || undefined,
-        isActive: data.body.isActive,
+        isActive: data.body.isActive ?? product?.isActive ?? true,
         basePrice: data.body.basePrice,
         baseCurrency: data.body.baseCurrency,
         features: data.body.features,

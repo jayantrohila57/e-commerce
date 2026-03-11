@@ -4,6 +4,7 @@ import { apiServer, HydrateClient } from "@/core/api/api.server";
 import { APP_ROLE, normalizeRole } from "@/core/auth/auth.roles";
 import { getServerSession } from "@/core/auth/auth.server";
 import { CategoryPreviewCard } from "@/module/category/category.component.preview";
+import { ManageSubcategories } from "@/module/category/category-manage-subcategories";
 import { SubCategorySection } from "@/module/subcategory/subcategories-section";
 import DashboardSection from "@/shared/components/layout/section/section-dashboard";
 import Shell from "@/shared/components/layout/shell";
@@ -45,6 +46,10 @@ export default async function CategoryPage({ params }: PageProps<"/studio/catalo
                     emptyMessage="No SubCategories"
                   />
                 )}
+              </div>
+              <div className="col-span-6 h-full w-full rounded-md">
+                <Separator className="my-2" />
+                {data && <ManageSubcategories categorySlug={slug} currentSubcategories={data.subcategories || []} />}
               </div>
             </div>
           </DashboardSection>

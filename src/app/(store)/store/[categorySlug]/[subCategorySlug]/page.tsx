@@ -41,35 +41,28 @@ export default async function SubCategoryPage({ params }: PageProps<"/store/[cat
   });
   if (!data?.subcategoryData) return notFound();
 
-  // Type assertion to handle Drizzle's optional deletedAt field
-  const products = data.products as unknown as {
+  // New flattened variant structure
+  const variants = data.variants as unknown as {
     id: string;
-    title: string;
     slug: string;
-    description: string | null;
-    basePrice: number;
-    baseImage: string | null;
-    categorySlug: string;
-    subcategorySlug: string;
-    variants: {
-      id: string;
-      slug: string;
-      title: string;
-      productId: string;
-      priceModifierType: string;
-      priceModifierValue: string;
-      attributes: { title: string; type: string; value: string }[] | null;
-      media: { url: string }[] | null;
-      createdAt: Date;
-      updatedAt: Date | null;
-      deletedAt: Date | null;
-    }[];
+    title: string;
+    priceModifierType: string;
+    priceModifierValue: string;
+    attributes: { title: string; type: string; value: string }[] | null;
+    media: { url: string }[] | null;
+    productId: string;
+    productTitle: string;
+    productSlug: string;
+    productDescription: string | null;
+    productBasePrice: number;
+    productBaseImage: string | null;
+    finalPrice: number;
   }[];
 
   return (
     <HydrateClient>
       <Section>
-        <SubCategoryItem data={data} products={products} />
+        <SubCategoryItem data={data} variants={variants} />
       </Section>
     </HydrateClient>
   );

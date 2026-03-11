@@ -1,4 +1,4 @@
-import { and, eq, ilike } from "drizzle-orm";
+import { and, eq, ilike, isNull, not } from "drizzle-orm";
 import { v4 as uuidv4 } from "uuid";
 import { createTRPCRouter, publicProcedure, staffProcedure } from "@/core/api/api.methods";
 import { db } from "@/core/db/db";
@@ -6,6 +6,24 @@ import { subcategory } from "@/core/db/db.schema";
 import { MESSAGE, STATUS } from "@/shared/config/api.config";
 import { API_RESPONSE } from "@/shared/config/api.utils";
 import { subcategoryContract } from "./subcategory.schema";
+
+const computePrice = (basePrice: number, priceModifierValue: string, priceModifierType: string): number => {
+  const base = basePrice;
+  const val = Number(priceModifierValue);
+
+  switch (priceModifierType) {
+    case "flat_increase":
+      return base + val;
+    case "flat_decrease":
+      return base - val;
+    case "percent_increase":
+      return base + Math.round((base * val) / 100);
+    case "percent_decrease":
+      return base - Math.round((base * val) / 100);
+    default:
+      return base;
+  }
+};
 
 export const subcategoryRouter = createTRPCRouter({
   getMany: publicProcedure
@@ -18,6 +36,10 @@ export const subcategoryRouter = createTRPCRouter({
         if (input.query?.visibility) conditions.push(eq(subcategory.visibility, input.query.visibility));
         if (input.query?.isFeatured !== undefined) conditions.push(eq(subcategory.isFeatured, input.query.isFeatured));
         if (input.query?.categorySlug) conditions.push(eq(subcategory.categorySlug, input.query.categorySlug));
+        // Exclude soft-deleted subcategories by default
+        if (input.query?.deleted !== true) {
+          conditions.push(isNull(subcategory.deletedAt));
+        }
 
         const output = await db.query.subcategory.findMany({
           where: conditions.length ? and(...conditions) : undefined,
@@ -68,18 +90,52 @@ export const subcategoryRouter = createTRPCRouter({
           orderBy: (p, { desc }) => [desc(p.createdAt)],
         });
 
-        // Normalize variants to ensure deletedAt is always present (even if undefined)
-        const products = productsRaw.map((product) => ({
-          ...product,
-          variants: product.variants.map((variant) => ({
-            ...variant,
-            deletedAt: variant.deletedAt ?? null,
-          })),
-        }));
+        // Flatten all variants with their product data; include products without variants as "virtual" entries
+        const flattenedVariants = [];
+        for (const product of productsRaw) {
+          if (product.variants.length > 0) {
+            for (const variant of product.variants) {
+              flattenedVariants.push({
+                id: variant.id,
+                slug: variant.slug,
+                title: variant.title,
+                priceModifierType: variant.priceModifierType,
+                priceModifierValue: variant.priceModifierValue,
+                attributes: variant.attributes,
+                media: variant.media,
+                productId: product.id,
+                productTitle: product.title,
+                productSlug: product.slug,
+                productDescription: product.description,
+                productBasePrice: product.basePrice,
+                productBaseImage: product.baseImage,
+                finalPrice: computePrice(product.basePrice, variant.priceModifierValue, variant.priceModifierType),
+              });
+            }
+          } else {
+            // Product without variants: add as virtual entry using product slug
+            flattenedVariants.push({
+              id: product.id,
+              slug: product.slug,
+              title: product.title,
+              priceModifierType: "flat_decrease",
+              priceModifierValue: "0",
+              attributes: null,
+              media: null,
+              productId: product.id,
+              productTitle: product.title,
+              productSlug: product.slug,
+              productDescription: product.description,
+              productBasePrice: product.basePrice,
+              productBaseImage: product.baseImage,
+              finalPrice: product.basePrice,
+            });
+          }
+        }
 
         return API_RESPONSE(STATUS.SUCCESS, MESSAGE.SUBCATEGORY.GET_BY_SLUG.SUCCESS, {
           subcategoryData,
-          products,
+          variants: flattenedVariants,
         });
       } catch (err) {
         return API_RESPONSE(STATUS.ERROR, MESSAGE.SUBCATEGORY.GET_BY_SLUG.ERROR, null, err as Error);
@@ -176,6 +232,59 @@ export const subcategoryRouter = createTRPCRouter({
         );
       } catch (err) {
         return API_RESPONSE(STATUS.ERROR, MESSAGE.SUBCATEGORY.DELETE.ERROR, null, err as Error);
+      }
+    }),
+
+  getAvailable: publicProcedure
+    .input(subcategoryContract.getAvailable.input)
+    .output(subcategoryContract.getAvailable.output)
+    .query(async ({ input }) => {
+      try {
+        const conditions = [
+          not(eq(subcategory.categorySlug, input.query.excludeCategorySlug)),
+          isNull(subcategory.deletedAt),
+        ];
+
+        if (input.query?.search) {
+          conditions.push(ilike(subcategory.title, `%${input.query.search}%`));
+        }
+
+        const output = await db.query.subcategory.findMany({
+          where: and(...conditions),
+          orderBy: (s, { asc }) => [asc(s.displayOrder), asc(s.title)],
+        });
+
+        return API_RESPONSE(
+          output?.length ? STATUS.SUCCESS : STATUS.FAILED,
+          output?.length ? MESSAGE.SUBCATEGORY.GET_MANY.SUCCESS : MESSAGE.SUBCATEGORY.GET_MANY.FAILED,
+          output ?? [],
+        );
+      } catch (err) {
+        return API_RESPONSE(STATUS.ERROR, MESSAGE.SUBCATEGORY.GET_MANY.ERROR, null, err as Error);
+      }
+    }),
+
+  transfer: staffProcedure
+    .input(subcategoryContract.transfer.input)
+    .output(subcategoryContract.transfer.output)
+    .mutation(async ({ input }) => {
+      try {
+        const [output] = await db
+          .update(subcategory)
+          .set({
+            categorySlug: input.body.categorySlug,
+            updatedAt: new Date(),
+          })
+          .where(eq(subcategory.id, String(input.params.id)))
+          .returning();
+
+        return API_RESPONSE(
+          output ? STATUS.SUCCESS : STATUS.FAILED,
+          output ? MESSAGE.SUBCATEGORY.UPDATE.SUCCESS : MESSAGE.SUBCATEGORY.UPDATE.FAILED,
+          output,
+        );
+      } catch (err) {
+        return API_RESPONSE(STATUS.ERROR, MESSAGE.SUBCATEGORY.UPDATE.ERROR, null, err as Error);
       }
     }),
 });

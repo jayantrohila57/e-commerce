@@ -2,7 +2,7 @@ import { and, eq, ilike, isNull, sql } from "drizzle-orm";
 import { v4 as uuidv4 } from "uuid";
 import { createTRPCRouter, publicProcedure, staffProcedure } from "@/core/api/api.methods";
 import { db } from "@/core/db/db";
-import { product } from "@/core/db/db.schema";
+import { product, productVariant } from "@/core/db/db.schema";
 import { MESSAGE, STATUS } from "@/shared/config/api.config";
 import { API_RESPONSE } from "@/shared/config/api.utils";
 import { buildPagination, buildPaginationMeta } from "@/shared/schema";
@@ -201,6 +201,96 @@ export const productRouter = createTRPCRouter({
         });
       } catch (err) {
         debugError("PRODUCT:GET_PDP_PRODUCT:ERROR", err);
+        return API_RESPONSE(STATUS.ERROR, MESSAGE.PRODUCT.GET_PDP_PRODUCT.ERROR, null, err as Error);
+      }
+    }),
+  getPDPProductByVariantFullPath: publicProcedure
+    .input(productContract.getPDPProductByVariantFullPath.input)
+    .output(productContract.getPDPProductByVariantFullPath.output)
+    .query(async ({ input }) => {
+      try {
+        const { categorySlug, subcategorySlug, variantSlug } = input.params;
+
+        // Step 1: Try to locate variant by slug
+        const variant = await db.query.productVariant.findFirst({
+          where: (pv, { eq, and, isNull }) => and(eq(pv.slug, variantSlug), isNull(pv.deletedAt)),
+        });
+
+        if (variant) {
+          const productData = await db.query.product.findFirst({
+            where: (p, { eq, and, isNull }) =>
+              and(
+                eq(p.id, variant.productId),
+                eq(p.categorySlug, categorySlug),
+                eq(p.subcategorySlug, subcategorySlug),
+                eq(p.isActive, true),
+                eq(p.status, "live"),
+                isNull(p.deletedAt),
+              ),
+            with: { variants: { where: (pv, { isNull }) => isNull(pv.deletedAt) } },
+          });
+          if (!productData) {
+            return API_RESPONSE(STATUS.FAILED, MESSAGE.PRODUCT.GET_PDP_PRODUCT.NOT_FOUND, null);
+          }
+          // Ensure variant matching URL is first so PDP displays correct one
+          const variants = [...productData.variants];
+          const matchIdx = variants.findIndex((v) => v.slug === variantSlug);
+          if (matchIdx > 0) {
+            const [matched] = variants.splice(matchIdx, 1);
+            variants.unshift(matched);
+          }
+          return API_RESPONSE(STATUS.SUCCESS, MESSAGE.PRODUCT.GET_PDP_PRODUCT.SUCCESS, {
+            product: { ...productData, variants },
+          });
+        }
+
+        // Fallback: variantSlug may be product slug (product without variants)
+        const found = await db.query.product.findFirst({
+          where: (p, { eq, and, isNull }) =>
+            and(
+              eq(p.slug, variantSlug),
+              eq(p.categorySlug, categorySlug),
+              eq(p.subcategorySlug, subcategorySlug),
+              eq(p.isActive, true),
+              eq(p.status, "live"),
+              isNull(p.deletedAt),
+            ),
+          with: { variants: { where: (pv, { isNull }) => isNull(pv.deletedAt) } },
+        });
+
+        if (!found) {
+          return API_RESPONSE(STATUS.FAILED, MESSAGE.PRODUCT.GET_PDP_PRODUCT.NOT_FOUND, null);
+        }
+
+        if (found.variants.length === 0) {
+          const productWithVirtualVariant = {
+            ...found,
+            variants: [
+              {
+                id: found.id,
+                slug: found.slug,
+                title: found.title,
+                productId: found.id,
+                priceModifierType: "flat_decrease" as const,
+                priceModifierValue: "0",
+                attributes: null as { title: string; type: string; value: string }[] | null,
+                media: null as { url: string }[] | null,
+                createdAt: found.createdAt,
+                updatedAt: found.updatedAt,
+                deletedAt: null as Date | null,
+              },
+            ],
+          };
+          return API_RESPONSE(STATUS.SUCCESS, MESSAGE.PRODUCT.GET_PDP_PRODUCT.SUCCESS, {
+            product: productWithVirtualVariant,
+          });
+        }
+
+        return API_RESPONSE(STATUS.SUCCESS, MESSAGE.PRODUCT.GET_PDP_PRODUCT.SUCCESS, {
+          product: found,
+        });
+      } catch (err) {
+        debugError("PRODUCT:GET_PDP_PRODUCT_FULL_PATH:ERROR", err);
         return API_RESPONSE(STATUS.ERROR, MESSAGE.PRODUCT.GET_PDP_PRODUCT.ERROR, null, err as Error);
       }
     }),

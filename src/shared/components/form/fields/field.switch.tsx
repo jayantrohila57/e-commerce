@@ -32,10 +32,11 @@ export const InputSwitch: React.FC<FormInputProps> = (props) => {
           <FormControl>
             <div className="bg-background dark:bg-input/30 flex items-center justify-between gap-4 rounded-md border p-2">
               <Switch
-                {...field}
                 {...props.fieldProps}
-                checked={field.value || false}
+                ref={field.ref}
+                checked={field.value ?? false}
                 onCheckedChange={field.onChange}
+                onBlur={field.onBlur}
                 className={cn(fieldState.error && "border-destructive data-[state=checked]:bg-destructive")}
               />
             </div>

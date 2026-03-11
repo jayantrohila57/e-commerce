@@ -178,26 +178,79 @@ export const productVariantRouter = createTRPCRouter({
       try {
         const { id } = input.params;
         const { body } = input;
+        const { inventory, ...variantData } = body;
 
-        const cleanMedia = body.media?.filter(Boolean) ?? undefined;
+        const cleanMedia = variantData.media?.filter(Boolean) ?? undefined;
+        const cleanAttributes = variantData.attributes ?? undefined;
 
-        const cleanAttributes = body.attributes ?? undefined;
+        // Atomic transaction: update variant and inventory together
+        const result = await db.transaction(async (tx) => {
+          // 1. Update variant
+          const [updatedVariant] = await tx
+            .update(productVariant)
+            .set({
+              ...variantData,
+              media: cleanMedia,
+              attributes: cleanAttributes,
+              updatedAt: new Date(),
+            })
+            .where(eq(productVariant.id, id))
+            .returning();
 
-        const [output] = await db
-          .update(productVariant)
-          .set({
-            ...body,
-            media: cleanMedia,
-            attributes: cleanAttributes,
-            updatedAt: new Date(),
-          })
-          .where(eq(productVariant.id, id))
-          .returning();
+          // 2. Update or create inventory if provided
+          let updatedInventory = null;
+          if (inventory && updatedVariant) {
+            // Check if inventory exists for this variant
+            const existingInventory = await tx.query.inventoryItem.findFirst({
+              where: eq(inventoryItem.variantId, id),
+            });
+
+            if (existingInventory) {
+              // Update existing inventory
+              [updatedInventory] = await tx
+                .update(inventoryItem)
+                .set({
+                  sku: inventory.sku,
+                  barcode: inventory.barcode,
+                  quantity: inventory.quantity,
+                  incoming: inventory.incoming,
+                  reserved: inventory.reserved,
+                  updatedAt: new Date(),
+                })
+                .where(eq(inventoryItem.variantId, id))
+                .returning();
+            } else {
+              // Create new inventory for this variant
+              [updatedInventory] = await tx
+                .insert(inventoryItem)
+                .values({
+                  id: uuidv4(),
+                  variantId: id,
+                  sku: inventory.sku,
+                  barcode: inventory.barcode ?? null,
+                  quantity: inventory.quantity,
+                  incoming: inventory.incoming,
+                  reserved: inventory.reserved,
+                })
+                .returning();
+            }
+          }
+
+          return {
+            variant: updatedVariant,
+            inventory: updatedInventory,
+          };
+        });
 
         return API_RESPONSE(
-          output ? STATUS.SUCCESS : STATUS.FAILED,
-          output ? MESSAGE.PRODUCT_VARIANT.UPDATE.SUCCESS : MESSAGE.PRODUCT_VARIANT.UPDATE.FAILED,
-          output ?? null,
+          result.variant ? STATUS.SUCCESS : STATUS.FAILED,
+          result.variant ? MESSAGE.PRODUCT_VARIANT.UPDATE.SUCCESS : MESSAGE.PRODUCT_VARIANT.UPDATE.FAILED,
+          result.variant
+            ? {
+                ...result.variant,
+                inventory: result.inventory,
+              }
+            : null,
         );
       } catch (err) {
         return API_RESPONSE(STATUS.ERROR, MESSAGE.PRODUCT_VARIANT.UPDATE.ERROR, null, err as Error);

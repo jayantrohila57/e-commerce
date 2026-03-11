@@ -2,17 +2,20 @@ import { notFound } from "next/navigation";
 import { apiServer, HydrateClient } from "@/core/api/api.server";
 import { PDPProduct } from "@/module/product/product-pdp";
 import Section from "@/shared/components/layout/section/section";
+import type { PageProps } from "@/shared/types/global.types";
 import { getImageSrc } from "@/shared/utils/lib/image.utils";
 
-export const revalidate = 300;
+export const dynamic = "force-dynamic";
 
-type ROUTE = "/store/[categorySlug]/[subCategorySlug]/[productSlug]/[variantSlug]";
+export async function generateMetadata({ params }: PageProps) {
+  const { categorySlug, subCategorySlug, variantSlug } = await params;
 
-export async function generateMetadata({ params }: PageProps<ROUTE>) {
-  const { variantSlug } = await params;
-
-  const { data } = await apiServer.product.getPDPProductByVariant({
-    params: { slug: variantSlug },
+  const { data } = await apiServer.product.getPDPProductByVariantFullPath({
+    params: {
+      categorySlug,
+      subcategorySlug: subCategorySlug,
+      variantSlug,
+    },
   });
 
   if (!data) {
@@ -38,11 +41,13 @@ export async function generateMetadata({ params }: PageProps<ROUTE>) {
   };
 }
 
-export default async function ProductVariantPage({ params }: PageProps<ROUTE>) {
-  const { variantSlug } = await params;
-  const { data } = await apiServer.product.getPDPProductByVariant({
+export default async function ProductVariantPage({ params }: PageProps) {
+  const { categorySlug, subCategorySlug, variantSlug } = await params;
+  const { data } = await apiServer.product.getPDPProductByVariantFullPath({
     params: {
-      slug: variantSlug,
+      categorySlug,
+      subcategorySlug: subCategorySlug,
+      variantSlug,
     },
   });
   if (!data) return notFound();
@@ -50,7 +55,7 @@ export default async function ProductVariantPage({ params }: PageProps<ROUTE>) {
   return (
     <HydrateClient>
       <Section>
-        <PDPProduct data={data} slug={variantSlug} />
+        <PDPProduct data={data} slug={variantSlug} categorySlug={categorySlug} subcategorySlug={subCategorySlug} />
       </Section>
     </HydrateClient>
   );

@@ -6,7 +6,7 @@ type LogType = "log" | "warn" | "error";
 const getColor = (type: LogType): string => {
   const isNode = typeof window === "undefined";
   if (isNode) {
-    return type === "log" ? "\x1b[32m" : type === "warn" ? "\x1b[36m" : "\x1b[31m";  
+    return type === "log" ? "\x1b[32m" : type === "warn" ? "\x1b[36m" : "\x1b[31m";
   } else {
     return type === "log" ? "color: green" : type === "warn" ? "color: cyan" : "color: red";
   }

@@ -74,6 +74,40 @@ export const productRouter = createTRPCRouter({
         return API_RESPONSE(STATUS.ERROR, MESSAGE.PRODUCT.GET_BY_SLUG.ERROR, null, err as Error);
       }
     }),
+  getBySubcategorySlug: publicProcedure
+    .input(productContract.getBySubcategorySlug.input)
+    .output(productContract.getBySubcategorySlug.output)
+    .query(async ({ input }) => {
+      try {
+        const { subcategorySlug, categorySlug } = input.params;
+
+        const products = await db.query.product.findMany({
+          where: (p, { eq, and, isNull }) =>
+            and(
+              eq(p.subcategorySlug, subcategorySlug),
+              eq(p.categorySlug, categorySlug),
+              eq(p.isActive, true),
+              eq(p.status, "live"),
+              isNull(p.deletedAt),
+            ),
+          with: {
+            variants: {
+              where: (pv, { isNull }) => isNull(pv.deletedAt),
+            },
+          },
+          orderBy: (p, { desc }) => [desc(p.createdAt)],
+        });
+
+        return API_RESPONSE(
+          products.length ? STATUS.SUCCESS : STATUS.FAILED,
+          products.length ? MESSAGE.PRODUCT.GET_MANY.SUCCESS : MESSAGE.PRODUCT.GET_MANY.FAILED,
+          products,
+        );
+      } catch (err) {
+        debugError("PRODUCT:GET_BY_SUBCATEGORY_SLUG:ERROR", err);
+        return API_RESPONSE(STATUS.ERROR, MESSAGE.PRODUCT.GET_MANY.ERROR, null, err as Error);
+      }
+    }),
   getMany: staffProcedure
     .input(productContract.getMany.input)
     .output(productContract.getMany.output)

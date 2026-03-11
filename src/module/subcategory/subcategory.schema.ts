@@ -1,4 +1,5 @@
 import { z } from "zod/v3";
+import { productVariantBaseSchema } from "@/module/product-variant/product-variant.schema";
 import { detailedResponse, offsetPaginationSchema, visibilityEnum } from "@/shared/schema";
 
 export const displayTypeEnum = z.enum(["grid", "carousel", "banner", "list", "featured"]);
@@ -69,6 +70,19 @@ export const subcategoryContract = {
       z
         .object({
           subcategoryData: subcategorySelectSchema,
+          products: z.array(
+            z.object({
+              id: z.string(),
+              title: z.string(),
+              slug: z.string(),
+              description: z.string().nullable(),
+              basePrice: z.number(),
+              baseImage: z.string().nullable(),
+              categorySlug: z.string(),
+              subcategorySlug: z.string(),
+              variants: z.array(productVariantBaseSchema),
+            }),
+          ),
         })
         .nullable(),
     ),

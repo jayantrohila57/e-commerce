@@ -6,9 +6,9 @@ type LogType = "log" | "warn" | "error";
 const getColor = (type: LogType): string => {
   const isNode = typeof window === "undefined";
   if (isNode) {
-    return type === "log" ? "\x1b[32m" : type === "warn" ? "\x1b[33m" : "\x1b[31m";
+    return type === "log" ? "\x1b[32m" : type === "warn" ? "\x1b[36m" : "\x1b[31m";  
   } else {
-    return type === "log" ? "color: green" : type === "warn" ? "color: yellow" : "color: red";
+    return type === "log" ? "color: green" : type === "warn" ? "color: cyan" : "color: red";
   }
 };
 
@@ -19,9 +19,9 @@ const printDebug = (type: LogType, tag: string, ...props: unknown[]) => {
 
   if (isNode) {
     const typeColor = getColor(type);
-    const timestampColor = "\x1b[33m"; // Yellow
+    const timestampColor = "\x1b[36m"; // Cyan
     const fileColor = "\x1b[32m"; // Green
-    const envColor = "\x1b[33m"; // Yellow
+    const envColor = "\x1b[36m"; // Cyan
 
     const typeSection = `[${typeColor}${type.toUpperCase()}\x1b[0m]`;
     const timestampSection = `[${timestampColor}${timestamp}\x1b[0m]`;
@@ -32,9 +32,9 @@ const printDebug = (type: LogType, tag: string, ...props: unknown[]) => {
     console[type](label, ...props);
   } else {
     const typeColor = getColor(type);
-    const timestampColor = "color: yellow";
+    const timestampColor = "color: cyan";
     const fileColor = "color: green";
-    const envColor = "color: yellow";
+    const envColor = "color: cyan";
 
     const typeSection = `[%c${type.toUpperCase()}%c]`;
     const timestampSection = `[%c${timestamp}%c]`;

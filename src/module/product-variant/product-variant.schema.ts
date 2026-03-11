@@ -45,7 +45,7 @@ export const productVariantBaseSchema = z.object({
   media: z
     .array(
       z.object({
-        url: z.string().url(),
+        url: z.string(),
       }),
     )
     .nullable()

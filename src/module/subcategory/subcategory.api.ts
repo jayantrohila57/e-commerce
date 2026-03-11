@@ -50,8 +50,36 @@ export const subcategoryRouter = createTRPCRouter({
 
         if (!subcategoryData) return API_RESPONSE(STATUS.FAILED, MESSAGE.SUBCATEGORY.GET_BY_SLUG.FAILED, null);
 
+        // Fetch products with their variants for this subcategory
+        const productsRaw = await db.query.product.findMany({
+          where: (p, { eq, and, isNull }) =>
+            and(
+              eq(p.subcategorySlug, slug),
+              eq(p.categorySlug, categorySlug),
+              eq(p.isActive, true),
+              eq(p.status, "live"),
+              isNull(p.deletedAt),
+            ),
+          with: {
+            variants: {
+              where: (pv, { isNull }) => isNull(pv.deletedAt),
+            },
+          },
+          orderBy: (p, { desc }) => [desc(p.createdAt)],
+        });
+
+        // Normalize variants to ensure deletedAt is always present (even if undefined)
+        const products = productsRaw.map((product) => ({
+          ...product,
+          variants: product.variants.map((variant) => ({
+            ...variant,
+            deletedAt: variant.deletedAt ?? null,
+          })),
+        }));
+
         return API_RESPONSE(STATUS.SUCCESS, MESSAGE.SUBCATEGORY.GET_BY_SLUG.SUCCESS, {
           subcategoryData,
+          products,
         });
       } catch (err) {
         return API_RESPONSE(STATUS.ERROR, MESSAGE.SUBCATEGORY.GET_BY_SLUG.ERROR, null, err as Error);

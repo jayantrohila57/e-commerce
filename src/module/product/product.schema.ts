@@ -70,6 +70,21 @@ export const productContract = {
     }),
     output: detailedResponse(productSelectSchema.nullable()),
   },
+  getBySubcategorySlug: {
+    input: z.object({
+      params: z.object({
+        subcategorySlug: z.string().min(1),
+        categorySlug: z.string().min(1),
+      }),
+    }),
+    output: detailedResponse(
+      z.array(
+        productSelectSchema.extend({
+          variants: z.array(productVariantBaseSchema),
+        }),
+      ),
+    ),
+  },
   getBySlug: {
     input: z.object({
       params: z.object({

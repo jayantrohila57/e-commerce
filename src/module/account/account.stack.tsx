@@ -35,7 +35,7 @@ export function ContentStack({ data }: { data: Category[] }) {
               const SectionIcon = section.icon;
               return (
                 <Link href={section.link} key={section.name}>
-                  <Card className="aspect-video h-full w-full">
+                  <Card className="aspect-video hover:bg-secondary h-full w-full">
                     <CardHeader>
                       <CardTitle>{section.name}</CardTitle>
                       <CardDescription>{section.description}</CardDescription>

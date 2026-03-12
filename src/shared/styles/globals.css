@@ -122,14 +122,14 @@
     @apply [&::-webkit-scrollbar]:h-4;
     @apply [&::-webkit-scrollbar]:w-4;
     @apply [&::-webkit-scrollbar-corner]:bg-transparent;
-    @apply [&::-webkit-scrollbar-thumb]:rounded-lg;
+    @apply [&::-webkit-scrollbar-thumb]:rounded-none;
     @apply [&::-webkit-scrollbar-thumb]:bg-muted-foreground/40;
     @apply [&::-webkit-scrollbar-thumb]:border-[5px];
     @apply [&::-webkit-scrollbar-thumb]:border-solid;
     @apply [&::-webkit-scrollbar-thumb]:border-transparent;
     @apply [&::-webkit-scrollbar-thumb]:bg-clip-padding;
     @apply [&::-webkit-scrollbar-thumb:hover]:bg-muted-foreground/60;
-    @apply [&::-webkit-scrollbar-track]:rounded-lg;
+    @apply [&::-webkit-scrollbar-track]:rounded-none;
     @apply [&::-webkit-scrollbar-track]:m-1;
     @apply [&::-webkit-scrollbar-track]:bg-transparent;
     @apply [&::-moz-selection]:bg-accent;

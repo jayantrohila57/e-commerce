@@ -30,8 +30,8 @@ export function AccountSidebar() {
   const pathname = usePathname();
 
   return (
-    <nav className="flex-1">
-      <ul className="space-y-2">
+    <nav className="flex-1 h-full w-full p-4 border-r">
+      <ul className="space-y-2 h-full w-full">
         {sections.map((section) => {
           const isActive = pathname === section.href;
           return (

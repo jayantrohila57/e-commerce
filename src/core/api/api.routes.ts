@@ -5,6 +5,7 @@ import { attributeRouter } from "@/module/attribute/attribute.api";
 import { cartRouter } from "@/module/cart/cart.api";
 import { categoryRouter } from "@/module/category/category.api";
 import { inventoryRouter } from "@/module/inventory/inventory.api";
+import { marketingContentRouter } from "@/module/marketing-content/marketing-content.api";
 import { orderRouter } from "@/module/order/order.api";
 import { paymentRouter } from "@/module/payment/payment.api";
 import { productRouter } from "@/module/product/product.api";
@@ -19,6 +20,7 @@ export const appRouter = createTRPCRouter({
   attribute: attributeRouter,
   cart: cartRouter,
   category: categoryRouter,
+  marketingContent: marketingContentRouter,
   subcategory: subcategoryRouter,
   product: productRouter,
   productVariant: productVariantRouter,

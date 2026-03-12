@@ -276,6 +276,33 @@ export const MESSAGE = {
       ERROR: "Unexpected error while deleting category.",
     },
   },
+  MARKETING_CONTENT: {
+    CREATE: {
+      SUCCESS: "Marketing content created successfully.",
+      FAILED: "Failed to create marketing content.",
+      ERROR: "Unexpected error while creating marketing content.",
+    },
+    GET: {
+      SUCCESS: "Marketing content retrieved successfully.",
+      FAILED: "Marketing content not found.",
+      ERROR: "Unexpected error while retrieving marketing content.",
+    },
+    GET_MANY: {
+      SUCCESS: "Marketing content list retrieved successfully.",
+      FAILED: "No marketing content found.",
+      ERROR: "Unexpected error while retrieving marketing content list.",
+    },
+    UPDATE: {
+      SUCCESS: "Marketing content updated successfully.",
+      FAILED: "Failed to update marketing content.",
+      ERROR: "Unexpected error while updating marketing content.",
+    },
+    DELETE: {
+      SUCCESS: "Marketing content deleted successfully.",
+      FAILED: "Failed to delete marketing content.",
+      ERROR: "Unexpected error while deleting marketing content.",
+    },
+  },
   SUBCATEGORY: {
     CREATE: {
       SUCCESS: "Subcategory created successfully.",

@@ -1,7 +1,15 @@
 import { notFound } from "next/navigation";
 import { apiServer, HydrateClient } from "@/core/api/api.server";
+import {
+  ContentAnnouncementBar,
+  ContentCTA,
+  ContentFeatureHighlights,
+  ContentOfferBanner,
+  ContentPromoBanner,
+  ContentSplitBanner,
+} from "@/module/site/content-sections";
 import { SubCategoryItem } from "@/module/subcategory/subcategory-listing";
-import Section from "@/shared/components/layout/section/section";
+import Shell from "@/shared/components/layout/shell";
 import { clientEnv } from "@/shared/config/env.client";
 import { getImageSrc } from "@/shared/utils/lib/image.utils";
 
@@ -61,9 +69,29 @@ export default async function SubCategoryPage({ params }: PageProps<"/store/[cat
 
   return (
     <HydrateClient>
-      <Section>
-        <SubCategoryItem data={data} variants={variants} />
-      </Section>
+      <Shell>
+        <Shell.Section>
+          <ContentAnnouncementBar page="store_subcategory" />
+        </Shell.Section>
+        <Shell.Section>
+          <ContentPromoBanner page="store_subcategory" />
+        </Shell.Section>
+        <Shell.Section>
+          <ContentSplitBanner page="store_subcategory" />
+        </Shell.Section>
+        <Shell.Section>
+          <SubCategoryItem data={data} variants={variants} />
+        </Shell.Section>
+        <Shell.Section>
+          <ContentCTA page="store_subcategory" />
+        </Shell.Section>
+        <Shell.Section>
+          <ContentOfferBanner page="store_subcategory" />
+        </Shell.Section>
+        <Shell.Section>
+          <ContentFeatureHighlights page="store_subcategory" />
+        </Shell.Section>
+      </Shell>
     </HydrateClient>
   );
 }

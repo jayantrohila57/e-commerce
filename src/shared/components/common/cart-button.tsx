@@ -22,9 +22,9 @@ export default function CartButton() {
       <Tooltip>
         <TooltipTrigger asChild>
           <Button
-            variant="outline"
+            variant="ghost"
             size="icon"
-            className="relative group hover:border-primary/50 transition-colors"
+            className="relative group  transition-colors"
             onClick={handleClick}
             aria-label="Cart"
           >

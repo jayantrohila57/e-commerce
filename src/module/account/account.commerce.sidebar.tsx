@@ -39,7 +39,7 @@ export function CommerceSidebar() {
   const pathname = usePathname();
 
   return (
-    <nav className="flex-1">
+    <nav className="flex-1 h-full w-full p-4 border-r">
       <ul className="space-y-2">
         {sections.map((section) => {
           const isActive = pathname === section.href;

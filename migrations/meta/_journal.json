@@ -8,6 +8,13 @@
       "when": 1773216729767,
       "tag": "0000_spicy_lilandra",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1773237291462,
+      "tag": "0001_mean_thunderball",
+      "breakpoints": true
     }
   ]
 }

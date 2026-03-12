@@ -65,11 +65,10 @@ export const footer: NavType[] = [
 
 export default function Footer() {
   return (
-    <div className="max-w-9xl container mx-auto h-full w-full items-center justify-between">
-      <Separator />
-      <div className="h-full w-full flex-row py-10">
-        <div className="relative flex flex-col-reverse justify-between gap-8 md:flex-row">
-          <div className="z-10 flex max-w-2xl flex-col justify-between gap-8 py-5 pr-5 sm:flex-row md:max-w-xs md:flex-col md:pt-0">
+    <div className="h-full w-full items-center border-r border-t justify-between">
+      <div className="h-full w-full flex-row">
+        <div className="relative flex border-b h-full w-full flex-col-reverse justify-between md:flex-row">
+          <div className="z-10 flex max-w-2xl p-4 border-r flex-col justify-between sm:flex-row md:max-w-xl md:flex-col">
             <div className="w-full">
               <Link href={PATH.ROOT}>
                 <div className="flex flex-row items-start justify-start gap-1">
@@ -88,25 +87,22 @@ export default function Footer() {
                 <span className="text-muted-foreground pr-2">{"Address:"}</span> {site.address}
               </p>
             </div>
-            <div className="grid w-full grid-cols-2 gap-8">
-              <div className="col-span-2">
-                <h4 className="mb-2 text-lg font-semibold">{"Supported Payment"}</h4>
-                <div className="flex space-x-2">
-                  <Icons.paypal className="h-6 w-9" />
-                  <Icons.visa className="h-10 w-auto" />
-                </div>
+            <div className="pb-20">
+              <h4 className="mb-2 text-lg font-semibold">{"Supported Payment"}</h4>
+              <div className="flex space-x-2">
+                <Icons.paypal className="h-6 w-9" />
+                <Icons.visa className="h-10 w-auto" />
               </div>
+            </div>
+          </div>
+          <div className="z-10 col-span-1 grid w-full grid-cols-1 md:col-span-2 pb-20">
+            <div className="grid w-full grid-cols-1 gap-4 p-4 border-b md:grid-cols-4 pb-20">
               <div className="col-span-2">
                 <h4 className="mb-2 text-lg font-semibold">{"Connect On Social"}</h4>
                 <div className="flex gap-5">
                   <Social />
                 </div>
               </div>
-            </div>
-          </div>
-          <div className="z-10 col-span-1 grid w-full max-w-7xl grid-cols-1 gap-8 py-5 md:col-span-2 md:pt-0">
-            <div className="grid w-full grid-cols-1 gap-8 py-5 md:grid-cols-4 md:py-0">
-              <div className="col-span-2"></div>
               <div className="col-span-1 md:col-span-2">
                 <h4 className="mb-2 text-lg font-semibold">{"Sign up to our Newsletter"}</h4>
                 <form className="flex space-x-2">
@@ -117,8 +113,7 @@ export default function Footer() {
                 </form>
               </div>
             </div>
-            <Separator />
-            <div className="grid w-full grid-cols-2 gap-2 sm:grid-cols-2 md:grid-cols-6 md:gap-4">
+            <div className="grid w-full grid-cols-2 sm:grid-cols-2 md:grid-cols-6 p-4">
               {footer?.map(({ title, submenu }) => {
                 return (
                   <div key={title}>
@@ -144,12 +139,17 @@ export default function Footer() {
             </div>
           </div>
         </div>
-        <Separator className="my-2 mb-8" />
-        <div className="flex h-full w-full items-center justify-between">
-          <AppBrand />
-          <div className="flex h-full w-auto items-center justify-start gap-4">
-            <ThemeToggle />
-            <RSS />
+        <div className="flex h-16 w-full items-center justify-between">
+          <div className="flex h-full w-auto items-center justify-center">
+            <AppBrand className="p-4 flex h-full border-r px-4 items-center justify-center" />
+          </div>
+          <div className="flex h-full w-auto items-center justify-center">
+            <div className="border-l p-4 w-16">
+              <ThemeToggle />
+            </div>
+            <div className="border-l p-4 w-16">
+              <RSS />
+            </div>
           </div>
         </div>
       </div>

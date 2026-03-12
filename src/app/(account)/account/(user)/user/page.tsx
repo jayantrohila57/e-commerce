@@ -15,11 +15,11 @@ export default async function AccountPage() {
   if (!session) return redirect(PATH.ROOT);
   return (
     <Section {...metadata}>
-      <div className="grid h-full min-h-[800px] w-full grid-cols-12 gap-4 shadow-none">
-        <div className="col-span-2 h-full w-full">
+      <div className="grid h-full min-h-[800px] w-full grid-cols-12 shadow-none">
+        <div className="col-span-2 h-full  border-b w-full">
           <AccountSidebar />
         </div>
-        <div className="col-span-10 h-full w-full">
+        <div className="col-span-10 h-full p-4 border-b border-r w-full">
           <AccountUserComponent />
         </div>
       </div>

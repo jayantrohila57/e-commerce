@@ -49,18 +49,24 @@ export function HeaderActions() {
     <UserDropdown user={session.user} />
   ) : (
     <Link href={PATH.AUTH.SIGN_UP}>
-      <Button size="sm" variant="outline">
+      <Button size="sm" variant="ghost">
         Sign Up
       </Button>
     </Link>
   );
 
   return (
-    <div className="flex flex-row gap-1 sm:gap-2 md:gap-4">
-      <CartButton />
-      <WishListButton />
-      <ModeToggle />
-      {authSlot}
+    <div className="flex flex-row h-full">
+      <div className="h-full flex flex-row items-center p-2 px-4 border-l">
+        <CartButton />
+      </div>
+      <div className="h-full flex flex-row items-center p-2 px-4 border-l">
+        <WishListButton />
+      </div>
+      <div className="h-full flex flex-row items-center p-2 px-4 border-l">
+        <ModeToggle />
+      </div>
+      <div className="h-full flex flex-row items-center p-2 px-4 border-l">{authSlot}</div>
     </div>
   );
 }

@@ -124,6 +124,11 @@ export const PATH = {
     MARKETING: {
       ROOT: "/studio/marketing",
       CAMPAIGNS: "/studio/marketing/campaigns",
+      CONTENT: {
+        ROOT: "/studio/marketing/content",
+        NEW: "/studio/marketing/content/new",
+        EDIT: (id: string) => `/studio/marketing/content/${id}/edit`,
+      },
       NEWSLETTERS: {
         ROOT: "/studio/marketing/newsletters",
         NEW: "/studio/marketing/newsletters/new",
@@ -206,8 +211,8 @@ export const PATH = {
   SITE: {
     ROOT: "/",
     FORBIDDEN: "/forbidden" as Route,
-    ABOUT: "/about",
-    CONTACT: "/contact",
+    ABOUT: "/marketing/about",
+    CONTACT: "/support/contact",
     LEGAL: {
       ROOT: "/legal",
       SLUG: (slug: string) => `/legal/${slug}`,

@@ -2,6 +2,7 @@ import {
   BarChart3,
   CreditCard,
   DollarSign,
+  Layout,
   LayoutDashboard,
   LifeBuoy,
   type LucideIcon,
@@ -124,6 +125,7 @@ export const getMarketingItems = (role?: string): NavItem[] => [
     icon: MessageSquare,
     items: [
       { title: "All Marketing", url: PATH.STUDIO.MARKETING.ROOT, icon: MessageSquare },
+      { title: "Content", url: PATH.STUDIO.MARKETING.CONTENT.ROOT, icon: Layout },
       { title: "Campaigns", url: PATH.STUDIO.MARKETING.CAMPAIGNS, icon: MessageSquare },
       { title: "Newsletters", url: PATH.STUDIO.MARKETING.NEWSLETTERS.ROOT, icon: Mail },
       { title: "Discounts", url: PATH.STUDIO.DISCOUNTS.ROOT, icon: DollarSign },
@@ -204,16 +206,16 @@ export const getSupportItems = (role?: string): NavItem[] => [
   },
 ];
 
-export function useSidebarSections(): NavSection[] {
-  const session = useSession();
-  const role = normalizeRole(session.data?.user?.role);
+export function useSidebarSections(): { sections: NavSection[]; isPending: boolean } {
+  const { data: session, isPending } = useSession();
+  const role = normalizeRole(session?.user?.role);
   const canSeeStudio = roleCanAccessStudio(role);
 
-  if (!canSeeStudio) {
-    return [];
+  if (isPending || !canSeeStudio) {
+    return { sections: [], isPending };
   }
 
-  return [
+  const sections: NavSection[] = [
     { title: "Dashboard", section: getDashboardItems(role) },
     {
       title: "Studio",
@@ -232,4 +234,6 @@ export function useSidebarSections(): NavSection[] {
     },
     { title: "Help & Support", section: [getSupportItems(role), getSettingsItems(role)].flat() },
   ];
+
+  return { sections, isPending: false };
 }

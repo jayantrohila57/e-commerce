@@ -29,7 +29,7 @@ export default function Section({
   return (
     <Card className={cn("bg-card/0 ring-0 gap-0 border-none p-0 shadow-none", className)}>
       {title && description && (
-        <div className={variant === "full" ? "w-full" : "max-w-9xl container mx-auto mb-4"}>
+        <div className="w-full p-4 border-y">
           <CardHeader className="px-0">
             {title && <CardTitle className="text-4xl">{title}</CardTitle>}
             {description && <CardDescription>{description}</CardDescription>}
@@ -43,7 +43,6 @@ export default function Section({
           </CardHeader>
         </div>
       )}
-      {separator && <Separator className="mb-4" />}
       <CardContent className="min-h-[600px] p-0">{children}</CardContent>
     </Card>
   );

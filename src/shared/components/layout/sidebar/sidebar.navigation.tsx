@@ -17,8 +17,8 @@ import {
 } from "@/shared/components/ui/sidebar";
 import { cn } from "@/shared/utils/lib/utils";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../../ui/collapsible";
-import { Separator } from "../../ui/separator";
 import { useSidebarSections } from "./sidebar.nav-items";
+import { SidebarNavSkeleton } from "./sidebar.nav-skeleton";
 
 function useIsActive() {
   const pathname = usePathname();
@@ -42,7 +42,7 @@ function useIsActive() {
 export function NavMain() {
   const isActive = useIsActive();
   const collapsibleId = useId();
-  const sections = useSidebarSections();
+  const { sections, isPending } = useSidebarSections();
 
   const [openStates, setOpenStates] = useState<Record<string, boolean>>(() => {
     const initial: Record<string, boolean> = {};
@@ -56,6 +56,10 @@ export function NavMain() {
     });
     return initial;
   });
+
+  if (isPending) {
+    return <SidebarNavSkeleton />;
+  }
 
   return sections && sections?.length > 0
     ? sections.map((section, sectionIndex) => (

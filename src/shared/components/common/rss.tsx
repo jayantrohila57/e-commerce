@@ -10,7 +10,7 @@ function RSS() {
     <TooltipProvider>
       <Tooltip>
         <Link href={PATH.FEEDS.RSS as Route}>
-          <Button variant={"outline"} size={"icon"}>
+          <Button variant={"ghost"} size={"icon"}>
             <RssIcon className="h-5 w-5" />
           </Button>
         </Link>

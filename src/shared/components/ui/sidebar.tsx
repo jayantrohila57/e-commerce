@@ -542,15 +542,13 @@ function SidebarMenuBadge({ className, ...props }: React.ComponentProps<"div">) 
 function SidebarMenuSkeleton({
   className,
   showIcon = false,
+  width = "70%",
   ...props
 }: React.ComponentProps<"div"> & {
   showIcon?: boolean;
+  /** Fixed width for the text skeleton. Use a fixed value to avoid hydration mismatch (no Math.random). */
+  width?: string;
 }) {
-  // Random width between 50 to 90%.
-  const [width] = React.useState(() => {
-    return `${Math.floor(Math.random() * 40) + 50}%`;
-  });
-
   return (
     <div
       data-slot="sidebar-menu-skeleton"
@@ -562,11 +560,7 @@ function SidebarMenuSkeleton({
       <Skeleton
         className="h-4 max-w-(--skeleton-width) flex-1"
         data-sidebar="menu-skeleton-text"
-        style={
-          {
-            "--skeleton-width": width,
-          } as React.CSSProperties
-        }
+        style={{ "--skeleton-width": width } as React.CSSProperties}
       />
     </div>
   );

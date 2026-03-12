@@ -71,6 +71,25 @@ export const inventoryAdjustmentTypeEnum = pgEnum("inventory_adjustment_type", [
   "correction",
 ]);
 export const auditActorTypeEnum = pgEnum("audit_actor_type", ["user", "system"]);
+export const marketingContentPageEnum = pgEnum("marketing_content_page", [
+  "home",
+  "store",
+  "store_category",
+  "store_subcategory",
+  "product",
+  "checkout",
+  "about",
+  "newsletter",
+  "support",
+]);
+export const marketingContentSectionEnum = pgEnum("marketing_content_section", [
+  "promo_banner",
+  "cta",
+  "offer_banner",
+  "split_banner",
+  "announcement_bar",
+  "feature_highlight",
+]);
 
 export const account = pgTable("account", {
   id: text("id").primaryKey(),
@@ -253,6 +272,44 @@ export const media = pgTable("media", {
   type: text("type").$type<"image" | "video" | "model" | "file">().default("image"),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
 });
+
+export const marketingContent = pgTable(
+  "marketing_content",
+  {
+    id: text("id").primaryKey(),
+    page: marketingContentPageEnum("page").notNull(),
+    section: marketingContentSectionEnum("section").notNull(),
+    title: text("title"),
+    bodyText: text("body_text"),
+    image: text("image"),
+    ctaLabel: text("cta_label"),
+    ctaLink: text("cta_link"),
+    productLink: text("product_link"),
+    items:
+      jsonb("items").$type<
+        {
+          title?: string | null;
+          bodyText?: string | null;
+          image?: string | null;
+          ctaLabel?: string | null;
+          ctaLink?: string | null;
+        }[]
+      >(),
+    displayOrder: integer("display_order").default(0).notNull(),
+    isActive: boolean("is_active").default(true).notNull(),
+    startsAt: timestamp("starts_at", { withTimezone: true }),
+    endsAt: timestamp("ends_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .defaultNow()
+      .$onUpdate(() => new Date()),
+  },
+  (table) => ({
+    pageSectionIdx: index("marketing_content_page_section_idx").on(table.page, table.section),
+    isActiveIdx: index("marketing_content_is_active_idx").on(table.isActive),
+    displayOrderIdx: index("marketing_content_display_order_idx").on(table.displayOrder),
+  }),
+);
 
 export const product = pgTable(
   "product",

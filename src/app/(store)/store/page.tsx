@@ -1,7 +1,14 @@
 import type { Route } from "next";
 import Link from "next/link";
 import { apiServer } from "@/core/api/api.server";
-import CodePreview from "@/shared/components/common/code-preview";
+import {
+  ContentAnnouncementBar,
+  ContentCTA,
+  ContentFeatureHighlights,
+  ContentOfferBanner,
+  ContentPromoBanner,
+  ContentSplitBanner,
+} from "@/module/site/content-sections";
 import { BlurImage } from "@/shared/components/common/image";
 import Section from "@/shared/components/layout/section/section";
 import Shell from "@/shared/components/layout/shell";
@@ -21,6 +28,15 @@ export default async function StorePage() {
 
   return (
     <Shell>
+      <Shell.Section>
+        <ContentAnnouncementBar page="store" />
+      </Shell.Section>
+      <Shell.Section>
+        <ContentPromoBanner page="store" />
+      </Shell.Section>
+      <Shell.Section>
+        <ContentSplitBanner page="store" />
+      </Shell.Section>
       <Shell.Section>
         {data?.map((category) => (
           <Section
@@ -58,6 +74,15 @@ export default async function StorePage() {
             </div>
           </Section>
         ))}
+      </Shell.Section>
+      <Shell.Section>
+        <ContentCTA page="store" />
+      </Shell.Section>
+      <Shell.Section>
+        <ContentOfferBanner page="store" />
+      </Shell.Section>
+      <Shell.Section>
+        <ContentFeatureHighlights page="store" />
       </Shell.Section>
     </Shell>
   );

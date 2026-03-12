@@ -14,8 +14,8 @@ export default async function Layout({ children }: { children: React.ReactNode }
       <ScrollToTopButton />
       <CookieConsent />
       <Shell.Header>
+        <ContentAnnouncementBar page="home" />
         <Header />
-        {/* <ContentAnnouncementBar page="home" /> */}
       </Shell.Header>
       <Shell.Main>{children}</Shell.Main>
       <Shell.Footer>

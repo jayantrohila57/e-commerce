@@ -19,16 +19,13 @@ export default async function Home({}: PageProps<"/">) {
         <GetFeaturedCategories />
       </Shell.Section>
       <Shell.Section>
+        <ContentOfferBanner page="home" />
+      </Shell.Section>
+      <Shell.Section>
         <ShopByCategoryGrid />
       </Shell.Section>
       <Shell.Section>
         <ContentCTA page="home" />
-      </Shell.Section>
-      <Shell.Section>
-        <ContentOfferBanner page="home" />
-      </Shell.Section>
-      <Shell.Section>
-        <ContentFeatureHighlights page="home" />
       </Shell.Section>
     </Shell>
   );

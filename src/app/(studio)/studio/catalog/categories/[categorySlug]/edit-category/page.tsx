@@ -22,8 +22,8 @@ export default async function EditCategoryPage({
 
   const { data } = await apiServer.category.get({
     params: {
-      id: String(id),
-      slug,
+      ...(id ? { id: String(id) } : {}),
+      ...(slug ? { slug } : {}),
     },
   });
 

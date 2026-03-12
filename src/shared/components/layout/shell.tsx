@@ -20,7 +20,7 @@ export const Shell = ({ children }: ShellComponent) => {
 const HeaderVariants = cva("", {
   variants: {
     variant: {
-      default: "fixed h-16 bg-background/50 top-0 left-0 backdrop-blur-md right-0 z-50 bg-none",
+      default: "fixed top-0 left-0 right-0 z-50 bg-none",
     },
   },
   defaultVariants: {

@@ -16,7 +16,7 @@ export default async function ContentAnnouncementBar({ page }: ContentAnnounceme
   if (!content) return null;
 
   return (
-    <div className="bg-primary text-primary-foreground">
+    <div className="bg-primary z-50 text-primary-foreground">
       <div className="mx-auto flex max-w-6xl items-center justify-center gap-2 px-4 py-2 text-xs sm:text-sm">
         <span className="font-medium">{content.title ?? "Announcement"}</span>
         {content.bodyText && <span className="opacity-90">{content.bodyText}</span>}

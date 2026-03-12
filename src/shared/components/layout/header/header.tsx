@@ -4,7 +4,7 @@ import { NavigationMenuDemo } from "./header.navigation";
 
 export default function Header() {
   return (
-    <nav className="z-9999 flex border-b border-r h-full w-full items-center justify-between">
+    <nav className="z-9999 h-16 bg-background/50 backdrop-blur-md flex border-b border-r w-full items-center justify-between">
       <div className="flex flex-row h-full">
         <div className="h-full flex flex-row bg-secondary items-center p-2 border-r px-8">
           <HeaderLogo />

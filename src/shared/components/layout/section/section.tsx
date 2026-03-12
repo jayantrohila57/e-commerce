@@ -14,6 +14,7 @@ interface SectionProps {
   variant?: "default" | "full";
   className?: string;
   actionLink?: Route;
+  isMinHeight?: boolean;
 }
 
 export default function Section({
@@ -23,6 +24,7 @@ export default function Section({
   action,
   children,
   separator = true,
+  isMinHeight = true,
   className,
   actionLink,
 }: SectionProps) {
@@ -30,20 +32,23 @@ export default function Section({
     <Card className={cn("bg-card/0 ring-0 gap-0 border-none p-0 shadow-none", className)}>
       {title && description && (
         <div className="w-full p-4 border-y">
-          <CardHeader className="px-0">
-            {title && <CardTitle className="text-4xl">{title}</CardTitle>}
-            {description && <CardDescription>{description}</CardDescription>}
-            <CardAction>
+          <CardHeader className="px-4">
+            {title && <CardTitle className="text-6xl font-semibold">{title}</CardTitle>}
+            {description && (
+              <CardDescription className="text-base text-muted-foreground">{description}</CardDescription>
+            )}
+            <CardAction className="flex flex-row items-end justify-end mt-6">
               {action && actionLink && (
                 <Link href={actionLink}>
-                  <Button variant={"outline"}>{action}</Button>
+                  <Button>{action}</Button>
                 </Link>
               )}
             </CardAction>
           </CardHeader>
         </div>
       )}
-      <CardContent className="min-h-[600px] p-0">{children}</CardContent>
+      <div className="w-full h-16 border-b"></div>
+      <CardContent className={cn("p-0", isMinHeight && "min-h-[600px]")}>{children}</CardContent>
     </Card>
   );
 }

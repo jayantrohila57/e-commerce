@@ -19,26 +19,28 @@ export default async function GetFeaturedCategories() {
     <HydrateClient>
       <Section
         {...{
-          title: "Featured Categories",
+          title: "Featured",
           description: "Explore our featured categories",
+          action: "View All",
+          actionLink: PATH.STORE.CATEGORIES.ROOT,
         }}
       >
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3">
+        <div className="grid grid-cols-1 h-full w-full border-b sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3">
           {categories?.map((category) => (
             <Link href={PATH.STORE.CATEGORIES.CATEGORY(category.slug) as Route} key={category.id}>
-              <Card className="flex h-full flex-col justify-between pt-0 transition-shadow duration-300 hover:shadow-lg">
-                <CardContent className="overflow-hidden rounded-sm p-0">
+              <Card className="flex h-full p-4 gap-0 rounded-none border-r last:border-l-0 ring-0 bg-transparent flex-col justify-between hover:bg-secondary">
+                <div className="overflow-hidden p-0 h-auto w-full aspect-4/5">
                   <BlurImage
                     src={getImageSrc(category.image)}
                     alt={category.title ?? "Category"}
                     width={500}
                     height={500}
-                    className="motion-all bg-secondary aspect-square h-auto w-full rounded-t-sm object-cover group-hover:drop-shadow"
+                    className="motion-all bg-secondary h-full w-full rounded-t-sm object-cover group-hover:drop-shadow"
                   />
-                </CardContent>
-                <CardHeader>
-                  <CardTitle className="text-xl font-semibold">{category.title}</CardTitle>
-                  <CardDescription className="text-muted-foreground line-clamp-3 h-12">
+                </div>
+                <CardHeader className="border-t p-4">
+                  <CardTitle className="text-2xl font-semibold">{category.title}</CardTitle>
+                  <CardDescription className="text-base text-muted-foreground line-clamp-3">
                     {category.description}
                   </CardDescription>
                 </CardHeader>

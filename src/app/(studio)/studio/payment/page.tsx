@@ -25,11 +25,24 @@ export default async function StudioPaymentsPage({
   const input = await searchParams;
   const listQuery = getListQueryFromSearchParams(input);
 
+  const statusParam = typeof input.status === "string" ? input.status : undefined;
+  const providerParam = typeof input.provider === "string" ? input.provider : undefined;
+  const status =
+    statusParam && ["pending", "completed", "failed", "refunded"].includes(statusParam)
+      ? (statusParam as "pending" | "completed" | "failed" | "refunded")
+      : undefined;
+  const provider =
+    providerParam && ["stripe", "razorpay", "paypal", "cod"].includes(providerParam)
+      ? (providerParam as "stripe" | "razorpay" | "paypal" | "cod")
+      : undefined;
+
   const result = await apiServer.payment.getManyAdmin({
     query: {
       page: listQuery.pagination.page,
       limit: listQuery.pagination.limit,
-      search: listQuery.search.q,
+      q: listQuery.search.q,
+      status,
+      provider,
     },
   });
 

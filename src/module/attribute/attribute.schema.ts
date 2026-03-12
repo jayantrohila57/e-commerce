@@ -24,9 +24,11 @@ export const attributeInsertSchema = attributeBaseSchema.omit({
 
 export const attributeUpdateSchema = attributeInsertSchema.partial();
 
-// Search
+// Search & filters
 const searchSchema = z.object({
   search: z.string().min(2).max(100).optional(),
+  type: z.string().optional(),
+  hasValues: z.boolean().optional(),
 });
 
 export const attributeContract = {

@@ -25,6 +25,33 @@ export default function UserTable({ data }: { data: StudioManagedUserList }) {
       data={items}
       columns={columns}
       displayKey={"name"}
+      extraFilters={[
+        {
+          key: "role",
+          title: "Role",
+          options: [
+            { label: "Admin", value: "ADMIN", color: "" },
+            { label: "Staff", value: "STAFF", color: "" },
+            { label: "Customer", value: "CUSTOMER", color: "" },
+          ],
+        },
+        {
+          key: "banned",
+          title: "Banned",
+          options: [
+            { label: "Banned", value: "true", color: "" },
+            { label: "Not banned", value: "false", color: "" },
+          ],
+        },
+        {
+          key: "emailVerified",
+          title: "Email Verified",
+          options: [
+            { label: "Verified", value: "true", color: "" },
+            { label: "Unverified", value: "false", color: "" },
+          ],
+        },
+      ]}
       deletionOptions={tableFilters.deletionStatus}
       bulkActions={bulkActions}
       pageCount={totalPages}

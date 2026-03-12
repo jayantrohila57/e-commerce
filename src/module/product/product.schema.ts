@@ -56,8 +56,7 @@ export const productUpdateSchema = baseProductSchema.partial();
 //
 const searchSchema = z.object({
   search: z.string().min(2).max(100).optional(),
-  visibility: z.enum(["public", "private", "hidden"]).optional(),
-  isFeatured: z.boolean().optional(),
+  status: z.enum(["draft", "archive", "live"]).optional(),
 });
 
 export const productContract = {
@@ -104,10 +103,13 @@ export const productContract = {
       query: offsetPaginationSchema
         .extend({
           categorySlug: z.string().optional(),
+          subcategorySlug: z.string().optional(),
           isActive: z.boolean().optional(),
+          deleted: z.boolean().optional(),
         })
         .extend({
           search: z.string().optional(),
+          status: z.enum(["draft", "archive", "live"]).optional(),
         }),
     }),
     output: detailedResponse(z.array(productSelectSchema)),

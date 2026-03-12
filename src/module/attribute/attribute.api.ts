@@ -56,7 +56,7 @@ export const attributeRouter = createTRPCRouter({
     .output(attributeContract.getMany.output)
     .query(async ({ input }) => {
       try {
-        const { search, limit = 20, offset = 0 } = input.query || {};
+        const { search, type, hasValues, limit = 20, offset = 0 } = input.query || {};
         const q = search?.trim();
 
         const pageInput = {
@@ -75,6 +75,9 @@ export const attributeRouter = createTRPCRouter({
           q
             ? or(ilike(attribute.title, `%${q}%`), ilike(attribute.slug, `%${q}%`), ilike(attribute.value, `%${q}%`))
             : undefined,
+          type ? eq(attribute.type, type) : undefined,
+          hasValues === true ? ilike(attribute.value, "%") : undefined,
+          hasValues === false ? eq(attribute.value, "") : undefined,
         ].filter((condition): condition is NonNullable<typeof condition> => Boolean(condition));
 
         const [{ count: totalRaw = 0 } = { count: 0 }] = await db
@@ -85,10 +88,18 @@ export const attributeRouter = createTRPCRouter({
 
         const data = await db.query.attribute.findMany({
           where: (a, helpers) => {
-            const { and, isNull, or } = helpers;
+            const { and, isNull, or, eq: _eq } = helpers;
             const conditions = [isNull(a.deletedAt)];
             if (q) {
               conditions.push(or(ilike(a.title, `%${q}%`), ilike(a.slug, `%${q}%`), ilike(a.value, `%${q}%`))!);
+            }
+            if (type) {
+              conditions.push(_eq(a.type, type));
+            }
+            if (hasValues === true) {
+              conditions.push(ilike(a.value, "%"));
+            } else if (hasValues === false) {
+              conditions.push(_eq(a.value, ""));
             }
             return and(...conditions);
           },

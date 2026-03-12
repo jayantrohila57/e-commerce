@@ -1,10 +1,11 @@
 "use client";
 
-import type { Row } from "@tanstack/react-table";
+import type { ColumnDef, Row } from "@tanstack/react-table";
 import type { Route } from "next";
 import { useRouter } from "next/navigation";
 import { useMemo } from "react";
 import { apiClient } from "@/core/api/api.client";
+import { DataTableColumnHeader } from "@/shared/components/table/data-table-column-header";
 import { commonColumns } from "@/shared/components/table/data-table-columns";
 import type { AttributeBase } from "./attribute.schema";
 import { attributeTableConfig } from "./attribute.table.config";
@@ -20,7 +21,7 @@ export function useAttributeColumns() {
     },
   });
 
-  return useMemo(() => {
+  return useMemo<ColumnDef<AttributeBase>[]>(() => {
     const handleEdit = (row: Row<AttributeBase>) => {
       const slug = row.getValue(attributeTableConfig.fields.slug);
       const id = row.getValue(attributeTableConfig.fields.id);
@@ -39,9 +40,16 @@ export function useAttributeColumns() {
       }
     };
 
-    const baseColumns = [
+    const baseColumns: ColumnDef<AttributeBase>[] = [
       ...commonColumns.titleColumn<AttributeBase>(attributeTableConfig.routes.studio),
       ...commonColumns.slugColumn<AttributeBase>(attributeTableConfig.routes.viewStorePrefix),
+      {
+        accessorKey: "type",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Type" />,
+        cell: ({ row }) => (
+          <div className="w-[140px] truncate text-xs text-muted-foreground">{row.getValue("type") as string}</div>
+        ),
+      },
       ...commonColumns.valueColumn<AttributeBase>(),
       ...commonColumns.createdAtColumn<AttributeBase>(),
       ...commonColumns.updatedAtColumn<AttributeBase>(),

@@ -24,12 +24,27 @@ export default async function StudioShippingPage({
 
   const input = await searchParams;
   const listQuery = getListQueryFromSearchParams(input);
+  const status =
+    typeof input.status === "string"
+      ? (input.status as
+          | "pending"
+          | "label_created"
+          | "picked_up"
+          | "in_transit"
+          | "out_for_delivery"
+          | "delivered"
+          | "exception"
+          | "returned")
+      : undefined;
+  const carrier = typeof input.carrier === "string" ? input.carrier : undefined;
   const result = await apiServer.shipment.getMany({
     query: {
       page: listQuery.pagination.page,
       limit: listQuery.pagination.limit,
       sortBy: "createdAt",
       sortOrder: "desc",
+      status,
+      carrier,
     },
   });
 

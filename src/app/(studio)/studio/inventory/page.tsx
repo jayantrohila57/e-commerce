@@ -26,11 +26,23 @@ export default async function InventoryPage({
   const input = await searchParams;
   const listQuery = getListQueryFromSearchParams(input);
 
+  const stockStatus =
+    typeof input.stockStatus === "string" && ["in_stock", "low_stock", "out_of_stock"].includes(input.stockStatus)
+      ? (input.stockStatus as "in_stock" | "low_stock" | "out_of_stock")
+      : undefined;
+  const hasReservedParam = typeof input.hasReserved === "string" ? input.hasReserved : undefined;
+  const hasReserved = hasReservedParam === "true" ? true : hasReservedParam === "false" ? false : undefined;
+  const hasIncomingParam = typeof input.hasIncoming === "string" ? input.hasIncoming : undefined;
+  const hasIncoming = hasIncomingParam === "true" ? true : hasIncomingParam === "false" ? false : undefined;
+
   const result = await apiServer.inventory.getMany({
     query: {
       offset: listQuery.pagination.offset,
       limit: listQuery.pagination.limit,
       search: listQuery.search.q,
+      stockStatus,
+      hasReserved,
+      hasIncoming,
     },
   });
 

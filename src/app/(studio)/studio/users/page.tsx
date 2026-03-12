@@ -25,6 +25,13 @@ export default async function StudioCustomersPage({
   const input = await searchParams;
   const listQuery = getListQueryFromSearchParams(input);
 
+  const roleFilter = typeof input.role === "string" ? input.role : undefined;
+  const bannedParam = typeof input.banned === "string" ? input.banned : undefined;
+  const emailVerifiedParam = typeof input.emailVerified === "string" ? input.emailVerified : undefined;
+  const banned = bannedParam === "true" ? true : bannedParam === "false" ? false : undefined;
+  const emailVerified =
+    emailVerifiedParam === "true" ? true : emailVerifiedParam === "false" ? false : undefined;
+
   const userList = await getStudioUsers({
     query: {
       limit: listQuery.pagination.limit,
@@ -32,6 +39,8 @@ export default async function StudioCustomersPage({
       searchValue: listQuery.search.q,
       searchField: "email",
       searchOperator: "contains",
+      filterField: roleFilter ? "role" : undefined,
+      filterValue: roleFilter,
     },
   });
 

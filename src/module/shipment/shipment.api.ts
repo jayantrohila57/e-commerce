@@ -1,4 +1,4 @@
-import { desc, eq, sql } from "drizzle-orm";
+import { and, desc, eq, ilike, sql } from "drizzle-orm";
 import { v4 as uuidv4 } from "uuid";
 import { createTRPCRouter, customerProcedure, publicProcedure, staffProcedure } from "@/core/api/api.methods";
 import { db } from "@/core/db/db";
@@ -47,6 +47,8 @@ export const shipmentRouter = createTRPCRouter({
           limit: 20,
           sortOrder: "desc" as const,
           sortBy: undefined as string | undefined,
+          status: undefined as typeof shipment.$inferSelect["status"] | undefined,
+          carrier: undefined as string | undefined,
           ...input?.query,
         };
 
@@ -57,12 +59,21 @@ export const shipmentRouter = createTRPCRouter({
           sortBy: query.sortBy,
         });
 
+        const whereConditions = [
+          query.status ? eq(shipment.status, query.status) : undefined,
+          query.carrier ? ilike(shipment.carrier, `%${query.carrier}%`) : undefined,
+        ].filter((c): c is NonNullable<typeof c> => Boolean(c));
+
+        const where = whereConditions.length ? and(...whereConditions) : undefined;
+
         const [{ count: totalRaw = 0 } = { count: 0 }] = await db
           .select({ count: sql<number>`count(*)` })
-          .from(shipment);
+          .from(shipment)
+          .where(where);
         const total = Number(totalRaw ?? 0);
 
         const data = await db.query.shipment.findMany({
+          where,
           orderBy: [desc(shipment.createdAt)],
           limit: Math.min(limit, 100),
           offset,

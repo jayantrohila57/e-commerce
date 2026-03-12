@@ -1,9 +1,9 @@
 "use client";
 
 import { Book, PencilIcon, Tag } from "lucide-react";
-import { EmptyState } from "@/shared/components/common/empty-state";
 import { DataTable } from "@/shared/components/table/data-table";
 import { filters as tableFilters } from "@/shared/components/table/data-table-filter.config";
+import type { FilterOption } from "@/shared/config/options.config";
 import { PATH } from "@/shared/config/routes";
 import { useAttributeBulkActions } from "./attribute.bulk-actions";
 import { useAttributeColumns } from "./attribute.columns";
@@ -22,6 +22,25 @@ export default function AttributeTable({ data }: { data: GetManyAttributesOutput
       data={items}
       columns={columns}
       displayKey={"title"}
+      extraFilters={[
+        {
+          key: "type",
+          title: "Type",
+          options: Array.from(new Set(items.map((item) => item.type))).map((t) => ({
+            label: t,
+            value: t,
+            color: "",
+          })),
+        },
+        {
+          key: "hasValues",
+          title: "Has Values",
+          options: [
+            { label: "Yes", value: "true", color: "" },
+            { label: "No", value: "false", color: "" },
+          ],
+        },
+      ]}
       deletionOptions={tableFilters.deletionStatus}
       bulkActions={bulkActions}
       pageCount={pageCount}

@@ -1,4 +1,4 @@
-import { and, eq, ilike, isNull, or, sql } from "drizzle-orm";
+import { and, eq, gt, ilike, isNull, lte, or, sql } from "drizzle-orm";
 import { v4 as uuidv4 } from "uuid";
 import { createTRPCRouter, publicProcedure, staffProcedure } from "@/core/api/api.methods";
 
@@ -90,11 +90,36 @@ export const inventoryRouter = createTRPCRouter({
         const total = Number(totalRaw ?? 0);
 
         const output = await db.query.inventoryItem.findMany({
-          where: (inv, { and, ilike, isNull, or }) => {
+          where: (inv, helpers) => {
+            const { and, ilike, isNull, or, gt: _gt, lte: _lte } = helpers;
             const conditions = [isNull(inv.deletedAt)];
             if (query?.search) {
               conditions.push(or(ilike(inv.sku, `%${query.search}%`), ilike(inv.barcode, `%${query.search}%`))!);
             }
+
+            // Stock status (simple heuristic: low_stock <= 5 and >0)
+            if (query?.stockStatus === "in_stock") {
+              conditions.push(_gt(inv.quantity, 0));
+            } else if (query?.stockStatus === "low_stock") {
+              conditions.push(_gt(inv.quantity, 0), _lte(inv.quantity, 5));
+            } else if (query?.stockStatus === "out_of_stock") {
+              conditions.push(_lte(inv.quantity, 0));
+            }
+
+            // Reserved
+            if (query?.hasReserved === true) {
+              conditions.push(_gt(inv.reserved, 0));
+            } else if (query?.hasReserved === false) {
+              conditions.push(_lte(inv.reserved, 0));
+            }
+
+            // Incoming
+            if (query?.hasIncoming === true) {
+              conditions.push(_gt(inv.incoming, 0));
+            } else if (query?.hasIncoming === false) {
+              conditions.push(_lte(inv.incoming, 0));
+            }
+
             return and(...conditions);
           },
           limit: Math.min(effectiveLimit, 100),

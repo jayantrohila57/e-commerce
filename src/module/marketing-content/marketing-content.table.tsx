@@ -19,6 +19,34 @@ export default function MarketingContentTable({ data }: { data: GetManyMarketing
       data={items}
       columns={columns}
       displayKey={"title"}
+      extraFilters={[
+        {
+          key: "page",
+          title: "Page",
+          options: Array.from(new Set(items.map((item) => item.page))).map((page) => ({
+            label: String(page),
+            value: String(page),
+            color: "",
+          })),
+        },
+        {
+          key: "section",
+          title: "Section",
+          options: Array.from(new Set(items.map((item) => item.section))).map((section) => ({
+            label: String(section),
+            value: String(section),
+            color: "",
+          })),
+        },
+        {
+          key: "isActive",
+          title: "Active",
+          options: [
+            { label: "Active", value: "true", color: "" },
+            { label: "Inactive", value: "false", color: "" },
+          ],
+        },
+      ]}
       deletionOptions={tableFilters.deletionStatus}
       pageCount={pageCount}
       rowCount={rowCount}

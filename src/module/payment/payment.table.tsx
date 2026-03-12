@@ -1,7 +1,6 @@
 "use client";
 
 import { CreditCard, PencilIcon, Tag } from "lucide-react";
-import { EmptyState } from "@/shared/components/common/empty-state";
 import { DataTable } from "@/shared/components/table/data-table";
 import { filters as tableFilters } from "@/shared/components/table/data-table-filter.config";
 import type { DetailedResponse } from "@/shared/schema";
@@ -22,6 +21,28 @@ export default function PaymentTable({ data }: { data: GetManyPaymentsOutput }) 
       data={items}
       columns={columns}
       displayKey={"id"}
+      extraFilters={[
+        {
+          key: "status",
+          title: "Status",
+          options: [
+            { label: "Pending", value: "pending", color: "" },
+            { label: "Completed", value: "completed", color: "" },
+            { label: "Failed", value: "failed", color: "" },
+            { label: "Refunded", value: "refunded", color: "" },
+          ],
+        },
+        {
+          key: "provider",
+          title: "Provider",
+          options: [
+            { label: "Stripe", value: "stripe", color: "" },
+            { label: "Razorpay", value: "razorpay", color: "" },
+            { label: "PayPal", value: "paypal", color: "" },
+            { label: "COD", value: "cod", color: "" },
+          ],
+        },
+      ]}
       deletionOptions={tableFilters.deletionStatus}
       pageCount={pageCount}
       rowCount={rowCount}

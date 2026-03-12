@@ -21,6 +21,28 @@ export default function ShipmentTable({ data }: { data: GetManyShipmentsOutput }
       data={items}
       columns={columns}
       displayKey={"trackingNumber"}
+      extraFilters={[
+        {
+          key: "shipmentStatus",
+          title: "Status",
+          options: [
+            { label: "Pending", value: "pending", color: "" },
+            { label: "In Transit", value: "in_transit", color: "" },
+            { label: "Out for Delivery", value: "out_for_delivery", color: "" },
+            { label: "Delivered", value: "delivered", color: "" },
+            { label: "Returned", value: "returned", color: "" },
+          ],
+        },
+        {
+          key: "carrier",
+          title: "Carrier",
+          options: Array.from(new Set(items.map((item) => item.carrier).filter(Boolean))).map((carrier) => ({
+            label: String(carrier),
+            value: String(carrier),
+            color: "",
+          })),
+        },
+      ]}
       deletionOptions={tableFilters.deletionStatus}
       bulkActions={bulkActions}
       pageCount={pageCount}

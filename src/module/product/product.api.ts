@@ -1,4 +1,4 @@
-import { and, eq, ilike, isNull, sql } from "drizzle-orm";
+import { and, eq, ilike, isNull, not, sql } from "drizzle-orm";
 import { v4 as uuidv4 } from "uuid";
 import { createTRPCRouter, publicProcedure, staffProcedure } from "@/core/api/api.methods";
 import { db } from "@/core/db/db";
@@ -114,11 +114,27 @@ export const productRouter = createTRPCRouter({
     .query(async ({ input }) => {
       try {
         const { query } = input;
-        const { limit, offset, categorySlug, isActive, search } = query;
+        const {
+          limit,
+          offset,
+          categorySlug,
+          subcategorySlug,
+          isActive,
+          deleted,
+          search,
+          status,
+        } = query;
 
-        const conditions = [isNull(product.deletedAt)];
+        const conditions = [];
+        if (deleted === true) {
+          conditions.push(not(isNull(product.deletedAt)));
+        } else {
+          conditions.push(isNull(product.deletedAt));
+        }
         if (categorySlug) conditions.push(eq(product.categorySlug, categorySlug));
+        if (subcategorySlug) conditions.push(eq(product.subcategorySlug, subcategorySlug));
         if (isActive !== undefined) conditions.push(eq(product.isActive, isActive));
+        if (status) conditions.push(eq(product.status, status));
         if (search) conditions.push(ilike(product.title, `%${search}%`));
 
         const where = conditions.length ? and(...conditions) : undefined;

@@ -42,7 +42,7 @@ import { Card, CardContent, CardFooter } from "../ui/card";
 import { Separator } from "../ui/separator";
 import type { BulkAction } from "./custom-action/bulk-operations.factory";
 import { useBulkActions } from "./custom-action/bulk-operations.factory";
-import { DataTableProvider } from "./data-table-context";
+import { DataTableProvider, type ExtraFilterConfig } from "./data-table-context";
 import { DataTablePagination } from "./data-table-pagination";
 import { DataTableToolbar } from "./data-table-toolbar";
 
@@ -73,6 +73,7 @@ interface DataTableProps<TData, TValue> {
     color: string;
     icon?: ComponentType<{ className?: string }>;
   }[];
+  extraFilters?: ExtraFilterConfig[];
   displayKey: keyof TData;
   bulkActions?: BulkAction<TData>[];
   deletionOptions?: {
@@ -102,6 +103,7 @@ export function DataTable<TData, TValue>({
   visibilityOptions,
   featuredOptions,
   deletionOptions,
+  extraFilters,
   displayKey,
   bulkActions,
   pageCount,
@@ -118,12 +120,14 @@ export function DataTable<TData, TValue>({
 
   const currentFilters = useMemo(() => {
     const filters: Record<string, string | null> = {};
-    const keys = ["status", "visibility", "displayType", "color", "contentType", "isFeatured", "deleted"];
+    const baseKeys = ["status", "visibility", "displayType", "color", "contentType", "isFeatured", "deleted"];
+    const extraKeys = extraFilters?.map((f) => f.key) ?? [];
+    const keys = [...baseKeys, ...extraKeys];
     keys.forEach((key) => {
       filters[key] = searchParams.get(key);
     });
     return filters;
-  }, [searchParams]);
+  }, [searchParams, extraFilters]);
 
   const pagination = useMemo(
     () => ({
@@ -208,6 +212,7 @@ export function DataTable<TData, TValue>({
         visibilityOptions,
         featuredOptions,
         deletionOptions,
+        extraFilters,
         filters: currentFilters,
         setFilter,
         setSearch,

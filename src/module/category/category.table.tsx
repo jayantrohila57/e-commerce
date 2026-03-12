@@ -5,7 +5,7 @@ import type { ComponentType } from "react";
 import { DataTable } from "@/shared/components/table/data-table";
 import { filters as tableFilters } from "@/shared/components/table/data-table-filter.config";
 import type { FilterOption } from "@/shared/config/options.config";
-import { displayTypeOptions, visibilityOptions } from "@/shared/config/options.config";
+import { colorOptions, displayTypeOptions, visibilityOptions } from "@/shared/config/options.config";
 import { PATH } from "@/shared/config/routes";
 import { useCategoryBulkActions } from "./category.bulk-actions";
 import { useCategoryColumns } from "./category.columns";
@@ -43,6 +43,13 @@ export default function CategoryTable({ data }: { data: GetCategoriesOutput }) {
       visibilityOptions={toFacetOptions(visibilityOptions)}
       typeOptions={toFacetOptions(displayTypeOptions)}
       featuredOptions={featuredOptions}
+      extraFilters={[
+        {
+          key: "color",
+          title: "Color",
+          options: toFacetOptions(colorOptions),
+        },
+      ]}
       deletionOptions={tableFilters.deletionStatus}
       bulkActions={bulkActions}
       pageCount={pageCount}

@@ -26,10 +26,36 @@ export default async function MarketingContentPage({
   const input = await searchParams;
   const listQuery = getListQueryFromSearchParams(input);
 
+  const pageFilter = typeof input.page === "string" ? input.page : undefined;
+  const sectionFilter = typeof input.section === "string" ? input.section : undefined;
+  const isActiveParam = typeof input.isActive === "string" ? input.isActive : undefined;
+  const isActive = isActiveParam === "true" ? true : isActiveParam === "false" ? false : undefined;
+
   const result = await apiServer.marketingContent.getMany({
     query: {
       offset: listQuery.pagination.offset,
       limit: listQuery.pagination.limit,
+      page: pageFilter as
+        | "home"
+        | "store"
+        | "store_category"
+        | "store_subcategory"
+        | "product"
+        | "checkout"
+        | "about"
+        | "newsletter"
+        | "support"
+        | undefined,
+      section: sectionFilter as
+        | "promo_banner"
+        | "cta"
+        | "offer_banner"
+        | "crousel"
+        | "split_banner"
+        | "announcement_bar"
+        | "feature_highlight"
+        | undefined,
+      isActive,
     },
   });
 

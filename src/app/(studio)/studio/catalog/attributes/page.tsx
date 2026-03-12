@@ -26,11 +26,18 @@ export default async function AttributesPage({
   const input = await searchParams;
   const listQuery = getListQueryFromSearchParams(input);
 
+  const type = typeof input.type === "string" ? input.type : undefined;
+  const hasValuesParam = typeof input.hasValues === "string" ? input.hasValues : undefined;
+  const hasValues =
+    hasValuesParam === "true" ? true : hasValuesParam === "false" ? false : undefined;
+
   const result = await apiServer.attribute.getMany({
     query: {
       offset: listQuery.pagination.offset,
       limit: listQuery.pagination.limit,
       search: listQuery.search.q,
+      type,
+      hasValues,
     },
   });
 

@@ -26,6 +26,9 @@ export const inventoryUpdateSchema = inventoryBaseSchema.partial();
 
 const searchSchema = z.object({
   search: z.string().min(2).max(100).optional(),
+  stockStatus: z.enum(["in_stock", "low_stock", "out_of_stock"]).optional(),
+  hasReserved: z.boolean().optional(),
+  hasIncoming: z.boolean().optional(),
 });
 
 export const inventoryContract = {

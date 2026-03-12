@@ -26,11 +26,22 @@ export default async function ProductsPage({
   const input = await searchParams;
   const listQuery = getListQueryFromSearchParams(input);
 
+  const status =
+    typeof input.status === "string" && ["draft", "archive", "live"].includes(input.status)
+      ? (input.status as "draft" | "archive" | "live")
+      : undefined;
+  const categorySlug = typeof input.categorySlug === "string" ? input.categorySlug : undefined;
+  const subcategorySlug = typeof input.subcategorySlug === "string" ? input.subcategorySlug : undefined;
+
   const result = await apiServer.product.getMany({
     query: {
       offset: listQuery.pagination.offset,
       limit: listQuery.pagination.limit,
       search: listQuery.search.q,
+      categorySlug,
+      subcategorySlug,
+      status,
+      deleted: listQuery.filters.deleted,
     },
   });
 

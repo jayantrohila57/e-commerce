@@ -19,6 +19,7 @@ export function DataTableToolbar<TData>() {
     visibilityOptions,
     featuredOptions,
     deletionOptions,
+    extraFilters,
     filters,
     setFilter,
     setSearch,
@@ -108,6 +109,16 @@ export function DataTableToolbar<TData>() {
             />
           </div>
         )}
+        {extraFilters?.map((filter) => (
+          <div key={filter.key} className="flex justify-center items-center px-4 h-full border-r">
+            <DataTableFacetedFilter
+              title={filter.title}
+              options={filter.options}
+              value={filters?.[filter.key]}
+              onSelect={(val) => setFilter?.(filter.key, val)}
+            />
+          </div>
+        ))}
         {isFiltered && (
           <div className="flex justify-center px-4 items-center h-full border-r">
             <Button

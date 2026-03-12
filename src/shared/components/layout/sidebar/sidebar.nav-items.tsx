@@ -36,27 +36,9 @@ export interface NavSection {
 export const getMainItems = (role?: string): NavItem[] => [
   {
     title: "Marketing",
-    url: PATH.STUDIO.MARKETING.ROOT,
+    url: PATH.STUDIO.MARKETING.CONTENT.ROOT,
     icon: MessageSquare,
-    items: [
-      { title: "Campaigns", url: PATH.STUDIO.MARKETING.CAMPAIGNS, icon: MessageSquare },
-      { title: "Discounts", url: PATH.STUDIO.DISCOUNTS.ROOT, icon: DollarSign },
-    ],
-  },
-  {
-    title: "Analytics",
-    url: PATH.STUDIO.ANALYTICS.ROOT,
-    icon: BarChart3,
-    items: [
-      { title: "Sales", url: PATH.STUDIO.ANALYTICS.SALES, icon: BarChart3 },
-      { title: "Customers", url: PATH.STUDIO.ANALYTICS.CUSTOMERS, icon: Users },
-    ],
-  },
-  {
-    title: "Settings",
-    url: PATH.STUDIO.SETTINGS.ROOT,
-    icon: Settings2,
-    items: [{ title: "Account", url: PATH.STUDIO.SETTINGS.ACCOUNT.ROOT, icon: Settings2 }],
+    items: [{ title: "Content", url: PATH.STUDIO.MARKETING.CONTENT.ROOT, icon: Layout }],
   },
 ];
 
@@ -126,40 +108,10 @@ export const getMarketingItems = (role?: string): NavItem[] => [
     items: [
       { title: "All Marketing", url: PATH.STUDIO.MARKETING.ROOT, icon: MessageSquare },
       { title: "Content", url: PATH.STUDIO.MARKETING.CONTENT.ROOT, icon: Layout },
-      { title: "Campaigns", url: PATH.STUDIO.MARKETING.CAMPAIGNS, icon: MessageSquare },
-      { title: "Newsletters", url: PATH.STUDIO.MARKETING.NEWSLETTERS.ROOT, icon: Mail },
-      { title: "Discounts", url: PATH.STUDIO.DISCOUNTS.ROOT, icon: DollarSign },
-      { title: "Promotions", url: PATH.STUDIO.MARKETING.PROMOTIONS.ROOT, icon: Percent },
-      { title: "Coupons", url: PATH.STUDIO.MARKETING.COUPONS.ROOT, icon: Percent },
-    ],
-  },
-  {
-    title: "Analytics",
-    url: PATH.STUDIO.ANALYTICS.ROOT,
-    icon: BarChart3,
-    items: [
-      { title: "Sales", url: PATH.STUDIO.ANALYTICS.SALES, icon: BarChart3 },
-      { title: "Customers", url: PATH.STUDIO.ANALYTICS.CUSTOMERS, icon: Users },
     ],
   },
 ];
-export const getSettingsItems = (role?: string): NavItem[] => [
-  {
-    title: "Settings",
-    url: PATH.STUDIO.SETTINGS.ROOT,
-    icon: Settings2,
-    items: [
-      {
-        title: "Account",
-        url: PATH.STUDIO.SETTINGS.ACCOUNT.ROOT,
-        icon: Settings2,
-      },
-      { title: "General", url: PATH.STUDIO.SETTINGS.GENERAL.ROOT, icon: Settings2 },
-      { title: "Notifications", url: PATH.STUDIO.SETTINGS.NOTIFICATIONS.EMAIL, icon: Settings2 },
-      { title: "Security", url: PATH.STUDIO.SETTINGS.SECURITY.TWO_FACTOR_AUTH, icon: Settings2 },
-    ],
-  },
-];
+export const getSettingsItems = (role?: string): NavItem[] => [];
 export const getPaymentsItems = (role?: string): NavItem[] => [
   {
     title: "Payments",

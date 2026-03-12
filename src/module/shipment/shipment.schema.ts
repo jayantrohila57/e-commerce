@@ -47,7 +47,12 @@ export const shipmentContract = {
   getMany: {
     input: z
       .object({
-        query: paginationInput.optional(),
+        query: paginationInput
+          .extend({
+            status: shipmentStatusEnum.optional(),
+            carrier: z.string().optional(),
+          })
+          .optional(),
       })
       .optional(),
     output: detailedResponse(z.array(shipmentSelectSchema)),

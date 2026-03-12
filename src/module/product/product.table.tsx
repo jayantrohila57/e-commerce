@@ -1,9 +1,9 @@
 "use client";
 
 import { Book, PencilIcon, Tag } from "lucide-react";
-import { EmptyState } from "@/shared/components/common/empty-state";
 import { DataTable } from "@/shared/components/table/data-table";
 import { filters as tableFilters } from "@/shared/components/table/data-table-filter.config";
+import { statusOptions as productStatusOptions } from "@/shared/config/options.config";
 import { PATH } from "@/shared/config/routes";
 import { useProductBulkActions } from "./product.bulk-actions";
 import { useProductColumns } from "./product.columns";
@@ -22,6 +22,27 @@ export default function ProductTable({ data }: { data: GetManyProductsOutput }) 
       data={items}
       columns={columns}
       displayKey={"title"}
+      statusOptions={productStatusOptions}
+      extraFilters={[
+        {
+          key: "categorySlug",
+          title: "Category",
+          options: Array.from(new Set(items.map((item) => item.categorySlug))).map((slug) => ({
+            label: slug,
+            value: slug,
+            color: "",
+          })),
+        },
+        {
+          key: "subcategorySlug",
+          title: "Subcategory",
+          options: Array.from(new Set(items.map((item) => item.subcategorySlug))).map((slug) => ({
+            label: slug,
+            value: slug,
+            color: "",
+          })),
+        },
+      ]}
       deletionOptions={tableFilters.deletionStatus}
       bulkActions={bulkActions}
       pageCount={pageCount}

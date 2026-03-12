@@ -30,7 +30,7 @@ export function useMarketingContentColumns() {
 
   return useMemo(() => {
     const handleEdit = (row: Row<MarketingContentBase>) => {
-      const id = row.getValue(marketingContentTableConfig.fields.id);
+      const id = row.original.id;
       if (id && typeof id === "string") {
         router.push(marketingContentTableConfig.routes.edit(id) as Route);
       }
@@ -38,15 +38,15 @@ export function useMarketingContentColumns() {
 
     const handleView = (row: Row<MarketingContentBase>) => {
       const original = row.original;
-      const title = original.title ?? "Untitled";
+      const title = original.title?.trim() ? original.title : "No title";
       const page = original.page ?? "N/A";
       const section = original.section ?? "N/A";
       toast.info(`"${title}" on ${page} · ${section}`);
     };
 
     const handleDelete = (row: Row<MarketingContentBase>) => {
-      const id = row.getValue(marketingContentTableConfig.fields.id);
-      const title = String(row.getValue(marketingContentTableConfig.fields.title) ?? "this content block");
+      const id = row.original.id;
+      const title = String(row.original.title?.trim() ? row.original.title : "this content block");
       if (id && typeof id === "string") {
         if (window.confirm(`Are you sure you want to delete "${title}"?`)) {
           deleteContent.mutate({ params: { id } });
@@ -61,12 +61,18 @@ export function useMarketingContentColumns() {
         header: ({ column }) => <DataTableColumnHeader column={column} title="Title" />,
         cell: ({ row }: { row: Row<MarketingContentBase> }) => {
           const original = row.original;
-          const title = original.title ?? "Untitled";
+          const title = original.title?.trim() ? original.title : "No title";
           const page = original.page ?? "N/A";
           const section = original.section ?? "N/A";
           return (
             <div className="flex min-w-[260px] flex-col gap-1">
-              <span className="truncate text-sm font-medium">{title}</span>
+              <button
+                type="button"
+                onClick={() => handleEdit(row)}
+                className="truncate text-left text-sm font-medium hover:underline"
+              >
+                {title}
+              </button>
               <span className="truncate text-xs text-muted-foreground">
                 {page} · {section}
               </span>

@@ -25,9 +25,12 @@ export default async function ContentFeatureHighlights({
 
   return (
     <Section title={sectionTitle} description={sectionDescription}>
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid h-full w-full grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
         {blocks.map((block) => (
-          <div key={block.id} className="flex h-full flex-col gap-2 rounded-xl border bg-card/40 p-4 shadow-xs">
+          <div
+            key={block.id}
+            className="flex h-auto aspect-square first:border-l-0 last:border-r-0  w-full flex-col gap-2 border p-4 "
+          >
             <h3 className="text-sm font-semibold sm:text-base">{block.title ?? "Feature"}</h3>
             {block.bodyText && <p className="text-xs text-muted-foreground sm:text-sm">{block.bodyText}</p>}
             {block.ctaLabel && block.ctaLink && (

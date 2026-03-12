@@ -18,7 +18,7 @@ export default async function ContentCTA({ page }: ContentCTAProps) {
 
   return (
     <Section separator={false}>
-      <div className="mx-auto flex max-w-4xl flex-col items-center gap-4 rounded-xl bg-card px-6 py-10 text-center shadow-sm">
+      <div className="  flex h-full w-full  flex-col items-center gap-4   bg-card px-6 py-20 text-center">
         {content.title && (
           <h2 className="text-balance text-2xl font-semibold tracking-tight sm:text-3xl">{content.title}</h2>
         )}

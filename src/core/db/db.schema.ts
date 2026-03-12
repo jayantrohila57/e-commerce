@@ -86,6 +86,7 @@ export const marketingContentSectionEnum = pgEnum("marketing_content_section", [
   "promo_banner",
   "cta",
   "offer_banner",
+  "crousel",
   "split_banner",
   "announcement_bar",
   "feature_highlight",

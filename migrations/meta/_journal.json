@@ -15,6 +15,13 @@
       "when": 1773237291462,
       "tag": "0001_mean_thunderball",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1773301623988,
+      "tag": "0002_eminent_mongu",
+      "breakpoints": true
     }
   ]
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { BarChart3, Settings, Shield, Target, X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/shared/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/components/ui/card";
 import { Switch } from "@/shared/components/ui/switch";
@@ -30,7 +30,7 @@ const STORAGE_KEY = "cookie-consent-preferences";
 const CONSENT_GIVEN_KEY = "cookie-consent-given";
 
 export default function CookieConsent() {
-  const [isVisible, setIsVisible] = useState(() => !localStorage.getItem(CONSENT_GIVEN_KEY));
+  const [isVisible, setIsVisible] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
   const [preferences, setPreferences] = useState<CookiePreferences>(() => {
     if (typeof window === "undefined") {
@@ -74,6 +74,14 @@ export default function CookieConsent() {
       };
     }
   });
+
+  useEffect(() => {
+    try {
+      setIsVisible(!window.localStorage.getItem(CONSENT_GIVEN_KEY));
+    } catch {
+      setIsVisible(true);
+    }
+  }, []);
 
   const savePreferences = (preferences: CookiePreferences) => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(preferences));

@@ -1,3 +1,5 @@
+import CookieConsent from "@/module/cookies/cookie-consent";
+import { ContentAnnouncementBar } from "@/module/site/content-sections";
 import { ScrollProgress } from "@/shared/components/common/scroll-progress";
 import ScrollToTopButton from "@/shared/components/common/scroll-to-top";
 import Footer from "@/shared/components/layout/footer/footer";
@@ -10,9 +12,10 @@ export default async function Layout({ children }: { children: React.ReactNode }
       {/* <PushNotificationPrompt /> */}
       <ScrollProgress />
       <ScrollToTopButton />
-      {/* <CookieConsent /> */}
+      <CookieConsent />
       <Shell.Header>
         <Header />
+        {/* <ContentAnnouncementBar page="home" /> */}
       </Shell.Header>
       <Shell.Main>{children}</Shell.Main>
       <Shell.Footer>

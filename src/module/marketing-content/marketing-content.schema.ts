@@ -17,6 +17,7 @@ export const marketingContentSectionEnum = z.enum([
   "promo_banner",
   "cta",
   "offer_banner",
+  "crousel",
   "split_banner",
   "announcement_bar",
   "feature_highlight",

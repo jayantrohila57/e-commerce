@@ -35,7 +35,8 @@ export interface DataTableContextValue<TData> {
   filters?: Record<string, string | null>;
   setFilter?: (key: string, value: string | null) => void;
   setSearch?: (q: string) => void;
-  clearFilters?: () => void;
+  clearFilters?: (keysToRemove?: string[]) => void;
+  setSorting?: (sortBy: string | null, sortDir: "asc" | "desc" | null) => void;
 
   bulkActions?: BulkAction<TData>[];
   runBulkAction?: (actionId: string) => void;

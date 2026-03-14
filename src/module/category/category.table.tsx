@@ -34,6 +34,8 @@ export default function CategoryTable({ data }: { data: GetCategoriesOutput }) {
   const items = data?.data ?? [];
   const pageCount = data?.meta?.pagination?.totalPages;
   const rowCount = data?.meta?.pagination?.total;
+  const currentPage = data?.meta?.pagination?.page;
+  const currentLimit = data?.meta?.pagination?.limit;
 
   return (
     <DataTable
@@ -54,6 +56,8 @@ export default function CategoryTable({ data }: { data: GetCategoriesOutput }) {
       bulkActions={bulkActions}
       pageCount={pageCount}
       rowCount={rowCount}
+      initialPageIndex={typeof currentPage === "number" ? currentPage - 1 : undefined}
+      initialPageSize={typeof currentLimit === "number" ? currentLimit : undefined}
       emptyState={{
         title: "No Categories Found",
         description: "You don't have any categories yet. Categories help you organize products.",

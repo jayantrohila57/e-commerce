@@ -1,6 +1,10 @@
 export type ListQuery = {
   pagination: { page: number; limit: number; offset: number };
   search: { q?: string };
+  sort?: {
+    sortBy?: string;
+    sortDir?: "asc" | "desc";
+  };
   filters: {
     visibility?: "public" | "private" | "hidden";
     displayType?: "grid" | "carousel" | "banner" | "list" | "featured";
@@ -35,6 +39,10 @@ export function getListQueryFromSearchParams(params: SearchParamsLike): ListQuer
 
   const q = first(params.q)?.trim() || undefined;
 
+  const sortBy = first(params.sortBy)?.trim() || undefined;
+  const sortDirParam = first(params.sortDir)?.trim()?.toLowerCase();
+  const sortDir = sortDirParam === "asc" || sortDirParam === "desc" ? (sortDirParam as "asc" | "desc") : undefined;
+
   const visibility = first(params.visibility) as ListQuery["filters"]["visibility"];
   const displayType = first(params.displayType) as ListQuery["filters"]["displayType"];
   const deleted = toBool(first(params.deleted));
@@ -44,6 +52,10 @@ export function getListQueryFromSearchParams(params: SearchParamsLike): ListQuer
   return {
     pagination: { page, limit, offset },
     search: { q },
+    sort: {
+      sortBy,
+      sortDir,
+    },
     filters: {
       visibility,
       displayType,

@@ -12,6 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/shared/components/ui/dropdown-menu";
 import { cn } from "@/shared/utils/lib/utils";
+import { useDataTableContext } from "./data-table-context";
 
 interface DataTableColumnHeaderProps<TData, TValue> extends React.HTMLAttributes<HTMLDivElement> {
   column: Column<TData, TValue>;
@@ -23,9 +24,18 @@ export function DataTableColumnHeader<TData, TValue>({
   title,
   className,
 }: DataTableColumnHeaderProps<TData, TValue>) {
+  const { setSorting } = useDataTableContext<TData>();
+
   if (!column.getCanSort()) {
     return <div className={cn(className)}>{title}</div>;
   }
+
+  const applySorting = (direction: "asc" | "desc") => {
+    column.toggleSorting(direction === "desc");
+    if (setSorting) {
+      setSorting(column.id, direction);
+    }
+  };
 
   return (
     <div className={cn("flex items-center space-x-2", className)}>
@@ -45,11 +55,11 @@ export function DataTableColumnHeader<TData, TValue>({
           </div>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start">
-          <DropdownMenuItem onClick={() => column.toggleSorting(false)}>
+          <DropdownMenuItem onClick={() => applySorting("asc")}>
             <ArrowUp className="text-muted-foreground/70 h-3.5 w-3.5" />
             Asc
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => column.toggleSorting(true)}>
+          <DropdownMenuItem onClick={() => applySorting("desc")}>
             <ArrowDown className="text-muted-foreground/70 h-3.5 w-3.5" />
             Desc
           </DropdownMenuItem>

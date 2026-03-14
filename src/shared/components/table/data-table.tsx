@@ -84,6 +84,10 @@ interface DataTableProps<TData, TValue> {
   }[];
   pageCount?: number;
   rowCount?: number;
+  initialPageIndex?: number;
+  initialPageSize?: number;
+  initialSortBy?: string;
+  initialSortDir?: "asc" | "desc";
   emptyState?: {
     title: string;
     description: string;
@@ -108,14 +112,23 @@ export function DataTable<TData, TValue>({
   bulkActions,
   pageCount,
   rowCount,
+  initialPageIndex,
+  initialPageSize,
+  initialSortBy,
+  initialSortDir,
   emptyState,
 }: DataTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [sorting, setSorting] = useState<SortingState>([]);
+  const [sorting, setSortingState] = useState<SortingState>(() => {
+    if (initialSortBy && initialSortDir) {
+      return [{ id: initialSortBy, desc: initialSortDir === "desc" }];
+    }
+    return [];
+  });
 
-  const { setFilter, setSearch, clearFilters } = useTableUrlSync();
+  const { setFilter, setSearch, clearFilters, setSorting } = useTableUrlSync();
   const searchParams = useSearchParams();
 
   const currentFilters = useMemo(() => {
@@ -131,10 +144,10 @@ export function DataTable<TData, TValue>({
 
   const pagination = useMemo(
     () => ({
-      pageIndex: Math.max(0, parseInt(searchParams.get("page") ?? "1", 10) - 1),
-      pageSize: parseInt(searchParams.get("limit") ?? "20", 10),
+      pageIndex: initialPageIndex ?? Math.max(0, parseInt(searchParams.get("page") ?? "1", 10) - 1),
+      pageSize: initialPageSize ?? parseInt(searchParams.get("limit") ?? "20", 10),
     }),
-    [searchParams],
+    [initialPageIndex, initialPageSize, searchParams],
   );
 
   const table = useReactTable({
@@ -151,7 +164,7 @@ export function DataTable<TData, TValue>({
     manualPagination: true,
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
-    onSortingChange: setSorting,
+    onSortingChange: setSortingState,
     onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
     getCoreRowModel: getCoreRowModel(),
@@ -217,6 +230,7 @@ export function DataTable<TData, TValue>({
         setFilter,
         setSearch,
         clearFilters,
+        setSorting,
         bulkActions,
         runBulkAction: bulkActions && bulkActions.length > 0 ? runBulkAction : undefined,
         isBulkActionLoading: bulk.isBulkActionLoading,

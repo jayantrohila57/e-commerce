@@ -1,5 +1,5 @@
 /** Default placeholder when no image or on load error. Must exist in public/. */
-export const PLACEHOLDER_IMAGE = "/fallback.svg";
+export const PLACEHOLDER_IMAGE = "/fallback.png";
 
 /**
  * Returns a safe image URL for display, or undefined so callers can show a placeholder.

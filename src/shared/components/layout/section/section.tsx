@@ -1,3 +1,4 @@
+import type { LucideIcon } from "lucide-react";
 import type { Route } from "next";
 import Link from "next/link";
 import { cn } from "@/shared/utils/lib/utils";
@@ -15,6 +16,7 @@ interface SectionProps {
   className?: string;
   actionLink?: Route;
   isMinHeight?: boolean;
+  icon?: LucideIcon;
 }
 
 export default function Section({
@@ -26,13 +28,20 @@ export default function Section({
   separator = true,
   isMinHeight = true,
   className,
+  icon,
   actionLink,
 }: SectionProps) {
+  const DynamicIcon = icon;
   return (
-    <Card className={cn("bg-card/0 ring-0 gap-0 border-none p-0 shadow-none", className)}>
+    <Card className={cn("bg-background ring-0 gap-0 border-none p-0 shadow-none", className)}>
       {title && description && (
-        <div className="w-full p-4 border-y">
-          <CardHeader className="px-4">
+        <div className="w-full p-0 border-t flex flex-row">
+          {DynamicIcon && (
+            <div className="h-full w-40 aspect-square border-r flex items-center justify-center">
+              <DynamicIcon className="w-10 h-10 text-muted-foreground" />
+            </div>
+          )}
+          <CardHeader className="p-4 w-full">
             {title && <CardTitle className="text-6xl font-semibold">{title}</CardTitle>}
             {description && (
               <CardDescription className="text-base text-muted-foreground">{description}</CardDescription>
@@ -47,7 +56,7 @@ export default function Section({
           </CardHeader>
         </div>
       )}
-      <div className="w-full h-16 border-b"></div>
+      <div className="w-full pt-16  border-y"></div>
       <CardContent className={cn("p-0", isMinHeight && "min-h-[600px]")}>{children}</CardContent>
     </Card>
   );

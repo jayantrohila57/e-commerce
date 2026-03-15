@@ -6,7 +6,6 @@ import Social from "@/shared/components/common/social";
 import { ThemeToggle } from "@/shared/components/theme/theme-toggle";
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
-import { Separator } from "@/shared/components/ui/separator";
 import { PATH } from "@/shared/config/routes";
 import { site } from "@/shared/config/site";
 import { AppBrand } from "../section/auth.card-layout";
@@ -65,7 +64,7 @@ export const footer: NavType[] = [
 
 export default function Footer() {
   return (
-    <div className="h-full w-full items-center border-r border-t justify-between">
+    <div className="h-full w-full  mt-16 items-center border-r border-t justify-between">
       <div className="h-full w-full flex-row">
         <div className="relative flex border-b h-full w-full flex-col-reverse justify-between md:flex-row">
           <div className="z-10 flex max-w-2xl p-4 border-r flex-col justify-between sm:flex-row md:max-w-xl md:flex-col">

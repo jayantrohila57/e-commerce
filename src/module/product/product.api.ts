@@ -114,16 +114,7 @@ export const productRouter = createTRPCRouter({
     .query(async ({ input }) => {
       try {
         const { query } = input;
-        const {
-          limit,
-          offset,
-          categorySlug,
-          subcategorySlug,
-          isActive,
-          deleted,
-          search,
-          status,
-        } = query;
+        const { limit, offset, categorySlug, subcategorySlug, isActive, deleted, search, status } = query;
 
         const conditions = [];
         if (deleted === true) {

@@ -29,8 +29,7 @@ export default async function StudioCustomersPage({
   const bannedParam = typeof input.banned === "string" ? input.banned : undefined;
   const emailVerifiedParam = typeof input.emailVerified === "string" ? input.emailVerified : undefined;
   const banned = bannedParam === "true" ? true : bannedParam === "false" ? false : undefined;
-  const emailVerified =
-    emailVerifiedParam === "true" ? true : emailVerifiedParam === "false" ? false : undefined;
+  const emailVerified = emailVerifiedParam === "true" ? true : emailVerifiedParam === "false" ? false : undefined;
 
   const userList = await getStudioUsers({
     query: {

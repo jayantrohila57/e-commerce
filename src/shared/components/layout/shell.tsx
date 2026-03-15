@@ -84,7 +84,7 @@ Shell.Footer = Footer;
 const MainVariants = cva("", {
   variants: {
     variant: {
-      default: "min-h-screen border-r",
+      default: "min-h-screen pt-16 border-r",
       dashboard: "flex flex-1 h-screen overflow-hidden flex-col",
     },
   },
@@ -110,7 +110,7 @@ Shell.Main = Main;
 const SectionVariants = cva("", {
   variants: {
     variant: {
-      default: "mt-16",
+      default: "",
       full: "w-full h-full",
       flexed: "my-12 flex container mx-auto px-0 max-w-9xl ",
       dashboard: "flex-1 gap-0 bg-background",

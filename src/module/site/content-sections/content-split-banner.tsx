@@ -19,7 +19,7 @@ export default async function ContentSplitBanner({ page }: ContentSplitBannerPro
 
   return (
     <Section separator={false} variant="full">
-      <div className="flex w-full flex-col gap-8 px-4 py-12 md:flex-row md:items-center md:py-16 lg:px-0">
+      <div className="flex w-full flex-col gap-8 px-4 md:flex-row md:items-center  lg:px-0">
         <div className="relative w-full overflow-hidden rounded-xl bg-muted md:w-1/2">
           <BlurImage
             src={content.image ?? undefined}

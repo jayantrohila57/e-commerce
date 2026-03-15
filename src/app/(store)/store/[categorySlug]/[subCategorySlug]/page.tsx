@@ -70,7 +70,7 @@ export default async function SubCategoryPage({ params }: PageProps<"/store/[cat
   return (
     <HydrateClient>
       <Shell>
-        <Shell.Section>
+        {/* <Shell.Section>
           <ContentAnnouncementBar page="store_subcategory" />
         </Shell.Section>
         <Shell.Section>
@@ -78,19 +78,19 @@ export default async function SubCategoryPage({ params }: PageProps<"/store/[cat
         </Shell.Section>
         <Shell.Section>
           <ContentSplitBanner page="store_subcategory" />
-        </Shell.Section>
+        </Shell.Section> */}
         <Shell.Section>
           <SubCategoryItem data={data} variants={variants} />
         </Shell.Section>
-        <Shell.Section>
+        {/* <Shell.Section>
           <ContentCTA page="store_subcategory" />
-        </Shell.Section>
-        <Shell.Section>
+        </Shell.Section> */}
+        {/* <Shell.Section>
           <ContentOfferBanner page="store_subcategory" />
         </Shell.Section>
         <Shell.Section>
           <ContentFeatureHighlights page="store_subcategory" />
-        </Shell.Section>
+        </Shell.Section> */}
       </Shell>
     </HydrateClient>
   );

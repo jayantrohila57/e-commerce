@@ -3,7 +3,6 @@ import { LegalSidebar } from "@/module/legal/legal.sidebar";
 import { TableOfContents } from "@/module/legal/legal.toc";
 import { getMetadata } from "@/module/legal/policy-content";
 import Section from "@/shared/components/layout/section/section";
-import Shell from "@/shared/components/layout/shell";
 
 export async function generateMetadata({ params }: PageProps<"/legal/[slug]">) {
   const { slug } = await params;
@@ -13,20 +12,18 @@ export async function generateMetadata({ params }: PageProps<"/legal/[slug]">) {
 export default async function Page({ params }: PageProps<"/legal/[slug]">) {
   const { slug } = await params;
   return (
-    <Shell>
-      <Section {...getMetadata(slug)}>
-        <div className="grid h-full w-full grid-cols-12 gap-4">
-          <div className="col-span-2 h-full w-full">
-            <LegalSidebar activeSection={slug} />
-          </div>
-          <div className="col-span-8 h-full w-full">
-            <LegalContent activeSection={slug} />
-          </div>
-          <div className="col-span-2">
-            <TableOfContents activeSection={slug} />
-          </div>
+    <Section {...getMetadata(slug)}>
+      <div className="grid h-full w-full grid-cols-12 gap-4">
+        <div className="col-span-2 h-full w-full">
+          <LegalSidebar activeSection={slug} />
         </div>
-      </Section>
-    </Shell>
+        <div className="col-span-8 h-full w-full">
+          <LegalContent activeSection={slug} />
+        </div>
+        <div className="col-span-2">
+          <TableOfContents activeSection={slug} />
+        </div>
+      </div>
+    </Section>
   );
 }

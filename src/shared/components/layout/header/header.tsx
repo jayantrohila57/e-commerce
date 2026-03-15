@@ -1,6 +1,6 @@
 import { HeaderActions } from "./header.actions";
 import HeaderLogo from "./header.logo";
-import { NavigationMenuDemo } from "./header.navigation";
+import { NavigationMenuComponent } from "./header.navigation";
 
 export default function Header() {
   return (
@@ -10,7 +10,7 @@ export default function Header() {
           <HeaderLogo />
         </div>
         <div className="h-full flex flex-row items-center">
-          <NavigationMenuDemo />
+          <NavigationMenuComponent />
         </div>
       </div>
       <div className="h-full flex flex-row items-center">

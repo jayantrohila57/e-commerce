@@ -8,8 +8,7 @@ export default function CategoriesListingSkeleton() {
       <div className="">
         <h2 className="text-4xl">Categories</h2>
       </div>
-      <Separator className="my-6" />
-      <div className="grid-rows-auto mx-auto grid h-full w-full max-w-4xl grid-cols-4 gap-4 rounded-md">
+      <div className="grid-rows-auto  grid h-full w-full max-w-4xl grid-cols-4 gap-4 rounded-md">
         {[1, 2, 3, 4, 5, 6, 7]?.map((category) => (
           <div key={category} className="group col-span-1">
             <Card className="border-none bg-transparent shadow-none">

@@ -1,14 +1,6 @@
 import { notFound } from "next/navigation";
 import { apiServer, HydrateClient } from "@/core/api/api.server";
 import { PDPProduct } from "@/module/product/product-pdp";
-import {
-  ContentAnnouncementBar,
-  ContentCTA,
-  ContentFeatureHighlights,
-  ContentOfferBanner,
-  ContentPromoBanner,
-  ContentSplitBanner,
-} from "@/module/site/content-sections";
 import Shell from "@/shared/components/layout/shell";
 import type { PageProps } from "@/shared/types/global.types";
 import { getImageSrc } from "@/shared/utils/lib/image.utils";
@@ -64,25 +56,7 @@ export default async function ProductVariantPage({ params }: PageProps) {
     <HydrateClient>
       <Shell>
         <Shell.Section>
-          <ContentAnnouncementBar page="product" />
-        </Shell.Section>
-        <Shell.Section>
-          <ContentPromoBanner page="product" />
-        </Shell.Section>
-        <Shell.Section>
-          <ContentSplitBanner page="product" />
-        </Shell.Section>
-        <Shell.Section>
           <PDPProduct data={data} slug={variantSlug} categorySlug={categorySlug} subcategorySlug={subCategorySlug} />
-        </Shell.Section>
-        <Shell.Section>
-          <ContentCTA page="product" />
-        </Shell.Section>
-        <Shell.Section>
-          <ContentOfferBanner page="product" />
-        </Shell.Section>
-        <Shell.Section>
-          <ContentFeatureHighlights page="product" />
         </Shell.Section>
       </Shell>
     </HydrateClient>

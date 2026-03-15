@@ -19,7 +19,7 @@ export default async function ContentOfferBanner({ page }: ContentOfferBannerPro
 
   return (
     <Section separator={false} variant="full">
-      <div className="relative overflow-hidden border-y aspect-21/9 bg-secondary">
+      <div className="relative overflow-hidden mb-16 border-y aspect-21/9 bg-secondary">
         {/* IMAGE */}
         <div className="absolute inset-0">
           <BlurImage

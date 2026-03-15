@@ -1,6 +1,7 @@
 import type { Route } from "next";
 import Link from "next/link";
 import { apiServer } from "@/core/api/api.server";
+import CategoryCard from "@/module/category/category-card";
 import {
   ContentAnnouncementBar,
   ContentCTA,
@@ -28,15 +29,15 @@ export default async function StorePage() {
 
   return (
     <Shell>
-      <Shell.Section>
+      {/* <Shell.Section>
         <ContentAnnouncementBar page="store" />
       </Shell.Section>
       <Shell.Section>
         <ContentPromoBanner page="store" />
-      </Shell.Section>
-      <Shell.Section>
+      </Shell.Section> */}
+      {/* <Shell.Section>
         <ContentSplitBanner page="store" />
-      </Shell.Section>
+      </Shell.Section> */}
       <Shell.Section>
         {data?.map((category) => (
           <Section
@@ -46,30 +47,16 @@ export default async function StorePage() {
             action="View All "
             actionLink={PATH.STORE.CATEGORIES.CATEGORY(category.slug) as Route}
           >
-            <div className="mb-8 grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+            <div className="grid mb-16 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
               {category?.subcategories?.map((subcategory) => (
-                <Link
+                <CategoryCard
+                  key={subcategory.id}
+                  id={subcategory.id}
                   href={PATH.STORE.SUB_CATEGORIES.SUBCATEGORY(subcategory?.slug, category.slug) as Route}
-                  key={subcategory?.id}
-                >
-                  <Card className="flex h-full flex-col justify-between pt-0 transition-shadow duration-300 hover:shadow-lg">
-                    <CardContent className="overflow-hidden rounded-sm p-0">
-                      <BlurImage
-                        src={getImageSrc(subcategory?.image)}
-                        alt={subcategory?.title ?? "Subcategory"}
-                        width={500}
-                        height={500}
-                        className="motion-all bg-secondary aspect-square h-auto w-full rounded-t-sm object-cover group-hover:drop-shadow"
-                      />
-                    </CardContent>
-                    <CardHeader>
-                      <CardTitle className="text-xl font-semibold">{subcategory?.title}</CardTitle>
-                      <CardDescription className="text-muted-foreground line-clamp-3 h-12">
-                        {subcategory?.description}
-                      </CardDescription>
-                    </CardHeader>
-                  </Card>
-                </Link>
+                  title={subcategory.title}
+                  description={subcategory.description}
+                  image={subcategory.image}
+                />
               ))}
             </div>
           </Section>

@@ -49,7 +49,7 @@ export async function notifyOrderConfirmation(orderId: string): Promise<void> {
         postalCode: addr.postalCode,
         country: addr.country,
       },
-      orderUrl: baseUrl ? `${baseUrl}/account/commerce/order/${orderWithDetails.id}` : undefined,
+      orderUrl: baseUrl ? `${baseUrl}${PATH.ACCOUNT.ORDER}/${orderWithDetails.id}` : undefined,
     });
   } catch (err) {
     debugError("NOTIFICATION:ORDER_CONFIRMATION:ERROR", err);
@@ -73,7 +73,7 @@ export async function notifyShipmentUpdate(shipmentId: string): Promise<void> {
       estimatedDelivery: shipmentRow.estimatedDeliveryAt
         ? new Date(shipmentRow.estimatedDeliveryAt).toLocaleDateString()
         : undefined,
-      orderUrl: baseUrl ? `${baseUrl}/account/commerce/order/${shipmentRow.orderId}` : undefined,
+      orderUrl: baseUrl ? `${baseUrl}${PATH.ACCOUNT.ORDER}/${shipmentRow.orderId}` : undefined,
     });
   } catch (err) {
     debugError("NOTIFICATION:SHIPMENT_UPDATE:ERROR", err);
@@ -92,7 +92,7 @@ export async function notifyOrderStatusChange(orderId: string, _oldStatus: strin
       user: { name: orderWithUser.user.name ?? "Customer", email: orderWithUser.user.email },
       orderNumber: orderId.slice(0, 8),
       newStatus,
-      orderUrl: baseUrl ? `${baseUrl}/account/commerce/order/${orderId}` : undefined,
+      orderUrl: baseUrl ? `${baseUrl}${PATH.ACCOUNT.ORDER}/${orderId}` : undefined,
     });
   } catch (err) {
     debugError("NOTIFICATION:ORDER_STATUS_CHANGE:ERROR", err);

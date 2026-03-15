@@ -28,8 +28,7 @@ export default async function AttributesPage({
 
   const type = typeof input.type === "string" ? input.type : undefined;
   const hasValuesParam = typeof input.hasValues === "string" ? input.hasValues : undefined;
-  const hasValues =
-    hasValuesParam === "true" ? true : hasValuesParam === "false" ? false : undefined;
+  const hasValues = hasValuesParam === "true" ? true : hasValuesParam === "false" ? false : undefined;
 
   const result = await apiServer.attribute.getMany({
     query: {

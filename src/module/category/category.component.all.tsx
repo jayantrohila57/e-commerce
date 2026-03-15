@@ -1,47 +1,24 @@
 import type { Route } from "next";
-import Link from "next/link";
-import { BlurImage } from "@/shared/components/common/image";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/components/ui/card";
 import { Separator } from "@/shared/components/ui/separator";
-import { getImageSrc } from "@/shared/utils/lib/image.utils";
+import { PATH } from "@/shared/config/routes";
 import type { GetCategoryWithSubcategoriesOutput } from "./category.types";
+import CategoryCard from "./category-card";
 
 export const CategoryItem = ({ data }: { data: GetCategoryWithSubcategoriesOutput["data"] }) => {
   if (!data) return null;
 
   return (
-    <div className="flex flex-col items-center justify-center">
-      <div className="">
-        <h2 className="text-4xl capitalize">{data.title}</h2>
-      </div>
-      <Separator className="my-6" />
-      <div className="grid-rows-auto mx-auto grid h-full w-full max-w-4xl grid-cols-4 gap-4 rounded-md">
-        {data.subcategories?.map((subcategory) => (
-          <div key={subcategory.id} className="group col-span-1">
-            <Link href={`/store/${data.slug}/${subcategory.slug}` as Route}>
-              <Card className="border-none bg-transparent shadow-none">
-                <CardContent className="flex w-full items-center justify-center">
-                  <BlurImage
-                    src={getImageSrc(subcategory.image)}
-                    alt={subcategory.title ?? "Subcategory"}
-                    width={500}
-                    height={500}
-                    className="motion-all bg-secondary aspect-square h-auto w-full rounded-full border object-cover group-hover:drop-shadow"
-                  />
-                </CardContent>
-                <CardHeader className="text-center">
-                  <CardTitle className="motion-all text-md text-center capitalize group-hover:text-blue-500">
-                    {subcategory.title}
-                  </CardTitle>
-                  <CardDescription className="motion-all text-center capitalize">
-                    {subcategory.description}
-                  </CardDescription>
-                </CardHeader>
-              </Card>
-            </Link>
-          </div>
-        ))}
-      </div>
+    <div className="grid-rows-auto grid h-full w-full grid-cols-4">
+      {data.subcategories?.map((subcategory) => (
+        <CategoryCard
+          key={subcategory.id}
+          id={subcategory.id}
+          href={PATH.STORE.SUB_CATEGORIES.SUBCATEGORY(subcategory.slug, data.slug) as Route}
+          title={subcategory.title}
+          description={subcategory.description}
+          image={subcategory.image}
+        />
+      ))}
     </div>
   );
 };

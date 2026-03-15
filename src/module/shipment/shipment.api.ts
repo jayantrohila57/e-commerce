@@ -47,7 +47,7 @@ export const shipmentRouter = createTRPCRouter({
           limit: 20,
           sortOrder: "desc" as const,
           sortBy: undefined as string | undefined,
-          status: undefined as typeof shipment.$inferSelect["status"] | undefined,
+          status: undefined as (typeof shipment.$inferSelect)["status"] | undefined,
           carrier: undefined as string | undefined,
           ...input?.query,
         };

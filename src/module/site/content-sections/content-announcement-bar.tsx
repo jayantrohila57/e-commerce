@@ -1,5 +1,6 @@
 import { getMarketingContentBlock } from "@/module/marketing-content/marketing-content.fetch";
 import type { MarketingContentSelect } from "@/module/marketing-content/marketing-content.types";
+import ContentAnnouncementBarClient from "./content-announcement-bar-client";
 
 type Page = MarketingContentSelect["page"];
 
@@ -8,24 +9,20 @@ interface ContentAnnouncementBarProps {
 }
 
 export default async function ContentAnnouncementBar({ page }: ContentAnnouncementBarProps) {
-  const content = await getMarketingContentBlock({
+  const data = await getMarketingContentBlock({
     page,
     section: "announcement_bar",
   });
+  const content = {
+    id: data?.id ?? "1",
+    title: data?.title ?? "Welcome to our website",
+    bodyText:
+      data?.bodyText ??
+      "We are a team of developers who are passionate about creating beautiful and functional websites.",
+    ctaLabel: data?.ctaLabel ?? "Visit our website",
+    ctaLink: data?.ctaLink ?? "/",
+  };
 
-  if (!content) return null;
-
-  return (
-    <div className="bg-primary z-50 text-primary-foreground">
-      <div className="mx-auto flex max-w-6xl items-center justify-center gap-2 px-4 py-2 text-xs sm:text-sm">
-        <span className="font-medium">{content.title ?? "Announcement"}</span>
-        {content.bodyText && <span className="opacity-90">{content.bodyText}</span>}
-        {content.ctaLabel && content.ctaLink && (
-          <a href={content.ctaLink} className="ml-3 underline underline-offset-4">
-            {content.ctaLabel}
-          </a>
-        )}
-      </div>
-    </div>
-  );
+  if (!data) return null;
+  return <ContentAnnouncementBarClient content={content} />;
 }

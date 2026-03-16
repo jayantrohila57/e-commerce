@@ -26,7 +26,7 @@ export default async function CheckoutPage() {
 
   return (
     <Shell>
-      <Shell.Section>
+      {/* <Shell.Section>
         <ContentAnnouncementBar page="checkout" />
       </Shell.Section>
       <Shell.Section>
@@ -34,11 +34,11 @@ export default async function CheckoutPage() {
       </Shell.Section>
       <Shell.Section>
         <ContentSplitBanner page="checkout" />
-      </Shell.Section>
+      </Shell.Section> */}
       <Shell.Section>
         <CheckoutClient />
       </Shell.Section>
-      <Shell.Section>
+      {/* <Shell.Section>
         <ContentCTA page="checkout" />
       </Shell.Section>
       <Shell.Section>
@@ -46,7 +46,7 @@ export default async function CheckoutPage() {
       </Shell.Section>
       <Shell.Section>
         <ContentFeatureHighlights page="checkout" />
-      </Shell.Section>
+      </Shell.Section> */}
     </Shell>
   );
 }

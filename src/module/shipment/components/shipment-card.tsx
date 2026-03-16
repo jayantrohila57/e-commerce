@@ -38,6 +38,18 @@ export function ShipmentCard({ shipment, orderId, href }: ShipmentCardProps) {
             <span className="font-medium text-foreground">{shipment.carrier}</span>
           </div>
         )}
+        {shipment.shippingProviderId && (
+          <div className="flex items-center justify-between">
+            <span>Provider</span>
+            <span className="font-medium text-foreground">{shipment.shippingProviderId}</span>
+          </div>
+        )}
+        {shipment.shippingMethodId && (
+          <div className="flex items-center justify-between">
+            <span>Method</span>
+            <span className="font-medium text-foreground">{shipment.shippingMethodId}</span>
+          </div>
+        )}
         {shipment.estimatedDeliveryAt && (
           <div className="flex items-center justify-between">
             <span>Est. delivery</span>

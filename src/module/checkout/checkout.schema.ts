@@ -8,6 +8,8 @@ export const checkoutFormBodySchema = z.object({
   billingAddressId: z.string().optional(),
   sameAsShipping: z.boolean().default(true),
   notes: z.string().max(500).optional(),
+  shippingProviderId: z.string().min(1, "Delivery method is required"),
+  shippingMethodId: z.string().min(1, "Delivery method is required"),
   agreeToTerms: z.boolean().refine((val) => val === true, {
     message: "You must agree to the terms and conditions",
   }),

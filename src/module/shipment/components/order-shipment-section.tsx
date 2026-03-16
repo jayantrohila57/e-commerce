@@ -59,7 +59,7 @@ export function OrderShipmentSection({ order, shipments }: OrderShipmentSectionP
             <DialogContent className="rounded-none">
               <DialogHeader>
                 <DialogTitle>Create shipment</DialogTitle>
-                <DialogDescription>Add tracking and carrier details for this order.</DialogDescription>
+                <DialogDescription>Add tracking and shipping details for this order.</DialogDescription>
               </DialogHeader>
               <ShipmentForm orderId={order.id} onSuccess={handleCreateSuccess} onCancel={() => setCreateOpen(false)} />
             </DialogContent>

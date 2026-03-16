@@ -70,6 +70,8 @@ export function useCheckout() {
           shippingAddress: addressToSnapshot(shippingAddr),
           billingAddress: addressToSnapshot(billingAddr),
           notes: body.notes ?? undefined,
+          shippingProviderId: body.shippingProviderId,
+          shippingMethodId: body.shippingMethodId,
         },
       });
 

@@ -46,6 +46,10 @@ export const orderBaseSchema = z.object({
   shippingTotal: z.number().int().default(0),
   grandTotal: z.number().int(),
   currency: z.string().default("INR"),
+  shippingProviderId: z.string().nullable().optional(),
+  shippingMethodId: z.string().nullable().optional(),
+  shippingZoneId: z.string().nullable().optional(),
+  warehouseId: z.string().nullable().optional(),
   shippingAddress: addressSnapshotSchema,
   billingAddress: addressSnapshotSchema.nullable().optional(),
   notes: z.string().nullable().optional(),
@@ -74,6 +78,8 @@ export const orderCreateInputSchema = z.object({
   billingAddressId: z.string().optional(),
   billingAddress: addressSnapshotSchema.optional(),
   notes: z.string().optional(),
+  shippingProviderId: z.string().min(1),
+  shippingMethodId: z.string().min(1),
 });
 
 export const orderUpdateStatusSchema = z.object({
@@ -103,6 +109,10 @@ export const orderContract = {
           status: orderStatusEnum.optional(),
           customerType: z.enum(["registered", "guest"]).optional(),
           q: z.string().optional(),
+          shippingProviderPresence: z.enum(["assigned", "unassigned"]).optional(),
+          shippingMethodPresence: z.enum(["assigned", "unassigned"]).optional(),
+          shippingZonePresence: z.enum(["assigned", "unassigned"]).optional(),
+          warehousePresence: z.enum(["assigned", "unassigned"]).optional(),
         })
         .optional(),
     }),

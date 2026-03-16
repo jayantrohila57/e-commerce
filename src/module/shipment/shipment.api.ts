@@ -50,6 +50,8 @@ export const shipmentRouter = createTRPCRouter({
           status: undefined as (typeof shipment.$inferSelect)["status"] | undefined,
           carrier: undefined as string | undefined,
           orderId: undefined as string | undefined,
+          shippingProviderId: undefined as string | undefined,
+          shippingMethodId: undefined as string | undefined,
           ...input?.query,
         };
 
@@ -64,6 +66,8 @@ export const shipmentRouter = createTRPCRouter({
           query.status ? eq(shipment.status, query.status) : undefined,
           query.carrier ? ilike(shipment.carrier, `%${query.carrier}%`) : undefined,
           query.orderId ? eq(shipment.orderId, query.orderId) : undefined,
+          query.shippingProviderId ? eq(shipment.shippingProviderId, query.shippingProviderId) : undefined,
+          query.shippingMethodId ? eq(shipment.shippingMethodId, query.shippingMethodId) : undefined,
         ].filter((c): c is NonNullable<typeof c> => Boolean(c));
 
         const where = whereConditions.length ? and(...whereConditions) : undefined;
@@ -139,7 +143,17 @@ export const shipmentRouter = createTRPCRouter({
     .output(shipmentContract.create.output)
     .mutation(async ({ input }) => {
       try {
-        const { orderId, trackingNumber, carrier, notes, estimatedDeliveryAt, shippingRate, weight } = input.body;
+        const {
+          orderId,
+          trackingNumber,
+          carrier,
+          notes,
+          estimatedDeliveryAt,
+          shippingRate,
+          weight,
+          shippingProviderId,
+          shippingMethodId,
+        } = input.body;
 
         const orderData = await db.query.order.findFirst({
           where: eq(order.id, orderId),
@@ -174,6 +188,8 @@ export const shipmentRouter = createTRPCRouter({
             estimatedDeliveryAt: estimatedDeliveryAt ?? null,
             shippingRate: shippingRate ?? null,
             weight: weight ?? null,
+            shippingProviderId: shippingProviderId ?? orderData.shippingProviderId ?? null,
+            shippingMethodId: shippingMethodId ?? orderData.shippingMethodId ?? null,
             status: "pending",
             createdAt: new Date(),
             updatedAt: new Date(),

@@ -46,6 +46,14 @@ export default function InventoryTable({ data }: { data: GetInventoriesOutput })
             { label: "No Incoming", value: "false", color: "" },
           ],
         },
+        {
+          key: "warehousePresence",
+          title: "Warehouse",
+          options: [
+            { label: "Assigned to Warehouse", value: "assigned", color: "" },
+            { label: "No Warehouse", value: "unassigned", color: "" },
+          ],
+        },
       ]}
       deletionOptions={tableFilters.deletionStatus}
       bulkActions={bulkActions}

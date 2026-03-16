@@ -35,6 +35,14 @@ export default async function InventoryPage({
   const hasIncomingParam = typeof input.hasIncoming === "string" ? input.hasIncoming : undefined;
   const hasIncoming = hasIncomingParam === "true" ? true : hasIncomingParam === "false" ? false : undefined;
 
+  const warehousePresenceParam = typeof input.warehousePresence === "string" ? input.warehousePresence : undefined;
+  const warehousePresence =
+    warehousePresenceParam === "assigned" || warehousePresenceParam === "unassigned"
+      ? warehousePresenceParam
+      : undefined;
+
+  const warehouseId = typeof input.warehouseId === "string" ? input.warehouseId : undefined;
+
   const result = await apiServer.inventory.getMany({
     query: {
       offset: listQuery.pagination.offset,
@@ -43,6 +51,8 @@ export default async function InventoryPage({
       stockStatus,
       hasReserved,
       hasIncoming,
+      warehousePresence,
+      warehouseId,
     },
   });
 

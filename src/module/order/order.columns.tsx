@@ -84,6 +84,32 @@ export function useOrderColumns() {
         },
       },
       {
+        id: "shippingSummary",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Shipping" />,
+        cell: ({ row }) => {
+          const providerId = row.getValue("shippingProviderId") as string | null | undefined;
+          const methodId = row.getValue("shippingMethodId") as string | null | undefined;
+          const zoneId = row.getValue("shippingZoneId") as string | null | undefined;
+          const warehouseId = (row.original as Order).warehouseId;
+
+          if (!providerId && !methodId && !zoneId && !warehouseId) {
+            return <div className="w-[220px] text-xs text-muted-foreground">—</div>;
+          }
+
+          const parts: string[] = [];
+          if (providerId) parts.push(`Provider ${providerId.slice(0, 8)}`);
+          if (methodId) parts.push(`Method ${methodId.slice(0, 8)}`);
+          if (zoneId) parts.push(`Zone ${zoneId.slice(0, 8)}`);
+          if (warehouseId) parts.push(`WH ${warehouseId.slice(0, 8)}`);
+
+          return (
+            <div className="w-[260px] truncate text-xs text-muted-foreground" title={parts.join(" • ")}>
+              {parts.join(" • ")}
+            </div>
+          );
+        },
+      },
+      {
         id: "payment",
         header: ({ column }) => <DataTableColumnHeader column={column} title="Payment" />,
         cell: ({ row }) => {

@@ -36,6 +36,22 @@ export function ShipmentForm({ orderId, onSuccess, onCancel }: ShipmentFormProps
     },
   });
 
+  const { data: providersRes } = apiClient.shippingConfig.listProviders.useQuery({});
+  const { data: methodsRes } = apiClient.shippingConfig.listMethods.useQuery({});
+
+  const providerOptions =
+    providersRes?.data?.map((p) => ({
+      label: p.name,
+      value: p.id,
+    })) ?? [];
+
+  const methodOptionsByProvider =
+    methodsRes?.data?.map((m) => ({
+      label: m.name,
+      value: m.id,
+      providerId: m.providerId,
+    })) ?? [];
+
   const defaultValues: CreateFormValues = {
     body: {
       orderId,
@@ -45,6 +61,8 @@ export function ShipmentForm({ orderId, onSuccess, onCancel }: ShipmentFormProps
       estimatedDeliveryAt: undefined,
       shippingRate: undefined,
       weight: "",
+      shippingProviderId: undefined,
+      shippingMethodId: undefined,
     },
   };
 
@@ -85,6 +103,30 @@ export function ShipmentForm({ orderId, onSuccess, onCancel }: ShipmentFormProps
           placeholder="Select carrier"
           options={CARRIER_OPTIONS}
         />
+        <Form.Field
+          name="body.shippingProviderId"
+          label="Shipping provider"
+          type="select"
+          placeholder="Select shipping provider"
+          options={providerOptions}
+        />
+        <Form.FormWatch name="body.shippingProviderId">
+          {({ value }) => {
+            const filteredMethods = methodOptionsByProvider
+              .filter((option) => !value || option.providerId === value)
+              .map(({ providerId: _providerId, ...rest }) => rest);
+
+            return (
+              <Form.Field
+                name="body.shippingMethodId"
+                label="Shipping method"
+                type="select"
+                placeholder="Select shipping method"
+                options={filteredMethods}
+              />
+            );
+          }}
+        </Form.FormWatch>
         <Form.Field
           name="body.notes"
           label="Notes"

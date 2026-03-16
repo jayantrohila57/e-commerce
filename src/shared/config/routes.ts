@@ -88,6 +88,12 @@ export const PATH = {
       NEW: "/studio/inventory/new",
       SLUG: (id: string) => `/studio/inventory/${id}`,
       EDIT: (id: string) => `/studio/inventory/${id}/edit-inventory`,
+      WAREHOUSES: {
+        ROOT: "/studio/inventory/warehouses",
+        NEW: "/studio/inventory/warehouses/new",
+        EDIT: (id: string) => `/studio/inventory/warehouses/${id}/edit`,
+      },
+      MOVEMENTS: "/studio/inventory?view=movements" as Route,
     },
     ATTRIBUTES: {
       ROOT: "/studio/catalog/attributes",
@@ -114,8 +120,21 @@ export const PATH = {
 
     SHIPPING: {
       ROOT: "/studio/shipping",
-      VIEW: (id: string) => `/studio/shipping/${id}`,
-      EDIT: (id: string) => `/studio/shipping/${id}/edit`,
+      VIEW: (id: string) => `/studio/shipping/shipments/${id}`,
+      EDIT: (id: string) => `/studio/shipping/shipments/${id}/edit`,
+      PROVIDERS: "/studio/shipping/providers" as Route,
+      PROVIDERS_NEW: "/studio/shipping/providers/new" as Route,
+      PROVIDERS_EDIT: (id: string) => `/studio/shipping/providers/${id}/edit`,
+      METHODS: "/studio/shipping/methods" as Route,
+      METHODS_NEW: "/studio/shipping/methods/new" as Route,
+      METHODS_EDIT: (id: string) => `/studio/shipping/methods/${id}/edit`,
+      ZONES: "/studio/shipping/zones" as Route,
+      ZONES_NEW: "/studio/shipping/zones/new" as Route,
+      ZONES_EDIT: (id: string) => `/studio/shipping/zones/${id}/edit`,
+      RATES: "/studio/shipping/rates" as Route,
+      RATES_NEW: "/studio/shipping/rates/new" as Route,
+      RATES_EDIT: (id: string) => `/studio/shipping/rates/${id}/edit`,
+      SHIPMENTS: "/studio/shipping/shipments" as Route,
     },
 
     PAYMENT: {

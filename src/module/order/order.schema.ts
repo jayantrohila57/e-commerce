@@ -80,6 +80,10 @@ export const orderCreateInputSchema = z.object({
   notes: z.string().optional(),
   shippingProviderId: z.string().min(1),
   shippingMethodId: z.string().min(1),
+  /**
+   * Optional discount/coupon code entered at checkout.
+   */
+  discountCode: z.string().min(1).optional(),
 });
 
 export const orderUpdateStatusSchema = z.object({

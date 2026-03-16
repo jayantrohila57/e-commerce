@@ -6,8 +6,11 @@ import { db } from "@/core/db/db";
 import {
   cart,
   cartLine,
+  discount,
+  discountUsageEvent,
   inventoryItem,
   order,
+  orderDiscount,
   orderItem,
   shippingMethod,
   shippingProvider,
@@ -188,8 +191,16 @@ export const orderRouter = createTRPCRouter({
     .mutation(async ({ input, ctx }) => {
       try {
         const userId = ctx.user.id;
-        const { cartId, sessionId, shippingAddress, billingAddress, notes, shippingProviderId, shippingMethodId } =
-          input.body;
+        const {
+          cartId,
+          sessionId,
+          shippingAddress,
+          billingAddress,
+          notes,
+          shippingProviderId,
+          shippingMethodId,
+          discountCode,
+        } = input.body;
 
         // 1. Get cart items
         const cartData = await db.query.cart.findFirst({
@@ -287,7 +298,55 @@ export const orderRouter = createTRPCRouter({
             };
           });
 
-          // 4. Create Order
+          // 4. Optional discount application
+          let discountTotal = 0;
+          let appliedDiscountRecord: {
+            id: string;
+            discountId: string;
+            appliedAmount: number;
+          } | null = null;
+
+          if (discountCode) {
+            const now = new Date();
+            const discountRow = await tx.query.discount.findFirst({
+              where: (d, { and: andLocal, eq: eqLocal }) =>
+                andLocal(eqLocal(d.code, discountCode), eqLocal(d.isActive, true)),
+            });
+
+            if (discountRow && (!discountRow.expiresAt || discountRow.expiresAt > now)) {
+              const minOrderAmount = discountRow.minOrderAmount ?? 0;
+              const maxUses = discountRow.maxUses ?? null;
+              const usedCount = discountRow.usedCount ?? 0;
+
+              if (subtotal >= minOrderAmount && (!maxUses || usedCount < maxUses)) {
+                if (discountRow.type === "percent") {
+                  const basisPoints = discountRow.value;
+                  discountTotal = Math.floor((subtotal * basisPoints) / 10000);
+                } else if (discountRow.type === "flat") {
+                  discountTotal = Math.min(discountRow.value, subtotal);
+                }
+
+                if (discountTotal > 0) {
+                  const orderDiscountId = uuidv4();
+                  appliedDiscountRecord = {
+                    id: orderDiscountId,
+                    discountId: discountRow.id,
+                    appliedAmount: discountTotal,
+                  };
+
+                  await tx
+                    .update(discount)
+                    .set({
+                      usedCount: sql`${discount.usedCount} + 1`,
+                      updatedAt: new Date(),
+                    })
+                    .where(eq(discount.id, discountRow.id));
+                }
+              }
+            }
+          }
+
+          // 5. Create Order
           const [newOrder] = await tx
             .insert(order)
             .values({
@@ -295,8 +354,9 @@ export const orderRouter = createTRPCRouter({
               userId: userId || null,
               status: "pending",
               subtotal,
+              discountTotal,
               shippingTotal,
-              grandTotal: subtotal + shippingTotal,
+              grandTotal: Math.max(0, subtotal + shippingTotal - discountTotal),
               currency: "INR",
               shippingProviderId,
               shippingMethodId,
@@ -310,10 +370,32 @@ export const orderRouter = createTRPCRouter({
             })
             .returning();
 
-          // 5. Create Order Items
+          // 6. Persist order-level discount + usage event if applied
+          if (appliedDiscountRecord) {
+            await tx.insert(orderDiscount).values({
+              id: appliedDiscountRecord.id,
+              orderId,
+              discountId: appliedDiscountRecord.discountId,
+              appliedAmount: appliedDiscountRecord.appliedAmount,
+              createdAt: new Date(),
+            });
+
+            await tx.insert(discountUsageEvent).values({
+              id: uuidv4(),
+              orderId,
+              discountId: appliedDiscountRecord.discountId,
+              orderDiscountId: appliedDiscountRecord.id,
+              userId: userId ?? null,
+              currency: "INR",
+              appliedAmount: appliedDiscountRecord.appliedAmount,
+              createdAt: new Date(),
+            });
+          }
+
+          // 7. Create Order Items
           await tx.insert(orderItem).values(orderItemsData);
 
-          // 6. Update Inventory (Deduct reserved, decrease quantity)
+          // 8. Update Inventory (Deduct reserved, decrease quantity)
           for (const item of orderItemsData) {
             await tx
               .update(inventoryItem)
@@ -324,7 +406,7 @@ export const orderRouter = createTRPCRouter({
               .where(eq(inventoryItem.variantId, item.variantId));
           }
 
-          // 7. Clear Cart
+          // 9. Clear Cart
           await tx.delete(cartLine).where(eq(cartLine.cartId, cartData.id));
           await tx.update(cart).set({ updatedAt: new Date() }).where(eq(cart.id, cartData.id));
 

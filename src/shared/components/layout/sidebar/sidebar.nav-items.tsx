@@ -108,6 +108,8 @@ export const getMarketingItems = (role?: string): NavItem[] => [
     items: [
       { title: "All Marketing", url: PATH.STUDIO.MARKETING.ROOT, icon: MessageSquare },
       { title: "Content", url: PATH.STUDIO.MARKETING.CONTENT.ROOT, icon: Layout },
+      { title: "Discounts", url: PATH.STUDIO.DISCOUNTS.ROOT, icon: Percent },
+      { title: "Coupons", url: PATH.STUDIO.MARKETING.COUPONS.ROOT, icon: Percent },
     ],
   },
 ];

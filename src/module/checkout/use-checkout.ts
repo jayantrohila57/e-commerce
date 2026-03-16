@@ -72,6 +72,7 @@ export function useCheckout() {
           notes: body.notes ?? undefined,
           shippingProviderId: body.shippingProviderId,
           shippingMethodId: body.shippingMethodId,
+          discountCode: body.discountCode || undefined,
         },
       });
 

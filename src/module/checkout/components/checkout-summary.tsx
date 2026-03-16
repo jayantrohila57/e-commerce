@@ -15,9 +15,17 @@ interface CheckoutSummaryProps {
 }
 
 export function CheckoutSummary({ subtotal, itemCount, currency = "INR" }: CheckoutSummaryProps) {
+  const form = useFormContext();
+  const discountCode = useWatch({
+    control: form.control,
+    name: "body.discountCode",
+  }) as string | undefined;
+
+  // For now, keep shipping/tax simple; discount is client-estimated as 0.
   const shipping = 0;
   const tax = Math.round(subtotal * 0.18);
-  const total = subtotal + shipping + tax;
+  const discountAmount = 0;
+  const total = subtotal + shipping + tax - discountAmount;
 
   return (
     <Card className="border-border bg-muted/30">
@@ -30,6 +38,14 @@ export function CheckoutSummary({ subtotal, itemCount, currency = "INR" }: Check
           <span className="text-muted-foreground">Subtotal</span>
           <span>₹{subtotal.toLocaleString(undefined, { maximumFractionDigits: 0 })}</span>
         </div>
+        {discountCode && (
+          <div className="flex justify-between">
+            <span className="text-muted-foreground">Discount ({discountCode})</span>
+            <span className="text-green-600">
+              -₹{discountAmount.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+            </span>
+          </div>
+        )}
         <div className="flex justify-between">
           <span className="text-muted-foreground">Shipping</span>
           <span className="font-medium text-green-600">Free</span>
@@ -52,6 +68,9 @@ export function CheckoutSummaryFormFields() {
   return (
     <div className="space-y-4">
       <DeliveryMethodSection />
+      <FormSection title="Discount code" description="Have a coupon or promo code? Apply it here.">
+        <Form.Field name="body.discountCode" label="Discount code" type="text" placeholder="Enter code" />
+      </FormSection>
       <FormSection title="Order notes" description="Optional instructions for your order.">
         <Form.Field
           name="body.notes"

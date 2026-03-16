@@ -12,7 +12,6 @@ const createSchema = shipmentContract.create.input;
 type CreateFormValues = z.infer<typeof createSchema>;
 
 const CARRIER_OPTIONS = [
-  { label: "Select carrier...", value: "", disable: true },
   { label: "BlueDart", value: "BlueDart" },
   { label: "Delhivery", value: "Delhivery" },
   { label: "DTDC", value: "DTDC" },
@@ -69,7 +68,7 @@ export function ShipmentForm({ orderId, onSuccess, onCancel }: ShipmentFormProps
       defaultValues={defaultValues as CreateFormValues}
       schema={createSchema}
       onSubmitAction={onSubmit}
-      className="space-y-4"
+      className="space-y-4 p-0"
     >
       <input type="hidden" name="body.orderId" value={orderId} />
       <FormSection title="Shipment details" description="Enter tracking and carrier information.">

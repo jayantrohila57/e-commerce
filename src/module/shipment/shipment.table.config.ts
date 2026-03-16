@@ -3,7 +3,7 @@ import { PATH } from "@/shared/config/routes";
 export const shipmentTableConfig = {
   routes: {
     base: PATH.STUDIO.SHIPPING.ROOT,
-    edit: (id: string) => PATH.STUDIO.SHIPPING.EDIT(id),
+    view: (id: string) => PATH.STUDIO.SHIPPING.VIEW(id),
   },
   fields: {
     id: "id",

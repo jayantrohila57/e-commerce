@@ -243,7 +243,7 @@ export function DataTable<TData, TValue>({
         </CardContent>
         <CardContent className="p-0 relative border-b h-[calc(100vh-17.6rem)] w-full overflow-auto">
           <Table>
-            <TableHeader className="sticky top-0 z-10 rounded-md">
+            <TableHeader className="sticky bg-background/50 backdrop-blur-md top-0 z-10 rounded-none">
               {table?.getHeaderGroups()?.map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
                   {headerGroup.headers.map((header) => {

@@ -6,6 +6,7 @@ import { apiServer } from "@/core/api/api.server";
 import { APP_ROLE, normalizeRole } from "@/core/auth/auth.roles";
 import { getServerSession } from "@/core/auth/auth.server";
 import { ShipmentStatusBadge } from "@/module/shipment/components/shipment-status-badge";
+import { ShipmentStatusForm } from "@/module/shipment/components/shipment-status-form";
 import { ShipmentTimeline } from "@/module/shipment/components/shipment-timeline";
 import Section from "@/shared/components/layout/section/section";
 import Shell from "@/shared/components/layout/shell";
@@ -65,7 +66,7 @@ export default async function StudioShipmentDetailPage({ params }: StudioShipmen
                 </CardHeader>
                 <CardContent className="space-y-2 text-sm">
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Order ID</span>
+                    <span className="text-muted-foreground">Order</span>
                     <Link
                       href={PATH.STUDIO.ORDERS.VIEW(shipment.orderId) as Route}
                       className="font-medium hover:underline"
@@ -105,8 +106,19 @@ export default async function StudioShipmentDetailPage({ params }: StudioShipmen
               </Card>
 
               <Card>
-                <CardContent className="pt-4">
+                <CardHeader>
+                  <CardTitle className="text-sm font-semibold">Status & Tracking</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4 pt-4">
                   <ShipmentTimeline shipment={shipment} />
+                  <div className="border-t pt-4">
+                    <ShipmentStatusForm
+                      shipmentId={shipment.id}
+                      currentStatus={shipment.status}
+                      currentTrackingNumber={shipment.trackingNumber}
+                      currentCarrier={shipment.carrier}
+                    />
+                  </div>
                 </CardContent>
               </Card>
             </div>

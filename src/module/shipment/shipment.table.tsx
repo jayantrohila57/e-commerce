@@ -6,6 +6,7 @@ import { DataTable } from "@/shared/components/table/data-table";
 import { filters as tableFilters } from "@/shared/components/table/data-table-filter.config";
 import { useShipmentBulkActions } from "./shipment.bulk-actions";
 import { useShipmentColumns } from "./shipment.columns";
+import { shipmentTableConfig } from "./shipment.table.config";
 import type { GetManyShipmentsOutput } from "./shipment.types";
 
 export default function ShipmentTable({ data }: { data: GetManyShipmentsOutput }) {
@@ -20,10 +21,10 @@ export default function ShipmentTable({ data }: { data: GetManyShipmentsOutput }
     <DataTable
       data={items}
       columns={columns}
-      displayKey={"trackingNumber"}
+      displayKey={shipmentTableConfig.fields.id}
       extraFilters={[
         {
-          key: "shipmentStatus",
+          key: "status",
           title: "Status",
           options: [
             { label: "Pending", value: "pending", color: "" },
@@ -53,7 +54,7 @@ export default function ShipmentTable({ data }: { data: GetManyShipmentsOutput }
         icons: [Book, PencilIcon, Tag],
         action: {
           label: "Create Shipment",
-          url: "/studio/shipments/new",
+          url: "/studio/orders",
         },
       }}
     />

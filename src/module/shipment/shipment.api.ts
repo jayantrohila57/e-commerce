@@ -4,7 +4,7 @@ import { createTRPCRouter, customerProcedure, publicProcedure, staffProcedure } 
 import { db } from "@/core/db/db";
 import { order, shipment } from "@/core/db/db.schema";
 import { buildPagination } from "@/core/db/utils/query.utils";
-import { notifyShipmentUpdate } from "@/shared/components/mail/notification.service";
+import { notifyOrderStatusChange, notifyShipmentUpdate } from "@/shared/components/mail/notification.service";
 import { MESSAGE, STATUS } from "@/shared/config/api.config";
 import { API_RESPONSE } from "@/shared/config/api.utils";
 import { buildPaginationMeta } from "@/shared/schema";
@@ -49,6 +49,7 @@ export const shipmentRouter = createTRPCRouter({
           sortBy: undefined as string | undefined,
           status: undefined as (typeof shipment.$inferSelect)["status"] | undefined,
           carrier: undefined as string | undefined,
+          orderId: undefined as string | undefined,
           ...input?.query,
         };
 
@@ -62,6 +63,7 @@ export const shipmentRouter = createTRPCRouter({
         const whereConditions = [
           query.status ? eq(shipment.status, query.status) : undefined,
           query.carrier ? ilike(shipment.carrier, `%${query.carrier}%`) : undefined,
+          query.orderId ? eq(shipment.orderId, query.orderId) : undefined,
         ].filter((c): c is NonNullable<typeof c> => Boolean(c));
 
         const where = whereConditions.length ? and(...whereConditions) : undefined;
@@ -126,6 +128,11 @@ export const shipmentRouter = createTRPCRouter({
 
   /**
    * Create a shipment for an order
+   *
+   * Business rules:
+   * - Order must exist
+   * - Order must be paid
+   * - Only one shipment per order is allowed for now
    */
   create: staffProcedure
     .input(shipmentContract.create.input)
@@ -140,6 +147,20 @@ export const shipmentRouter = createTRPCRouter({
 
         if (!orderData) {
           return API_RESPONSE(STATUS.FAILED, MESSAGE.SHIPMENT.CREATE.FAILED, null);
+        }
+
+        // Only allow creating shipments for paid orders
+        if (orderData.status !== "paid") {
+          return API_RESPONSE(STATUS.FAILED, "Shipments can only be created for paid orders.", null);
+        }
+
+        // Prevent multiple shipments per order (current UX assumes 1:1)
+        const existingShipment = await db.query.shipment.findFirst({
+          where: eq(shipment.orderId, orderId),
+        });
+
+        if (existingShipment) {
+          return API_RESPONSE(STATUS.FAILED, "A shipment already exists for this order.", existingShipment);
         }
 
         const [newShipment] = await db
@@ -166,12 +187,15 @@ export const shipmentRouter = createTRPCRouter({
         return API_RESPONSE(STATUS.SUCCESS, MESSAGE.SHIPMENT.CREATE.SUCCESS, newShipment);
       } catch (err) {
         debugError("SHIPMENT:CREATE:ERROR", err);
-        return API_RESPONSE(STATUS.ERROR, "Error creating shipment", null, err as Error);
+        return API_RESPONSE(STATUS.ERROR, MESSAGE.SHIPMENT.CREATE.ERROR, null, err as Error);
       }
     }),
 
   /**
    * Update shipment status
+   *
+   * Also keeps the parent order status in sync
+   * and triggers shipment notification emails.
    */
   updateStatus: staffProcedure
     .input(shipmentContract.updateStatus.input)
@@ -188,26 +212,53 @@ export const shipmentRouter = createTRPCRouter({
 
         if (trackingNumber) updateData.trackingNumber = trackingNumber;
         if (carrier) updateData.carrier = carrier;
-        if (status === "in_transit" || status === "picked_up") updateData.shippedAt = new Date();
-        if (status === "delivered") updateData.deliveredAt = new Date();
+        if (status === "in_transit" || status === "picked_up") {
+          updateData.shippedAt = updateData.shippedAt ?? new Date();
+        }
+        if (status === "delivered") {
+          updateData.deliveredAt = updateData.deliveredAt ?? new Date();
+        }
 
         const [updatedShipment] = await db.update(shipment).set(updateData).where(eq(shipment.id, id)).returning();
 
         if (!updatedShipment) {
-          return API_RESPONSE(STATUS.FAILED, "Shipment not found", null);
+          return API_RESPONSE(STATUS.FAILED, MESSAGE.SHIPMENT.UPDATE.FAILED, null);
         }
 
-        // If delivered, update order status
-        if (status === "delivered") {
-          await db
-            .update(order)
-            .set({ status: "delivered", updatedAt: new Date() })
-            .where(eq(order.id, updatedShipment.orderId));
-        } else if (status === "in_transit" || status === "picked_up") {
-          await db
-            .update(order)
-            .set({ status: "shipped", updatedAt: new Date() })
-            .where(eq(order.id, updatedShipment.orderId));
+        // Keep order status aligned with shipment state and notify if it changes
+        if (updatedShipment.orderId) {
+          const existingOrder = await db.query.order.findFirst({
+            where: eq(order.id, updatedShipment.orderId),
+          });
+
+          if (existingOrder) {
+            const oldStatus = existingOrder.status;
+            let newStatus = oldStatus;
+
+            if (status === "delivered") {
+              newStatus = "delivered";
+            } else if (status === "in_transit" || status === "picked_up") {
+              newStatus = "shipped";
+            } else if (status === "exception" || status === "returned") {
+              // For now, treat exception/returned shipments as a terminal problem state
+              // and move the order to cancelled if it is not already completed.
+              if (oldStatus !== "delivered") {
+                newStatus = "cancelled";
+              }
+            }
+
+            if (newStatus !== oldStatus) {
+              const [updatedOrder] = await db
+                .update(order)
+                .set({ status: newStatus, updatedAt: new Date() })
+                .where(eq(order.id, updatedShipment.orderId))
+                .returning();
+
+              if (updatedOrder && existingOrder.userId) {
+                await notifyOrderStatusChange(updatedOrder.id, oldStatus, newStatus);
+              }
+            }
+          }
         }
 
         if (updatedShipment.orderId) {
@@ -217,7 +268,7 @@ export const shipmentRouter = createTRPCRouter({
         return API_RESPONSE(STATUS.SUCCESS, MESSAGE.SHIPMENT.UPDATE.SUCCESS, updatedShipment);
       } catch (err) {
         debugError("SHIPMENT:UPDATE_STATUS:ERROR", err);
-        return API_RESPONSE(STATUS.ERROR, "Error updating shipment status", null, err as Error);
+        return API_RESPONSE(STATUS.ERROR, MESSAGE.SHIPMENT.UPDATE.ERROR, null, err as Error);
       }
     }),
 

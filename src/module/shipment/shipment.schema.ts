@@ -27,7 +27,7 @@ export const shipmentCreateInputSchema = z.object({
   carrier: z.string().optional(),
   notes: z.string().optional(),
   estimatedDeliveryAt: z.coerce.date().optional(),
-  shippingRate: z.number().int().min(0).optional(),
+  shippingRate: z.coerce.number().int().min(0).optional(),
   weight: z.string().optional(),
 });
 
@@ -51,6 +51,7 @@ export const shipmentContract = {
           .extend({
             status: shipmentStatusEnum.optional(),
             carrier: z.string().optional(),
+            orderId: z.string().optional(),
           })
           .optional(),
       })

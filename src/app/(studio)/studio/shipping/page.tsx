@@ -37,6 +37,7 @@ export default async function StudioShippingPage({
           | "returned")
       : undefined;
   const carrier = typeof input.carrier === "string" ? input.carrier : undefined;
+  const orderId = typeof input.orderId === "string" ? input.orderId : undefined;
   const result = await apiServer.shipment.getMany({
     query: {
       page: listQuery.pagination.page,
@@ -45,6 +46,7 @@ export default async function StudioShippingPage({
       sortOrder: "desc",
       status,
       carrier,
+      orderId,
     },
   });
 

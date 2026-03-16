@@ -77,6 +77,7 @@ export const PATH = {
     SUB_CATEGORIES: {
       ROOT: (categorySlug: string, subcategorySlug: string) =>
         `/studio/catalog/categories/${categorySlug}/${subcategorySlug}`,
+      LIST: (categorySlug: string) => `/studio/catalog/categories/${categorySlug}/subcategory`,
       NEW: (categoryId: string, categorySlug: string) =>
         `/studio/catalog/categories/${categorySlug}/add-new-subcategory?id=${categoryId}`,
       EDIT: (subcategorySlug: string, categorySlug: string, subcategoryId: string) =>

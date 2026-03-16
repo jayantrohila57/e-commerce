@@ -1,4 +1,5 @@
 import type { Route } from "next";
+import Link from "next/link";
 import { forbidden, redirect } from "next/navigation";
 import { apiServer, HydrateClient } from "@/core/api/api.server";
 import { APP_ROLE, normalizeRole } from "@/core/auth/auth.roles";
@@ -36,7 +37,15 @@ export default async function CategoryPage({ params }: PageProps<"/studio/catalo
             <div className="grid h-full w-full grid-cols-6 gap-2">
               <div className="col-span-6 h-full w-full rounded-md">{data && <CategoryPreviewCard data={data} />}</div>
               <div className="col-span-6 h-full w-full rounded-md">
-                <Separator className="my-2" />
+                <div className="flex items-center justify-between mb-2">
+                  <Separator className="flex-1" />
+                  <Link
+                    href={PATH.STUDIO.SUB_CATEGORIES.LIST(slug) as Route}
+                    className="ml-4 inline-flex items-center rounded-md border px-3 py-1 text-xs font-medium text-primary hover:bg-accent hover:text-accent-foreground"
+                  >
+                    View all subcategories
+                  </Link>
+                </div>
                 {data?.subcategories && (
                   <SubCategorySection
                     slug={slug}

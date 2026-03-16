@@ -16,7 +16,7 @@ export function OrderSummary({ order }: OrderSummaryProps) {
   const total = order.grandTotal;
 
   return (
-    <Card  className="bg-transparent border-none border-r border-b">
+    <Card className="bg-transparent border-none border-r border-b">
       <CardHeader className="pb-3">
         <CardTitle className="text-sm font-semibold">Order Summary</CardTitle>
       </CardHeader>

@@ -44,6 +44,14 @@ export const createIntentOutputDataSchema = z.object({
 });
 
 export const paymentContract = {
+  get: {
+    input: z.object({
+      params: z.object({
+        id: z.string().min(1),
+      }),
+    }),
+    output: detailedResponse(paymentSelectSchema),
+  },
   createIntent: {
     input: z.object({
       body: paymentIntentInputSchema,

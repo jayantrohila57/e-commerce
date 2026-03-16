@@ -42,6 +42,32 @@ function toPaymentDto(row: {
 
 export const paymentRouter = createTRPCRouter({
   /**
+   * Get a single payment by ID (admin/staff).
+   */
+  get: adminProcedure
+    .input(paymentContract.get.input)
+    .output(paymentContract.get.output)
+    .query(async ({ input }) => {
+      try {
+        const { id } = input.params;
+
+        const row = await db.query.payment.findFirst({
+          where: eq(payment.id, id),
+        });
+
+        if (!row) {
+          return API_RESPONSE(STATUS.FAILED, "Payment not found", null);
+        }
+
+        const payload = toPaymentDto(row);
+        return API_RESPONSE(STATUS.SUCCESS, "Payment retrieved", payload);
+      } catch (err) {
+        debugError("PAYMENT:GET:ERROR", err);
+        return API_RESPONSE(STATUS.ERROR, "Error retrieving payment", null, err as Error);
+      }
+    }),
+
+  /**
    * Create a payment intent for an order. For Razorpay, creates a Razorpay order and returns
    * razorpayOrderId for checkout.js. Amount is taken from order.grandTotal (paise).
    */

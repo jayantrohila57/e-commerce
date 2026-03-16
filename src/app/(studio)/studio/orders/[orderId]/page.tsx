@@ -53,7 +53,7 @@ export default async function StudioOrderDetailPage({ params }: StudioOrderDetai
             <OrderOverviewCard order={order} />
             <div className="grid grid-cols-1 lg:grid-cols-3">
               <div className="lg:col-span-2">
-              <Card className="bg-transparent border-none border-r rounded-none border-b">
+                <Card className="bg-transparent border-none border-r rounded-none border-b">
                   <CardHeader className="border-b">
                     <CardTitle className="text-sm font-semibold">
                       Order items <span className="text-xs text-muted-foreground">({order.items?.length ?? 0})</span>

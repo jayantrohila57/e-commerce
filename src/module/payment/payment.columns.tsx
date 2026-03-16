@@ -7,6 +7,7 @@ import { useMemo } from "react";
 import { DataTableColumnHeader } from "@/shared/components/table/data-table-column-header";
 import { commonColumns } from "@/shared/components/table/data-table-columns";
 import { Badge } from "@/shared/components/ui/badge";
+import { PATH } from "@/shared/config/routes";
 import { cn } from "@/shared/utils/lib/utils";
 import type { Payment } from "./payment.schema";
 import { paymentTableConfig } from "./payment.table.config";
@@ -18,11 +19,11 @@ const statusColors: Record<Payment["status"], string> = {
   refunded: "bg-blue-100 text-blue-800 border-blue-200",
 };
 
-const providerIcons: Record<Payment["provider"], string> = {
+const providerLabels: Record<Payment["provider"], string> = {
   stripe: "Stripe",
   razorpay: "Razorpay",
   paypal: "PayPal",
-  cod: "COD",
+  cod: "Cash on Delivery",
 };
 
 export function usePaymentColumns() {
@@ -37,36 +38,74 @@ export function usePaymentColumns() {
     };
 
     const baseColumns: ColumnDef<Payment>[] = [
-      ...commonColumns.idColumn<Payment>(),
       {
-        accessorKey: "orderId",
-        header: ({ column }) => <DataTableColumnHeader column={column} title="Order ID" />,
+        accessorKey: paymentTableConfig.fields.id,
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Payment" />,
         cell: ({ row }) => {
-          const orderId = String(row.getValue("orderId"));
-          return <div className="w-[200px] truncate text-xs text-muted-foreground">{orderId}</div>;
+          const id = String(row.getValue(paymentTableConfig.fields.id) ?? "");
+          const label = id ? `Payment #${id.slice(0, 8)}` : "Payment";
+
+          return (
+            <button
+              type="button"
+              onClick={() => {
+                if (id) {
+                  router.push(paymentTableConfig.routes.view(id) as Route);
+                }
+              }}
+              className="w-[220px] truncate text-left text-sm font-medium underline-offset-4 hover:underline"
+            >
+              {label}
+            </button>
+          );
         },
       },
       {
-        accessorKey: "provider",
+        accessorKey: paymentTableConfig.fields.orderId,
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Order" />,
+        cell: ({ row }) => {
+          const orderId = String(row.getValue(paymentTableConfig.fields.orderId) ?? "");
+
+          if (!orderId) {
+            return <div className="w-[200px] text-xs text-muted-foreground">—</div>;
+          }
+
+          return (
+            <button
+              type="button"
+              onClick={() => {
+                router.push(PATH.STUDIO.ORDERS.VIEW(orderId) as Route);
+              }}
+              className="w-[220px] truncate text-left text-xs font-medium text-primary underline-offset-4 hover:underline"
+            >
+              Order #{orderId.slice(0, 8)}
+            </button>
+          );
+        },
+      },
+      {
+        accessorKey: paymentTableConfig.fields.provider,
         header: ({ column }) => <DataTableColumnHeader column={column} title="Provider" />,
         cell: ({ row }) => {
-          const provider = row.getValue("provider") as Payment["provider"];
+          const provider = row.getValue(paymentTableConfig.fields.provider) as Payment["provider"];
+          const label = providerLabels[provider] ?? provider;
+
           return (
-            <div className="w-[100px]">
-              <Badge variant="outline" className="text-xs">
-                {providerIcons[provider] ?? provider}
+            <div className="w-[140px]">
+              <Badge variant="outline" className="px-2 py-0.5 text-xs">
+                {label}
               </Badge>
             </div>
           );
         },
       },
       {
-        accessorKey: "status",
+        accessorKey: paymentTableConfig.fields.status,
         header: ({ column }) => <DataTableColumnHeader column={column} title="Status" />,
         cell: ({ row }) => {
-          const status = row.getValue("status") as Payment["status"];
+          const status = row.getValue(paymentTableConfig.fields.status) as Payment["status"];
           return (
-            <div className="w-[100px]">
+            <div className="w-[120px]">
               <Badge
                 variant="outline"
                 className={cn("border px-2 py-0.5 text-xs capitalize", statusColors[status] ?? "")}
@@ -78,15 +117,15 @@ export function usePaymentColumns() {
         },
       },
       {
-        accessorKey: "amount",
+        accessorKey: paymentTableConfig.fields.amount,
         header: ({ column }) => <DataTableColumnHeader column={column} title="Amount" />,
         cell: ({ row }) => {
-          const amount = row.getValue("amount") as number;
-          const currency = (row.getValue("currency") as string) ?? "INR";
-          // Convert from smallest currency unit to display format
+          const amount = row.getValue(paymentTableConfig.fields.amount) as number;
+          const currency = (row.getValue(paymentTableConfig.fields.currency) as string) ?? "INR";
           const displayAmount = (amount / 100).toFixed(2);
+
           return (
-            <div className="w-[120px] text-sm font-medium">
+            <div className="w-[140px] text-sm font-medium">
               {currency} {displayAmount}
             </div>
           );

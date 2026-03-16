@@ -40,7 +40,7 @@ export function OrderShipmentSection({ order, shipments }: OrderShipmentSectionP
   }
 
   return (
-    <Card>
+    <Card className="bg-transparent border-none border-r rounded-none border-b">
       <CardHeader>
         <CardTitle className="text-sm font-semibold">Shipments</CardTitle>
       </CardHeader>

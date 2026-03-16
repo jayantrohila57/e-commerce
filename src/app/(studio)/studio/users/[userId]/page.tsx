@@ -17,6 +17,7 @@ interface StudioCustomerDetailPageProps {
   params: Promise<{
     userId: string;
   }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }
 
 export const metadata = {
@@ -24,8 +25,10 @@ export const metadata = {
   description: "Inspect and manage user access.",
 };
 
-export default async function StudioCustomerDetailPage({ params }: StudioCustomerDetailPageProps) {
-  const { userId: id } = await params;
+export default async function StudioCustomerDetailPage({ params, searchParams }: StudioCustomerDetailPageProps) {
+  const [{ userId: paramId }, search] = await Promise.all([params, searchParams]);
+  const idFromQuery = typeof search.id === "string" ? search.id : undefined;
+  const id = idFromQuery ?? paramId;
   const { session, user } = await getServerSession();
   if (!session) return redirect(PATH.ROOT);
   if (normalizeRole(user?.role) !== APP_ROLE.ADMIN) forbidden();

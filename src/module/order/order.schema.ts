@@ -54,8 +54,16 @@ export const orderBaseSchema = z.object({
   updatedAt: z.date().nullable().optional(),
 });
 
+const orderUserSnapshotSchema = z.object({
+  id: z.string().min(1),
+  name: z.string().nullable().optional(),
+  email: z.string().nullable().optional(),
+  image: z.string().nullable().optional(),
+});
+
 export const orderSelectSchema = orderBaseSchema.extend({
   items: z.array(orderItemSchema).optional(),
+  user: orderUserSnapshotSchema.nullable().optional(),
 });
 
 export const orderCreateInputSchema = z.object({
@@ -93,6 +101,7 @@ export const orderContract = {
       query: paginationInput
         .extend({
           status: orderStatusEnum.optional(),
+          customerType: z.enum(["registered", "guest"]).optional(),
           q: z.string().optional(),
         })
         .optional(),

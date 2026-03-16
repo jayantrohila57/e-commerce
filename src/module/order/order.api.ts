@@ -28,6 +28,7 @@ export const orderRouter = createTRPCRouter({
           where: eq(order.id, id),
           with: {
             items: true,
+            user: true,
           },
         });
 
@@ -61,9 +62,10 @@ export const orderRouter = createTRPCRouter({
         const role = normalizeRole(ctx.user.role);
         const data = await db.query.order.findMany({
           where: role === APP_ROLE.CUSTOMER ? eq(order.userId, userId) : undefined,
-          orderBy: (order, { desc }) => [desc(order.placedAt)],
+          orderBy: (orderTable, { desc }) => [desc(orderTable.placedAt)],
           with: {
             items: true,
+            user: true,
           },
         });
 
@@ -87,10 +89,11 @@ export const orderRouter = createTRPCRouter({
           limit: 20,
           sortOrder: "desc" as const,
           status: undefined as OrderStatus | undefined,
+          customerType: undefined as "registered" | "guest" | undefined,
           q: undefined as string | undefined,
           ...input.query,
         };
-        const { status, q } = query;
+        const { status, q, customerType } = query;
 
         const pageInput = {
           page: query.page ?? 1,
@@ -106,6 +109,8 @@ export const orderRouter = createTRPCRouter({
         // Build where conditions using drizzle top-level helpers
         const whereConditions = [
           status ? eq(order.status, status) : undefined,
+          customerType === "registered" ? sql`${order.userId} IS NOT NULL` : undefined,
+          customerType === "guest" ? sql`${order.userId} IS NULL` : undefined,
           q ? ilike(order.id, `%${q}%`) : undefined,
         ].filter((condition): condition is NonNullable<typeof condition> => Boolean(condition));
 
@@ -122,6 +127,9 @@ export const orderRouter = createTRPCRouter({
           orderBy: (o, { desc }) => [desc(o.placedAt)],
           limit,
           offset,
+          with: {
+            user: true,
+          },
         });
 
         const metaPagination = buildPaginationMeta(total, pageInput);

@@ -7,12 +7,42 @@ interface OrderTimelineProps {
   order: Order;
 }
 
-const STATUS_STEPS: { id: Order["status"]; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
-  { id: "pending", label: "Pending", icon: Clock3 },
-  { id: "paid", label: "Paid", icon: CheckCircle2 },
-  { id: "shipped", label: "Shipped", icon: Truck },
-  { id: "delivered", label: "Delivered", icon: Package },
-  { id: "cancelled", label: "Cancelled", icon: CheckCircle2 },
+const STATUS_STEPS: {
+  id: Order["status"];
+  label: string;
+  description: string;
+  icon: React.ComponentType<{ className?: string }>;
+}[] = [
+  {
+    id: "pending",
+    label: "Pending",
+    description: "Order has been placed and is waiting for payment or manual confirmation.",
+    icon: Clock3,
+  },
+  {
+    id: "paid",
+    label: "Paid",
+    description: "Payment has been received and the order is ready for fulfillment.",
+    icon: CheckCircle2,
+  },
+  {
+    id: "shipped",
+    label: "Shipped",
+    description: "Items have left the warehouse and are with the carrier.",
+    icon: Truck,
+  },
+  {
+    id: "delivered",
+    label: "Delivered",
+    description: "The order has been delivered to the customer.",
+    icon: Package,
+  },
+  {
+    id: "cancelled",
+    label: "Cancelled",
+    description: "The order has been cancelled and will not be processed further.",
+    icon: CheckCircle2,
+  },
 ];
 
 export function OrderTimeline({ order }: OrderTimelineProps) {
@@ -35,7 +65,7 @@ export function OrderTimeline({ order }: OrderTimelineProps) {
             <li key={step.id} className="flex items-start gap-3">
               <div className="flex flex-col items-center">
                 <div
-                  className={`flex h-6 w-6 items-center justify-center rounded-full border text-[10px] ${
+                  className={`flex h-10 w-10 items-center justify-center border text-[10px] ${
                     isCompleted
                       ? "border-emerald-500 bg-emerald-500/10 text-emerald-600"
                       : "border-border bg-background text-muted-foreground"
@@ -45,8 +75,9 @@ export function OrderTimeline({ order }: OrderTimelineProps) {
                 </div>
                 {index < STATUS_STEPS.length - 1 && <div className="mt-1 h-6 w-px bg-border/70" aria-hidden="true" />}
               </div>
-              <div className="pt-0.5">
+              <div className="pt-0.5 space-y-1">
                 <p className={`font-medium ${isActive ? "text-foreground" : "text-muted-foreground"}`}>{step.label}</p>
+                <p className="max-w-xs text-[11px] leading-snug text-muted-foreground">{step.description}</p>
               </div>
             </li>
           );

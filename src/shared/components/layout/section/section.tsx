@@ -42,7 +42,7 @@ export default function Section({
             </div>
           )}
           <CardHeader className="p-4 w-full">
-            {title && <CardTitle className="text-6xl font-semibold">{title}</CardTitle>}
+            {title && <CardTitle className="text-4xl font-semibold">{title}</CardTitle>}
             {description && (
               <CardDescription className="text-base text-muted-foreground">{description}</CardDescription>
             )}
@@ -56,7 +56,7 @@ export default function Section({
           </CardHeader>
         </div>
       )}
-      <div className="w-full pt-16  border-y"></div>
+      <div className="w-full  border-t"></div>
       <CardContent className={cn("p-0", isMinHeight && "min-h-[600px]")}>{children}</CardContent>
     </Card>
   );

@@ -9,6 +9,7 @@ import { DataTableColumnHeader } from "@/shared/components/table/data-table-colu
 import { commonColumns } from "@/shared/components/table/data-table-columns";
 import { Badge } from "@/shared/components/ui/badge";
 import { cn } from "@/shared/utils/lib/utils";
+import { OrderCustomerCell } from "./components/order-customer-cell";
 import type { Order, orderStatusEnum } from "./order.schema";
 import { orderTableConfig } from "./order.table.config";
 
@@ -41,14 +42,36 @@ export function useOrderColumns() {
     };
 
     const baseColumns: ColumnDef<Order>[] = [
-      ...commonColumns.idColumn<Order>(),
+      {
+        accessorKey: orderTableConfig.fields.id,
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Order" />,
+        cell: ({ row }) => {
+          const id = String(row.getValue(orderTableConfig.fields.id) ?? "");
+          const label = id ? `Order #${id.slice(0, 8)}` : "Order";
+
+          return (
+            <button
+              type="button"
+              onClick={() => {
+                if (id) {
+                  router.push(orderTableConfig.routes.view(id) as Route);
+                }
+              }}
+              className="w-[200px] truncate text-left text-sm font-medium underline-offset-4 hover:underline"
+            >
+              {label}
+            </button>
+          );
+        },
+      },
       ...commonColumns.currencyColumn<Order>(),
       {
         accessorKey: "userId",
-        header: ({ column }) => <DataTableColumnHeader column={column} title="Customer ID" />,
-        cell: ({ row }) => (
-          <div className="w-[200px] truncate text-xs text-muted-foreground">{row.getValue("userId") ?? "Guest"}</div>
-        ),
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Customer" />,
+        cell: ({ row }) => {
+          const order = row.original as Order;
+          return <OrderCustomerCell order={order} />;
+        },
       },
       {
         accessorKey: "grandTotal",
@@ -56,7 +79,54 @@ export function useOrderColumns() {
         cell: ({ row }) => {
           const total = row.getValue("grandTotal") as number;
           const currency = (row.getValue("currency") as string) ?? "INR";
-          return <div className="w-[120px] text-sm font-medium">{`${currency} ${total / 100}`}</div>;
+          const displayAmount = (total / 100).toFixed(2);
+          return <div className="w-[120px] text-sm font-medium">{`${currency} ${displayAmount}`}</div>;
+        },
+      },
+      {
+        id: "payment",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Payment" />,
+        cell: ({ row }) => {
+          const id = row.getValue(orderTableConfig.fields.id) as string | undefined;
+          if (!id) {
+            return <div className="w-[140px] text-xs text-muted-foreground">—</div>;
+          }
+
+          return (
+            <button
+              type="button"
+              onClick={() => {
+                const search = new URLSearchParams({ q: id }).toString();
+                window.location.href = `/studio/payment?${search}`;
+              }}
+              className="w-[140px] truncate text-left text-xs font-medium text-primary underline-offset-4 hover:underline"
+            >
+              View payments
+            </button>
+          );
+        },
+      },
+      {
+        id: "shipment",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Shipment" />,
+        cell: ({ row }) => {
+          const id = row.getValue(orderTableConfig.fields.id) as string | undefined;
+          if (!id) {
+            return <div className="w-[140px] text-xs text-muted-foreground">—</div>;
+          }
+
+          return (
+            <button
+              type="button"
+              onClick={() => {
+                const search = new URLSearchParams({ orderId: id }).toString();
+                window.location.href = `/studio/shipping?${search}`;
+              }}
+              className="w-[140px] truncate text-left text-xs font-medium text-primary underline-offset-4 hover:underline"
+            >
+              View shipments
+            </button>
+          );
         },
       },
       {
@@ -81,11 +151,11 @@ export function useOrderColumns() {
         header: ({ column }) => <DataTableColumnHeader column={column} title="Placed At" />,
         cell: ({ row }) => {
           const date = row.getValue("placedAt") as Date;
-          return (
-            <div className="w-[160px] text-xs text-muted-foreground">
-              {date ? new Date(date).toLocaleString() : "—"}
-            </div>
-          );
+          const formatted =
+            date instanceof Date && !Number.isNaN(date.getTime())
+              ? `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`
+              : null;
+          return <div className="w-[160px] text-xs text-muted-foreground">{formatted ?? "—"}</div>;
         },
       },
     ];

@@ -25,10 +25,30 @@ export default async function StudioOrdersPage({
   const input = await searchParams;
   const listQuery = getListQueryFromSearchParams(input);
 
+  const statusParam = typeof input.status === "string" ? input.status : undefined;
+  const customerTypeParam = typeof input.customerType === "string" ? input.customerType : undefined;
+
+  const status =
+    statusParam && ["pending", "paid", "shipped", "delivered", "cancelled"].includes(statusParam)
+      ? (statusParam as "pending" | "paid" | "shipped" | "delivered" | "cancelled")
+      : undefined;
+
+  const customerType =
+    customerTypeParam && ["registered", "guest"].includes(customerTypeParam) ? customerTypeParam : undefined;
+
   const result = await apiServer.order.getManyAdmin({
     query: {
       page: listQuery.pagination.page,
       limit: listQuery.pagination.limit,
+      status,
+      q: listQuery.search.q,
+      customerType,
+    } as unknown as {
+      page?: number;
+      limit?: number;
+      status?: "pending" | "paid" | "shipped" | "delivered" | "cancelled";
+      q?: string;
+      customerType?: "registered" | "guest";
     },
   });
 

@@ -1,9 +1,11 @@
-import { and, desc, eq, ilike, sql } from "drizzle-orm";
+import { and, desc, eq, ilike, inArray, sql } from "drizzle-orm";
 import { v4 as uuidv4 } from "uuid";
 import { createTRPCRouter, customerProcedure, publicProcedure, staffProcedure } from "@/core/api/api.methods";
+import { APP_ROLE, normalizeRole } from "@/core/auth/auth.roles";
 import { db } from "@/core/db/db";
-import { order, shipment } from "@/core/db/db.schema";
+import { order, shipment, shippingMethod, shippingProvider } from "@/core/db/db.schema";
 import { buildPagination } from "@/core/db/utils/query.utils";
+import { adjustInventoryForReturn } from "@/module/inventory/inventory.api";
 import { notifyOrderStatusChange, notifyShipmentUpdate } from "@/shared/components/mail/notification.service";
 import { MESSAGE, STATUS } from "@/shared/config/api.config";
 import { API_RESPONSE } from "@/shared/config/api.utils";
@@ -221,6 +223,16 @@ export const shipmentRouter = createTRPCRouter({
         const { id } = input.params;
         const { status, trackingNumber, carrier } = input.body;
 
+        const existingShipment = await db.query.shipment.findFirst({
+          where: eq(shipment.id, id),
+        });
+
+        if (!existingShipment) {
+          return API_RESPONSE(STATUS.FAILED, MESSAGE.SHIPMENT.UPDATE.FAILED, null);
+        }
+
+        const previousStatus = existingShipment.status;
+
         const updateData: Record<string, unknown> = {
           status,
           updatedAt: new Date(),
@@ -245,6 +257,9 @@ export const shipmentRouter = createTRPCRouter({
         if (updatedShipment.orderId) {
           const existingOrder = await db.query.order.findFirst({
             where: eq(order.id, updatedShipment.orderId),
+            with: {
+              items: true,
+            },
           });
 
           if (existingOrder) {
@@ -255,10 +270,13 @@ export const shipmentRouter = createTRPCRouter({
               newStatus = "delivered";
             } else if (status === "in_transit" || status === "picked_up") {
               newStatus = "shipped";
-            } else if (status === "exception" || status === "returned") {
-              // For now, treat exception/returned shipments as a terminal problem state
-              // and move the order to cancelled if it is not already completed.
-              if (oldStatus !== "delivered") {
+            } else if (status === "returned") {
+              // Distinguish returned orders from cancelled ones
+              newStatus = "returned";
+            } else if (status === "exception") {
+              // Shipment is in an exception state; treat as a terminal cancellation
+              // if the order has not already been delivered or explicitly returned.
+              if (oldStatus !== "delivered" && oldStatus !== "returned") {
                 newStatus = "cancelled";
               }
             }
@@ -272,6 +290,34 @@ export const shipmentRouter = createTRPCRouter({
 
               if (updatedOrder && existingOrder.userId) {
                 await notifyOrderStatusChange(updatedOrder.id, oldStatus, newStatus);
+              }
+            }
+
+            // If this is the first transition into the "returned" state,
+            // restore inventory for each order line and log proper adjustment events.
+            const isFirstReturnTransition = previousStatus !== "returned" && status === "returned";
+            if (isFirstReturnTransition) {
+              const warehouseId = existingOrder.warehouseId;
+
+              if (warehouseId) {
+                await db.transaction(async (tx) => {
+                  for (const item of existingOrder.items ?? []) {
+                    await adjustInventoryForReturn(tx, {
+                      variantId: item.variantId,
+                      warehouseId,
+                      quantity: item.quantity,
+                      orderId: existingOrder.id,
+                      refundId: null,
+                      reason: "Shipment returned",
+                      adjustedBy: existingOrder.userId ?? null,
+                    });
+                  }
+                });
+              } else {
+                debugError("SHIPMENT:UPDATE_STATUS:RETURN_NO_WAREHOUSE", {
+                  orderId: existingOrder.id,
+                  shipmentId: updatedShipment.id,
+                });
               }
             }
           }
@@ -289,14 +335,29 @@ export const shipmentRouter = createTRPCRouter({
     }),
 
   /**
-   * Get shipments for an order
+   * Get shipments for an order (customer-scoped)
    */
   getByOrder: customerProcedure
     .input(shipmentContract.getByOrder.input)
     .output(shipmentContract.getByOrder.output)
-    .query(async ({ input }) => {
+    .query(async ({ input, ctx }) => {
       try {
         const { orderId } = input.params;
+
+        const userId = ctx.user.id;
+        const role = normalizeRole(ctx.user.role);
+
+        const orderData = await db.query.order.findFirst({
+          where: eq(order.id, orderId),
+        });
+
+        if (!orderData) {
+          return API_RESPONSE(STATUS.FAILED, MESSAGE.SHIPMENT.GET_ORDER_SHIPMENTS.FAILED, []);
+        }
+
+        if (role === APP_ROLE.CUSTOMER && orderData.userId && orderData.userId !== userId) {
+          return API_RESPONSE(STATUS.FAILED, "Unauthorized", []);
+        }
 
         const data = await db.query.shipment.findMany({
           where: eq(shipment.orderId, orderId),
@@ -306,6 +367,74 @@ export const shipmentRouter = createTRPCRouter({
         return API_RESPONSE(STATUS.SUCCESS, MESSAGE.SHIPMENT.GET_ORDER_SHIPMENTS.SUCCESS, data);
       } catch (err) {
         debugError("SHIPMENT:GET_BY_ORDER:ERROR", err);
+        return API_RESPONSE(STATUS.ERROR, "Error retrieving shipments", [], err as Error);
+      }
+    }),
+
+  /**
+   * Get all shipments for the current customer (avoids N+1 over orders)
+   */
+  getForCustomer: customerProcedure
+    .input(shipmentContract.getForCustomer.input)
+    .output(shipmentContract.getForCustomer.output)
+    .query(async ({ ctx }) => {
+      try {
+        const userId = ctx.user.id;
+
+        const role = normalizeRole(ctx.user.role);
+        if (role !== APP_ROLE.CUSTOMER) {
+          return API_RESPONSE(STATUS.FAILED, "Only customers can view their shipments", []);
+        }
+
+        const customerOrders = await db.query.order.findMany({
+          where: eq(order.userId, userId),
+          columns: {
+            id: true,
+          },
+        });
+
+        const orderIds = customerOrders.map((o) => o.id);
+        if (!orderIds.length) {
+          return API_RESPONSE(STATUS.SUCCESS, MESSAGE.SHIPMENT.GET_ORDER_SHIPMENTS.SUCCESS, []);
+        }
+
+        const shipments = await db.query.shipment.findMany({
+          where: inArray(shipment.orderId, orderIds),
+          orderBy: (s, { desc }) => [desc(s.createdAt)],
+        });
+
+        const providerIds = Array.from(
+          new Set(shipments.map((s) => s.shippingProviderId).filter((id): id is string => Boolean(id))),
+        );
+        const methodIds = Array.from(
+          new Set(shipments.map((s) => s.shippingMethodId).filter((id): id is string => Boolean(id))),
+        );
+
+        const [providers, methods] = await Promise.all([
+          providerIds.length
+            ? db.query.shippingProvider.findMany({
+                where: inArray(shippingProvider.id, providerIds),
+              })
+            : Promise.resolve([]),
+          methodIds.length
+            ? db.query.shippingMethod.findMany({
+                where: inArray(shippingMethod.id, methodIds),
+              })
+            : Promise.resolve([]),
+        ]);
+
+        const providerNamesById = Object.fromEntries(providers.map((p) => [p.id, p.name] as const));
+        const methodNamesById = Object.fromEntries(methods.map((m) => [m.id, m.name] as const));
+
+        const enrichedShipments = shipments.map((s) => ({
+          ...s,
+          shippingProviderName: s.shippingProviderId ? (providerNamesById[s.shippingProviderId] ?? null) : null,
+          shippingMethodName: s.shippingMethodId ? (methodNamesById[s.shippingMethodId] ?? null) : null,
+        }));
+
+        return API_RESPONSE(STATUS.SUCCESS, "Shipments retrieved successfully", enrichedShipments);
+      } catch (err) {
+        debugError("SHIPMENT:GET_FOR_CUSTOMER:ERROR", err);
         return API_RESPONSE(STATUS.ERROR, "Error retrieving shipments", [], err as Error);
       }
     }),

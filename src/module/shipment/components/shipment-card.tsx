@@ -13,9 +13,11 @@ interface ShipmentCardProps {
   shipment: Shipment;
   orderId?: string;
   href?: Route | string;
+  shippingProviderName?: string;
+  shippingMethodName?: string;
 }
 
-export function ShipmentCard({ shipment, orderId, href }: ShipmentCardProps) {
+export function ShipmentCard({ shipment, orderId, href, shippingProviderName, shippingMethodName }: ShipmentCardProps) {
   const createdAt = shipment.createdAt ? format(new Date(shipment.createdAt), "dd MMM yyyy") : "";
   const link = href ?? (orderId ? `${PATH.ACCOUNT.ORDER}/${orderId}` : PATH.ACCOUNT.SHIPMENT);
 
@@ -41,13 +43,17 @@ export function ShipmentCard({ shipment, orderId, href }: ShipmentCardProps) {
         {shipment.shippingProviderId && (
           <div className="flex items-center justify-between">
             <span>Provider</span>
-            <span className="font-medium text-foreground">{shipment.shippingProviderId}</span>
+            <span className="font-medium text-foreground">
+              {shippingProviderName ?? shipment.shippingProviderName ?? shipment.shippingProviderId}
+            </span>
           </div>
         )}
         {shipment.shippingMethodId && (
           <div className="flex items-center justify-between">
             <span>Method</span>
-            <span className="font-medium text-foreground">{shipment.shippingMethodId}</span>
+            <span className="font-medium text-foreground">
+              {shippingMethodName ?? shipment.shippingMethodName ?? shipment.shippingMethodId}
+            </span>
           </div>
         )}
         {shipment.estimatedDeliveryAt && (

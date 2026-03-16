@@ -133,7 +133,7 @@ export const getShippingItems = (role?: string): NavItem[] => [
     url: PATH.STUDIO.SHIPPING.ROOT,
     icon: Truck,
     items: [
-      { title: "Shipments", url: PATH.STUDIO.SHIPPING.SHIPMENTS, icon: Truck },
+      { title: "Shipments", url: PATH.STUDIO.SHIPPING.ROOT, icon: Truck },
       { title: "Providers", url: PATH.STUDIO.SHIPPING.PROVIDERS, icon: Truck },
       { title: "Zones", url: PATH.STUDIO.SHIPPING.ZONES, icon: Truck },
       { title: "Methods", url: PATH.STUDIO.SHIPPING.METHODS, icon: Truck },

@@ -3,13 +3,16 @@ import { v4 as uuidv4 } from "uuid";
 import { createTRPCRouter, publicProcedure, staffProcedure } from "@/core/api/api.methods";
 
 import { db } from "@/core/db/db";
-import { inventoryAdjustmentEvent, inventoryItem } from "@/core/db/db.schema";
+import { inventoryAdjustmentEvent, inventoryItem, warehouse } from "@/core/db/db.schema";
 import { STATUS } from "@/shared/config/api.config";
 import { API_RESPONSE } from "@/shared/config/api.utils";
 import { buildPagination, buildPaginationMeta } from "@/shared/schema";
 import { inventoryContract } from "./inventory.schema";
 
-type InventoryDbLike = typeof db;
+// Broad type so helpers work with both the root db client and transaction clients.
+// We rely on runtime Drizzle behavior for safety.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type InventoryDbLike = any;
 
 /**
  * Helper: adjust inventory for a product return/refund in a specific warehouse.
@@ -34,13 +37,15 @@ export async function adjustInventoryForReturn(
     throw new Error("Return quantity must be a positive integer");
   }
 
-  // Find existing inventory item for this variant and warehouse (ignoring soft-deleted rows)
   let current = await tx.query.inventoryItem.findFirst({
-    where: (inv, { and, eq, isNull }) =>
-      and(eq(inv.variantId, variantId), eq(inv.warehouseId, warehouseId), isNull(inv.deletedAt)),
+    where: (inv: typeof inventoryItem, helpers: { and: typeof and; eq: typeof eq; isNull: typeof isNull }) =>
+      helpers.and(
+        helpers.eq(inv.variantId, variantId),
+        helpers.eq(inv.warehouseId, warehouseId),
+        helpers.isNull(inv.deletedAt),
+      ),
   });
 
-  // If no row exists yet for this variant+warehouse, create a zeroed inventory item first
   if (!current) {
     const [created] = await tx
       .insert(inventoryItem)
@@ -48,8 +53,6 @@ export async function adjustInventoryForReturn(
         id: uuidv4(),
         variantId,
         warehouseId,
-        // SKU is non-nullable; for system-created rows without a canonical SKU yet,
-        // fall back to an empty string. This can be refined later when SKU strategy is defined.
         sku: "",
         barcode: null,
         quantity: 0,
@@ -65,40 +68,105 @@ export async function adjustInventoryForReturn(
     throw new Error("Failed to load or create inventory for return");
   }
 
+  const updated = await applyInventoryDelta(tx, {
+    inventoryId: current.id,
+    quantityDelta: quantity,
+    type: "return",
+    warehouseId,
+    variantId,
+    orderId,
+    refundId,
+    reason,
+    adjustedBy,
+  });
+
+  return updated;
+}
+
+export type InventoryDeltaContext = {
+  inventoryId: string;
+  quantityDelta?: number;
+  reservedDelta?: number;
+  incomingDelta?: number;
+  type?: "manual" | "order" | "restock" | "return" | "damaged" | "correction";
+  warehouseId?: string | null;
+  variantId?: string;
+  orderId?: string | null;
+  refundId?: string | null;
+  reason?: string | null;
+  adjustedBy?: string | null;
+};
+
+export async function applyInventoryDelta(tx: InventoryDbLike, context: InventoryDeltaContext) {
+  const {
+    inventoryId,
+    quantityDelta = 0,
+    reservedDelta = 0,
+    incomingDelta = 0,
+    type = "manual",
+    warehouseId,
+    variantId,
+    orderId,
+    refundId,
+    reason,
+    adjustedBy,
+  } = context;
+
+  const current = await tx.query.inventoryItem.findFirst({
+    where: (inv: typeof inventoryItem, helpers: { and: typeof and; eq: typeof eq; isNull: typeof isNull }) =>
+      helpers.and(helpers.eq(inv.id, inventoryId), helpers.isNull(inv.deletedAt)),
+  });
+
+  if (!current) {
+    throw new Error("Inventory not found for delta application");
+  }
+
   const quantityBefore = current.quantity;
   const incomingBefore = current.incoming;
   const reservedBefore = current.reserved;
 
-  const quantityAfter = quantityBefore + quantity;
+  const quantityAfter = quantityBefore + quantityDelta;
+  const incomingAfter = incomingBefore + incomingDelta;
+  const reservedAfter = reservedBefore + reservedDelta;
+
+  if (quantityAfter < 0 || incomingAfter < 0 || reservedAfter < 0) {
+    throw new Error("Inventory values cannot be negative");
+  }
+
+  if (reservedAfter > quantityAfter) {
+    throw new Error("Reserved quantity cannot exceed available quantity");
+  }
 
   const [updated] = await tx
     .update(inventoryItem)
     .set({
       quantity: quantityAfter,
+      incoming: incomingAfter,
+      reserved: reservedAfter,
       updatedAt: new Date(),
     })
-    .where(eq(inventoryItem.id, current.id))
+    .where(eq(inventoryItem.id, inventoryId))
     .returning();
 
   if (!updated) {
-    throw new Error("Failed to update inventory for return");
+    throw new Error("Failed to apply inventory delta");
   }
 
   await tx.insert(inventoryAdjustmentEvent).values({
     id: uuidv4(),
-    type: "return",
+    type,
     inventoryId: updated.id,
-    warehouseId: updated.warehouseId ?? warehouseId,
-    variantId: updated.variantId,
+    warehouseId: updated.warehouseId ?? warehouseId ?? null,
+    variantId: updated.variantId ?? variantId ?? null,
     quantityBefore,
-    quantityDelta: quantity,
+    quantityDelta,
     quantityAfter,
     incomingBefore,
-    incomingDelta: 0,
-    incomingAfter: incomingBefore,
+    incomingDelta,
+    incomingAfter,
     reservedBefore,
-    reservedDelta: 0,
-    reservedAfter: reservedBefore,
+    reservedDelta,
+    reservedAfter,
     orderId: orderId ?? null,
     refundId: refundId ?? null,
     reason: reason ?? null,
@@ -107,6 +175,28 @@ export async function adjustInventoryForReturn(
   });
 
   return updated;
+}
+
+export async function getInventoryForVariantAndWarehouse(
+  tx: InventoryDbLike,
+  params: { variantId: string; warehouseId?: string | null },
+) {
+  const { variantId, warehouseId } = params;
+
+  const row = await tx.query.inventoryItem.findFirst({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    where: (inv: any, helpers: any) => {
+      const conditions = [helpers.eq(inv.variantId, variantId), helpers.isNull(inv.deletedAt)];
+      if (warehouseId) {
+        conditions.push(helpers.eq(inv.warehouseId, warehouseId));
+      }
+      return helpers.and(...conditions);
+    },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    orderBy: (inv: any, helpers: any) => [helpers.desc(inv.updatedAt)],
+  });
+
+  return row ?? null;
 }
 
 function validateInventoryNumbers(input: { quantity: number; reserved: number; incoming: number }) {
@@ -189,7 +279,7 @@ export const inventoryRouter = createTRPCRouter({
           .where(baseConditions.length ? and(...baseConditions) : undefined);
         const total = Number(totalRaw ?? 0);
 
-        const output = await db.query.inventoryItem.findMany({
+        const rows = await db.query.inventoryItem.findMany({
           where: (inv, helpers) => {
             const { and, ilike, isNull, isNotNull, or, gt: _gt, lte: _lte } = helpers;
             const conditions = [isNull(inv.deletedAt)];
@@ -229,10 +319,27 @@ export const inventoryRouter = createTRPCRouter({
 
             return and(...conditions);
           },
+          with: {
+            warehouse: true,
+          },
           limit: Math.min(effectiveLimit, 100),
           offset: effectiveOffset,
           orderBy: (inv, { desc }) => [desc(inv.updatedAt)],
         });
+
+        const output = rows.map((row) => ({
+          id: row.id,
+          variantId: row.variantId,
+          warehouseId: row.warehouseId,
+          sku: row.sku,
+          barcode: row.barcode,
+          quantity: row.quantity,
+          incoming: row.incoming,
+          reserved: row.reserved,
+          updatedAt: row.updatedAt,
+          warehouseCode: row.warehouse?.code ?? null,
+          warehouseName: row.warehouse?.name ?? null,
+        }));
 
         const metaPagination = buildPaginationMeta(total, pageInput);
 
@@ -309,23 +416,30 @@ export const inventoryRouter = createTRPCRouter({
     }),
 
   // =========================
-  // GET BY VARIANT ID
+  // GET BY VARIANT ID (OPTIONALLY BY WAREHOUSE)
   // =========================
   getByVariantId: publicProcedure
     .input(inventoryContract.getByVariantId.input)
     .output(inventoryContract.getByVariantId.output)
     .query(async ({ input }) => {
       try {
-        const { variantId } = input.params;
+        const { variantId, warehouseId } = input.params;
 
-        const output = await db.query.inventoryItem.findFirst({
-          where: (inv, { and, eq, isNull }) => and(eq(inv.variantId, variantId), isNull(inv.deletedAt)),
+        const rows = await db.query.inventoryItem.findMany({
+          where: (inv, { and, eq, isNull }) => {
+            const conditions = [eq(inv.variantId, variantId), isNull(inv.deletedAt)];
+            if (warehouseId) {
+              conditions.push(eq(inv.warehouseId, warehouseId));
+            }
+            return and(...conditions);
+          },
+          orderBy: (inv, { asc }) => [asc(inv.warehouseId), asc(inv.id)],
         });
 
         return API_RESPONSE(
-          output ? STATUS.SUCCESS : STATUS.FAILED,
-          output ? "Inventory fetched successfully" : "Failed to fetch inventory",
-          output ?? null,
+          rows.length ? STATUS.SUCCESS : STATUS.FAILED,
+          rows.length ? "Inventory fetched successfully" : "Failed to fetch inventory",
+          rows,
         );
       } catch (err) {
         return API_RESPONSE(STATUS.ERROR, "Error fetching inventory", null, err as Error);

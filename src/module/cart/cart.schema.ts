@@ -108,6 +108,7 @@ export const cartContract = {
       body: z.object({
         variantId: z.string().min(1),
         quantity: z.number().int().min(1),
+        warehouseId: z.string().min(1).optional(),
         sessionId: z.string().optional(), // for guest carts
       }),
     }),

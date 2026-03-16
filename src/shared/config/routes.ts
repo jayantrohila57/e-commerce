@@ -120,8 +120,8 @@ export const PATH = {
 
     SHIPPING: {
       ROOT: "/studio/shipping",
-      VIEW: (id: string) => `/studio/shipping/shipments/${id}`,
-      EDIT: (id: string) => `/studio/shipping/shipments/${id}/edit`,
+      VIEW: (id: string) => `/studio/shipping/${id}`,
+      EDIT: (id: string) => `/studio/shipping/${id}/edit`,
       PROVIDERS: "/studio/shipping/providers" as Route,
       PROVIDERS_NEW: "/studio/shipping/providers/new" as Route,
       PROVIDERS_EDIT: (id: string) => `/studio/shipping/providers/${id}/edit`,
@@ -134,7 +134,7 @@ export const PATH = {
       RATES: "/studio/shipping/rates" as Route,
       RATES_NEW: "/studio/shipping/rates/new" as Route,
       RATES_EDIT: (id: string) => `/studio/shipping/rates/${id}/edit`,
-      SHIPMENTS: "/studio/shipping/shipments" as Route,
+      SHIPMENTS: "/studio/shipping" as Route,
     },
 
     PAYMENT: {

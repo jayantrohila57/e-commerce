@@ -1,4 +1,4 @@
-import { and, eq, ilike, sql } from "drizzle-orm";
+import { and, eq, ilike, or, sql } from "drizzle-orm";
 import { v4 as uuidv4 } from "uuid";
 import { createTRPCRouter, staffProcedure } from "@/core/api/api.methods";
 import { db } from "@/core/db/db";
@@ -27,10 +27,10 @@ export const warehouseRouter = createTRPCRouter({
       const effectiveLimit = paging.limit;
 
       const rows = await db.query.warehouse.findMany({
-        where: (w, { and: andLocal, ilike: ilikeLocal, eq: eqLocal }) =>
+        where: (w, { and: andLocal, ilike: ilikeLocal, eq: eqLocal, or: orLocal }) =>
           andLocal(
             query?.search
-              ? (ilikeLocal(w.name, `%${query.search}%`) ?? ilikeLocal(w.code, `%${query.search}%`))
+              ? orLocal(ilikeLocal(w.name, `%${query.search}%`), ilikeLocal(w.code, `%${query.search}%`))
               : undefined,
             query?.isActive !== undefined ? eqLocal(w.isActive, query.isActive) : undefined,
           ),
@@ -45,7 +45,9 @@ export const warehouseRouter = createTRPCRouter({
         .where(
           query?.search || query?.isActive !== undefined
             ? and(
-                query?.search ? ilike(warehouse.name, `%${query.search}%`) : undefined,
+                query?.search
+                  ? or(ilike(warehouse.name, `%${query.search}%`), ilike(warehouse.code, `%${query.search}%`))
+                  : undefined,
                 query?.isActive !== undefined ? eq(warehouse.isActive, query.isActive) : undefined,
               )
             : undefined,
@@ -72,10 +74,10 @@ export const warehouseRouter = createTRPCRouter({
       const search = input?.query?.search;
 
       const rows = await db.query.warehouse.findMany({
-        where: (w, { and: andLocal, ilike: ilikeLocal, eq: eqLocal }) =>
+        where: (w, { and: andLocal, ilike: ilikeLocal, eq: eqLocal, or: orLocal }) =>
           andLocal(
             eqLocal(w.isActive, true),
-            search ? (ilikeLocal(w.name, `%${search}%`) ?? ilikeLocal(w.code, `%${search}%`)) : undefined,
+            search ? orLocal(ilikeLocal(w.name, `%${search}%`), ilikeLocal(w.code, `%${search}%`)) : undefined,
           ),
         orderBy: (w, { asc }) => [asc(w.name)],
         limit: 100,

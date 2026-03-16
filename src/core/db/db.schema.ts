@@ -29,7 +29,14 @@ import {
  */
 
 export const discountTypeEnum = pgEnum("discount_type", ["flat", "percent"]);
-export const orderStatusEnum = pgEnum("order_status", ["pending", "paid", "shipped", "delivered", "cancelled"]);
+export const orderStatusEnum = pgEnum("order_status", [
+  "pending",
+  "paid",
+  "shipped",
+  "delivered",
+  "returned",
+  "cancelled",
+]);
 export const paymentStatusEnum = pgEnum("payment_status", ["pending", "completed", "failed", "refunded"]);
 export const paymentProviderEnum = pgEnum("payment_provider", ["stripe", "razorpay", "paypal", "cod"]);
 export const shipmentStatusEnum = pgEnum("shipment_status", [

@@ -9,17 +9,8 @@ export const metadata = {
 };
 
 export default async function ShipmentPage() {
-  const ordersRes = await apiServer.order.getMany({});
-  const orders = ordersRes?.data ?? [];
-  const orderIds = Array.isArray(orders) ? orders.map((o) => o.id) : [];
-
-  const allShipments: Shipment[] = [];
-
-  for (const orderId of orderIds) {
-    const shipRes = await apiServer.shipment.getByOrder({ params: { orderId } });
-    const list = shipRes?.data ?? [];
-    if (Array.isArray(list)) allShipments.push(...list);
-  }
+  const shipmentsRes = await apiServer.shipment.getForCustomer({});
+  const allShipments: Shipment[] = Array.isArray(shipmentsRes?.data) ? shipmentsRes.data : [];
 
   allShipments.sort((a, b) => {
     const da = a.createdAt instanceof Date ? a.createdAt.getTime() : new Date(a.createdAt).getTime();

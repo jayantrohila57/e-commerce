@@ -18,6 +18,7 @@ const statusColors: Record<ReturnType<(typeof orderStatusEnum)["parse"]>, string
   paid: "bg-emerald-100 text-emerald-800 border-emerald-200",
   shipped: "bg-sky-100 text-sky-800 border-sky-200",
   delivered: "bg-emerald-100 text-emerald-800 border-emerald-200",
+  returned: "bg-purple-100 text-purple-800 border-purple-200",
   cancelled: "bg-rose-100 text-rose-800 border-rose-200",
 };
 

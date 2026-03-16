@@ -14,6 +14,8 @@ export const inventoryBaseSchema = z.object({
     .date()
     .default(() => new Date())
     .nullable(),
+  warehouseCode: z.string().nullable().optional(),
+  warehouseName: z.string().nullable().optional(),
 });
 
 export const inventorySelectSchema = inventoryBaseSchema;
@@ -88,9 +90,10 @@ export const inventoryContract = {
     input: z.object({
       params: z.object({
         variantId: z.string(),
+        warehouseId: z.string().min(1).optional(),
       }),
     }),
-    output: detailedResponse(inventorySelectSchema.nullable()),
+    output: detailedResponse(z.array(inventorySelectSchema)),
   },
 
   getBySku: {

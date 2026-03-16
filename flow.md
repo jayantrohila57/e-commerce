@@ -143,9 +143,10 @@ How to read this document:
 | tRPC app router (`src/core/api/api.routes.ts`) | Store, account, studio, service routes | Complete | Central data contract passes typecheck. |
 | Guest + user cart hooks (`src/module/cart/use-cart.ts`, `cart.api.ts`) | PDP, header cart button, `/account/cart`, checkout | Partial | Guest carts exist, but the UI routes for viewing/managing cart are account-only. |
 | Address book (`src/module/address/use-address.ts`, `address.api.ts`) | `/account/address*`, checkout | Complete | Real CRUD and default-address flow. |
-| Order pipeline (`src/module/order/order.api.ts`) | Checkout, order history/detail, studio orders | Mostly complete | End-to-end order creation exists, but downstream UI still has a few dead action buttons. |
+| Order pipeline (`src/module/order/order.api.ts`) | Checkout, order history/detail, studio orders | Mostly complete | End-to-end order creation exists, but downstream UI still has a few dead action buttons. Every checkout now writes `inventoryAdjustmentEvent` rows so that stock movements are visible. |
 | Payment pipeline (`src/module/payment/payment.api.ts`) | Checkout, account payments, studio payments, webhook | Mostly complete | Razorpay intent + confirm flow is real. |
-| Shipment pipeline (`src/module/shipment/shipment.api.ts`) | Store/account order detail, account shipments, studio shipping | Mostly complete | Creation and status updates exist. |
+| Shipment pipeline (`src/module/shipment/shipment.api.ts`) | Store/account order detail, account shipments, studio shipping | Mostly complete | Creation and status updates exist. Shipment returns now call `adjustInventoryForReturn`, which appends return-type `inventoryAdjustmentEvent` entries. |
+| Inventory adjustment events (`inventoryAdjustmentEvent` + helpers in `src/module/inventory/inventory.api.ts`) | Studio inventory screens, analytics, reporting | Complete | All stock-changing operations (create/update, manual stock changes, checkout deductions, and shipment-driven returns) append `inventoryAdjustmentEvent` rows. Studio inventory detail and the `/studio/inventory?view=movements` view read from these events to render a chronological stock movement timeline. |
 
 <a id="shared-marketing-content-blocks"></a>
 ### Shared Marketing Content Blocks

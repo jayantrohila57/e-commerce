@@ -17,6 +17,7 @@ import {
   shippingRateRule,
   user as userTable,
 } from "@/core/db/db.schema";
+import { applyInventoryDelta } from "@/module/inventory/inventory.api";
 import { notifyLowStock, notifyOrderStatusChange } from "@/shared/components/mail/notification.service";
 import { MESSAGE, STATUS } from "@/shared/config/api.config";
 import { API_RESPONSE } from "@/shared/config/api.utils";
@@ -395,15 +396,29 @@ export const orderRouter = createTRPCRouter({
           // 7. Create Order Items
           await tx.insert(orderItem).values(orderItemsData);
 
-          // 8. Update Inventory (Deduct reserved, decrease quantity)
+          // 8. Update Inventory (Deduct reserved, decrease quantity) with centralized movement logging
           for (const item of orderItemsData) {
-            await tx
-              .update(inventoryItem)
-              .set({
-                quantity: sql`${inventoryItem.quantity} - ${item.quantity}`,
-                reserved: sql`GREATEST(0, ${inventoryItem.reserved} - ${item.quantity})`,
-              })
-              .where(eq(inventoryItem.variantId, item.variantId));
+            const inventoryRow = await tx.query.inventoryItem.findFirst({
+              where: (inv, { and, eq: eqLocal, isNull }) =>
+                and(eqLocal(inv.variantId, item.variantId), isNull(inv.deletedAt)),
+            });
+
+            if (!inventoryRow) {
+              continue;
+            }
+
+            await applyInventoryDelta(tx, {
+              inventoryId: inventoryRow.id,
+              quantityDelta: -item.quantity,
+              reservedDelta: -item.quantity,
+              type: "order",
+              warehouseId: inventoryRow.warehouseId,
+              variantId: inventoryRow.variantId,
+              orderId,
+              refundId: null,
+              reason: "Order placed",
+              adjustedBy: userId,
+            });
           }
 
           // 9. Clear Cart

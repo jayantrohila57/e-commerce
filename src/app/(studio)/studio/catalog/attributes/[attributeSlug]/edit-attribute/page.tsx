@@ -12,8 +12,10 @@ export const metadata = {
 };
 
 export default async function EditAttributePage({
+  params,
   searchParams,
 }: PageProps<"/studio/catalog/attributes/[attributeSlug]/edit-attribute">) {
+  const { attributeSlug } = await params;
   const { id } = await searchParams;
   const { session } = await getServerSession();
   if (!session) return redirect(PATH.ROOT);
@@ -22,7 +24,7 @@ export default async function EditAttributePage({
 
   const { data: attr } = await apiServer.attribute.get({ params: { id: String(id) } });
 
-  if (!attr) notFound();
+  if (!attr || attr.slug !== attributeSlug) notFound();
 
   return (
     <HydrateClient>

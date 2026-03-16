@@ -8,7 +8,7 @@ import type { AttributeSelect } from "./attribute.schema";
 
 export function AttributeCard({ attribute }: { attribute: AttributeSelect }) {
   return (
-    <Link href={PATH.STUDIO.ATTRIBUTES.EDIT(attribute.slug, attribute.id) as Route}>
+    <Link href={PATH.STUDIO.ATTRIBUTES.VIEW(attribute.slug) as Route}>
       <div className="bg-secondary hover:bg-secondary/80 motion-all flex w-full items-center justify-between gap-3 rounded-md border p-2 shadow-xs">
         <div className="flex min-w-0 items-center gap-3">
           <div className="bg-muted flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-xs font-semibold">

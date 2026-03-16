@@ -1,10 +1,11 @@
 "use client";
 
-import { ArrowRightIcon, HomeIcon, SlashIcon } from "lucide-react";
+import { ArrowRightIcon, CheckIcon, CopyIcon, HomeIcon, LinkIcon, SlashIcon } from "lucide-react";
 import type { Route } from "next";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import React from "react";
+import React, { useState } from "react";
+import { toast } from "sonner";
 import {
   Breadcrumb,
   BreadcrumbEllipsis,
@@ -22,8 +23,10 @@ import {
 } from "@/shared/components/ui/dropdown-menu";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/shared/components/ui/tooltip";
 import { PATH } from "@/shared/config/routes";
+import { debugError } from "@/shared/utils/lib/logger.utils";
 import { slugToTitle } from "@/shared/utils/lib/url.utils";
 import { cn } from "@/shared/utils/lib/utils";
+import { Button } from "../../ui/button";
 
 type BreadcrumbItem = {
   href: string;
@@ -81,10 +84,25 @@ export function Breadcrumbs({ className }: { className?: string }) {
   const pathname = usePathname();
   const raw = generateBreadcrumbs(pathname);
   const { visible: breadcrumbs } = compressBreadcrumbs(raw);
+  const [copied, setCopied] = useState(false);
 
+  const handleCopyUrl = async () => {
+    const toastId = toast.loading("Copying URL...");
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      setCopied(true);
+      window.setTimeout(() => {
+        setCopied(false);
+      }, 2000);
+      toast.success("URL copied to clipboard", { id: toastId });
+    } catch (error) {
+      debugError("BREADCRUMB_COPY_URL_ERROR", error);
+      toast.error("Failed to copy URL", { id: toastId });
+    }
+  };
   return (
-    <Breadcrumb className="flex w-auto flex-row">
-      <BreadcrumbList className={cn("", className)}>
+    <Breadcrumb className="flex w-auto group flex-row">
+      <BreadcrumbList className={cn(className)}>
         {/* Home */}
         <BreadcrumbItem>
           <TooltipProvider>
@@ -100,7 +118,6 @@ export function Breadcrumbs({ className }: { className?: string }) {
           </TooltipProvider>
         </BreadcrumbItem>
 
-        {/* Dynamic nodes */}
         {breadcrumbs.map((node, index) => (
           <React.Fragment key={index}>
             <BreadcrumbSeparator className="first:hidden">
@@ -159,6 +176,43 @@ export function Breadcrumbs({ className }: { className?: string }) {
             </BreadcrumbItem>
           </React.Fragment>
         ))}
+
+        {/* Copy current URL */}
+        <BreadcrumbItem className="ml-2">
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button type="button" variant="ghost" size="icon" onClick={handleCopyUrl} aria-label="Copy current URL">
+                  {copied ? (
+                    <CheckIcon
+                      aria-hidden="true"
+                      focusable="false"
+                      role="presentation"
+                      className="h-3.5 w-3.5 text-emerald-500"
+                    />
+                  ) : (
+                    <>
+                      <CopyIcon
+                        aria-hidden="true"
+                        focusable="false"
+                        role="presentation"
+                        className="h-3.5 w-3.5 hidden group-hover:block"
+                      />
+                      <LinkIcon
+                        aria-hidden="true"
+                        focusable="false"
+                        role="presentation"
+                        className="h-3.5 w-3.5 block group-hover:hidden"
+                      />
+                    </>
+                  )}
+                  <span className="sr-only">Copy current URL</span>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Copy current URL</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </BreadcrumbItem>
       </BreadcrumbList>
     </Breadcrumb>
   );

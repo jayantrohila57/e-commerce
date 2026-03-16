@@ -41,7 +41,7 @@ export function useAttributeColumns() {
     };
 
     const baseColumns: ColumnDef<AttributeBase>[] = [
-      ...commonColumns.titleColumn<AttributeBase>(attributeTableConfig.routes.studio),
+      ...commonColumns.titleColumn<AttributeBase>(attributeTableConfig.routes.base),
       ...commonColumns.slugColumn<AttributeBase>(attributeTableConfig.routes.viewStorePrefix),
       {
         accessorKey: "type",

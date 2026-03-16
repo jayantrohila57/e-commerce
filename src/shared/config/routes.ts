@@ -92,6 +92,7 @@ export const PATH = {
     ATTRIBUTES: {
       ROOT: "/studio/catalog/attributes",
       NEW: "/studio/catalog/attributes/add-new-attribute",
+      VIEW: (slug: string) => `/studio/catalog/attributes/${slug}`,
       EDIT: (slug: string, id: string) => `/studio/catalog/attributes/${slug}/edit-attribute?id=${id}`,
     },
 

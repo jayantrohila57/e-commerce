@@ -3,6 +3,7 @@ import { createCallerFactory, createTRPCRouter } from "@/core/api/api.methods";
 import { addressRouter } from "@/module/address/address.api";
 import { attributeRouter } from "@/module/attribute/attribute.api";
 import { cartRouter } from "@/module/cart/cart.api";
+import { catalogRouter } from "@/module/catalog/catalog.api";
 import { categoryRouter } from "@/module/category/category.api";
 import { inventoryRouter } from "@/module/inventory/inventory.api";
 import { marketingContentRouter } from "@/module/marketing-content/marketing-content.api";
@@ -20,6 +21,7 @@ export const appRouter = createTRPCRouter({
   attribute: attributeRouter,
   cart: cartRouter,
   category: categoryRouter,
+  catalog: catalogRouter,
   marketingContent: marketingContentRouter,
   subcategory: subcategoryRouter,
   product: productRouter,

@@ -9,10 +9,10 @@ import { API_RESPONSE } from "@/shared/config/api.utils";
 import { buildPagination, buildPaginationMeta } from "@/shared/schema";
 import { inventoryContract } from "./inventory.schema";
 
-// Broad type so helpers work with both the root db client and transaction clients.
-// We rely on runtime Drizzle behavior for safety.
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type InventoryDbLike = any;
+type InventoryTx = Parameters<Parameters<typeof db.transaction>[0]>[0];
+
+// Type for both the root db client and transaction clients.
+export type InventoryDbLike = typeof db | InventoryTx;
 
 /**
  * Helper: adjust inventory for a product return/refund in a specific warehouse.
@@ -38,12 +38,8 @@ export async function adjustInventoryForReturn(
   }
 
   let current = await tx.query.inventoryItem.findFirst({
-    where: (inv: typeof inventoryItem, helpers: { and: typeof and; eq: typeof eq; isNull: typeof isNull }) =>
-      helpers.and(
-        helpers.eq(inv.variantId, variantId),
-        helpers.eq(inv.warehouseId, warehouseId),
-        helpers.isNull(inv.deletedAt),
-      ),
+    where: (inv, { and, eq, isNull }) =>
+      and(eq(inv.variantId, variantId), eq(inv.warehouseId, warehouseId), isNull(inv.deletedAt)),
   });
 
   if (!current) {
@@ -113,8 +109,7 @@ export async function applyInventoryDelta(tx: InventoryDbLike, context: Inventor
   } = context;
 
   const current = await tx.query.inventoryItem.findFirst({
-    where: (inv: typeof inventoryItem, helpers: { and: typeof and; eq: typeof eq; isNull: typeof isNull }) =>
-      helpers.and(helpers.eq(inv.id, inventoryId), helpers.isNull(inv.deletedAt)),
+    where: (inv, { and, eq, isNull }) => and(eq(inv.id, inventoryId), isNull(inv.deletedAt)),
   });
 
   if (!current) {
@@ -184,16 +179,14 @@ export async function getInventoryForVariantAndWarehouse(
   const { variantId, warehouseId } = params;
 
   const row = await tx.query.inventoryItem.findFirst({
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    where: (inv: any, helpers: any) => {
-      const conditions = [helpers.eq(inv.variantId, variantId), helpers.isNull(inv.deletedAt)];
+    where: (inv, { and, eq, isNull }) => {
+      const conditions = [eq(inv.variantId, variantId), isNull(inv.deletedAt)];
       if (warehouseId) {
-        conditions.push(helpers.eq(inv.warehouseId, warehouseId));
+        conditions.push(eq(inv.warehouseId, warehouseId));
       }
-      return helpers.and(...conditions);
+      return and(...conditions);
     },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    orderBy: (inv: any, helpers: any) => [helpers.desc(inv.updatedAt)],
+    orderBy: (inv, { desc }) => [desc(inv.updatedAt)],
   });
 
   return row ?? null;

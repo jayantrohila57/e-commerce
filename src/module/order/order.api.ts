@@ -17,7 +17,7 @@ import {
   shippingRateRule,
   user as userTable,
 } from "@/core/db/db.schema";
-import { applyInventoryDelta } from "@/module/inventory/inventory.api";
+import { applyInventoryDelta, type InventoryDbLike } from "@/module/inventory/inventory.api";
 import { notifyLowStock, notifyOrderStatusChange } from "@/shared/components/mail/notification.service";
 import { MESSAGE, STATUS } from "@/shared/config/api.config";
 import { API_RESPONSE } from "@/shared/config/api.utils";

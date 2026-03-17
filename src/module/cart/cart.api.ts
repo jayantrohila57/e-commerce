@@ -90,7 +90,10 @@ async function getCartWithItems(cartId: string) {
  */
 async function reserveInventory(variantId: string, quantity: number, userId?: string, warehouseId?: string | null) {
   const result = await db.transaction(async (tx) => {
-    const inventory = await getInventoryForVariantAndWarehouse(tx, { variantId, warehouseId: warehouseId ?? null });
+    const inventory = await getInventoryForVariantAndWarehouse(tx, {
+      variantId,
+      warehouseId: warehouseId ?? null,
+    });
 
     if (!inventory) {
       throw new Error("Inventory not found for this variant");

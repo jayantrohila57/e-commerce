@@ -13,6 +13,18 @@ export const metadata = {
   description: "Manage customer orders",
 };
 
+type OrdersAdminQuery = {
+  page?: number;
+  limit?: number;
+  status?: "pending" | "paid" | "shipped" | "delivered" | "cancelled";
+  q?: string;
+  customerType?: "registered" | "guest";
+  shippingProviderPresence?: "assigned" | "unassigned";
+  shippingMethodPresence?: "assigned" | "unassigned";
+  shippingZonePresence?: "assigned" | "unassigned";
+  warehousePresence?: "assigned" | "unassigned";
+};
+
 export default async function StudioOrdersPage({
   searchParams,
 }: {
@@ -60,28 +72,20 @@ export default async function StudioOrdersPage({
       ? warehousePresenceParam
       : undefined;
 
+  const query: OrdersAdminQuery = {
+    page: listQuery.pagination.page,
+    limit: listQuery.pagination.limit,
+    status,
+    q: listQuery.search.q,
+    customerType,
+    shippingProviderPresence,
+    shippingMethodPresence,
+    shippingZonePresence,
+    warehousePresence,
+  };
+
   const result = await apiServer.order.getManyAdmin({
-    query: {
-      page: listQuery.pagination.page,
-      limit: listQuery.pagination.limit,
-      status,
-      q: listQuery.search.q,
-      customerType,
-      shippingProviderPresence,
-      shippingMethodPresence,
-      shippingZonePresence,
-      warehousePresence,
-    } as unknown as {
-      page?: number;
-      limit?: number;
-      status?: "pending" | "paid" | "shipped" | "delivered" | "cancelled";
-      q?: string;
-      customerType?: "registered" | "guest";
-      shippingProviderPresence?: "assigned" | "unassigned";
-      shippingMethodPresence?: "assigned" | "unassigned";
-      shippingZonePresence?: "assigned" | "unassigned";
-      warehousePresence?: "assigned" | "unassigned";
-    },
+    query,
   });
 
   return (

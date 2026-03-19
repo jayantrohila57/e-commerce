@@ -1,4 +1,4 @@
-import { notFound, redirect } from "next/navigation";
+import { forbidden, notFound, redirect } from "next/navigation";
 import { apiServer, HydrateClient } from "@/core/api/api.server";
 import { APP_ROLE, normalizeRole } from "@/core/auth/auth.roles";
 import { getServerSession } from "@/core/auth/auth.server";
@@ -16,9 +16,7 @@ interface PageProps {
 export default async function EditWarehousePage({ params }: PageProps) {
   const { session, user } = await getServerSession();
   if (!session) return redirect(PATH.ROOT);
-  if (normalizeRole(user?.role) === APP_ROLE.CUSTOMER) {
-    redirect(PATH.SITE.FORBIDDEN);
-  }
+  if (normalizeRole(user?.role) === APP_ROLE.CUSTOMER) forbidden();
 
   const { warehouseId } = await params;
 

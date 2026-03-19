@@ -33,7 +33,7 @@ export default async function StudioOrderDetailPage({ params }: StudioOrderDetai
   if (!session) return redirect(PATH.ROOT);
   if (normalizeRole(user?.role) === APP_ROLE.CUSTOMER) forbidden();
 
-  const res = await apiServer.order?.get({
+  const res = await apiServer.order.get({
     params: { id },
   });
 

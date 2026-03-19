@@ -3,6 +3,7 @@
 import { format } from "date-fns";
 import type { Route } from "next";
 import Link from "next/link";
+import { useMemo } from "react";
 import { ShipmentStatusBadge } from "@/module/shipment/components/shipment-status-badge";
 import type { Shipment } from "@/module/shipment/shipment.schema";
 import { Button } from "@/shared/components/ui/button";
@@ -19,7 +20,22 @@ interface ShipmentCardProps {
 
 export function ShipmentCard({ shipment, orderId, href, shippingProviderName, shippingMethodName }: ShipmentCardProps) {
   const createdAt = shipment.createdAt ? format(new Date(shipment.createdAt), "dd MMM yyyy") : "";
-  const link = href ?? (orderId ? `${PATH.ACCOUNT.ORDER}/${orderId}` : PATH.ACCOUNT.SHIPMENT);
+  const shipmentLink = href ?? PATH.ACCOUNT.SHIPMENT_DETAIL(shipment.id);
+  const orderLink = PATH.ACCOUNT.ORDER_DETAIL(orderId ?? shipment.orderId);
+  const trackingUrl = useMemo(() => {
+    if (!shipment.trackingNumber) return null;
+
+    const query = encodeURIComponent(shipment.trackingNumber);
+    const carrierName = shipment.carrier?.toLowerCase() ?? "";
+
+    if (carrierName.includes("dhl")) {
+      return `https://www.dhl.com/global-en/home/tracking/tracking-express.html?submit=1&tracking-id=${query}`;
+    }
+    if (carrierName.includes("fedex")) return `https://www.fedex.com/fedextrack/?trknbr=${query}`;
+    if (carrierName.includes("delhivery")) return `https://www.delhivery.com/track-v2/package/${query}`;
+
+    return `https://www.google.com/search?q=${encodeURIComponent(`track ${shipment.carrier ?? "shipment"} ${shipment.trackingNumber}`)}`;
+  }, [shipment.carrier, shipment.trackingNumber]);
 
   return (
     <Card className="border border-border/80 bg-background/60">
@@ -70,9 +86,33 @@ export function ShipmentCard({ shipment, orderId, href, shippingProviderName, sh
         <span className="text-[11px] text-muted-foreground">
           Order #{orderId?.slice(0, 8) ?? shipment.orderId.slice(0, 8)}
         </span>
-        <Button variant="outline" size="sm" asChild className="h-7 px-3 text-xs">
-          <Link href={link as Route}>View details</Link>
-        </Button>
+        <div className="flex flex-wrap items-center justify-end gap-2">
+          {shipment.trackingNumber && (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-7 px-3 text-xs"
+              onClick={async () => {
+                await navigator.clipboard.writeText(shipment.trackingNumber as string);
+              }}
+            >
+              Copy tracking
+            </Button>
+          )}
+          {trackingUrl && (
+            <Button variant="ghost" size="sm" asChild className="h-7 px-3 text-xs">
+              <a href={trackingUrl} target="_blank" rel="noreferrer noopener">
+                Track package
+              </a>
+            </Button>
+          )}
+          <Button variant="outline" size="sm" asChild className="h-7 px-3 text-xs">
+            <Link href={orderLink as Route}>View order</Link>
+          </Button>
+          <Button variant="outline" size="sm" asChild className="h-7 px-3 text-xs">
+            <Link href={shipmentLink as Route}>View shipment</Link>
+          </Button>
+        </div>
       </CardFooter>
     </Card>
   );

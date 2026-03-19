@@ -20,6 +20,7 @@ export const PATH = {
     CART: "/account/cart" as Route,
     WISHLIST: "/account/wishlist" as Route,
     ORDER: "/account/order" as Route,
+    ORDER_DETAIL: (id: string) => `/account/order/${id}`,
     PAYMENT: "/account/payment" as Route,
     ADDRESS: "/account/address" as Route,
     ADDRESS_NEW: "/account/address/new" as Route,
@@ -27,6 +28,7 @@ export const PATH = {
     REVIEW: "/account/review" as Route,
     SETTINGS: "/account/setting" as Route,
     SHIPMENT: "/account/shipment" as Route,
+    SHIPMENT_DETAIL: (id: string) => `/account/shipment/${id}`,
   },
   STORE: {
     ROOT: "/store",

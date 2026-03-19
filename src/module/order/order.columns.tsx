@@ -88,9 +88,9 @@ export function useOrderColumns() {
         id: "shippingSummary",
         header: ({ column }) => <DataTableColumnHeader column={column} title="Shipping" />,
         cell: ({ row }) => {
-          const providerId = row.getValue("shippingProviderId") as string | null | undefined;
-          const methodId = row.getValue("shippingMethodId") as string | null | undefined;
-          const zoneId = row.getValue("shippingZoneId") as string | null | undefined;
+          const providerId = (row.original as Order).shippingProviderId;
+          const methodId = (row.original as Order).shippingMethodId;
+          const zoneId = (row.original as Order).shippingZoneId;
           const warehouseId = (row.original as Order).warehouseId;
 
           if (!providerId && !methodId && !zoneId && !warehouseId) {

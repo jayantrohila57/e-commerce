@@ -39,6 +39,20 @@ const baseColumns: ColumnDef<InventoryBase>[] = [
     cell: ({ row }) => <div className="w-[80px] text-sm">{row.getValue("reserved")}</div>,
   },
   {
+    accessorKey: "warehouseId",
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Warehouse" />,
+    cell: ({ row }) => {
+      const warehouseCode = row.getValue<string | null>("warehouseCode");
+      const warehouseName = row.getValue<string | null>("warehouseName");
+      if (!warehouseCode && !warehouseName) {
+        return <div className="w-[160px] text-sm text-muted-foreground">—</div>;
+      }
+      const label =
+        warehouseCode && warehouseName ? `${warehouseCode} • ${warehouseName}` : (warehouseCode ?? warehouseName);
+      return <div className="w-[200px] truncate text-sm">{label}</div>;
+    },
+  },
+  {
     accessorKey: "updatedAt",
     header: ({ column }) => <DataTableColumnHeader column={column} title="Updated At" />,
     cell: ({ row }) => {

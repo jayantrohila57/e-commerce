@@ -20,6 +20,7 @@ export const PATH = {
     CART: "/account/cart" as Route,
     WISHLIST: "/account/wishlist" as Route,
     ORDER: "/account/order" as Route,
+    ORDER_DETAIL: (id: string) => `/account/order/${id}`,
     PAYMENT: "/account/payment" as Route,
     ADDRESS: "/account/address" as Route,
     ADDRESS_NEW: "/account/address/new" as Route,
@@ -27,6 +28,7 @@ export const PATH = {
     REVIEW: "/account/review" as Route,
     SETTINGS: "/account/setting" as Route,
     SHIPMENT: "/account/shipment" as Route,
+    SHIPMENT_DETAIL: (id: string) => `/account/shipment/${id}`,
   },
   STORE: {
     ROOT: "/store",
@@ -88,6 +90,12 @@ export const PATH = {
       NEW: "/studio/inventory/new",
       SLUG: (id: string) => `/studio/inventory/${id}`,
       EDIT: (id: string) => `/studio/inventory/${id}/edit-inventory`,
+      WAREHOUSES: {
+        ROOT: "/studio/inventory/warehouses",
+        NEW: "/studio/inventory/warehouses/new",
+        EDIT: (id: string) => `/studio/inventory/warehouses/${id}/edit`,
+      },
+      MOVEMENTS: "/studio/inventory?view=movements" as Route,
     },
     ATTRIBUTES: {
       ROOT: "/studio/catalog/attributes",
@@ -116,6 +124,19 @@ export const PATH = {
       ROOT: "/studio/shipping",
       VIEW: (id: string) => `/studio/shipping/${id}`,
       EDIT: (id: string) => `/studio/shipping/${id}/edit`,
+      PROVIDERS: "/studio/shipping/providers" as Route,
+      PROVIDERS_NEW: "/studio/shipping/providers/new" as Route,
+      PROVIDERS_EDIT: (id: string) => `/studio/shipping/providers/${id}/edit`,
+      METHODS: "/studio/shipping/methods" as Route,
+      METHODS_NEW: "/studio/shipping/methods/new" as Route,
+      METHODS_EDIT: (id: string) => `/studio/shipping/methods/${id}/edit`,
+      ZONES: "/studio/shipping/zones" as Route,
+      ZONES_NEW: "/studio/shipping/zones/new" as Route,
+      ZONES_EDIT: (id: string) => `/studio/shipping/zones/${id}/edit`,
+      RATES: "/studio/shipping/rates" as Route,
+      RATES_NEW: "/studio/shipping/rates/new" as Route,
+      RATES_EDIT: (id: string) => `/studio/shipping/rates/${id}/edit`,
+      SHIPMENTS: "/studio/shipping" as Route,
     },
 
     PAYMENT: {

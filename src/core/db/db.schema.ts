@@ -29,7 +29,14 @@ import {
  */
 
 export const discountTypeEnum = pgEnum("discount_type", ["flat", "percent"]);
-export const orderStatusEnum = pgEnum("order_status", ["pending", "paid", "shipped", "delivered", "cancelled"]);
+export const orderStatusEnum = pgEnum("order_status", [
+  "pending",
+  "paid",
+  "shipped",
+  "delivered",
+  "returned",
+  "cancelled",
+]);
 export const paymentStatusEnum = pgEnum("payment_status", ["pending", "completed", "failed", "refunded"]);
 export const paymentProviderEnum = pgEnum("payment_provider", ["stripe", "razorpay", "paypal", "cod"]);
 export const shipmentStatusEnum = pgEnum("shipment_status", [
@@ -377,6 +384,31 @@ export const productVariant = pgTable(
   }),
 );
 
+export const warehouse = pgTable(
+  "warehouse",
+  {
+    id: text("id").primaryKey(),
+    code: text("code").notNull().unique(),
+    name: text("name").notNull(),
+    country: text("country").notNull(),
+    state: text("state"),
+    city: text("city"),
+    addressLine1: text("address_line1"),
+    addressLine2: text("address_line2"),
+    postalCode: text("postal_code"),
+    isActive: boolean("is_active").default(true).notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .defaultNow()
+      .$onUpdate(() => new Date()),
+  },
+  (table) => ({
+    codeIdx: index("warehouse_code_idx").on(table.code),
+    isActiveIdx: index("warehouse_is_active_idx").on(table.isActive),
+    countryIdx: index("warehouse_country_idx").on(table.country),
+  }),
+);
+
 export const inventoryItem = pgTable(
   "inventory_item",
   {
@@ -384,7 +416,8 @@ export const inventoryItem = pgTable(
     variantId: text("variant_id")
       .notNull()
       .references(() => productVariant.id, { onDelete: "cascade" }),
-    sku: text("sku").notNull().unique(),
+    warehouseId: text("warehouse_id").references(() => warehouse.id, { onDelete: "set null" }),
+    sku: text("sku").notNull(),
     barcode: text("barcode"),
     quantity: integer("quantity").notNull().default(0),
     incoming: integer("incoming").notNull().default(0),
@@ -396,6 +429,7 @@ export const inventoryItem = pgTable(
   },
   (table) => ({
     skuIdx: index("inventory_item_sku_idx").on(table.sku),
+    variantIdWarehouseIdx: index("inventory_item_variant_warehouse_idx").on(table.variantId, table.warehouseId),
     variantIdIdx: index("inventory_item_variant_id_idx").on(table.variantId),
   }),
 );
@@ -407,6 +441,7 @@ export const inventoryReservation = pgTable(
     inventoryId: text("inventory_id")
       .notNull()
       .references(() => inventoryItem.id, { onDelete: "cascade" }),
+    warehouseId: text("warehouse_id").references(() => warehouse.id, { onDelete: "set null" }),
     userId: text("user_id").references(() => user.id, { onDelete: "cascade" }),
     quantity: integer("quantity").notNull(),
     expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
@@ -414,6 +449,7 @@ export const inventoryReservation = pgTable(
   },
   (table) => ({
     inventoryIdIdx: index("inventory_reservation_inventory_id_idx").on(table.inventoryId),
+    warehouseIdIdx: index("inventory_reservation_warehouse_id_idx").on(table.warehouseId),
     userIdIdx: index("inventory_reservation_user_id_idx").on(table.userId),
   }),
 );
@@ -492,6 +528,12 @@ export const order = pgTable(
 
     currency: text("currency").default("INR").notNull(),
 
+    // Shipping configuration snapshot
+    shippingProviderId: text("shipping_provider_id").references(() => shippingProvider.id, { onDelete: "set null" }),
+    shippingMethodId: text("shipping_method_id").references(() => shippingMethod.id, { onDelete: "set null" }),
+    shippingZoneId: text("shipping_zone_id").references(() => shippingZone.id, { onDelete: "set null" }),
+    warehouseId: text("warehouse_id").references(() => warehouse.id, { onDelete: "set null" }),
+
     // Address snapshots (immutable once placed)
     shippingAddress: json("shipping_address")
       .$type<{
@@ -531,6 +573,7 @@ export const order = pgTable(
     userIdIdx: index("order_user_idx").on(table.userId),
     statusIdx: index("order_status_idx").on(table.status),
     placedAtIdx: index("order_placed_at_idx").on(table.placedAt),
+    warehouseIdIdx: index("order_warehouse_id_idx").on(table.warehouseId),
   }),
 );
 
@@ -637,6 +680,8 @@ export const shipment = pgTable(
     shippingRate: integer("shipping_rate"), // paise
     weight: numeric("weight", { precision: 10, scale: 2 }),
     notes: text("notes"),
+    shippingProviderId: text("shipping_provider_id").references(() => shippingProvider.id, { onDelete: "set null" }),
+    shippingMethodId: text("shipping_method_id").references(() => shippingMethod.id, { onDelete: "set null" }),
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
     updatedAt: timestamp("updated_at", { withTimezone: true })
       .defaultNow()
@@ -858,6 +903,100 @@ export const taxRule = pgTable(
       table.taxClassId,
       table.effectiveFrom,
     ),
+  }),
+);
+
+// --- Shipping configuration: providers, methods, simple zones, flat rates ---
+// Design notes:
+// - Providers represent carriers or delivery partners (e.g. BlueDart, Delhivery).
+// - Methods are service levels per provider (e.g. Standard, Express, COD).
+// - Zones are intentionally simple (country/state) for v1; application code can
+//   pick the best matching zone based on the order's shipping address.
+// - Rate rules are flat amounts per method+zone, stored in smallest currency unit.
+
+export const shippingProvider = pgTable(
+  "shipping_provider",
+  {
+    id: text("id").primaryKey(),
+    code: text("code").notNull().unique(),
+    name: text("name").notNull(),
+    isActive: boolean("is_active").default(true).notNull(),
+    metadata: jsonb("metadata").$type<Record<string, unknown>>(),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .defaultNow()
+      .$onUpdate(() => new Date())
+      .notNull(),
+  },
+  (table) => ({
+    codeIdx: index("shipping_provider_code_idx").on(table.code),
+    isActiveIdx: index("shipping_provider_is_active_idx").on(table.isActive),
+  }),
+);
+
+export const shippingMethod = pgTable(
+  "shipping_method",
+  {
+    id: text("id").primaryKey(),
+    providerId: text("provider_id")
+      .notNull()
+      .references(() => shippingProvider.id, { onDelete: "cascade" }),
+    code: text("code").notNull(),
+    name: text("name").notNull(),
+    isActive: boolean("is_active").default(true).notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .defaultNow()
+      .$onUpdate(() => new Date())
+      .notNull(),
+  },
+  (table) => ({
+    providerCodeIdx: index("shipping_method_provider_code_idx").on(table.providerId, table.code),
+    isActiveIdx: index("shipping_method_is_active_idx").on(table.isActive),
+  }),
+);
+
+export const shippingZone = pgTable(
+  "shipping_zone",
+  {
+    id: text("id").primaryKey(),
+    name: text("name").notNull(),
+    countryCode: text("country_code").notNull(),
+    regionCode: text("region_code"),
+    isActive: boolean("is_active").default(true).notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .defaultNow()
+      .$onUpdate(() => new Date())
+      .notNull(),
+  },
+  (table) => ({
+    countryRegionIdx: index("shipping_zone_country_region_idx").on(table.countryCode, table.regionCode),
+    isActiveIdx: index("shipping_zone_is_active_idx").on(table.isActive),
+  }),
+);
+
+export const shippingRateRule = pgTable(
+  "shipping_rate_rule",
+  {
+    id: text("id").primaryKey(),
+    methodId: text("method_id")
+      .notNull()
+      .references(() => shippingMethod.id, { onDelete: "cascade" }),
+    zoneId: text("zone_id")
+      .notNull()
+      .references(() => shippingZone.id, { onDelete: "cascade" }),
+    price: integer("price").notNull(),
+    isActive: boolean("is_active").default(true).notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .defaultNow()
+      .$onUpdate(() => new Date())
+      .notNull(),
+  },
+  (table) => ({
+    methodZoneIdx: index("shipping_rate_rule_method_zone_idx").on(table.methodId, table.zoneId),
+    isActiveIdx: index("shipping_rate_rule_is_active_idx").on(table.isActive),
   }),
 );
 
@@ -1169,6 +1308,7 @@ export const inventoryAdjustmentEvent = pgTable(
     inventoryId: text("inventory_id")
       .notNull()
       .references(() => inventoryItem.id, { onDelete: "cascade" }),
+    warehouseId: text("warehouse_id").references(() => warehouse.id, { onDelete: "set null" }),
     variantId: text("variant_id").references(() => productVariant.id, { onDelete: "set null" }),
     quantityBefore: integer("quantity_before"),
     quantityDelta: integer("quantity_delta").default(0).notNull(),
@@ -1187,6 +1327,7 @@ export const inventoryAdjustmentEvent = pgTable(
   },
   (table) => ({
     inventoryIdx: index("inventory_adjustment_event_inventory_idx").on(table.inventoryId),
+    warehouseIdx: index("inventory_adjustment_event_warehouse_idx").on(table.warehouseId),
     variantIdx: index("inventory_adjustment_event_variant_idx").on(table.variantId),
     orderIdx: index("inventory_adjustment_event_order_idx").on(table.orderId),
     createdAtIdx: index("inventory_adjustment_event_created_at_idx").on(table.createdAt),
@@ -1288,6 +1429,33 @@ export const taxRuleRelations = relations(taxRule, ({ one }) => ({
   taxClass: one(taxClass, {
     fields: [taxRule.taxClassId],
     references: [taxClass.id],
+  }),
+}));
+
+export const shippingProviderRelations = relations(shippingProvider, ({ many }) => ({
+  methods: many(shippingMethod),
+}));
+
+export const shippingMethodRelations = relations(shippingMethod, ({ one, many }) => ({
+  provider: one(shippingProvider, {
+    fields: [shippingMethod.providerId],
+    references: [shippingProvider.id],
+  }),
+  rates: many(shippingRateRule),
+}));
+
+export const shippingZoneRelations = relations(shippingZone, ({ many }) => ({
+  rates: many(shippingRateRule),
+}));
+
+export const shippingRateRuleRelations = relations(shippingRateRule, ({ one }) => ({
+  method: one(shippingMethod, {
+    fields: [shippingRateRule.methodId],
+    references: [shippingMethod.id],
+  }),
+  zone: one(shippingZone, {
+    fields: [shippingRateRule.zoneId],
+    references: [shippingZone.id],
   }),
 }));
 
@@ -1423,10 +1591,21 @@ export const priceChangeEventRelations = relations(priceChangeEvent, ({ one }) =
   }),
 }));
 
+export const warehouseRelations = relations(warehouse, ({ many }) => ({
+  inventoryItems: many(inventoryItem),
+  reservations: many(inventoryReservation),
+  adjustmentEvents: many(inventoryAdjustmentEvent),
+  orders: many(order),
+}));
+
 export const inventoryAdjustmentEventRelations = relations(inventoryAdjustmentEvent, ({ one }) => ({
   inventory: one(inventoryItem, {
     fields: [inventoryAdjustmentEvent.inventoryId],
     references: [inventoryItem.id],
+  }),
+  warehouse: one(warehouse, {
+    fields: [inventoryAdjustmentEvent.warehouseId],
+    references: [warehouse.id],
   }),
   variant: one(productVariant, {
     fields: [inventoryAdjustmentEvent.variantId],
@@ -1489,6 +1668,10 @@ export const inventoryItemRelations = relations(inventoryItem, ({ one, many }) =
     fields: [inventoryItem.variantId],
     references: [productVariant.id],
   }),
+  warehouse: one(warehouse, {
+    fields: [inventoryItem.warehouseId],
+    references: [warehouse.id],
+  }),
   reservations: many(inventoryReservation),
 }));
 
@@ -1496,6 +1679,10 @@ export const inventoryReservationRelations = relations(inventoryReservation, ({ 
   inventory: one(inventoryItem, {
     fields: [inventoryReservation.inventoryId],
     references: [inventoryItem.id],
+  }),
+  warehouse: one(warehouse, {
+    fields: [inventoryReservation.warehouseId],
+    references: [warehouse.id],
   }),
 }));
 
@@ -1538,6 +1725,10 @@ export const orderRelations = relations(order, ({ one, many }) => ({
   user: one(user, {
     fields: [order.userId],
     references: [user.id],
+  }),
+  warehouse: one(warehouse, {
+    fields: [order.warehouseId],
+    references: [warehouse.id],
   }),
   items: many(orderItem),
   payments: many(payment),

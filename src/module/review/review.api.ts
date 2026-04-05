@@ -1,4 +1,4 @@
-import { and, eq, isNull, sql } from "drizzle-orm";
+import { and, eq, gte, lte, sql } from "drizzle-orm";
 import { v4 as uuidv4 } from "uuid";
 import { createTRPCRouter, customerProcedure, publicProcedure, staffProcedure } from "@/core/api/api.methods";
 import { db } from "@/core/db/db";
@@ -97,6 +97,92 @@ export const reviewRouter = createTRPCRouter({
       } catch (err) {
         debugError("REVIEW:GET_MANY:ERROR", err);
         return API_RESPONSE(STATUS.ERROR, MESSAGE.REVIEW.GET_MANY.ERROR, [], err as Error);
+      }
+    }),
+
+  getManyAdmin: staffProcedure
+    .input(reviewContract.getManyAdmin.input)
+    .output(reviewContract.getManyAdmin.output)
+    .query(async ({ input }) => {
+      try {
+        const { query } = input;
+        const { limit, offset, productId, userId, isApproved, minRating, maxRating } = query;
+
+        const conditions = [];
+        if (productId) conditions.push(eq(review.productId, productId));
+        if (userId) conditions.push(eq(review.userId, userId));
+        if (isApproved !== undefined) conditions.push(eq(review.isApproved, isApproved));
+        if (minRating !== undefined) conditions.push(gte(review.rating, minRating));
+        if (maxRating !== undefined) conditions.push(lte(review.rating, maxRating));
+
+        const where = conditions.length ? and(...conditions) : undefined;
+
+        const pageInput = {
+          page: offset && limit ? Math.floor(offset / limit) + 1 : 1,
+          limit: limit ?? 20,
+          sortBy: undefined,
+          sortOrder: "desc" as const,
+        };
+
+        const paging = buildPagination(pageInput);
+        const effectiveOffset = offset ?? paging.offset;
+        const effectiveLimit = paging.limit;
+
+        const [{ count: totalRaw = 0 } = { count: 0 }] = await db
+          .select({ count: sql<number>`count(*)` })
+          .from(review)
+          .where(where);
+        const total = Number(totalRaw ?? 0);
+
+        const reviews = await db.query.review.findMany({
+          limit: effectiveLimit,
+          offset: effectiveOffset,
+          where,
+          orderBy: (r, { desc }) => [desc(r.createdAt)],
+        });
+
+        const metaPagination = buildPaginationMeta(total, pageInput);
+
+        return {
+          status: STATUS.SUCCESS,
+          message: MESSAGE.REVIEW.GET_MANY.SUCCESS,
+          data: reviews,
+          meta: {
+            count: total,
+            pagination: metaPagination,
+          },
+        };
+      } catch (err) {
+        debugError("REVIEW:GET_MANY_ADMIN:ERROR", err);
+        return API_RESPONSE(STATUS.ERROR, MESSAGE.REVIEW.GET_MANY.ERROR, [], err as Error);
+      }
+    }),
+
+  updateApproval: staffProcedure
+    .input(reviewContract.updateApproval.input)
+    .output(reviewContract.updateApproval.output)
+    .mutation(async ({ input }) => {
+      try {
+        const { id } = input.params;
+        const { isApproved } = input.body;
+
+        const [updated] = await db
+          .update(review)
+          .set({
+            isApproved,
+            updatedAt: new Date(),
+          })
+          .where(eq(review.id, id))
+          .returning();
+
+        if (!updated) {
+          return API_RESPONSE(STATUS.FAILED, MESSAGE.REVIEW.UPDATE.FAILED, null);
+        }
+
+        return API_RESPONSE(STATUS.SUCCESS, MESSAGE.REVIEW.UPDATE.SUCCESS, updated);
+      } catch (err) {
+        debugError("REVIEW:UPDATE_APPROVAL:ERROR", err);
+        return API_RESPONSE(STATUS.ERROR, MESSAGE.REVIEW.UPDATE.ERROR, null, err as Error);
       }
     }),
 });

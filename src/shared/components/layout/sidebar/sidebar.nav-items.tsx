@@ -70,8 +70,8 @@ export const getOrdersItems = (role?: string): NavItem[] => [
     icon: ShoppingBag,
     items: [
       { title: "All Orders", url: PATH.STUDIO.ORDERS.ROOT, icon: ShoppingBag },
-      { title: "Returns", url: PATH.STUDIO.SHIPPING.ROOT, icon: Truck },
-      { title: "Refunds", url: PATH.STUDIO.PAYMENT.ROOT, icon: CreditCard },
+      { title: "Returns", url: `${PATH.STUDIO.SHIPPING.ROOT}?status=returned`, icon: Truck },
+      { title: "Refunds", url: `${PATH.STUDIO.PAYMENT.ROOT}?status=refunded`, icon: CreditCard },
     ],
   },
 ];
@@ -82,8 +82,8 @@ export const getCustomersItems = (role?: string): NavItem[] => [
     icon: Users,
     items: [
       { title: "All Users", url: PATH.STUDIO.USERS.ROOT, icon: Users },
-      { title: "Customers", url: PATH.STUDIO.USERS.ROOT, icon: Users },
-      { title: "Staff", url: PATH.STUDIO.USERS.ROOT, icon: Users },
+      { title: "Customers", url: `${PATH.STUDIO.USERS.ROOT}?role=CUSTOMER`, icon: Users },
+      { title: "Staff", url: `${PATH.STUDIO.USERS.ROOT}?role=STAFF`, icon: Users },
     ],
   },
 ];
@@ -94,9 +94,9 @@ export const getInventoryItems = (role?: string): NavItem[] => [
     icon: Package,
     items: [
       { title: "All Inventory", url: PATH.STUDIO.INVENTORY.ROOT, icon: Package },
-      { title: "Stock", url: PATH.STUDIO.PRODUCTS.ROOT, icon: Package },
-      { title: "Warehouse", url: PATH.STUDIO.CATEGORIES.ROOT, icon: Package },
-      { title: "Stock Movements", url: PATH.STUDIO.ATTRIBUTES.ROOT, icon: Tags },
+      { title: "Stock", url: `${PATH.STUDIO.INVENTORY.ROOT}?view=stock`, icon: Package },
+      { title: "Warehouses", url: PATH.STUDIO.INVENTORY.WAREHOUSES.ROOT, icon: Package },
+      { title: "Stock Movements", url: PATH.STUDIO.INVENTORY.MOVEMENTS, icon: Tags },
     ],
   },
 ];
@@ -108,6 +108,8 @@ export const getMarketingItems = (role?: string): NavItem[] => [
     items: [
       { title: "All Marketing", url: PATH.STUDIO.MARKETING.ROOT, icon: MessageSquare },
       { title: "Content", url: PATH.STUDIO.MARKETING.CONTENT.ROOT, icon: Layout },
+      { title: "Discounts", url: PATH.STUDIO.DISCOUNTS.ROOT, icon: Percent },
+      { title: "Coupons", url: PATH.STUDIO.MARKETING.COUPONS.ROOT, icon: Percent },
     ],
   },
 ];
@@ -119,9 +121,9 @@ export const getPaymentsItems = (role?: string): NavItem[] => [
     icon: CreditCard,
     items: [
       { title: "All Payments", url: PATH.STUDIO.PAYMENT.ROOT, icon: CreditCard },
-      { title: "Transactions", url: PATH.STUDIO.PAYMENT.ROOT, icon: CreditCard },
-      { title: "Refunds", url: PATH.STUDIO.PAYMENT.ROOT, icon: CreditCard },
-      { title: "Payouts", url: PATH.STUDIO.PAYMENT.ROOT, icon: CreditCard },
+      { title: "Transactions", url: `${PATH.STUDIO.PAYMENT.ROOT}?status=completed`, icon: CreditCard },
+      { title: "Refunds", url: `${PATH.STUDIO.PAYMENT.ROOT}?status=refunded`, icon: CreditCard },
+      { title: "Payouts", url: `${PATH.STUDIO.PAYMENT.ROOT}?provider=cod`, icon: CreditCard },
     ],
   },
 ];
@@ -131,10 +133,11 @@ export const getShippingItems = (role?: string): NavItem[] => [
     url: PATH.STUDIO.SHIPPING.ROOT,
     icon: Truck,
     items: [
-      { title: "All Shipping", url: PATH.STUDIO.SHIPPING.ROOT, icon: Truck },
-      { title: "Zones", url: PATH.STUDIO.SHIPPING.ROOT, icon: Truck },
-      { title: "Methods", url: PATH.STUDIO.SHIPPING.ROOT, icon: Truck },
-      { title: "Rates", url: PATH.STUDIO.SHIPPING.ROOT, icon: Truck },
+      { title: "Shipments", url: PATH.STUDIO.SHIPPING.ROOT, icon: Truck },
+      { title: "Providers", url: PATH.STUDIO.SHIPPING.PROVIDERS, icon: Truck },
+      { title: "Zones", url: PATH.STUDIO.SHIPPING.ZONES, icon: Truck },
+      { title: "Methods", url: PATH.STUDIO.SHIPPING.METHODS, icon: Truck },
+      { title: "Rates", url: PATH.STUDIO.SHIPPING.RATES, icon: Truck },
     ],
   },
 ];

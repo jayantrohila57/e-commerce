@@ -22,7 +22,12 @@ const statusColors: Record<ReturnType<(typeof shipmentStatusEnum)["parse"]>, str
   returned: "bg-slate-100 text-slate-800 border-slate-200",
 };
 
-export function useShipmentColumns() {
+type ShipmentColumnLookups = {
+  providerNamesById?: Record<string, string>;
+  methodNamesById?: Record<string, string>;
+};
+
+export function useShipmentColumns(lookups?: ShipmentColumnLookups) {
   const router = useRouter();
 
   return useMemo(() => {
@@ -94,6 +99,26 @@ export function useShipmentColumns() {
         cell: ({ row }) => (
           <div className="w-[160px] truncate text-xs text-muted-foreground">{row.getValue("carrier") ?? "—"}</div>
         ),
+      },
+      {
+        accessorKey: "shippingProviderId",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Provider" />,
+        cell: ({ row }) => {
+          const id = row.getValue("shippingProviderId") as string | null;
+          const label = id ? (lookups?.providerNamesById?.[id] ?? id) : null;
+
+          return <div className="w-[160px] truncate text-xs text-muted-foreground">{label ?? "—"}</div>;
+        },
+      },
+      {
+        accessorKey: "shippingMethodId",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Method" />,
+        cell: ({ row }) => {
+          const id = row.getValue("shippingMethodId") as string | null;
+          const label = id ? (lookups?.methodNamesById?.[id] ?? id) : null;
+
+          return <div className="w-[160px] truncate text-xs text-muted-foreground">{label ?? "—"}</div>;
+        },
       },
       {
         accessorKey: "status",

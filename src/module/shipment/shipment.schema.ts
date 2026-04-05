@@ -9,6 +9,10 @@ export const shipmentBaseSchema = z.object({
   status: shipmentStatusEnum,
   trackingNumber: z.string().nullable().optional(),
   carrier: z.string().nullable().optional(),
+  shippingProviderId: z.string().nullable().optional(),
+  shippingMethodId: z.string().nullable().optional(),
+  shippingProviderName: z.string().nullable().optional(),
+  shippingMethodName: z.string().nullable().optional(),
   shippedAt: z.date().nullable().optional(),
   deliveredAt: z.date().nullable().optional(),
   estimatedDeliveryAt: z.date().nullable().optional(),
@@ -29,6 +33,8 @@ export const shipmentCreateInputSchema = z.object({
   estimatedDeliveryAt: z.coerce.date().optional(),
   shippingRate: z.coerce.number().int().min(0).optional(),
   weight: z.string().optional(),
+  shippingProviderId: z.string().optional(),
+  shippingMethodId: z.string().optional(),
 });
 
 export const shipmentUpdateStatusInputSchema = z.object({
@@ -52,6 +58,8 @@ export const shipmentContract = {
             status: shipmentStatusEnum.optional(),
             carrier: z.string().optional(),
             orderId: z.string().optional(),
+            shippingProviderId: z.string().optional(),
+            shippingMethodId: z.string().optional(),
           })
           .optional(),
       })
@@ -81,6 +89,10 @@ export const shipmentContract = {
     input: z.object({
       params: z.object({ orderId: z.string().min(1) }),
     }),
+    output: detailedResponse(z.array(shipmentSelectSchema)),
+  },
+  getForCustomer: {
+    input: z.object({}).optional(),
     output: detailedResponse(z.array(shipmentSelectSchema)),
   },
 };

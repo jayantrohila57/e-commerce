@@ -41,4 +41,25 @@ export const reviewContract = {
     }),
     output: detailedResponse(z.array(reviewSelectSchema)),
   },
+  getManyAdmin: {
+    input: z.object({
+      query: offsetPaginationSchema.extend({
+        productId: z.string().optional(),
+        userId: z.string().optional(),
+        isApproved: z.boolean().optional(),
+        minRating: z.number().min(1).max(5).optional(),
+        maxRating: z.number().min(1).max(5).optional(),
+      }),
+    }),
+    output: detailedResponse(z.array(reviewSelectSchema)),
+  },
+  updateApproval: {
+    input: z.object({
+      params: z.object({ id: z.string().min(1) }),
+      body: z.object({
+        isApproved: z.boolean(),
+      }),
+    }),
+    output: detailedResponse(reviewSelectSchema),
+  },
 };

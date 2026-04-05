@@ -1,7 +1,7 @@
 "use client";
 
-import { Book, PencilIcon, Tag } from "lucide-react";
-import { EmptyState } from "@/shared/components/common/empty-state";
+import { Book, PencilIcon, Plus, Tag } from "lucide-react";
+import type { RouterOutputs } from "@/core/api/api.client";
 import { DataTable } from "@/shared/components/table/data-table";
 import { filters as tableFilters } from "@/shared/components/table/data-table-filter.config";
 import { useShipmentBulkActions } from "./shipment.bulk-actions";
@@ -9,8 +9,23 @@ import { useShipmentColumns } from "./shipment.columns";
 import { shipmentTableConfig } from "./shipment.table.config";
 import type { GetManyShipmentsOutput } from "./shipment.types";
 
-export default function ShipmentTable({ data }: { data: GetManyShipmentsOutput }) {
-  const columns = useShipmentColumns();
+type ProviderListOutput = RouterOutputs["shippingConfig"]["listProviders"];
+type MethodListOutput = RouterOutputs["shippingConfig"]["listMethods"];
+
+interface ShipmentTableProps {
+  data: GetManyShipmentsOutput;
+  providers: ProviderListOutput;
+  methods: MethodListOutput;
+}
+
+export default function ShipmentTable({ data, providers, methods }: ShipmentTableProps) {
+  const providerItems = providers?.data ?? [];
+  const methodItems = methods?.data ?? [];
+
+  const providerNamesById = Object.fromEntries(providerItems.map((p) => [p.id, p.name] as const));
+  const methodNamesById = Object.fromEntries(methodItems.map((m) => [m.id, m.name] as const));
+
+  const columns = useShipmentColumns({ providerNamesById, methodNamesById });
   const bulkActions = useShipmentBulkActions();
 
   const items = data?.data ?? [];
@@ -40,6 +55,24 @@ export default function ShipmentTable({ data }: { data: GetManyShipmentsOutput }
           options: Array.from(new Set(items.map((item) => item.carrier).filter(Boolean))).map((carrier) => ({
             label: String(carrier),
             value: String(carrier),
+            color: "",
+          })),
+        },
+        {
+          key: "shippingProviderId",
+          title: "Provider",
+          options: providerItems.map((provider) => ({
+            label: provider.name,
+            value: provider.id,
+            color: "",
+          })),
+        },
+        {
+          key: "shippingMethodId",
+          title: "Method",
+          options: methodItems.map((method) => ({
+            label: method.name,
+            value: method.id,
             color: "",
           })),
         },

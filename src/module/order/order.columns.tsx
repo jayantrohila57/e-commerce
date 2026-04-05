@@ -18,6 +18,7 @@ const statusColors: Record<ReturnType<(typeof orderStatusEnum)["parse"]>, string
   paid: "bg-emerald-100 text-emerald-800 border-emerald-200",
   shipped: "bg-sky-100 text-sky-800 border-sky-200",
   delivered: "bg-emerald-100 text-emerald-800 border-emerald-200",
+  returned: "bg-purple-100 text-purple-800 border-purple-200",
   cancelled: "bg-rose-100 text-rose-800 border-rose-200",
 };
 
@@ -81,6 +82,32 @@ export function useOrderColumns() {
           const currency = (row.getValue("currency") as string) ?? "INR";
           const displayAmount = (total / 100).toFixed(2);
           return <div className="w-[120px] text-sm font-medium">{`${currency} ${displayAmount}`}</div>;
+        },
+      },
+      {
+        id: "shippingSummary",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Shipping" />,
+        cell: ({ row }) => {
+          const providerId = (row.original as Order).shippingProviderId;
+          const methodId = (row.original as Order).shippingMethodId;
+          const zoneId = (row.original as Order).shippingZoneId;
+          const warehouseId = (row.original as Order).warehouseId;
+
+          if (!providerId && !methodId && !zoneId && !warehouseId) {
+            return <div className="w-[220px] text-xs text-muted-foreground">—</div>;
+          }
+
+          const parts: string[] = [];
+          if (providerId) parts.push(`Provider ${providerId.slice(0, 8)}`);
+          if (methodId) parts.push(`Method ${methodId.slice(0, 8)}`);
+          if (zoneId) parts.push(`Zone ${zoneId.slice(0, 8)}`);
+          if (warehouseId) parts.push(`WH ${warehouseId.slice(0, 8)}`);
+
+          return (
+            <div className="w-[260px] truncate text-xs text-muted-foreground" title={parts.join(" • ")}>
+              {parts.join(" • ")}
+            </div>
+          );
         },
       },
       {

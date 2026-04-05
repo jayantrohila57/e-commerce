@@ -1,5 +1,5 @@
 import type { Route } from "next";
-import { notFound, redirect } from "next/navigation";
+import { forbidden, notFound, redirect } from "next/navigation";
 import { apiServer, HydrateClient } from "@/core/api/api.server";
 import { APP_ROLE, normalizeRole } from "@/core/auth/auth.roles";
 import { getServerSession } from "@/core/auth/auth.server";
@@ -14,7 +14,7 @@ export default async function AttributeDetailPage({ params }: PageProps<"/studio
   const { session, user } = await getServerSession();
 
   if (!session) return redirect(PATH.ROOT);
-  if (normalizeRole(user?.role) === APP_ROLE.CUSTOMER) notFound();
+  if (normalizeRole(user?.role) === APP_ROLE.CUSTOMER) forbidden();
 
   const { data } = await apiServer.attribute.getBySlug({
     params: { slug: attributeSlug },

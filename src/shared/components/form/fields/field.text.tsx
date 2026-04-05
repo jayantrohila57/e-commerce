@@ -33,6 +33,7 @@ export const InputText: React.FC<FormInputProps> = (props) => {
             <Input
               id={stableId}
               {...field}
+              value={field.value ?? ""}
               {...props.fieldProps}
               placeholder={props.placeholder}
               type="text"

@@ -1,5 +1,8 @@
 "use client";
 
+import { useEffect } from "react";
+import { useFormContext, useWatch } from "react-hook-form";
+import { apiClient } from "@/core/api/api.client";
 import Form from "@/shared/components/form/form";
 import { FormSection } from "@/shared/components/form/form.helper";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/card";
@@ -12,9 +15,17 @@ interface CheckoutSummaryProps {
 }
 
 export function CheckoutSummary({ subtotal, itemCount, currency = "INR" }: CheckoutSummaryProps) {
+  const form = useFormContext();
+  const discountCode = useWatch({
+    control: form.control,
+    name: "body.discountCode",
+  }) as string | undefined;
+
+  // For now, keep shipping/tax simple; discount is client-estimated as 0.
   const shipping = 0;
   const tax = Math.round(subtotal * 0.18);
-  const total = subtotal + shipping + tax;
+  const discountAmount = 0;
+  const total = subtotal + shipping + tax - discountAmount;
 
   return (
     <Card className="border-border bg-muted/30">
@@ -27,6 +38,14 @@ export function CheckoutSummary({ subtotal, itemCount, currency = "INR" }: Check
           <span className="text-muted-foreground">Subtotal</span>
           <span>₹{subtotal.toLocaleString(undefined, { maximumFractionDigits: 0 })}</span>
         </div>
+        {discountCode && (
+          <div className="flex justify-between">
+            <span className="text-muted-foreground">Discount ({discountCode})</span>
+            <span className="text-green-600">
+              -₹{discountAmount.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+            </span>
+          </div>
+        )}
         <div className="flex justify-between">
           <span className="text-muted-foreground">Shipping</span>
           <span className="font-medium text-green-600">Free</span>
@@ -48,6 +67,10 @@ export function CheckoutSummary({ subtotal, itemCount, currency = "INR" }: Check
 export function CheckoutSummaryFormFields() {
   return (
     <div className="space-y-4">
+      <DeliveryMethodSection />
+      <FormSection title="Discount code" description="Have a coupon or promo code? Apply it here.">
+        <Form.Field name="body.discountCode" label="Discount code" type="text" placeholder="Enter code" />
+      </FormSection>
       <FormSection title="Order notes" description="Optional instructions for your order.">
         <Form.Field
           name="body.notes"
@@ -65,5 +88,80 @@ export function CheckoutSummaryFormFields() {
         />
       </FormSection>
     </div>
+  );
+}
+
+function DeliveryMethodSection() {
+  const form = useFormContext();
+  const shippingAddressId = useWatch({
+    control: form.control,
+    name: "body.shippingAddressId",
+  }) as string | undefined;
+
+  const hasAddress = typeof shippingAddressId === "string" && shippingAddressId.length > 0;
+
+  const { data, isLoading } = apiClient.shippingConfig.getOptions.useQuery(
+    { body: { shippingAddressId: hasAddress ? shippingAddressId : "" } },
+    {
+      enabled: hasAddress,
+    },
+  );
+
+  const options = data?.data ?? [];
+
+  const selectedMethodId = useWatch({
+    control: form.control,
+    name: "body.shippingMethodId",
+  }) as string | undefined;
+
+  useEffect(() => {
+    if (!options.length) return;
+    const currentMethodId = selectedMethodId ?? (form.getValues("body.shippingMethodId") as string | undefined);
+    if (!currentMethodId) {
+      const first = options[0];
+      form.setValue("body.shippingMethodId", first.methodId, { shouldValidate: true });
+      form.setValue("body.shippingProviderId", first.providerId, { shouldValidate: true });
+    }
+  }, [options, form, selectedMethodId]);
+
+  useEffect(() => {
+    if (!selectedMethodId) return;
+    const match = options.find((opt) => opt.methodId === selectedMethodId);
+    if (!match) return;
+    form.setValue("body.shippingProviderId", match.providerId, { shouldValidate: true });
+  }, [selectedMethodId, options, form]);
+
+  return (
+    <FormSection
+      title="Delivery method"
+      description={
+        !hasAddress
+          ? "Add a shipping address to see available delivery methods."
+          : "Choose how you want your order delivered."
+      }
+      required
+    >
+      {!hasAddress && <p className="text-xs text-muted-foreground">No shipping address selected yet.</p>}
+      {hasAddress && isLoading && <p className="text-xs text-muted-foreground">Loading available delivery methods…</p>}
+      {hasAddress && !isLoading && options.length === 0 && (
+        <p className="text-xs text-destructive">
+          No delivery options are configured for this address. Please use a different address.
+        </p>
+      )}
+      {hasAddress && options.length > 0 && (
+        <Form.Field
+          name="body.shippingMethodId"
+          label="Choose a delivery option"
+          type="radio"
+          required
+          options={options.map((opt) => ({
+            value: opt.methodId,
+            label: `${opt.providerName} – ${opt.methodName} · ₹${opt.price.toLocaleString()}${
+              opt.etaDays ? ` · ${opt.etaDays}-day delivery` : ""
+            }`,
+          }))}
+        />
+      )}
+    </FormSection>
   );
 }

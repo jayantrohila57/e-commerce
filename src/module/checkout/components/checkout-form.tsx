@@ -45,6 +45,8 @@ export function CheckoutForm() {
   const defaultValues: CheckoutFormValues = {
     body: {
       shippingAddressId: defaultShippingId,
+      shippingProviderId: "",
+      shippingMethodId: "",
       sameAsShipping: true,
       notes: "",
       agreeToTerms: false,

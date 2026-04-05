@@ -46,6 +46,38 @@ export default function OrderTable({ data }: { data: AdminOrdersOutput }) {
             { label: "Guest", value: "guest", color: "" },
           ],
         },
+        {
+          key: "shippingProviderPresence",
+          title: "Provider",
+          options: [
+            { label: "Has Provider", value: "assigned", color: "" },
+            { label: "No Provider", value: "unassigned", color: "" },
+          ],
+        },
+        {
+          key: "shippingMethodPresence",
+          title: "Method",
+          options: [
+            { label: "Has Method", value: "assigned", color: "" },
+            { label: "No Method", value: "unassigned", color: "" },
+          ],
+        },
+        {
+          key: "shippingZonePresence",
+          title: "Zone",
+          options: [
+            { label: "Has Zone", value: "assigned", color: "" },
+            { label: "No Zone", value: "unassigned", color: "" },
+          ],
+        },
+        {
+          key: "warehousePresence",
+          title: "Warehouse",
+          options: [
+            { label: "Has Warehouse", value: "assigned", color: "" },
+            { label: "No Warehouse", value: "unassigned", color: "" },
+          ],
+        },
       ]}
       deletionOptions={tableFilters.deletionStatus}
       bulkActions={bulkActions}

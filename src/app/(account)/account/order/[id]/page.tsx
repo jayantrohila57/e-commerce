@@ -1,8 +1,11 @@
+import type { Route } from "next";
+import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { apiServer } from "@/core/api/api.server";
 import { OrderDetailSection } from "@/module/order/order-detail.section";
 import { ShipmentTrackingSection } from "@/module/shipment/components/shipment-tracking-section";
 import Section from "@/shared/components/layout/section/section";
+import { Button } from "@/shared/components/ui/button";
 import { PATH } from "@/shared/config/routes";
 
 interface OrderDetailPageProps {
@@ -42,6 +45,11 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
         </div>
 
         <OrderDetailSection order={order} />
+        <div className="flex justify-end">
+          <Button variant="outline" size="sm" asChild>
+            <Link href={PATH.ACCOUNT.SHIPMENT as Route}>View all shipments</Link>
+          </Button>
+        </div>
         <ShipmentTrackingSection orderId={order.id} />
       </div>
     </Section>

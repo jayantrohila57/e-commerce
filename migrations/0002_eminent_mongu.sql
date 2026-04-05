@@ -1,1 +1,0 @@
-ALTER TYPE "public"."marketing_content_section" ADD VALUE 'crousel' BEFORE 'split_banner';

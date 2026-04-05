@@ -4,6 +4,7 @@ import { apiServer, HydrateClient } from "@/core/api/api.server";
 import { APP_ROLE, normalizeRole } from "@/core/auth/auth.roles";
 import { getServerSession } from "@/core/auth/auth.server";
 import InventoryDelete from "@/module/inventory/inventory.component.delete";
+import InventoryMovements from "@/module/inventory/inventory.component.movements";
 import InventoryViewCard from "@/module/inventory/inventory.component.view";
 import DashboardSection from "@/shared/components/layout/section/section-dashboard";
 import Shell from "@/shared/components/layout/shell";
@@ -17,6 +18,9 @@ export default async function InventoryPage({ params }: PageProps<"/studio/inven
   const { inventoryId } = await params;
 
   const { data } = await apiServer.inventory.get({ params: { id: String(inventoryId) } });
+  const movementsResult = await apiServer.inventory.getMovements({
+    params: { inventoryId: String(inventoryId) },
+  });
 
   return (
     <HydrateClient>
@@ -29,7 +33,10 @@ export default async function InventoryPage({ params }: PageProps<"/studio/inven
             actionUrl={PATH.STUDIO.INVENTORY.EDIT(String(inventoryId)) as Route}
           >
             <div className="grid grid-cols-6 gap-2">
-              <div className="col-span-4">{data && data && <InventoryViewCard data={data} />}</div>
+              <div className="col-span-4 flex flex-col gap-2">
+                {data && <InventoryViewCard data={data} />}
+                <InventoryMovements movements={movementsResult.data ?? []} />
+              </div>
               <div className="col-span-2 flex flex-col gap-2">
                 {/* action controls */}
                 {data && <InventoryDelete inventoryId={String(inventoryId)} />}

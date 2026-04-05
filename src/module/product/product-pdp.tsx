@@ -1,6 +1,7 @@
 import type { Route } from "next";
 import Link from "next/link";
 import { PDPWishlistToggle } from "@/module/product/product-pdp-wishlist-toggle";
+import { ProductReviews } from "@/module/review/components/product-reviews";
 import { AddToCartButton } from "@/shared/components/common/add-to-cart-button";
 import { BlurImage } from "@/shared/components/common/image";
 import { ViewCartButton } from "@/shared/components/common/view-cart-button";
@@ -165,6 +166,9 @@ export const PDPProduct = ({ data, slug, categorySlug, subcategorySlug }: PDPPro
             </div>
           </div>
         </div>
+      </div>
+      <div className="mt-10">
+        <ProductReviews productId={product.id} canWriteReview />
       </div>
     </div>
   );

@@ -5,7 +5,9 @@ CREATE TYPE "public"."discount_type" AS ENUM('flat', 'percent');--> statement-br
 CREATE TYPE "public"."display_type" AS ENUM('grid', 'carousel', 'banner', 'list', 'featured');--> statement-breakpoint
 CREATE TYPE "public"."inventory_adjustment_type" AS ENUM('manual', 'order', 'restock', 'return', 'damaged', 'correction');--> statement-breakpoint
 CREATE TYPE "public"."loyalty_point_transaction_type" AS ENUM('earn', 'redeem', 'adjust', 'expire', 'reversal');--> statement-breakpoint
-CREATE TYPE "public"."order_status" AS ENUM('pending', 'paid', 'shipped', 'delivered', 'cancelled');--> statement-breakpoint
+CREATE TYPE "public"."marketing_content_page" AS ENUM('home', 'store', 'store_category', 'store_subcategory', 'product', 'checkout', 'about', 'newsletter', 'support');--> statement-breakpoint
+CREATE TYPE "public"."marketing_content_section" AS ENUM('promo_banner', 'cta', 'offer_banner', 'crousel', 'split_banner', 'announcement_bar', 'feature_highlight');--> statement-breakpoint
+CREATE TYPE "public"."order_status" AS ENUM('pending', 'paid', 'shipped', 'delivered', 'returned', 'cancelled');--> statement-breakpoint
 CREATE TYPE "public"."payment_provider" AS ENUM('stripe', 'razorpay', 'paypal', 'cod');--> statement-breakpoint
 CREATE TYPE "public"."payment_status" AS ENUM('pending', 'completed', 'failed', 'refunded');--> statement-breakpoint
 CREATE TYPE "public"."product_relation_type" AS ENUM('related', 'cross_sell', 'upsell');--> statement-breakpoint
@@ -183,6 +185,7 @@ CREATE TABLE "inventory_adjustment_event" (
 	"id" text PRIMARY KEY NOT NULL,
 	"type" "inventory_adjustment_type" DEFAULT 'manual' NOT NULL,
 	"inventory_id" text NOT NULL,
+	"warehouse_id" text,
 	"variant_id" text,
 	"quantity_before" integer,
 	"quantity_delta" integer DEFAULT 0 NOT NULL,
@@ -203,19 +206,20 @@ CREATE TABLE "inventory_adjustment_event" (
 CREATE TABLE "inventory_item" (
 	"id" text PRIMARY KEY NOT NULL,
 	"variant_id" text NOT NULL,
+	"warehouse_id" text,
 	"sku" text NOT NULL,
 	"barcode" text,
 	"quantity" integer DEFAULT 0 NOT NULL,
 	"incoming" integer DEFAULT 0 NOT NULL,
 	"reserved" integer DEFAULT 0 NOT NULL,
 	"deleted_at" timestamp with time zone,
-	"updated_at" timestamp with time zone DEFAULT now(),
-	CONSTRAINT "inventory_item_sku_unique" UNIQUE("sku")
+	"updated_at" timestamp with time zone DEFAULT now()
 );
 --> statement-breakpoint
 CREATE TABLE "inventory_reservation" (
 	"id" text PRIMARY KEY NOT NULL,
 	"inventory_id" text NOT NULL,
+	"warehouse_id" text,
 	"user_id" text,
 	"quantity" integer NOT NULL,
 	"expires_at" timestamp with time zone NOT NULL,
@@ -264,6 +268,25 @@ CREATE TABLE "loyalty_tier" (
 	CONSTRAINT "loyalty_tier_code_unique" UNIQUE("code")
 );
 --> statement-breakpoint
+CREATE TABLE "marketing_content" (
+	"id" text PRIMARY KEY NOT NULL,
+	"page" "marketing_content_page" NOT NULL,
+	"section" "marketing_content_section" NOT NULL,
+	"title" text,
+	"body_text" text,
+	"image" text,
+	"cta_label" text,
+	"cta_link" text,
+	"product_link" text,
+	"items" jsonb,
+	"display_order" integer DEFAULT 0 NOT NULL,
+	"is_active" boolean DEFAULT true NOT NULL,
+	"starts_at" timestamp with time zone,
+	"ends_at" timestamp with time zone,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now()
+);
+--> statement-breakpoint
 CREATE TABLE "media" (
 	"id" text PRIMARY KEY NOT NULL,
 	"url" text NOT NULL,
@@ -282,6 +305,10 @@ CREATE TABLE "order" (
 	"shipping_total" integer DEFAULT 0 NOT NULL,
 	"grand_total" integer NOT NULL,
 	"currency" text DEFAULT 'INR' NOT NULL,
+	"shipping_provider_id" text,
+	"shipping_method_id" text,
+	"shipping_zone_id" text,
+	"warehouse_id" text,
 	"shipping_address" json NOT NULL,
 	"billing_address" json,
 	"notes" text,
@@ -488,8 +515,51 @@ CREATE TABLE "shipment" (
 	"shipping_rate" integer,
 	"weight" numeric(10, 2),
 	"notes" text,
+	"shipping_provider_id" text,
+	"shipping_method_id" text,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"updated_at" timestamp with time zone DEFAULT now()
+);
+--> statement-breakpoint
+CREATE TABLE "shipping_method" (
+	"id" text PRIMARY KEY NOT NULL,
+	"provider_id" text NOT NULL,
+	"code" text NOT NULL,
+	"name" text NOT NULL,
+	"is_active" boolean DEFAULT true NOT NULL,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE "shipping_provider" (
+	"id" text PRIMARY KEY NOT NULL,
+	"code" text NOT NULL,
+	"name" text NOT NULL,
+	"is_active" boolean DEFAULT true NOT NULL,
+	"metadata" jsonb,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
+	CONSTRAINT "shipping_provider_code_unique" UNIQUE("code")
+);
+--> statement-breakpoint
+CREATE TABLE "shipping_rate_rule" (
+	"id" text PRIMARY KEY NOT NULL,
+	"method_id" text NOT NULL,
+	"zone_id" text NOT NULL,
+	"price" integer NOT NULL,
+	"is_active" boolean DEFAULT true NOT NULL,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE "shipping_zone" (
+	"id" text PRIMARY KEY NOT NULL,
+	"name" text NOT NULL,
+	"country_code" text NOT NULL,
+	"region_code" text,
+	"is_active" boolean DEFAULT true NOT NULL,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "subcategory" (
@@ -586,6 +656,22 @@ CREATE TABLE "verification" (
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
+CREATE TABLE "warehouse" (
+	"id" text PRIMARY KEY NOT NULL,
+	"code" text NOT NULL,
+	"name" text NOT NULL,
+	"country" text NOT NULL,
+	"state" text,
+	"city" text,
+	"address_line1" text,
+	"address_line2" text,
+	"postal_code" text,
+	"is_active" boolean DEFAULT true NOT NULL,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now(),
+	CONSTRAINT "warehouse_code_unique" UNIQUE("code")
+);
+--> statement-breakpoint
 CREATE TABLE "wishlist" (
 	"id" text PRIMARY KEY NOT NULL,
 	"user_id" text NOT NULL,
@@ -608,12 +694,15 @@ ALTER TABLE "discount_usage_event" ADD CONSTRAINT "discount_usage_event_discount
 ALTER TABLE "discount_usage_event" ADD CONSTRAINT "discount_usage_event_order_discount_id_order_discount_id_fk" FOREIGN KEY ("order_discount_id") REFERENCES "public"."order_discount"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "discount_usage_event" ADD CONSTRAINT "discount_usage_event_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "inventory_adjustment_event" ADD CONSTRAINT "inventory_adjustment_event_inventory_id_inventory_item_id_fk" FOREIGN KEY ("inventory_id") REFERENCES "public"."inventory_item"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "inventory_adjustment_event" ADD CONSTRAINT "inventory_adjustment_event_warehouse_id_warehouse_id_fk" FOREIGN KEY ("warehouse_id") REFERENCES "public"."warehouse"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "inventory_adjustment_event" ADD CONSTRAINT "inventory_adjustment_event_variant_id_product_variant_id_fk" FOREIGN KEY ("variant_id") REFERENCES "public"."product_variant"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "inventory_adjustment_event" ADD CONSTRAINT "inventory_adjustment_event_order_id_order_id_fk" FOREIGN KEY ("order_id") REFERENCES "public"."order"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "inventory_adjustment_event" ADD CONSTRAINT "inventory_adjustment_event_refund_id_refund_id_fk" FOREIGN KEY ("refund_id") REFERENCES "public"."refund"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "inventory_adjustment_event" ADD CONSTRAINT "inventory_adjustment_event_adjusted_by_user_id_fk" FOREIGN KEY ("adjusted_by") REFERENCES "public"."user"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "inventory_item" ADD CONSTRAINT "inventory_item_variant_id_product_variant_id_fk" FOREIGN KEY ("variant_id") REFERENCES "public"."product_variant"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "inventory_item" ADD CONSTRAINT "inventory_item_warehouse_id_warehouse_id_fk" FOREIGN KEY ("warehouse_id") REFERENCES "public"."warehouse"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "inventory_reservation" ADD CONSTRAINT "inventory_reservation_inventory_id_inventory_item_id_fk" FOREIGN KEY ("inventory_id") REFERENCES "public"."inventory_item"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "inventory_reservation" ADD CONSTRAINT "inventory_reservation_warehouse_id_warehouse_id_fk" FOREIGN KEY ("warehouse_id") REFERENCES "public"."warehouse"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "inventory_reservation" ADD CONSTRAINT "inventory_reservation_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "loyalty_account" ADD CONSTRAINT "loyalty_account_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "loyalty_account" ADD CONSTRAINT "loyalty_account_tier_id_loyalty_tier_id_fk" FOREIGN KEY ("tier_id") REFERENCES "public"."loyalty_tier"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
@@ -622,6 +711,10 @@ ALTER TABLE "loyalty_point_transaction" ADD CONSTRAINT "loyalty_point_transactio
 ALTER TABLE "loyalty_point_transaction" ADD CONSTRAINT "loyalty_point_transaction_order_item_id_order_item_id_fk" FOREIGN KEY ("order_item_id") REFERENCES "public"."order_item"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "loyalty_point_transaction" ADD CONSTRAINT "loyalty_point_transaction_refund_id_refund_id_fk" FOREIGN KEY ("refund_id") REFERENCES "public"."refund"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "order" ADD CONSTRAINT "order_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "order" ADD CONSTRAINT "order_shipping_provider_id_shipping_provider_id_fk" FOREIGN KEY ("shipping_provider_id") REFERENCES "public"."shipping_provider"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "order" ADD CONSTRAINT "order_shipping_method_id_shipping_method_id_fk" FOREIGN KEY ("shipping_method_id") REFERENCES "public"."shipping_method"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "order" ADD CONSTRAINT "order_shipping_zone_id_shipping_zone_id_fk" FOREIGN KEY ("shipping_zone_id") REFERENCES "public"."shipping_zone"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "order" ADD CONSTRAINT "order_warehouse_id_warehouse_id_fk" FOREIGN KEY ("warehouse_id") REFERENCES "public"."warehouse"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "order_discount" ADD CONSTRAINT "order_discount_order_id_order_id_fk" FOREIGN KEY ("order_id") REFERENCES "public"."order"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "order_discount" ADD CONSTRAINT "order_discount_discount_id_discount_id_fk" FOREIGN KEY ("discount_id") REFERENCES "public"."discount"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "order_item" ADD CONSTRAINT "order_item_order_id_order_id_fk" FOREIGN KEY ("order_id") REFERENCES "public"."order"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
@@ -651,6 +744,11 @@ ALTER TABLE "review" ADD CONSTRAINT "review_user_id_user_id_fk" FOREIGN KEY ("us
 ALTER TABLE "review" ADD CONSTRAINT "review_product_id_product_id_fk" FOREIGN KEY ("product_id") REFERENCES "public"."product"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "session" ADD CONSTRAINT "session_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "shipment" ADD CONSTRAINT "shipment_order_id_order_id_fk" FOREIGN KEY ("order_id") REFERENCES "public"."order"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "shipment" ADD CONSTRAINT "shipment_shipping_provider_id_shipping_provider_id_fk" FOREIGN KEY ("shipping_provider_id") REFERENCES "public"."shipping_provider"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "shipment" ADD CONSTRAINT "shipment_shipping_method_id_shipping_method_id_fk" FOREIGN KEY ("shipping_method_id") REFERENCES "public"."shipping_method"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "shipping_method" ADD CONSTRAINT "shipping_method_provider_id_shipping_provider_id_fk" FOREIGN KEY ("provider_id") REFERENCES "public"."shipping_provider"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "shipping_rate_rule" ADD CONSTRAINT "shipping_rate_rule_method_id_shipping_method_id_fk" FOREIGN KEY ("method_id") REFERENCES "public"."shipping_method"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "shipping_rate_rule" ADD CONSTRAINT "shipping_rate_rule_zone_id_shipping_zone_id_fk" FOREIGN KEY ("zone_id") REFERENCES "public"."shipping_zone"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "subcategory" ADD CONSTRAINT "subcategory_category_slug_category_slug_fk" FOREIGN KEY ("category_slug") REFERENCES "public"."category"("slug") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "tax_rule" ADD CONSTRAINT "tax_rule_zone_id_tax_zone_id_fk" FOREIGN KEY ("zone_id") REFERENCES "public"."tax_zone"("id") ON DELETE restrict ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "tax_rule" ADD CONSTRAINT "tax_rule_tax_class_id_tax_class_id_fk" FOREIGN KEY ("tax_class_id") REFERENCES "public"."tax_class"("id") ON DELETE restrict ON UPDATE no action;--> statement-breakpoint
@@ -685,12 +783,15 @@ CREATE INDEX "discount_usage_event_discount_idx" ON "discount_usage_event" USING
 CREATE INDEX "discount_usage_event_discount_created_idx" ON "discount_usage_event" USING btree ("discount_id","created_at");--> statement-breakpoint
 CREATE INDEX "discount_usage_event_user_idx" ON "discount_usage_event" USING btree ("user_id");--> statement-breakpoint
 CREATE INDEX "inventory_adjustment_event_inventory_idx" ON "inventory_adjustment_event" USING btree ("inventory_id");--> statement-breakpoint
+CREATE INDEX "inventory_adjustment_event_warehouse_idx" ON "inventory_adjustment_event" USING btree ("warehouse_id");--> statement-breakpoint
 CREATE INDEX "inventory_adjustment_event_variant_idx" ON "inventory_adjustment_event" USING btree ("variant_id");--> statement-breakpoint
 CREATE INDEX "inventory_adjustment_event_order_idx" ON "inventory_adjustment_event" USING btree ("order_id");--> statement-breakpoint
 CREATE INDEX "inventory_adjustment_event_created_at_idx" ON "inventory_adjustment_event" USING btree ("created_at");--> statement-breakpoint
 CREATE INDEX "inventory_item_sku_idx" ON "inventory_item" USING btree ("sku");--> statement-breakpoint
+CREATE INDEX "inventory_item_variant_warehouse_idx" ON "inventory_item" USING btree ("variant_id","warehouse_id");--> statement-breakpoint
 CREATE INDEX "inventory_item_variant_id_idx" ON "inventory_item" USING btree ("variant_id");--> statement-breakpoint
 CREATE INDEX "inventory_reservation_inventory_id_idx" ON "inventory_reservation" USING btree ("inventory_id");--> statement-breakpoint
+CREATE INDEX "inventory_reservation_warehouse_id_idx" ON "inventory_reservation" USING btree ("warehouse_id");--> statement-breakpoint
 CREATE INDEX "inventory_reservation_user_id_idx" ON "inventory_reservation" USING btree ("user_id");--> statement-breakpoint
 CREATE INDEX "loyalty_account_user_idx" ON "loyalty_account" USING btree ("user_id");--> statement-breakpoint
 CREATE INDEX "loyalty_account_tier_idx" ON "loyalty_account" USING btree ("tier_id");--> statement-breakpoint
@@ -703,9 +804,13 @@ CREATE INDEX "loyalty_point_transaction_expires_at_idx" ON "loyalty_point_transa
 CREATE INDEX "loyalty_tier_code_idx" ON "loyalty_tier" USING btree ("code");--> statement-breakpoint
 CREATE INDEX "loyalty_tier_min_lifetime_idx" ON "loyalty_tier" USING btree ("min_lifetime_points");--> statement-breakpoint
 CREATE INDEX "loyalty_tier_is_active_idx" ON "loyalty_tier" USING btree ("is_active");--> statement-breakpoint
+CREATE INDEX "marketing_content_page_section_idx" ON "marketing_content" USING btree ("page","section");--> statement-breakpoint
+CREATE INDEX "marketing_content_is_active_idx" ON "marketing_content" USING btree ("is_active");--> statement-breakpoint
+CREATE INDEX "marketing_content_display_order_idx" ON "marketing_content" USING btree ("display_order");--> statement-breakpoint
 CREATE INDEX "order_user_idx" ON "order" USING btree ("user_id");--> statement-breakpoint
 CREATE INDEX "order_status_idx" ON "order" USING btree ("status");--> statement-breakpoint
 CREATE INDEX "order_placed_at_idx" ON "order" USING btree ("placed_at");--> statement-breakpoint
+CREATE INDEX "order_warehouse_id_idx" ON "order" USING btree ("warehouse_id");--> statement-breakpoint
 CREATE INDEX "order_discount_composite_idx" ON "order_discount" USING btree ("order_id","discount_id");--> statement-breakpoint
 CREATE INDEX "order_item_order_idx" ON "order_item" USING btree ("order_id");--> statement-breakpoint
 CREATE INDEX "order_item_variant_idx" ON "order_item" USING btree ("variant_id");--> statement-breakpoint
@@ -743,6 +848,14 @@ CREATE INDEX "review_user_idx" ON "review" USING btree ("user_id");--> statement
 CREATE INDEX "review_rating_idx" ON "review" USING btree ("rating");--> statement-breakpoint
 CREATE INDEX "shipment_order_id_idx" ON "shipment" USING btree ("order_id");--> statement-breakpoint
 CREATE INDEX "shipment_tracking_idx" ON "shipment" USING btree ("tracking_number");--> statement-breakpoint
+CREATE INDEX "shipping_method_provider_code_idx" ON "shipping_method" USING btree ("provider_id","code");--> statement-breakpoint
+CREATE INDEX "shipping_method_is_active_idx" ON "shipping_method" USING btree ("is_active");--> statement-breakpoint
+CREATE INDEX "shipping_provider_code_idx" ON "shipping_provider" USING btree ("code");--> statement-breakpoint
+CREATE INDEX "shipping_provider_is_active_idx" ON "shipping_provider" USING btree ("is_active");--> statement-breakpoint
+CREATE INDEX "shipping_rate_rule_method_zone_idx" ON "shipping_rate_rule" USING btree ("method_id","zone_id");--> statement-breakpoint
+CREATE INDEX "shipping_rate_rule_is_active_idx" ON "shipping_rate_rule" USING btree ("is_active");--> statement-breakpoint
+CREATE INDEX "shipping_zone_country_region_idx" ON "shipping_zone" USING btree ("country_code","region_code");--> statement-breakpoint
+CREATE INDEX "shipping_zone_is_active_idx" ON "shipping_zone" USING btree ("is_active");--> statement-breakpoint
 CREATE INDEX "subcategory_category_slug_idx" ON "subcategory" USING btree ("category_slug");--> statement-breakpoint
 CREATE INDEX "subcategory_visibility_idx" ON "subcategory" USING btree ("visibility");--> statement-breakpoint
 CREATE INDEX "subcategory_is_featured_idx" ON "subcategory" USING btree ("is_featured");--> statement-breakpoint
@@ -754,5 +867,8 @@ CREATE INDEX "tax_rule_active_effective_idx" ON "tax_rule" USING btree ("is_acti
 CREATE INDEX "tax_rule_zone_class_effective_idx" ON "tax_rule" USING btree ("zone_id","tax_class_id","effective_from");--> statement-breakpoint
 CREATE INDEX "tax_zone_country_region_idx" ON "tax_zone" USING btree ("country_code","region_code");--> statement-breakpoint
 CREATE INDEX "tax_zone_active_priority_idx" ON "tax_zone" USING btree ("is_active","priority");--> statement-breakpoint
+CREATE INDEX "warehouse_code_idx" ON "warehouse" USING btree ("code");--> statement-breakpoint
+CREATE INDEX "warehouse_is_active_idx" ON "warehouse" USING btree ("is_active");--> statement-breakpoint
+CREATE INDEX "warehouse_country_idx" ON "warehouse" USING btree ("country");--> statement-breakpoint
 CREATE INDEX "wishlist_user_id_idx" ON "wishlist" USING btree ("user_id");--> statement-breakpoint
 CREATE INDEX "wishlist_variant_id_idx" ON "wishlist" USING btree ("variant_id");

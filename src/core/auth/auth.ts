@@ -4,6 +4,7 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { createAuthMiddleware } from "better-auth/api";
 import { nextCookies } from "better-auth/next-js";
 import { admin as adminPlugin } from "better-auth/plugins/admin";
+import { twoFactor } from "better-auth/plugins/two-factor";
 import { db } from "@/core/db/db";
 import {
   sendDeleteAccountEmail,
@@ -12,12 +13,38 @@ import {
   sendWelcomeEmail,
 } from "@/shared/components/mail/mail.methods";
 import { serverEnv } from "@/shared/config/env.server";
-import { site } from "@/shared/config/site";
+import { site, siteConfig } from "@/shared/config/site";
 import { debugLog } from "@/shared/utils/lib/logger.utils";
 import { resolveNewUserRole } from "./auth.roles";
 import { ac, admin, customer, staff, user } from "./permissions";
 
 const MAX_AGE = 60 * 60; // 1 hour
+
+function getPasskeyConfig() {
+  const authUrl = serverEnv.BETTER_AUTH_URL || site.url || siteConfig.urls.website;
+
+  try {
+    const url = new URL(authUrl);
+    return {
+      rpID: url.hostname,
+      rpName: site.name,
+      origin: url.origin,
+    };
+  } catch {
+    return {
+      rpID: "localhost",
+      rpName: site.name,
+      origin: "http://localhost:3000",
+    };
+  }
+}
+
+function normalizeEmailUser(user: { email: string; name?: string | null }) {
+  return {
+    email: user.email,
+    name: user.name?.trim() || "there",
+  };
+}
 
 export const auth = betterAuth({
   logger: {
@@ -40,9 +67,20 @@ export const auth = betterAuth({
     },
     changeEmail: {
       enabled: true,
-      sendChangeEmailVerification: async ({ user, url, newEmail }) => {
+      sendChangeEmailVerification: async ({
+        user,
+        url,
+        newEmail,
+      }: {
+        user: { email: string; name?: string | null };
+        url: string;
+        newEmail: string;
+      }) => {
         await sendEmailVerificationEmail({
-          user: { ...user, email: newEmail },
+          user: {
+            ...normalizeEmailUser(user),
+            email: newEmail,
+          },
           url,
         });
       },
@@ -50,7 +88,7 @@ export const auth = betterAuth({
     deleteUser: {
       enabled: true,
       sendDeleteAccountVerification: async ({ user, url }) => {
-        await sendDeleteAccountEmail({ user, url });
+        await sendDeleteAccountEmail({ user: normalizeEmailUser(user), url });
       },
     },
   },
@@ -72,14 +110,14 @@ export const auth = betterAuth({
     autoSignIn: false,
     requireEmailVerification: true,
     sendResetPassword: async ({ user, url }) => {
-      await sendPasswordResetEmail({ user, url });
+      await sendPasswordResetEmail({ user: normalizeEmailUser(user), url });
     },
   },
   emailVerification: {
     autoSignInAfterVerification: false,
     sendOnSignUp: true,
     sendVerificationEmail: async ({ user, url }) => {
-      await sendEmailVerificationEmail({ user, url });
+      await sendEmailVerificationEmail({ user: normalizeEmailUser(user), url });
     },
   },
   socialProviders: {
@@ -97,7 +135,7 @@ export const auth = betterAuth({
         };
 
         if (user != null) {
-          await sendWelcomeEmail({ user, url: ctx.path });
+          await sendWelcomeEmail({ user: normalizeEmailUser(user), url: ctx.path });
         }
       }
     }),
@@ -119,7 +157,6 @@ export const auth = betterAuth({
   plugins: [
     nextCookies(),
     twoFactor(),
-    passkey(),
     adminPlugin({
       ac,
       roles: {
@@ -129,5 +166,6 @@ export const auth = betterAuth({
         staff,
       },
     }),
+    passkey(getPasskeyConfig()),
   ],
 });

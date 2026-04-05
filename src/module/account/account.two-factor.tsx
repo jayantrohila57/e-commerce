@@ -38,7 +38,7 @@ export function TwoFactorAuthForm({ isEnabled }: { isEnabled: boolean }) {
         password: data.password,
       },
       {
-        onError: (error) => {
+        onError: (error: { error: { message: string } }) => {
           toast.error(error.error.message || "Failed to disable 2FA");
         },
         onSuccess: () => {
@@ -127,7 +127,7 @@ function QRCodeVerify({ totpURI, backupCodes, onDone }: TwoFactorData & { onDone
         code: data.token,
       },
       {
-        onError: (error) => {
+        onError: (error: { error: { message: string } }) => {
           toast.error(error.error.message || "Failed to verify code");
         },
         onSuccess: () => {

@@ -15,19 +15,21 @@ export function ForgotPasswordForm() {
 
   function onSubmit(data: FormValues) {
     startTransition(async () => {
+      const options = {
+        onError: (error) => {
+          toast.error(error.error.message || "Failed to send password reset email");
+        },
+        onSuccess: () => {
+          toast.success("Password reset email sent");
+        },
+      } satisfies NonNullable<Parameters<typeof requestPasswordReset>[1]>;
+
       await requestPasswordReset(
         {
           ...data,
           redirectTo: "/auth/reset-password",
         },
-        {
-          onError: (error) => {
-            toast.error(error.error.message || "Failed to send password reset email");
-          },
-          onSuccess: () => {
-            toast.success("Password reset email sent");
-          },
-        },
+        options,
       );
     });
   }

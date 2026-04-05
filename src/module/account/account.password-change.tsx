@@ -31,7 +31,7 @@ export function ChangePasswordForm() {
   const { isSubmitting } = form.formState;
 
   async function handlePasswordChange(data: ChangePasswordForm) {
-    await changePassword(data, {
+    const options = {
       onError: (error) => {
         toast.error(error.error.message || "Failed to change password");
       },
@@ -39,7 +39,9 @@ export function ChangePasswordForm() {
         toast.success("Password changed successfully");
         form.reset();
       },
-    });
+    } satisfies NonNullable<Parameters<typeof changePassword>[1]>;
+
+    await changePassword(data, options);
   }
 
   return (

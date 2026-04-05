@@ -1,3 +1,4 @@
+import { passkeyClient } from "@better-auth/passkey/client";
 import { adminClient, inferAdditionalFields, twoFactorClient } from "better-auth/client/plugins";
 import { nextCookies } from "better-auth/next-js";
 import { createAuthClient } from "better-auth/react";
@@ -20,9 +21,11 @@ export const {
   revokeOtherSessions,
   sendVerificationEmail,
   requestPasswordReset,
+  twoFactor,
 } = createAuthClient({
   plugins: [
     nextCookies(),
+    passkeyClient(),
     adminClient({
       ac,
       roles: {

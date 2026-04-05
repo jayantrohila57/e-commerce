@@ -23,24 +23,26 @@ export default function ResetPasswordForm({ token, error }: { token: string; err
     startTransition(async () => {
       if (token == null) return;
 
+      const options = {
+        onError: (error) => {
+          toast.error(error.error.message || "Failed to reset password");
+        },
+        onSuccess: () => {
+          toast.success("Password reset successful", {
+            description: "Redirection to login...",
+          });
+          setTimeout(() => {
+            router.push(PATH.AUTH.SIGN_IN);
+          }, 1000);
+        },
+      } satisfies NonNullable<Parameters<typeof resetPassword>[1]>;
+
       await resetPassword(
         {
           newPassword: data.password,
           token,
         },
-        {
-          onError: (error) => {
-            toast.error(error.error.message || "Failed to reset password");
-          },
-          onSuccess: () => {
-            toast.success("Password reset successful", {
-              description: "Redirection to login...",
-            });
-            setTimeout(() => {
-              router.push(PATH.AUTH.SIGN_IN);
-            }, 1000);
-          },
-        },
+        options,
       );
     });
   }

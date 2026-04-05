@@ -7,9 +7,6 @@ export type GetAttributeOutput = z.infer<typeof attributeContract.get.output>;
 export type GetAttributeBySlugInput = z.infer<typeof attributeContract.getBySlug.input>;
 export type GetAttributeBySlugOutput = z.infer<typeof attributeContract.getBySlug.output>;
 
-export type GetAttributesBySeriesInput = z.infer<typeof attributeContract.getBySeries.input>;
-export type GetAttributesBySeriesOutput = z.infer<typeof attributeContract.getBySeries.output>;
-
 export type GetManyAttributesInput = z.infer<typeof attributeContract.getMany.input>;
 export type GetManyAttributesOutput = z.infer<typeof attributeContract.getMany.output>;
 

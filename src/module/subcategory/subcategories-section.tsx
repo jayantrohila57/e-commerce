@@ -1,5 +1,7 @@
+import type { Route } from "next";
 import { FormSection } from "@/shared/components/form/form.helper";
 import { Separator } from "@/shared/components/ui/separator";
+import { PATH } from "@/shared/config/routes";
 import type { SubcategoryBase } from "./subcategory.schema";
 import { SubCategoryCard } from "./subcategory-card";
 
@@ -35,7 +37,7 @@ export const SubCategorySection = ({
     <div className="grid grid-cols-1 gap-2">
       {categories?.length > 0 ? (
         categories?.map((cat) => (
-          <SubCategoryCard href={`/studio/products/categories/${slug}/${cat.slug}`} key={cat.id} data={cat} />
+          <SubCategoryCard href={PATH.STUDIO.SUB_CATEGORIES.ROOT(slug, cat.slug) as Route} key={cat.id} data={cat} />
         ))
       ) : (
         <p className="text-muted-foreground px-2 text-sm">{emptyMessage}</p>

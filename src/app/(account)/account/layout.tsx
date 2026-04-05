@@ -3,6 +3,7 @@ import { ScrollProgress } from "@/shared/components/common/scroll-progress";
 import ScrollToTopButton from "@/shared/components/common/scroll-to-top";
 import Footer from "@/shared/components/layout/footer/footer";
 import Header from "@/shared/components/layout/header/header";
+import AccountPageLayout from "@/shared/components/layout/section/account-page-layout";
 import { SubNavHeader } from "@/shared/components/layout/section/section.header";
 import Shell from "@/shared/components/layout/shell";
 
@@ -17,7 +18,7 @@ export default async function AccountLayout({ children }: { children: React.Reac
       <Shell.Main>
         <Shell.Section>
           <SubNavHeader />
-          {children}
+          <AccountPageLayout>{children}</AccountPageLayout>
         </Shell.Section>
       </Shell.Main>
       <Shell.Footer>

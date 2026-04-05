@@ -15,7 +15,7 @@ interface SignOutButtonProps {
   size?: "default" | "sm" | "lg" | "icon";
 }
 
-export function SignOutIcon({ variant = "outline", size = "icon" }: SignOutButtonProps) {
+export function SignOutIcon({ variant = "ghost", size = "icon" }: SignOutButtonProps) {
   const [isLoading, startTransition] = useTransition();
 
   const router = useRouter();

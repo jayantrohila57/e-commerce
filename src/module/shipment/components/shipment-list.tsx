@@ -14,9 +14,19 @@ interface ShipmentListProps {
   orderId?: string;
   baseHref?: Route | string;
   onRefresh?: () => void;
+  providerNamesById?: Record<string, string>;
+  methodNamesById?: Record<string, string>;
 }
 
-export function ShipmentList({ shipments, isLoading = false, orderId, baseHref, onRefresh }: ShipmentListProps) {
+export function ShipmentList({
+  shipments,
+  isLoading = false,
+  orderId,
+  baseHref,
+  onRefresh,
+  providerNamesById,
+  methodNamesById,
+}: ShipmentListProps) {
   if (isLoading) {
     return (
       <div className="space-y-3">
@@ -53,6 +63,14 @@ export function ShipmentList({ shipments, isLoading = false, orderId, baseHref, 
           key={shipment.id}
           shipment={shipment}
           orderId={orderId ?? shipment.orderId}
+          shippingProviderName={
+            shipment.shippingProviderName ??
+            (shipment.shippingProviderId ? providerNamesById?.[shipment.shippingProviderId] : undefined)
+          }
+          shippingMethodName={
+            shipment.shippingMethodName ??
+            (shipment.shippingMethodId ? methodNamesById?.[shipment.shippingMethodId] : undefined)
+          }
           href={(baseHref ? `${baseHref}/${shipment.id}` : undefined) as Route | undefined}
         />
       ))}

@@ -20,25 +20,51 @@ export default function UserTable({ data }: { data: StudioManagedUserList }) {
   const page = limit > 0 ? Math.floor(offset / limit) + 1 : 1;
   const totalPages = limit > 0 ? Math.max(1, Math.ceil(total / limit)) : 1;
 
-  if (items.length === 0) {
-    return (
-      <EmptyState
-        title="No Users Found"
-        description="There are no users to manage yet."
-        icons={[Book, PencilIcon, Tag]}
-      />
-    );
-  }
-
   return (
     <DataTable
       data={items}
       columns={columns}
       displayKey={"name"}
+      extraFilters={[
+        {
+          key: "role",
+          title: "Role",
+          options: [
+            { label: "Admin", value: "ADMIN", color: "" },
+            { label: "Staff", value: "STAFF", color: "" },
+            { label: "Customer", value: "CUSTOMER", color: "" },
+          ],
+        },
+        {
+          key: "banned",
+          title: "Banned",
+          options: [
+            { label: "Banned", value: "true", color: "" },
+            { label: "Not banned", value: "false", color: "" },
+          ],
+        },
+        {
+          key: "emailVerified",
+          title: "Email Verified",
+          options: [
+            { label: "Verified", value: "true", color: "" },
+            { label: "Unverified", value: "false", color: "" },
+          ],
+        },
+      ]}
       deletionOptions={tableFilters.deletionStatus}
       bulkActions={bulkActions}
       pageCount={totalPages}
       rowCount={total}
+      emptyState={{
+        title: "No Users Found",
+        description: "There are no users to manage yet.",
+        icons: [Book, PencilIcon, Tag],
+        action: {
+          label: "Create Customer",
+          url: "/studio/users/new",
+        },
+      }}
     />
   );
 }

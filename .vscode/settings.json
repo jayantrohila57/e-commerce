@@ -29,7 +29,7 @@
   "editor.dropIntoEditor.preferences": [],
   "search.exclude": {
     "**/node_modules": true,
-    "**/.next": true,
+    // "**/.next": true,
     "**/.agent": true,
     "**/.agents": true,
     "**/.husky": true
@@ -37,7 +37,7 @@
   },
   "files.exclude": {
     "**/node_modules": true,
-    "**/.next": true,
+    // "**/.next": true,
     "**/.agent": true,
     "**/.agents": true,
     "**/.husky": true

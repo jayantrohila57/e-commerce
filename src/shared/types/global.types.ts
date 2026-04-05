@@ -8,5 +8,8 @@ export interface PageProps {
   }>;
   params: Promise<{
     slug: string;
+    categorySlug: string;
+    subCategorySlug: string;
+    variantSlug: string;
   }>;
 }

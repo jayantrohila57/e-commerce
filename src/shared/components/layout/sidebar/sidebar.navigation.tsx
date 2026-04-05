@@ -17,8 +17,8 @@ import {
 } from "@/shared/components/ui/sidebar";
 import { cn } from "@/shared/utils/lib/utils";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../../ui/collapsible";
-import { Separator } from "../../ui/separator";
 import { useSidebarSections } from "./sidebar.nav-items";
+import { SidebarNavSkeleton } from "./sidebar.nav-skeleton";
 
 function useIsActive() {
   const pathname = usePathname();
@@ -42,7 +42,7 @@ function useIsActive() {
 export function NavMain() {
   const isActive = useIsActive();
   const collapsibleId = useId();
-  const sections = useSidebarSections();
+  const { sections, isPending } = useSidebarSections();
 
   const [openStates, setOpenStates] = useState<Record<string, boolean>>(() => {
     const initial: Record<string, boolean> = {};
@@ -57,9 +57,13 @@ export function NavMain() {
     return initial;
   });
 
+  if (isPending) {
+    return <SidebarNavSkeleton />;
+  }
+
   return sections && sections?.length > 0
     ? sections.map((section, sectionIndex) => (
-        <SidebarGroup key={sectionIndex}>
+        <SidebarGroup key={sectionIndex} className="border-b p-2 min-h-16 px-4">
           <SidebarGroupLabel>{section.title}</SidebarGroupLabel>
           <SidebarMenu key={sectionIndex}>
             {section.section.map((item, itemIndex) => {
@@ -72,7 +76,7 @@ export function NavMain() {
                 return (
                   <SidebarMenuItem key={item.title}>
                     <Link href={item.url as Route}>
-                      <SidebarMenuButton data-active={isItemActive ? "true" : "false"} tooltip={item.title}>
+                      <SidebarMenuButton isActive={isItemActive} tooltip={item.title}>
                         {item.icon && <item.icon className="h-4 w-4" />}
                         <span>{item.title}</span>
                       </SidebarMenuButton>
@@ -93,7 +97,11 @@ export function NavMain() {
                 >
                   <SidebarMenuItem>
                     <CollapsibleTrigger asChild>
-                      <SidebarMenuButton tooltip={item.title} data-active={isItemActive ? "true" : "false"}>
+                      <SidebarMenuButton
+                        isActive={isItemActive}
+                        tooltip={item.title}
+                        data-active={isItemActive ? "true" : "false"}
+                      >
                         {item.icon && <item.icon className="h-4 w-4" />}
                         <span className="truncate">{item.title}</span>
                         <ChevronRight
@@ -107,12 +115,11 @@ export function NavMain() {
                           const isSubItemActive = isActive(subItem.url, true);
                           return (
                             <SidebarMenuSubItem key={subItem.title}>
-                              <SidebarMenuSubButton
-                                data-active={isSubItemActive ? "true" : "false"}
-                                href={subItem.url as Route}
-                              >
-                                {subItem.icon && <subItem.icon className="h-4 w-4" />}
-                                {subItem.title}
+                              <SidebarMenuSubButton asChild isActive={isSubItemActive}>
+                                <Link href={subItem.url as Route}>
+                                  {subItem.icon && <subItem.icon className="h-4 w-4" />}
+                                  {subItem.title}
+                                </Link>
                               </SidebarMenuSubButton>
                             </SidebarMenuSubItem>
                           );
@@ -124,7 +131,6 @@ export function NavMain() {
               );
             })}
           </SidebarMenu>
-          {sectionIndex !== sections.length - 1 && <Separator className="mt-1" />}
         </SidebarGroup>
       ))
     : null;

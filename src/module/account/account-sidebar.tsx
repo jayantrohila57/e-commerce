@@ -1,13 +1,13 @@
 "use client";
 
-import { Lock, UserIcon } from "lucide-react";
+import { Boxes, CreditCard, Heart, LocateIcon, Lock, ShoppingCart, UserCog, UserIcon } from "lucide-react";
 import type { Route } from "next";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "@/shared/components/ui/button";
 import { PATH } from "@/shared/config/routes";
 
-type NavItem<T extends string = string> = {
+type NavItem<T extends Route = Route> = {
   href: T;
   label: string;
   icon: React.ReactNode;
@@ -17,25 +17,34 @@ type NavItem<T extends string = string> = {
 const sections: NavItem<Route>[] = [
   {
     label: "Account",
-    icon: <UserIcon size={14} />,
-    href: PATH.ACCOUNT.USER,
+    icon: <UserCog size={14} />,
+    href: PATH.ACCOUNT.ROOT,
     id: "account",
   },
-  { id: "profile", label: "Profile", href: PATH.ACCOUNT.PROFILE, icon: <UserIcon size={14} /> },
-  { id: "security", label: "Security", href: PATH.ACCOUNT.SECURITY, icon: <Lock size={14} /> },
-  { id: "sessions", label: "Sessions", href: PATH.ACCOUNT.SESSIONS, icon: <Lock size={14} /> },
+  { id: "cart", label: "Cart", href: PATH.ACCOUNT.CART, icon: <ShoppingCart size={14} /> },
+  { id: "wishlist", label: "Wishlist", href: PATH.ACCOUNT.WISHLIST, icon: <Heart size={14} /> },
+  { id: "order", label: "Order", href: PATH.ACCOUNT.ORDER, icon: <Boxes size={14} /> },
+  { id: "payment", label: "Payment", href: PATH.ACCOUNT.PAYMENT, icon: <CreditCard size={14} /> },
+  { id: "address", label: "Address", href: PATH.ACCOUNT.ADDRESS, icon: <LocateIcon size={14} /> },
+  {
+    id: "shipment",
+    label: "Shipment",
+    href: PATH.ACCOUNT.SHIPMENT,
+    icon: <LocateIcon size={14} />,
+  },
+  { id: "review", label: "Review", href: PATH.ACCOUNT.REVIEW, icon: <LocateIcon size={14} /> },
 ];
 
 export function AccountSidebar() {
   const pathname = usePathname();
 
   return (
-    <nav className="flex-1">
-      <ul className="space-y-2">
+    <nav className="flex-1 h-full w-full border-r border-b">
+      <ul className="space-y-2 h-full w-full">
         {sections.map((section) => {
           const isActive = pathname === section.href;
           return (
-            <li key={section.id}>
+            <li key={section.id} className="w-full border-b p-4">
               <Link href={section.href}>
                 <Button
                   variant={isActive ? "outline" : "ghost"}

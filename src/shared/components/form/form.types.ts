@@ -27,6 +27,7 @@ export interface BaseFormInputProps {
   hidden?: boolean;
   className?: string;
   readonly?: boolean;
+  disabled?: boolean;
   helperText?: string;
   fieldProps?: object;
   required?: boolean;

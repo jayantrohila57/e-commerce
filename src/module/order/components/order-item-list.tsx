@@ -25,7 +25,7 @@ export function OrderItemList({ order }: OrderItemListProps) {
     <div className="space-y-4">
       {items.map((item, index) => (
         <div key={item.id} className="space-y-1 text-sm">
-          <div className="flex items-start justify-between gap-4 rounded-md border border-border/60 bg-background/60 p-3">
+          <div className="flex items-start justify-between gap-4   bg-transparent border-none border-r border-b p-3">
             <div className="space-y-1">
               <div className="flex items-center gap-2">
                 <Badge variant="outline" className="h-6 px-2 text-[10px] font-medium uppercase tracking-wide">

@@ -22,24 +22,67 @@ const statusColors: Record<ReturnType<(typeof shipmentStatusEnum)["parse"]>, str
   returned: "bg-slate-100 text-slate-800 border-slate-200",
 };
 
-export function useShipmentColumns() {
+type ShipmentColumnLookups = {
+  providerNamesById?: Record<string, string>;
+  methodNamesById?: Record<string, string>;
+};
+
+export function useShipmentColumns(lookups?: ShipmentColumnLookups) {
   const router = useRouter();
 
   return useMemo(() => {
-    const handleEdit = (row: Row<Shipment>) => {
+    const handleView = (row: Row<Shipment>) => {
       const id = row.getValue(shipmentTableConfig.fields.id);
       if (id && typeof id === "string") {
-        router.push(shipmentTableConfig.routes.edit(id) as Route);
+        router.push(shipmentTableConfig.routes.view(id) as Route);
       }
     };
 
     const baseColumns: ColumnDef<Shipment>[] = [
       {
+        accessorKey: shipmentTableConfig.fields.id,
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Shipment" />,
+        cell: ({ row }) => {
+          const id = String(row.getValue(shipmentTableConfig.fields.id) ?? "");
+          const label = id ? `Shipment #${id.slice(0, 8)}` : "Shipment";
+
+          return (
+            <button
+              type="button"
+              onClick={() => {
+                if (id) {
+                  router.push(shipmentTableConfig.routes.view(id) as Route);
+                }
+              }}
+              className="w-[220px] truncate text-left text-sm font-medium underline-offset-4 hover:underline"
+            >
+              {label}
+            </button>
+          );
+        },
+      },
+      {
         accessorKey: "orderId",
-        header: ({ column }) => <DataTableColumnHeader column={column} title="Order ID" />,
-        cell: ({ row }) => (
-          <div className="w-[200px] truncate text-xs text-muted-foreground">{row.getValue("orderId")}</div>
-        ),
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Order" />,
+        cell: ({ row }) => {
+          const orderId = String(row.getValue("orderId") ?? "");
+
+          if (!orderId) {
+            return <div className="w-[200px] text-xs text-muted-foreground">—</div>;
+          }
+
+          return (
+            <button
+              type="button"
+              onClick={() => {
+                router.push(("/studio/orders/" + orderId) as Route);
+              }}
+              className="w-[220px] truncate text-left text-xs font-medium text-primary underline-offset-4 hover:underline"
+            >
+              Order #{orderId.slice(0, 8)}
+            </button>
+          );
+        },
       },
       {
         accessorKey: "trackingNumber",
@@ -56,6 +99,26 @@ export function useShipmentColumns() {
         cell: ({ row }) => (
           <div className="w-[160px] truncate text-xs text-muted-foreground">{row.getValue("carrier") ?? "—"}</div>
         ),
+      },
+      {
+        accessorKey: "shippingProviderId",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Provider" />,
+        cell: ({ row }) => {
+          const id = row.getValue("shippingProviderId") as string | null;
+          const label = id ? (lookups?.providerNamesById?.[id] ?? id) : null;
+
+          return <div className="w-[160px] truncate text-xs text-muted-foreground">{label ?? "—"}</div>;
+        },
+      },
+      {
+        accessorKey: "shippingMethodId",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Method" />,
+        cell: ({ row }) => {
+          const id = row.getValue("shippingMethodId") as string | null;
+          const label = id ? (lookups?.methodNamesById?.[id] ?? id) : null;
+
+          return <div className="w-[160px] truncate text-xs text-muted-foreground">{label ?? "—"}</div>;
+        },
       },
       {
         accessorKey: "status",
@@ -92,7 +155,7 @@ export function useShipmentColumns() {
       ...commonColumns.selectColumn<Shipment>(),
       ...baseColumns,
       ...commonColumns.actionsColumn<Shipment>({
-        onEdit: handleEdit,
+        onView: handleView,
       }),
     ];
   }, [router]);

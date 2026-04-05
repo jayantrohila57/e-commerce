@@ -11,6 +11,12 @@ type FacetOption = {
   icon?: React.ComponentType<{ className?: string }>;
 };
 
+export interface ExtraFilterConfig {
+  key: string;
+  title: string;
+  options: FacetOption[];
+}
+
 export interface DataTableContextValue<TData> {
   table: Table<TData>;
   displayKey: keyof TData;
@@ -23,12 +29,14 @@ export interface DataTableContextValue<TData> {
   visibilityOptions?: FacetOption[];
   featuredOptions?: FacetOption[];
   deletionOptions?: FacetOption[];
+  extraFilters?: ExtraFilterConfig[];
 
   // URL State & Sync
   filters?: Record<string, string | null>;
   setFilter?: (key: string, value: string | null) => void;
   setSearch?: (q: string) => void;
-  clearFilters?: () => void;
+  clearFilters?: (keysToRemove?: string[]) => void;
+  setSorting?: (sortBy: string | null, sortDir: "asc" | "desc" | null) => void;
 
   bulkActions?: BulkAction<TData>[];
   runBulkAction?: (actionId: string) => void;

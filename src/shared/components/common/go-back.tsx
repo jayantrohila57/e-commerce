@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronLeft } from "lucide-react";
+import { ArrowLeftIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { memo, useCallback } from "react";
 import { Button } from "@/shared/components/ui/button";
@@ -17,7 +17,7 @@ const GoBackButton = memo(() => {
           <Button
             size={"icon"}
             onClick={handleGoBack}
-            variant={"outline"}
+            variant={"ghost"}
             aria-label="Back"
             role="button"
             tabIndex={0}
@@ -27,7 +27,7 @@ const GoBackButton = memo(() => {
               }
             }}
           >
-            <ChevronLeft aria-hidden="true" focusable="false" role="presentation" />
+            <ArrowLeftIcon aria-hidden="true" focusable="false" role="presentation" />
           </Button>
         </TooltipTrigger>
         <TooltipContent>

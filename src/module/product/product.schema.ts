@@ -14,7 +14,7 @@ export const baseProductSchema = z.object({
   // RELATIONS
   categorySlug: z.string().min(1),
   subcategorySlug: z.string().min(1),
-  seriesSlug: z.string().min(1),
+  taxClassId: z.string().nullable().optional(),
 
   // PRICING (currency field stores string; coerce for API/DB)
   basePrice: z.coerce.number().min(0),
@@ -56,8 +56,7 @@ export const productUpdateSchema = baseProductSchema.partial();
 //
 const searchSchema = z.object({
   search: z.string().min(2).max(100).optional(),
-  visibility: z.enum(["public", "private", "hidden"]).optional(),
-  isFeatured: z.boolean().optional(),
+  status: z.enum(["draft", "archive", "live"]).optional(),
 });
 
 export const productContract = {
@@ -69,6 +68,21 @@ export const productContract = {
       }),
     }),
     output: detailedResponse(productSelectSchema.nullable()),
+  },
+  getBySubcategorySlug: {
+    input: z.object({
+      params: z.object({
+        subcategorySlug: z.string().min(1),
+        categorySlug: z.string().min(1),
+      }),
+    }),
+    output: detailedResponse(
+      z.array(
+        productSelectSchema.extend({
+          variants: z.array(productVariantBaseSchema),
+        }),
+      ),
+    ),
   },
   getBySlug: {
     input: z.object({
@@ -89,11 +103,13 @@ export const productContract = {
       query: offsetPaginationSchema
         .extend({
           categorySlug: z.string().optional(),
-          seriesSlug: z.string().optional(),
+          subcategorySlug: z.string().optional(),
           isActive: z.boolean().optional(),
+          deleted: z.boolean().optional(),
         })
         .extend({
           search: z.string().optional(),
+          status: z.enum(["draft", "archive", "live"]).optional(),
         }),
     }),
     output: detailedResponse(z.array(productSelectSchema)),
@@ -114,18 +130,22 @@ export const productContract = {
         .nullable(),
     ),
   },
-  getProductsBySeriesSlug: {
+  getPDPProductByVariantFullPath: {
     input: z.object({
       params: z.object({
-        slug: z.string().min(1),
+        categorySlug: z.string().min(1),
+        subcategorySlug: z.string().min(1),
+        variantSlug: z.string().min(1),
       }),
     }),
     output: detailedResponse(
-      z.array(
-        productSelectSchema.extend({
-          variant: productVariantBaseSchema,
-        }),
-      ),
+      z
+        .object({
+          product: productSelectSchema.extend({
+            variants: z.array(productVariantBaseSchema),
+          }),
+        })
+        .nullable(),
     ),
   },
   getProductWithProductVariants: {

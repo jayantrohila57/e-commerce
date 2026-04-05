@@ -30,11 +30,16 @@ export default function SubcategoryForm({ categorySlug, categoryId }: Subcategor
   const [isLoading, setIsLoading] = useState(false);
 
   const createSubcategory = apiClient.subcategory.create.useMutation({
-    onSuccess: async ({ status, message }) => {
+    onSuccess: async ({ status, message, data }) => {
       if (status === STATUS.SUCCESS) {
         toast.success(message, { id: toastId });
         setToastId("");
-        router.push(PATH.STUDIO.SUB_CATEGORIES.ROOT(categorySlug) as Route);
+        // Navigate to the newly created subcategory page
+        if (data?.slug) {
+          router.push(PATH.STUDIO.SUB_CATEGORIES.ROOT(categorySlug, data.slug) as Route);
+        } else {
+          router.push(PATH.STUDIO.CATEGORIES.ROOT as Route);
+        }
       } else if (status === STATUS.FAILED || status === STATUS.ERROR) {
         toast.error(message, { id: toastId });
         setToastId("");

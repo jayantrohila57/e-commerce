@@ -1,8 +1,19 @@
+import type { Route } from "next";
 import { notFound } from "next/navigation";
 import { apiServer, HydrateClient } from "@/core/api/api.server";
 import { CategoryItem } from "@/module/category/category.component.all";
+import {
+  ContentAnnouncementBar,
+  ContentCTA,
+  ContentFeatureHighlights,
+  ContentOfferBanner,
+  ContentPromoBanner,
+  ContentSplitBanner,
+} from "@/module/site/content-sections";
 import Section from "@/shared/components/layout/section/section";
+import Shell from "@/shared/components/layout/shell";
 import { clientEnv } from "@/shared/config/env.client";
+import { PATH } from "@/shared/config/routes";
 
 export async function generateMetadata({ params }: PageProps<"/store/[categorySlug]">) {
   const { categorySlug: slug } = await params;
@@ -41,9 +52,32 @@ export default async function CartPage({ params }: PageProps<"/store/[categorySl
 
   return (
     <HydrateClient>
-      <Section>
-        <CategoryItem data={data} />
-      </Section>
+      <Shell>
+        {/* <Shell.Section>
+          <ContentAnnouncementBar page="store_category" />
+        </Shell.Section>
+        <Shell.Section>
+          <ContentPromoBanner page="store_category" />
+        </Shell.Section>
+        <Shell.Section>
+          <ContentSplitBanner page="store_category" />
+        </Shell.Section> */}
+        <Shell.Section>
+          <Section title={`Shop by ${data.title}`} description={data.description ?? ""}>
+            <CategoryItem data={data} />
+          </Section>
+        </Shell.Section>
+        <Shell.Section>
+          <ContentCTA page="store_category" />
+        </Shell.Section>
+        {/*
+        <Shell.Section>
+          <ContentOfferBanner page="store_category" />
+        </Shell.Section>
+        <Shell.Section>
+          <ContentFeatureHighlights page="store_category" />
+        </Shell.Section> */}
+      </Shell>
     </HydrateClient>
   );
 }

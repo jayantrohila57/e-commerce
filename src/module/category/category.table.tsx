@@ -2,11 +2,11 @@
 
 import { Book, PencilIcon, Tag } from "lucide-react";
 import type { ComponentType } from "react";
-import { EmptyState } from "@/shared/components/common/empty-state";
 import { DataTable } from "@/shared/components/table/data-table";
 import { filters as tableFilters } from "@/shared/components/table/data-table-filter.config";
 import type { FilterOption } from "@/shared/config/options.config";
-import { displayTypeOptions, visibilityOptions } from "@/shared/config/options.config";
+import { colorOptions, displayTypeOptions, visibilityOptions } from "@/shared/config/options.config";
+import { PATH } from "@/shared/config/routes";
 import { useCategoryBulkActions } from "./category.bulk-actions";
 import { useCategoryColumns } from "./category.columns";
 import type { GetCategoriesOutput } from "./category.types";
@@ -34,20 +34,8 @@ export default function CategoryTable({ data }: { data: GetCategoriesOutput }) {
   const items = data?.data ?? [];
   const pageCount = data?.meta?.pagination?.totalPages;
   const rowCount = data?.meta?.pagination?.total;
-
-  if (items.length === 0) {
-    return (
-      <EmptyState
-        title="No Categories Found"
-        description="You don't have any categories yet. Categories help you organize products."
-        icons={[Book, PencilIcon, Tag]}
-        action={{
-          label: "Create Category",
-          url: "/studio/products/categories/new",
-        }}
-      />
-    );
-  }
+  const currentPage = data?.meta?.pagination?.page;
+  const currentLimit = data?.meta?.pagination?.limit;
 
   return (
     <DataTable
@@ -57,10 +45,28 @@ export default function CategoryTable({ data }: { data: GetCategoriesOutput }) {
       visibilityOptions={toFacetOptions(visibilityOptions)}
       typeOptions={toFacetOptions(displayTypeOptions)}
       featuredOptions={featuredOptions}
+      extraFilters={[
+        {
+          key: "color",
+          title: "Color",
+          options: toFacetOptions(colorOptions),
+        },
+      ]}
       deletionOptions={tableFilters.deletionStatus}
       bulkActions={bulkActions}
       pageCount={pageCount}
       rowCount={rowCount}
+      initialPageIndex={typeof currentPage === "number" ? currentPage - 1 : undefined}
+      initialPageSize={typeof currentLimit === "number" ? currentLimit : undefined}
+      emptyState={{
+        title: "No Categories Found",
+        description: "You don't have any categories yet. Categories help you organize products.",
+        icons: [Book, PencilIcon, Tag],
+        action: {
+          label: "Create Category",
+          url: PATH.STUDIO.CATEGORIES.NEW,
+        },
+      }}
     />
   );
 }

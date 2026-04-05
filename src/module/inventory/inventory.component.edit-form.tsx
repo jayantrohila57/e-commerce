@@ -24,6 +24,7 @@ type InventoryLike = {
   quantity: number;
   incoming: number;
   reserved: number;
+  warehouseId?: string | null;
 };
 
 export default function InventoryEditForm({ inventory }: { inventory: InventoryLike }) {
@@ -60,6 +61,7 @@ export default function InventoryEditForm({ inventory }: { inventory: InventoryL
         quantity: data?.data?.quantity,
         incoming: data?.data?.incoming,
         reserved: data?.data?.reserved,
+        warehouseId: data?.data?.warehouseId,
       },
     });
   }
@@ -74,6 +76,7 @@ export default function InventoryEditForm({ inventory }: { inventory: InventoryL
           quantity: inventory.quantity,
           incoming: inventory.incoming,
           reserved: inventory.reserved,
+          warehouseId: inventory.warehouseId ?? undefined,
         },
       }}
       schema={formSchema}
@@ -87,6 +90,7 @@ export default function InventoryEditForm({ inventory }: { inventory: InventoryL
           <Form.Field name="data.quantity" label="Quantity" type="number" required placeholder="Quantity" />
           <Form.Field name="data.incoming" label="Incoming" type="number" placeholder="Incoming" />
           <Form.Field name="data.reserved" label="Reserved" type="number" placeholder="Reserved" />
+          <Form.Field name="data.warehouseId" label="Warehouse ID" type="text" required placeholder="Warehouse ID" />
         </FormSection>
       </div>
 

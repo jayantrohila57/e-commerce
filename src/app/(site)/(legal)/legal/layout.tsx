@@ -6,8 +6,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     <Shell>
       <Shell.Section>
         <SubNavHeader />
-        {children}
       </Shell.Section>
+      <Shell.Section>{children}</Shell.Section>
     </Shell>
   );
 }

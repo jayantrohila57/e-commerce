@@ -4,6 +4,7 @@ import { detailedResponse, offsetPaginationSchema } from "@/shared/schema";
 export const inventoryBaseSchema = z.object({
   id: z.string().min(1),
   variantId: z.string().min(1),
+  warehouseId: z.string().min(1).optional().nullable(),
   sku: z.string().min(1),
   barcode: z.string().nullable().optional(),
   quantity: z.number().int().min(0),
@@ -13,6 +14,8 @@ export const inventoryBaseSchema = z.object({
     .date()
     .default(() => new Date())
     .nullable(),
+  warehouseCode: z.string().nullable().optional(),
+  warehouseName: z.string().nullable().optional(),
 });
 
 export const inventorySelectSchema = inventoryBaseSchema;
@@ -24,8 +27,35 @@ export const inventoryInsertSchema = inventoryBaseSchema.omit({
 
 export const inventoryUpdateSchema = inventoryBaseSchema.partial();
 
-const searchSchema = z.object({
+export const inventoryMovementSchema = z.object({
+  id: z.string().min(1),
+  inventoryId: z.string().min(1),
+  warehouseId: z.string().min(1).optional().nullable(),
+  variantId: z.string().nullable().optional(),
+  type: z.enum(["manual", "order", "restock", "return", "damaged", "correction"]),
+  quantityBefore: z.number().int().nullable().optional(),
+  quantityDelta: z.number().int(),
+  quantityAfter: z.number().int().nullable().optional(),
+  incomingBefore: z.number().int().nullable().optional(),
+  incomingDelta: z.number().int(),
+  incomingAfter: z.number().int().nullable().optional(),
+  reservedBefore: z.number().int().nullable().optional(),
+  reservedDelta: z.number().int(),
+  reservedAfter: z.number().int().nullable().optional(),
+  orderId: z.string().nullable().optional(),
+  refundId: z.string().nullable().optional(),
+  reason: z.string().nullable().optional(),
+  adjustedBy: z.string().nullable().optional(),
+  createdAt: z.date(),
+});
+
+export const searchSchema = z.object({
   search: z.string().min(2).max(100).optional(),
+  stockStatus: z.enum(["in_stock", "low_stock", "out_of_stock"]).optional(),
+  hasReserved: z.boolean().optional(),
+  hasIncoming: z.boolean().optional(),
+  warehousePresence: z.enum(["assigned", "unassigned"]).optional(),
+  warehouseId: z.string().min(1).optional(),
 });
 
 export const inventoryContract = {
@@ -46,13 +76,24 @@ export const inventoryContract = {
     output: detailedResponse(z.array(inventorySelectSchema)),
   },
 
+  getMovements: {
+    input: z.object({
+      params: z.object({
+        inventoryId: z.string().min(1),
+      }),
+      query: offsetPaginationSchema.optional(),
+    }),
+    output: detailedResponse(z.array(inventoryMovementSchema)),
+  },
+
   getByVariantId: {
     input: z.object({
       params: z.object({
         variantId: z.string(),
+        warehouseId: z.string().min(1).optional(),
       }),
     }),
-    output: detailedResponse(inventorySelectSchema.nullable()),
+    output: detailedResponse(z.array(inventorySelectSchema)),
   },
 
   getBySku: {

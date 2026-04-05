@@ -54,32 +54,64 @@ export function useTableUrlSync() {
     [updateUrl],
   );
 
-  const clearFilters = useCallback(() => {
-    const current = new URLSearchParams(Array.from(searchParams.entries()));
-    const keysToRemove = [
-      "status",
-      "visibility",
-      "displayType",
-      "color",
-      "contentType",
-      "isFeatured",
-      "deleted",
-      "q",
-      "page",
-    ];
-    for (const key of keysToRemove) {
-      current.delete(key);
-    }
+  const setSorting = useCallback(
+    (sortBy: string | null | undefined, sortDir: "asc" | "desc" | null | undefined) => {
+      updateUrl({
+        sortBy,
+        sortDir,
+      });
+    },
+    [updateUrl],
+  );
 
-    const query = current.toString();
-    const url = `${pathname}${query ? `?${query}` : ""}` as Route;
-    router.push(url, { scroll: false });
-  }, [pathname, router, searchParams]);
+  const clearFilters = useCallback(
+    (keysToRemove?: string[]) => {
+      const current = new URLSearchParams(Array.from(searchParams.entries()));
+      const defaultKeys = [
+        "status",
+        "visibility",
+        "displayType",
+        "color",
+        "contentType",
+        "isFeatured",
+        "deleted",
+        "categorySlug",
+        "subcategorySlug",
+        "stockStatus",
+        "hasReserved",
+        "hasIncoming",
+        "status",
+        "carrier",
+        "paymentStatus",
+        "provider",
+        "role",
+        "banned",
+        "emailVerified",
+        "pageFilter",
+        "section",
+        "isActive",
+        "q",
+        "page",
+        "sortBy",
+        "sortDir",
+      ];
+      const keys = keysToRemove && keysToRemove.length > 0 ? keysToRemove : defaultKeys;
+      for (const key of keys) {
+        current.delete(key);
+      }
+
+      const query = current.toString();
+      const url = `${pathname}${query ? `?${query}` : ""}` as Route;
+      router.push(url, { scroll: false });
+    },
+    [pathname, router, searchParams],
+  );
 
   return {
     setFilter,
     setPagination,
     setSearch,
+    setSorting,
     clearFilters,
   };
 }

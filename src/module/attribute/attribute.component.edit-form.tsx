@@ -19,8 +19,6 @@ import { attributeContract } from "./attribute.schema";
 const formSchema = attributeContract.update.input;
 type FormValues = z.infer<typeof formSchema>;
 
-type SeriesLike = { slug: string; title: string };
-
 const attributeTypeOptions = [
   { label: "Text", value: "text" },
   { label: "Number", value: "number" },
@@ -29,19 +27,10 @@ const attributeTypeOptions = [
   { label: "Select", value: "select" },
 ] as const;
 
-export default function AttributeEditForm({ attribute, series }: { attribute: AttributeSelect; series: SeriesLike[] }) {
+export default function AttributeEditForm({ attribute }: { attribute: AttributeSelect }) {
   const router = useRouter();
   const [toastId, setToastId] = useState<string | number>("");
   const [isLoading, setIsLoading] = useState(false);
-
-  const seriesOptions = useMemo(
-    () =>
-      (series ?? []).map((s) => ({
-        label: s.title,
-        value: s.slug,
-      })),
-    [series],
-  );
 
   const updateAttribute = apiClient.attribute.update.useMutation({
     onSuccess: async ({ status, message }) => {
@@ -71,7 +60,6 @@ export default function AttributeEditForm({ attribute, series }: { attribute: At
     updateAttribute.mutate({
       params: { id: attribute.id },
       body: {
-        seriesSlug: values.body.seriesSlug,
         title: values.body.title,
         slug: values.body.slug,
         type: values.body.type,
@@ -86,7 +74,6 @@ export default function AttributeEditForm({ attribute, series }: { attribute: At
       defaultValues={{
         params: { id: attribute.id },
         body: {
-          seriesSlug: attribute.seriesSlug,
           slug: attribute.slug,
           title: attribute.title,
           type: attribute.type,
@@ -100,7 +87,6 @@ export default function AttributeEditForm({ attribute, series }: { attribute: At
     >
       <div className="col-span-4 h-full w-full space-y-6">
         <FormSection title="Attribute Details" description="Update the attribute fields below.">
-          <Form.Field name="body.seriesSlug" label="Series" type="select" required options={seriesOptions} />
           <Form.Field name="body.title" label="Title" type="text" required />
           <Form.Field
             name="body.slug"

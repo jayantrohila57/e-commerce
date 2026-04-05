@@ -3,11 +3,12 @@ import type { Route } from "next";
 import Link from "next/link";
 import { Badge } from "@/shared/components/ui/badge";
 import { Separator } from "@/shared/components/ui/separator";
+import { PATH } from "@/shared/config/routes";
 import type { AttributeSelect } from "./attribute.schema";
 
-export function AttributeCard({ attribute, seriesTitle }: { attribute: AttributeSelect; seriesTitle?: string }) {
+export function AttributeCard({ attribute }: { attribute: AttributeSelect }) {
   return (
-    <Link href={`/studio/products/attributes/${attribute.slug}/edit?id=${attribute.id}` as Route}>
+    <Link href={PATH.STUDIO.ATTRIBUTES.VIEW(attribute.slug) as Route}>
       <div className="bg-secondary hover:bg-secondary/80 motion-all flex w-full items-center justify-between gap-3 rounded-md border p-2 shadow-xs">
         <div className="flex min-w-0 items-center gap-3">
           <div className="bg-muted flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-xs font-semibold">
@@ -30,9 +31,6 @@ export function AttributeCard({ attribute, seriesTitle }: { attribute: Attribute
         </div>
 
         <div className="flex shrink-0 items-center gap-2">
-          <Badge variant="outline" className="hidden sm:inline-flex">
-            {seriesTitle ?? attribute.seriesSlug}
-          </Badge>
           <Badge variant="outline" className="hidden sm:inline-flex">
             Order: {attribute.displayOrder ?? 0}
           </Badge>

@@ -1,9 +1,23 @@
-import { and, eq, ilike, inArray, sql } from "drizzle-orm";
+import { and, eq, ilike, inArray, isNotNull, isNull, sql } from "drizzle-orm";
 import { v4 as uuidv4 } from "uuid";
 import { adminProcedure, createTRPCRouter, customerProcedure, staffProcedure } from "@/core/api/api.methods";
 import { APP_ROLE, normalizeRole } from "@/core/auth/auth.roles";
 import { db } from "@/core/db/db";
-import { cart, cartLine, inventoryItem, order, orderItem, user as userTable } from "@/core/db/db.schema";
+import {
+  cart,
+  cartLine,
+  discount,
+  discountUsageEvent,
+  inventoryItem,
+  order,
+  orderDiscount,
+  orderItem,
+  shippingMethod,
+  shippingProvider,
+  shippingRateRule,
+  user as userTable,
+} from "@/core/db/db.schema";
+import { applyInventoryDelta, type InventoryDbLike } from "@/module/inventory/inventory.api";
 import { notifyLowStock, notifyOrderStatusChange } from "@/shared/components/mail/notification.service";
 import { MESSAGE, STATUS } from "@/shared/config/api.config";
 import { API_RESPONSE } from "@/shared/config/api.utils";
@@ -28,6 +42,7 @@ export const orderRouter = createTRPCRouter({
           where: eq(order.id, id),
           with: {
             items: true,
+            user: true,
           },
         });
 
@@ -61,9 +76,10 @@ export const orderRouter = createTRPCRouter({
         const role = normalizeRole(ctx.user.role);
         const data = await db.query.order.findMany({
           where: role === APP_ROLE.CUSTOMER ? eq(order.userId, userId) : undefined,
-          orderBy: (order, { desc }) => [desc(order.placedAt)],
+          orderBy: (orderTable, { desc }) => [desc(orderTable.placedAt)],
           with: {
             items: true,
+            user: true,
           },
         });
 
@@ -87,10 +103,23 @@ export const orderRouter = createTRPCRouter({
           limit: 20,
           sortOrder: "desc" as const,
           status: undefined as OrderStatus | undefined,
+          customerType: undefined as "registered" | "guest" | undefined,
           q: undefined as string | undefined,
+          shippingProviderPresence: undefined as "assigned" | "unassigned" | undefined,
+          shippingMethodPresence: undefined as "assigned" | "unassigned" | undefined,
+          shippingZonePresence: undefined as "assigned" | "unassigned" | undefined,
+          warehousePresence: undefined as "assigned" | "unassigned" | undefined,
           ...input.query,
         };
-        const { status, q } = query;
+        const {
+          status,
+          q,
+          customerType,
+          shippingProviderPresence,
+          shippingMethodPresence,
+          shippingZonePresence,
+          warehousePresence,
+        } = query;
 
         const pageInput = {
           page: query.page ?? 1,
@@ -106,7 +135,17 @@ export const orderRouter = createTRPCRouter({
         // Build where conditions using drizzle top-level helpers
         const whereConditions = [
           status ? eq(order.status, status) : undefined,
+          customerType === "registered" ? sql`${order.userId} IS NOT NULL` : undefined,
+          customerType === "guest" ? sql`${order.userId} IS NULL` : undefined,
           q ? ilike(order.id, `%${q}%`) : undefined,
+          shippingProviderPresence === "assigned" ? isNotNull(order.shippingProviderId) : undefined,
+          shippingProviderPresence === "unassigned" ? isNull(order.shippingProviderId) : undefined,
+          shippingMethodPresence === "assigned" ? isNotNull(order.shippingMethodId) : undefined,
+          shippingMethodPresence === "unassigned" ? isNull(order.shippingMethodId) : undefined,
+          shippingZonePresence === "assigned" ? isNotNull(order.shippingZoneId) : undefined,
+          shippingZonePresence === "unassigned" ? isNull(order.shippingZoneId) : undefined,
+          warehousePresence === "assigned" ? isNotNull(order.warehouseId) : undefined,
+          warehousePresence === "unassigned" ? isNull(order.warehouseId) : undefined,
         ].filter((condition): condition is NonNullable<typeof condition> => Boolean(condition));
 
         const where = whereConditions.length ? and(...whereConditions) : undefined;
@@ -122,6 +161,9 @@ export const orderRouter = createTRPCRouter({
           orderBy: (o, { desc }) => [desc(o.placedAt)],
           limit,
           offset,
+          with: {
+            user: true,
+          },
         });
 
         const metaPagination = buildPaginationMeta(total, pageInput);
@@ -150,7 +192,16 @@ export const orderRouter = createTRPCRouter({
     .mutation(async ({ input, ctx }) => {
       try {
         const userId = ctx.user.id;
-        const { cartId, sessionId, shippingAddress, billingAddress, notes } = input.body;
+        const {
+          cartId,
+          sessionId,
+          shippingAddress,
+          billingAddress,
+          notes,
+          shippingProviderId,
+          shippingMethodId,
+          discountCode,
+        } = input.body;
 
         // 1. Get cart items
         const cartData = await db.query.cart.findFirst({
@@ -181,7 +232,50 @@ export const orderRouter = createTRPCRouter({
           return API_RESPONSE(STATUS.FAILED, "Shipping address is required", null);
         }
 
-        // 2. Start transaction
+        // 2. Validate shipping method + provider and resolve shipping zone + rate
+        const methodRow = await db.query.shippingMethod.findFirst({
+          where: eq(shippingMethod.id, shippingMethodId),
+          with: {
+            provider: true,
+            rates: {
+              with: {
+                zone: true,
+              },
+            },
+          },
+        });
+
+        if (!methodRow || !methodRow.isActive) {
+          return API_RESPONSE(STATUS.FAILED, "Selected delivery method is not available", null);
+        }
+
+        if (!methodRow.provider || !methodRow.provider.isActive || methodRow.provider.id !== shippingProviderId) {
+          return API_RESPONSE(STATUS.FAILED, "Selected delivery provider is not available", null);
+        }
+
+        const normalizedCountry = shippingAddress.country.toUpperCase();
+        const normalizedRegion = shippingAddress.state.toUpperCase();
+
+        const matchingRate =
+          methodRow.rates.find(
+            (rate) =>
+              rate.isActive &&
+              rate.zone.countryCode.toUpperCase() === normalizedCountry &&
+              (rate.zone.regionCode?.toUpperCase() === normalizedRegion || rate.zone.regionCode === null),
+          ) ?? null;
+
+        if (!matchingRate) {
+          return API_RESPONSE(
+            STATUS.FAILED,
+            "No delivery rate is configured for the selected address and method",
+            null,
+          );
+        }
+
+        const shippingZoneId = matchingRate.zoneId;
+        const shippingTotal = matchingRate.price;
+
+        // 3. Start transaction
         const result = await db.transaction(async (tx) => {
           const orderId = uuidv4();
           let subtotal = 0;
@@ -205,7 +299,55 @@ export const orderRouter = createTRPCRouter({
             };
           });
 
-          // 3. Create Order
+          // 4. Optional discount application
+          let discountTotal = 0;
+          let appliedDiscountRecord: {
+            id: string;
+            discountId: string;
+            appliedAmount: number;
+          } | null = null;
+
+          if (discountCode) {
+            const now = new Date();
+            const discountRow = await tx.query.discount.findFirst({
+              where: (d, { and: andLocal, eq: eqLocal }) =>
+                andLocal(eqLocal(d.code, discountCode), eqLocal(d.isActive, true)),
+            });
+
+            if (discountRow && (!discountRow.expiresAt || discountRow.expiresAt > now)) {
+              const minOrderAmount = discountRow.minOrderAmount ?? 0;
+              const maxUses = discountRow.maxUses ?? null;
+              const usedCount = discountRow.usedCount ?? 0;
+
+              if (subtotal >= minOrderAmount && (!maxUses || usedCount < maxUses)) {
+                if (discountRow.type === "percent") {
+                  const basisPoints = discountRow.value;
+                  discountTotal = Math.floor((subtotal * basisPoints) / 10000);
+                } else if (discountRow.type === "flat") {
+                  discountTotal = Math.min(discountRow.value, subtotal);
+                }
+
+                if (discountTotal > 0) {
+                  const orderDiscountId = uuidv4();
+                  appliedDiscountRecord = {
+                    id: orderDiscountId,
+                    discountId: discountRow.id,
+                    appliedAmount: discountTotal,
+                  };
+
+                  await tx
+                    .update(discount)
+                    .set({
+                      usedCount: sql`${discount.usedCount} + 1`,
+                      updatedAt: new Date(),
+                    })
+                    .where(eq(discount.id, discountRow.id));
+                }
+              }
+            }
+          }
+
+          // 5. Create Order
           const [newOrder] = await tx
             .insert(order)
             .values({
@@ -213,8 +355,13 @@ export const orderRouter = createTRPCRouter({
               userId: userId || null,
               status: "pending",
               subtotal,
-              grandTotal: subtotal, // Basic subtotal for now
+              discountTotal,
+              shippingTotal,
+              grandTotal: Math.max(0, subtotal + shippingTotal - discountTotal),
               currency: "INR",
+              shippingProviderId,
+              shippingMethodId,
+              shippingZoneId,
               shippingAddress: shippingAddress,
               billingAddress: billingAddress || shippingAddress,
               notes: notes || null,
@@ -224,28 +371,64 @@ export const orderRouter = createTRPCRouter({
             })
             .returning();
 
-          // 4. Create Order Items
-          await tx.insert(orderItem).values(orderItemsData);
+          // 6. Persist order-level discount + usage event if applied
+          if (appliedDiscountRecord) {
+            await tx.insert(orderDiscount).values({
+              id: appliedDiscountRecord.id,
+              orderId,
+              discountId: appliedDiscountRecord.discountId,
+              appliedAmount: appliedDiscountRecord.appliedAmount,
+              createdAt: new Date(),
+            });
 
-          // 5. Update Inventory (Deduct reserved, decrease quantity)
-          for (const item of orderItemsData) {
-            await tx
-              .update(inventoryItem)
-              .set({
-                quantity: sql`${inventoryItem.quantity} - ${item.quantity}`,
-                reserved: sql`GREATEST(0, ${inventoryItem.reserved} - ${item.quantity})`,
-              })
-              .where(eq(inventoryItem.variantId, item.variantId));
+            await tx.insert(discountUsageEvent).values({
+              id: uuidv4(),
+              orderId,
+              discountId: appliedDiscountRecord.discountId,
+              orderDiscountId: appliedDiscountRecord.id,
+              userId: userId ?? null,
+              currency: "INR",
+              appliedAmount: appliedDiscountRecord.appliedAmount,
+              createdAt: new Date(),
+            });
           }
 
-          // 6. Clear Cart
+          // 7. Create Order Items
+          await tx.insert(orderItem).values(orderItemsData);
+
+          // 8. Update Inventory (Deduct reserved, decrease quantity) with centralized movement logging
+          for (const item of orderItemsData) {
+            const inventoryRow = await tx.query.inventoryItem.findFirst({
+              where: (inv, { and, eq: eqLocal, isNull }) =>
+                and(eqLocal(inv.variantId, item.variantId), isNull(inv.deletedAt)),
+            });
+
+            if (!inventoryRow) {
+              continue;
+            }
+
+            await applyInventoryDelta(tx, {
+              inventoryId: inventoryRow.id,
+              quantityDelta: -item.quantity,
+              reservedDelta: -item.quantity,
+              type: "order",
+              warehouseId: inventoryRow.warehouseId,
+              variantId: inventoryRow.variantId,
+              orderId,
+              refundId: null,
+              reason: "Order placed",
+              adjustedBy: userId,
+            });
+          }
+
+          // 9. Clear Cart
           await tx.delete(cartLine).where(eq(cartLine.cartId, cartData.id));
           await tx.update(cart).set({ updatedAt: new Date() }).where(eq(cart.id, cartData.id));
 
           return { ...newOrder, items: orderItemsData };
         });
 
-        // 7. Upgrade role from user -> customer on first checkout
+        // 8. Upgrade role from user -> customer on first checkout
         const currentRole = normalizeRole(ctx.user.role);
         if (currentRole === APP_ROLE.USER) {
           await db.update(userTable).set({ role: APP_ROLE.CUSTOMER }).where(eq(userTable.id, userId));

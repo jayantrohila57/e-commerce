@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import type { z } from "zod/v3";
 import { apiClient } from "@/core/api/api.client";
 import type { Shipment } from "@/module/shipment/shipment.schema";
@@ -23,14 +24,11 @@ const SHIPMENT_STATUS_VALUES = [
   "returned",
 ] as const;
 
-const STATUS_OPTIONS = [
-  { label: "Select status...", value: "", disable: true },
-  ...SHIPMENT_STATUS_VALUES.map((value) => ({
-    label: value.replace(/_/g, " "),
-    value,
-    disable: false,
-  })),
-];
+const STATUS_OPTIONS = SHIPMENT_STATUS_VALUES.map((value) => ({
+  label: value.replace(/_/g, " "),
+  value,
+  disable: false,
+}));
 
 interface ShipmentStatusFormProps {
   shipmentId: string;
@@ -49,10 +47,12 @@ export function ShipmentStatusForm({
   onSuccess,
   onCancel,
 }: ShipmentStatusFormProps) {
+  const router = useRouter();
   const updateMutation = apiClient.shipment.updateStatus.useMutation({
     onSuccess: (res) => {
       if (res.status === STATUS.SUCCESS) {
         onSuccess?.();
+        router.refresh();
       }
     },
   });

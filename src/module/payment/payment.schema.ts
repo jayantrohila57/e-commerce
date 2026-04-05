@@ -1,5 +1,5 @@
 import { z } from "zod/v3";
-import { detailedResponse } from "@/shared/schema";
+import { detailedResponse, paginationInput } from "@/shared/schema";
 
 export const paymentStatusEnum = z.enum(["pending", "completed", "failed", "refunded"]);
 export const paymentProviderEnum = z.enum(["stripe", "razorpay", "paypal", "cod"]);
@@ -44,6 +44,14 @@ export const createIntentOutputDataSchema = z.object({
 });
 
 export const paymentContract = {
+  get: {
+    input: z.object({
+      params: z.object({
+        id: z.string().min(1),
+      }),
+    }),
+    output: detailedResponse(paymentSelectSchema),
+  },
   createIntent: {
     input: z.object({
       body: paymentIntentInputSchema,
@@ -59,6 +67,18 @@ export const paymentContract = {
   getStatus: {
     input: z.object({
       params: z.object({ orderId: z.string().min(1) }),
+    }),
+    output: detailedResponse(z.array(paymentSelectSchema)),
+  },
+  getManyAdmin: {
+    input: z.object({
+      query: paginationInput
+        .extend({
+          status: paymentStatusEnum.optional(),
+          provider: paymentProviderEnum.optional(),
+          q: z.string().optional(),
+        })
+        .optional(),
     }),
     output: detailedResponse(z.array(paymentSelectSchema)),
   },

@@ -108,8 +108,8 @@ export async function setUserRoleAction(input: unknown) {
     },
     headers: await headers(),
   });
-  revalidatePath(PATH.STUDIO.CUSTOMERS.ROOT);
-  revalidatePath(PATH.STUDIO.CUSTOMERS.VIEW(parsed.userId));
+  revalidatePath(PATH.STUDIO.USERS.ROOT);
+  revalidatePath(PATH.STUDIO.USERS.VIEW(parsed.userId));
 }
 
 export async function setUserPermissionsAction(input: unknown) {
@@ -122,8 +122,8 @@ export async function setUserPermissionsAction(input: unknown) {
     },
     headers: await headers(),
   });
-  revalidatePath(PATH.STUDIO.CUSTOMERS.ROOT);
-  revalidatePath(PATH.STUDIO.CUSTOMERS.VIEW(parsed.userId));
+  revalidatePath(PATH.STUDIO.USERS.ROOT);
+  revalidatePath(PATH.STUDIO.USERS.VIEW(parsed.userId));
 }
 
 export async function banUserAction(input: unknown) {
@@ -137,8 +137,8 @@ export async function banUserAction(input: unknown) {
     },
     headers: await headers(),
   });
-  revalidatePath(PATH.STUDIO.CUSTOMERS.ROOT);
-  revalidatePath(PATH.STUDIO.CUSTOMERS.VIEW(parsed.userId));
+  revalidatePath(PATH.STUDIO.USERS.ROOT);
+  revalidatePath(PATH.STUDIO.USERS.VIEW(parsed.userId));
 }
 
 export async function unbanUserAction(input: unknown) {
@@ -150,6 +150,6 @@ export async function unbanUserAction(input: unknown) {
     },
     headers: await headers(),
   });
-  revalidatePath(PATH.STUDIO.CUSTOMERS.ROOT);
-  revalidatePath(PATH.STUDIO.CUSTOMERS.VIEW(parsed.userId));
+  revalidatePath(PATH.STUDIO.USERS.ROOT);
+  revalidatePath(PATH.STUDIO.USERS.VIEW(parsed.userId));
 }

@@ -24,14 +24,10 @@ export function AddressSelectionSection({ shippingAddresses, billingAddresses }:
   const sameAsShipping = useWatch({ name: "body.sameAsShipping" as const, defaultValue: true });
 
   const shippingOptions =
-    shippingAddresses.length > 0
-      ? shippingAddresses.map((a) => ({ value: a.id, label: formatAddress(a) }))
-      : [{ value: "", label: "No shipping address", disable: true as const }];
+    shippingAddresses.length > 0 ? shippingAddresses.map((a) => ({ value: a.id, label: formatAddress(a) })) : [];
 
   const billingOptions =
-    billingAddresses.length > 0
-      ? billingAddresses.map((a) => ({ value: a.id, label: formatAddress(a) }))
-      : [{ value: "", label: "No billing address", disable: true as const }];
+    billingAddresses.length > 0 ? billingAddresses.map((a) => ({ value: a.id, label: formatAddress(a) })) : [];
 
   return (
     <div className="space-y-4">

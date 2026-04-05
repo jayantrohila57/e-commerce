@@ -2,6 +2,7 @@ import {
   BarChart3,
   CreditCard,
   DollarSign,
+  Layout,
   LayoutDashboard,
   LifeBuoy,
   type LucideIcon,
@@ -35,27 +36,9 @@ export interface NavSection {
 export const getMainItems = (role?: string): NavItem[] => [
   {
     title: "Marketing",
-    url: PATH.STUDIO.MARKETING.ROOT,
+    url: PATH.STUDIO.MARKETING.CONTENT.ROOT,
     icon: MessageSquare,
-    items: [
-      { title: "Campaigns", url: PATH.STUDIO.MARKETING.CAMPAIGNS, icon: MessageSquare },
-      { title: "Discounts", url: PATH.STUDIO.DISCOUNTS.ROOT, icon: DollarSign },
-    ],
-  },
-  {
-    title: "Analytics",
-    url: PATH.STUDIO.ANALYTICS.ROOT,
-    icon: BarChart3,
-    items: [
-      { title: "Sales", url: PATH.STUDIO.ANALYTICS.SALES, icon: BarChart3 },
-      { title: "Customers", url: PATH.STUDIO.ANALYTICS.CUSTOMERS, icon: Users },
-    ],
-  },
-  {
-    title: "Settings",
-    url: PATH.STUDIO.SETTINGS.ROOT,
-    icon: Settings2,
-    items: [{ title: "Account", url: PATH.STUDIO.SETTINGS.ACCOUNT.ROOT, icon: Settings2 }],
+    items: [{ title: "Content", url: PATH.STUDIO.MARKETING.CONTENT.ROOT, icon: Layout }],
   },
 ];
 
@@ -87,20 +70,20 @@ export const getOrdersItems = (role?: string): NavItem[] => [
     icon: ShoppingBag,
     items: [
       { title: "All Orders", url: PATH.STUDIO.ORDERS.ROOT, icon: ShoppingBag },
-      { title: "Returns", url: PATH.STUDIO.SHIPPING.ROOT, icon: Truck },
-      { title: "Refunds", url: PATH.STUDIO.PAYMENTS.ROOT, icon: CreditCard },
+      { title: "Returns", url: `${PATH.STUDIO.SHIPPING.ROOT}?status=returned`, icon: Truck },
+      { title: "Refunds", url: `${PATH.STUDIO.PAYMENT.ROOT}?status=refunded`, icon: CreditCard },
     ],
   },
 ];
 export const getCustomersItems = (role?: string): NavItem[] => [
   {
     title: "Users",
-    url: PATH.STUDIO.CUSTOMERS.ROOT,
+    url: PATH.STUDIO.USERS.ROOT,
     icon: Users,
     items: [
-      { title: "All Users", url: PATH.STUDIO.CUSTOMERS.ROOT, icon: Users },
-      { title: "Customers", url: PATH.STUDIO.CUSTOMERS.ROOT, icon: Users },
-      { title: "Staff", url: PATH.STUDIO.CUSTOMERS.ROOT, icon: Users },
+      { title: "All Users", url: PATH.STUDIO.USERS.ROOT, icon: Users },
+      { title: "Customers", url: `${PATH.STUDIO.USERS.ROOT}?role=CUSTOMER`, icon: Users },
+      { title: "Staff", url: `${PATH.STUDIO.USERS.ROOT}?role=STAFF`, icon: Users },
     ],
   },
 ];
@@ -111,9 +94,9 @@ export const getInventoryItems = (role?: string): NavItem[] => [
     icon: Package,
     items: [
       { title: "All Inventory", url: PATH.STUDIO.INVENTORY.ROOT, icon: Package },
-      { title: "Stock", url: PATH.STUDIO.PRODUCTS.ROOT, icon: Package },
-      { title: "Warehouse", url: PATH.STUDIO.CATEGORIES.ROOT, icon: Package },
-      { title: "Stock Movements", url: PATH.STUDIO.ATTRIBUTES.ROOT, icon: Tags },
+      { title: "Stock", url: `${PATH.STUDIO.INVENTORY.ROOT}?view=stock`, icon: Package },
+      { title: "Warehouses", url: PATH.STUDIO.INVENTORY.WAREHOUSES.ROOT, icon: Package },
+      { title: "Stock Movements", url: PATH.STUDIO.INVENTORY.MOVEMENTS, icon: Tags },
     ],
   },
 ];
@@ -124,50 +107,23 @@ export const getMarketingItems = (role?: string): NavItem[] => [
     icon: MessageSquare,
     items: [
       { title: "All Marketing", url: PATH.STUDIO.MARKETING.ROOT, icon: MessageSquare },
-      { title: "Campaigns", url: PATH.STUDIO.MARKETING.CAMPAIGNS, icon: MessageSquare },
-      { title: "Newsletters", url: PATH.STUDIO.MARKETING.NEWSLETTERS.ROOT, icon: Mail },
-      { title: "Discounts", url: PATH.STUDIO.DISCOUNTS.ROOT, icon: DollarSign },
-      { title: "Promotions", url: PATH.STUDIO.MARKETING.PROMOTIONS.ROOT, icon: Percent },
+      { title: "Content", url: PATH.STUDIO.MARKETING.CONTENT.ROOT, icon: Layout },
+      { title: "Discounts", url: PATH.STUDIO.DISCOUNTS.ROOT, icon: Percent },
       { title: "Coupons", url: PATH.STUDIO.MARKETING.COUPONS.ROOT, icon: Percent },
     ],
   },
-  {
-    title: "Analytics",
-    url: PATH.STUDIO.ANALYTICS.ROOT,
-    icon: BarChart3,
-    items: [
-      { title: "Sales", url: PATH.STUDIO.ANALYTICS.SALES, icon: BarChart3 },
-      { title: "Customers", url: PATH.STUDIO.ANALYTICS.CUSTOMERS, icon: Users },
-    ],
-  },
 ];
-export const getSettingsItems = (role?: string): NavItem[] => [
-  {
-    title: "Settings",
-    url: PATH.STUDIO.SETTINGS.ROOT,
-    icon: Settings2,
-    items: [
-      {
-        title: "Account",
-        url: PATH.STUDIO.SETTINGS.ACCOUNT.ROOT,
-        icon: Settings2,
-      },
-      { title: "General", url: PATH.STUDIO.SETTINGS.GENERAL.ROOT, icon: Settings2 },
-      { title: "Notifications", url: PATH.STUDIO.SETTINGS.NOTIFICATIONS.EMAIL, icon: Settings2 },
-      { title: "Security", url: PATH.STUDIO.SETTINGS.SECURITY.TWO_FACTOR_AUTH, icon: Settings2 },
-    ],
-  },
-];
+export const getSettingsItems = (role?: string): NavItem[] => [];
 export const getPaymentsItems = (role?: string): NavItem[] => [
   {
     title: "Payments",
-    url: PATH.STUDIO.PAYMENTS.ROOT,
+    url: PATH.STUDIO.PAYMENT.ROOT,
     icon: CreditCard,
     items: [
-      { title: "All Payments", url: PATH.STUDIO.PAYMENTS.ROOT, icon: CreditCard },
-      { title: "Transactions", url: PATH.STUDIO.PAYMENTS.ROOT, icon: CreditCard },
-      { title: "Refunds", url: PATH.STUDIO.PAYMENTS.ROOT, icon: CreditCard },
-      { title: "Payouts", url: PATH.STUDIO.PAYMENTS.ROOT, icon: CreditCard },
+      { title: "All Payments", url: PATH.STUDIO.PAYMENT.ROOT, icon: CreditCard },
+      { title: "Transactions", url: `${PATH.STUDIO.PAYMENT.ROOT}?status=completed`, icon: CreditCard },
+      { title: "Refunds", url: `${PATH.STUDIO.PAYMENT.ROOT}?status=refunded`, icon: CreditCard },
+      { title: "Payouts", url: `${PATH.STUDIO.PAYMENT.ROOT}?provider=cod`, icon: CreditCard },
     ],
   },
 ];
@@ -177,10 +133,11 @@ export const getShippingItems = (role?: string): NavItem[] => [
     url: PATH.STUDIO.SHIPPING.ROOT,
     icon: Truck,
     items: [
-      { title: "All Shipping", url: PATH.STUDIO.SHIPPING.ROOT, icon: Truck },
-      { title: "Zones", url: PATH.STUDIO.SHIPPING.ROOT, icon: Truck },
-      { title: "Methods", url: PATH.STUDIO.SHIPPING.ROOT, icon: Truck },
-      { title: "Rates", url: PATH.STUDIO.SHIPPING.ROOT, icon: Truck },
+      { title: "Shipments", url: PATH.STUDIO.SHIPPING.ROOT, icon: Truck },
+      { title: "Providers", url: PATH.STUDIO.SHIPPING.PROVIDERS, icon: Truck },
+      { title: "Zones", url: PATH.STUDIO.SHIPPING.ZONES, icon: Truck },
+      { title: "Methods", url: PATH.STUDIO.SHIPPING.METHODS, icon: Truck },
+      { title: "Rates", url: PATH.STUDIO.SHIPPING.RATES, icon: Truck },
     ],
   },
 ];
@@ -204,16 +161,16 @@ export const getSupportItems = (role?: string): NavItem[] => [
   },
 ];
 
-export function useSidebarSections(): NavSection[] {
-  const session = useSession();
-  const role = normalizeRole(session.data?.user?.role);
+export function useSidebarSections(): { sections: NavSection[]; isPending: boolean } {
+  const { data: session, isPending } = useSession();
+  const role = normalizeRole(session?.user?.role);
   const canSeeStudio = roleCanAccessStudio(role);
 
-  if (!canSeeStudio) {
-    return [];
+  if (isPending || !canSeeStudio) {
+    return { sections: [], isPending };
   }
 
-  return [
+  const sections: NavSection[] = [
     { title: "Dashboard", section: getDashboardItems(role) },
     {
       title: "Studio",
@@ -232,4 +189,6 @@ export function useSidebarSections(): NavSection[] {
     },
     { title: "Help & Support", section: [getSupportItems(role), getSettingsItems(role)].flat() },
   ];
+
+  return { sections, isPending: false };
 }

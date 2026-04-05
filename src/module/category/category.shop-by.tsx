@@ -1,11 +1,8 @@
 import type { Route } from "next";
-import Link from "next/link";
 import { apiServer, HydrateClient } from "@/core/api/api.server";
-import { BlurImage } from "@/shared/components/common/image";
 import Section from "@/shared/components/layout/section/section";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/components/ui/card";
 import { PATH } from "@/shared/config/routes";
-import { getImageSrc } from "@/shared/utils/lib/image.utils";
+import CategoryCard from "./category-card";
 
 export default async function ShopByCategoryGrid() {
   const { data: categories } = await apiServer.category.getMany({
@@ -25,27 +22,16 @@ export default async function ShopByCategoryGrid() {
           actionLink: PATH.STORE.CATEGORIES.ROOT as Route,
         }}
       >
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4">
-          {categories?.map((category) => (
-            <Link href={PATH.STORE.CATEGORIES.CATEGORY(category.slug) as Route} key={category.id}>
-              <Card className="flex h-full flex-col justify-between pt-0 transition-shadow duration-300 hover:shadow-lg">
-                <CardContent className="overflow-hidden rounded-sm p-0">
-                  <BlurImage
-                    src={getImageSrc(category.image)}
-                    alt={category.title ?? "Category"}
-                    width={500}
-                    height={500}
-                    className="motion-all bg-secondary aspect-square h-auto w-full rounded-t-sm object-cover group-hover:drop-shadow"
-                  />
-                </CardContent>
-                <CardHeader>
-                  <CardTitle className="text-xl font-semibold">{category.title}</CardTitle>
-                  <CardDescription className="text-muted-foreground line-clamp-3 h-12">
-                    {category.description}
-                  </CardDescription>
-                </CardHeader>
-              </Card>
-            </Link>
+        <div className="grid grid-cols-1 h-full w-full border-b sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4">
+          {categories?.slice(0, 4)?.map((category) => (
+            <CategoryCard
+              key={category.id}
+              id={category.id}
+              href={PATH.STORE.CATEGORIES.CATEGORY(category.slug) as Route}
+              title={category.title}
+              description={category.description}
+              image={category.image}
+            />
           ))}
         </div>
       </Section>

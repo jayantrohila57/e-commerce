@@ -3,7 +3,6 @@ import { detailedResponse, offsetPaginationSchema } from "@/shared/schema";
 
 export const attributeBaseSchema = z.object({
   id: z.string().min(1),
-  seriesSlug: z.string().min(1),
   slug: z.string().min(1),
   title: z.string().min(1),
   type: z.string().default("text"),
@@ -25,10 +24,11 @@ export const attributeInsertSchema = attributeBaseSchema.omit({
 
 export const attributeUpdateSchema = attributeInsertSchema.partial();
 
-// Search
+// Search & filters
 const searchSchema = z.object({
   search: z.string().min(2).max(100).optional(),
-  seriesSlug: z.string().min(1).optional(),
+  type: z.string().optional(),
+  hasValues: z.boolean().optional(),
 });
 
 export const attributeContract = {
@@ -53,16 +53,6 @@ export const attributeContract = {
   getMany: {
     input: z.object({
       query: searchSchema.merge(offsetPaginationSchema).optional(),
-    }),
-    output: detailedResponse(z.array(attributeSelectSchema)),
-  },
-
-  getBySeries: {
-    input: z.object({
-      params: z.object({
-        seriesSlug: z.string(),
-      }),
-      query: offsetPaginationSchema.optional(),
     }),
     output: detailedResponse(z.array(attributeSelectSchema)),
   },

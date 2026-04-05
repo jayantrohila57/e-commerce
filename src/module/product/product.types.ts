@@ -25,13 +25,13 @@ export type GetManyProductsOutput = z.output<typeof productContract.getMany.outp
 export type GetProductBySlugInput = z.input<typeof productContract.getBySlug.input>;
 export type GetProductBySlugOutput = z.output<typeof productContract.getBySlug.output>;
 
+// GET BY SUBCATEGORY SLUG
+export type GetProductsBySubcategorySlugInput = z.input<typeof productContract.getBySubcategorySlug.input>;
+export type GetProductsBySubcategorySlugOutput = z.output<typeof productContract.getBySubcategorySlug.output>;
+
 // PDP PRODUCT
 export type GetPDPProductInput = z.input<typeof productContract.getPDPProduct.input>;
 export type GetPDPProductOutput = z.output<typeof productContract.getPDPProduct.output>;
-
-// PRODUCTS BY SERIES
-export type GetProductsBySeriesSlugInput = z.input<typeof productContract.getProductsBySeriesSlug.input>;
-export type GetProductsBySeriesSlugOutput = z.output<typeof productContract.getProductsBySeriesSlug.output>;
 
 // PRODUCT WITH VARIANTS
 export type GetProductWithProductVariantsInput = z.input<typeof productContract.getProductWithProductVariants.input>;

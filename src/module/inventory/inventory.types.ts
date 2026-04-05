@@ -3,6 +3,7 @@ import type {
   inventoryBaseSchema,
   inventoryContract,
   inventoryInsertSchema,
+  inventoryMovementSchema,
   inventorySelectSchema,
   inventoryUpdateSchema,
 } from "./inventory.schema";
@@ -10,7 +11,10 @@ import type {
 // =========================
 // BASE TYPES
 // =========================
-export type InventoryBase = z.infer<typeof inventoryBaseSchema>;
+export type InventoryBase = z.infer<typeof inventoryBaseSchema> & {
+  warehouseCode?: string | null;
+  warehouseName?: string | null;
+};
 export type InventorySelect = z.infer<typeof inventorySelectSchema>;
 export type InventoryInsert = z.infer<typeof inventoryInsertSchema>;
 export type InventoryUpdate = z.infer<typeof inventoryUpdateSchema>;
@@ -44,3 +48,7 @@ export type UpdateStockOutput = z.output<typeof inventoryContract.updateStock.ou
 
 export type SearchInventoryInput = z.input<typeof inventoryContract.search.input>;
 export type SearchInventoryOutput = z.output<typeof inventoryContract.search.output>;
+
+export type InventoryMovement = z.infer<typeof inventoryMovementSchema>;
+export type GetInventoryMovementsInput = z.input<typeof inventoryContract.getMovements.input>;
+export type GetInventoryMovementsOutput = z.output<typeof inventoryContract.getMovements.output>;

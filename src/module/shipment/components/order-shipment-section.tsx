@@ -40,7 +40,7 @@ export function OrderShipmentSection({ order, shipments }: OrderShipmentSectionP
   }
 
   return (
-    <Card>
+    <Card className="bg-transparent border-none border-r rounded-none border-b">
       <CardHeader>
         <CardTitle className="text-sm font-semibold">Shipments</CardTitle>
       </CardHeader>
@@ -56,10 +56,10 @@ export function OrderShipmentSection({ order, shipments }: OrderShipmentSectionP
             <DialogTrigger asChild>
               <Button size="sm">Create Shipment</Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="rounded-none">
               <DialogHeader>
                 <DialogTitle>Create shipment</DialogTitle>
-                <DialogDescription>Add tracking and carrier details for this order.</DialogDescription>
+                <DialogDescription>Add tracking and shipping details for this order.</DialogDescription>
               </DialogHeader>
               <ShipmentForm orderId={order.id} onSuccess={handleCreateSuccess} onCancel={() => setCreateOpen(false)} />
             </DialogContent>
@@ -69,7 +69,7 @@ export function OrderShipmentSection({ order, shipments }: OrderShipmentSectionP
         {shipments.length > 0 && (
           <div className="space-y-4">
             {shipments.map((shipment) => (
-              <div key={shipment.id} className="rounded-lg border p-3 space-y-3">
+              <div key={shipment.id} className="rounded-none border p-3 space-y-3">
                 <ShipmentTimeline shipment={shipment} />
                 {statusFormId === shipment.id ? (
                   <ShipmentStatusForm

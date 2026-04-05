@@ -18,22 +18,82 @@ export default function OrderTable({ data }: { data: AdminOrdersOutput }) {
   const items = data?.data ?? [];
   const pageCount = data?.meta?.pagination?.totalPages;
   const rowCount = data?.meta?.pagination?.total;
-
-  if (items.length === 0) {
-    return (
-      <EmptyState title="No Orders Found" description="There are no orders yet." icons={[Book, PencilIcon, Tag]} />
-    );
-  }
+  const currentPage = data?.meta?.pagination?.page;
+  const currentLimit = data?.meta?.pagination?.limit;
 
   return (
     <DataTable
       data={items}
       columns={columns}
       displayKey={"id"}
+      extraFilters={[
+        {
+          key: "status",
+          title: "Status",
+          options: [
+            { label: "Pending", value: "pending", color: "" },
+            { label: "Paid", value: "paid", color: "" },
+            { label: "Shipped", value: "shipped", color: "" },
+            { label: "Delivered", value: "delivered", color: "" },
+            { label: "Cancelled", value: "cancelled", color: "" },
+          ],
+        },
+        {
+          key: "customerType",
+          title: "Customer",
+          options: [
+            { label: "Registered", value: "registered", color: "" },
+            { label: "Guest", value: "guest", color: "" },
+          ],
+        },
+        {
+          key: "shippingProviderPresence",
+          title: "Provider",
+          options: [
+            { label: "Has Provider", value: "assigned", color: "" },
+            { label: "No Provider", value: "unassigned", color: "" },
+          ],
+        },
+        {
+          key: "shippingMethodPresence",
+          title: "Method",
+          options: [
+            { label: "Has Method", value: "assigned", color: "" },
+            { label: "No Method", value: "unassigned", color: "" },
+          ],
+        },
+        {
+          key: "shippingZonePresence",
+          title: "Zone",
+          options: [
+            { label: "Has Zone", value: "assigned", color: "" },
+            { label: "No Zone", value: "unassigned", color: "" },
+          ],
+        },
+        {
+          key: "warehousePresence",
+          title: "Warehouse",
+          options: [
+            { label: "Has Warehouse", value: "assigned", color: "" },
+            { label: "No Warehouse", value: "unassigned", color: "" },
+          ],
+        },
+      ]}
       deletionOptions={tableFilters.deletionStatus}
       bulkActions={bulkActions}
       pageCount={pageCount}
       rowCount={rowCount}
+      initialPageIndex={typeof currentPage === "number" ? currentPage - 1 : undefined}
+      initialPageSize={typeof currentLimit === "number" ? currentLimit : undefined}
+      emptyState={{
+        title: "No Orders Found",
+        description: "There are no orders yet.",
+        icons: [Book, PencilIcon, Tag],
+        action: {
+          label: "Create Order",
+          url: "/studio/orders/new",
+        },
+      }}
     />
   );
 }

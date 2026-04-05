@@ -1,14 +1,16 @@
-import { apiServer } from "@/core/api/api.server";
 import Section from "@/shared/components/layout/section/section";
-import { CategoryBanner } from "../category/category.banner";
+import { getMarketingContentBlock } from "../marketing-content/marketing-content.fetch";
+import { MarketingCarousel } from "./site.carousel";
 
 export default async function SiteHero() {
-  const { data } = await apiServer.category.getMany({
-    query: {},
+  const content = await getMarketingContentBlock({
+    page: "home",
+    section: "crousel",
+    limit: 1,
   });
   return (
     <Section>
-      <CategoryBanner data={data} />
+      <MarketingCarousel items={content?.items ?? []} />
     </Section>
   );
 }

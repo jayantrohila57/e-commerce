@@ -6,8 +6,8 @@ import { Controller, useFormContext } from "react-hook-form";
 import { FormControl, FormDescription, FormItem, FormLabel, FormMessage } from "@/shared/components/common/form";
 import { RadioGroup, RadioGroupItem } from "@/shared/components/ui/radio-group";
 import { cn } from "@/shared/utils/lib/utils";
-import type { FormInputProps } from "../form.types";
 import { Label } from "../../ui/label";
+import type { FormInputProps } from "../form.types";
 
 export const InputRadio: React.FC<FormInputProps> = (props) => {
   const reactId = useId();

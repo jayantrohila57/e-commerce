@@ -50,7 +50,7 @@ export const categoryContract = {
   get: {
     input: z.object({
       params: z.object({
-        id: z.string().uuid().optional(),
+        id: z.string().min(1).optional(),
         slug: z.string().optional(),
       }),
     }),

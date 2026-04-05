@@ -16,6 +16,10 @@ const STATUS_CONFIG: Record<
     label: "Pending",
     variant: "secondary",
   },
+  returned: {
+    label: "Returned",
+    variant: "outline",
+  },
   paid: {
     label: "Paid",
     variant: "default",

@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from "uuid";
 import { createTRPCRouter, customerProcedure, publicProcedure } from "@/core/api/api.methods";
 import { db } from "@/core/db/db";
 import { cart, cartLine, inventoryItem, inventoryReservation, productVariant } from "@/core/db/db.schema";
+import { applyInventoryDelta, getInventoryForVariantAndWarehouse } from "@/module/inventory/inventory.api";
 import { MESSAGE, STATUS } from "@/shared/config/api.config";
 import { API_RESPONSE } from "@/shared/config/api.utils";
 import { debugError } from "@/shared/utils/lib/logger.utils";
@@ -87,56 +88,80 @@ async function getCartWithItems(cartId: string) {
 /**
  * Helper function to check and reserve inventory
  */
-async function reserveInventory(variantId: string, quantity: number, userId?: string) {
-  const inventory = await db.query.inventoryItem.findFirst({
-    where: (inv, { and, eq, isNull }) => and(eq(inv.variantId, variantId), isNull(inv.deletedAt)),
+async function reserveInventory(variantId: string, quantity: number, userId?: string, warehouseId?: string | null) {
+  const result = await db.transaction(async (tx) => {
+    const inventory = await getInventoryForVariantAndWarehouse(tx, {
+      variantId,
+      warehouseId: warehouseId ?? null,
+    });
+
+    if (!inventory) {
+      throw new Error("Inventory not found for this variant");
+    }
+
+    const availableQuantity = inventory.quantity - inventory.reserved;
+
+    if (availableQuantity < quantity) {
+      throw new Error(`Insufficient inventory. Only ${availableQuantity} items available`);
+    }
+
+    const reservationId = uuidv4();
+
+    await tx.insert(inventoryReservation).values({
+      id: reservationId,
+      inventoryId: inventory.id,
+      warehouseId: inventory.warehouseId,
+      userId: userId || null,
+      quantity,
+      expiresAt: new Date(Date.now() + 30 * 60 * 1000),
+      createdAt: new Date(),
+    });
+
+    await applyInventoryDelta(tx, {
+      inventoryId: inventory.id,
+      reservedDelta: quantity,
+      type: "order",
+      warehouseId: inventory.warehouseId,
+      variantId: inventory.variantId,
+      orderId: null,
+      refundId: null,
+      reason: "Cart reservation",
+      adjustedBy: userId ?? null,
+    });
+
+    return reservationId;
   });
 
-  if (!inventory) {
-    throw new Error("Inventory not found for this variant");
-  }
-
-  const availableQuantity = inventory.quantity - inventory.reserved;
-
-  if (availableQuantity < quantity) {
-    throw new Error(`Insufficient inventory. Only ${availableQuantity} items available`);
-  }
-
-  // Create inventory reservation
-  const reservationId = uuidv4();
-  await db.insert(inventoryReservation).values({
-    id: reservationId,
-    inventoryId: inventory.id,
-    userId: userId || null,
-    quantity,
-    expiresAt: new Date(Date.now() + 30 * 60 * 1000), // 30 minutes
-    createdAt: new Date(),
-  });
-
-  // Update reserved count
-  await db
-    .update(inventoryItem)
-    .set({ reserved: inventory.reserved + quantity })
-    .where(eq(inventoryItem.id, inventory.id));
-
-  return reservationId;
+  return result;
 }
 
 /**
  * Helper function to release inventory reservation
  */
 async function releaseReservation(inventoryId: string, quantity: number) {
-  const inventory = await db.query.inventoryItem.findFirst({
-    where: eq(inventoryItem.id, inventoryId),
+  await db.transaction(async (tx) => {
+    const inventory = await tx.query.inventoryItem.findFirst({
+      where: eq(inventoryItem.id, inventoryId),
+    });
+
+    if (!inventory) return;
+
+    const releaseQuantity = Math.min(quantity, inventory.reserved);
+
+    if (releaseQuantity <= 0) return;
+
+    await applyInventoryDelta(tx, {
+      inventoryId: inventory.id,
+      reservedDelta: -releaseQuantity,
+      type: "order",
+      warehouseId: inventory.warehouseId,
+      variantId: inventory.variantId,
+      orderId: null,
+      refundId: null,
+      reason: "Cart reservation released",
+      adjustedBy: null,
+    });
   });
-
-  if (!inventory) return;
-
-  // Update reserved count
-  await db
-    .update(inventoryItem)
-    .set({ reserved: Math.max(0, inventory.reserved - quantity) })
-    .where(eq(inventoryItem.id, inventoryId));
 }
 
 export const cartRouter = createTRPCRouter({
@@ -236,7 +261,7 @@ export const cartRouter = createTRPCRouter({
     .output(cartContract.add.output)
     .mutation(async ({ input, ctx }) => {
       try {
-        const { variantId, quantity, sessionId } = input.body;
+        const { variantId, quantity, sessionId, warehouseId } = input.body;
         const userId = ctx.user?.id;
 
         // Get variant details
@@ -266,9 +291,9 @@ export const cartRouter = createTRPCRouter({
           }
         }
 
-        // Reserve inventory
+        // Reserve inventory (warehouse-aware when warehouseId is provided)
         try {
-          await reserveInventory(variantId, quantity, userId);
+          await reserveInventory(variantId, quantity, userId, warehouseId);
         } catch (inventoryErr) {
           return API_RESPONSE(STATUS.FAILED, (inventoryErr as Error).message, null);
         }

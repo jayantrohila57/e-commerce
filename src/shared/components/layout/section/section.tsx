@@ -1,3 +1,4 @@
+import type { LucideIcon } from "lucide-react";
 import type { Route } from "next";
 import Link from "next/link";
 import { cn } from "@/shared/utils/lib/utils";
@@ -14,6 +15,8 @@ interface SectionProps {
   variant?: "default" | "full";
   className?: string;
   actionLink?: Route;
+  isMinHeight?: boolean;
+  icon?: LucideIcon;
 }
 
 export default function Section({
@@ -23,28 +26,38 @@ export default function Section({
   action,
   children,
   separator = true,
+  isMinHeight = true,
   className,
+  icon,
   actionLink,
 }: SectionProps) {
+  const DynamicIcon = icon;
   return (
-    <Card className={cn("bg-card/0 ring-0 gap-0 border-none p-0 shadow-none", className)}>
+    <Card className={cn("bg-background ring-0 gap-0 border-none p-0 shadow-none", className)}>
       {title && description && (
-        <div className={variant === "full" ? "w-full" : "max-w-9xl container mx-auto mb-4"}>
-          <CardHeader className="px-0">
-            {title && <CardTitle className="text-4xl">{title}</CardTitle>}
-            {description && <CardDescription>{description}</CardDescription>}
-            <CardAction>
+        <div className="w-full p-0 border-t flex flex-row">
+          {DynamicIcon && (
+            <div className="h-full w-40 aspect-square border-r flex items-center justify-center">
+              <DynamicIcon className="w-10 h-10 text-muted-foreground" />
+            </div>
+          )}
+          <CardHeader className="p-4 w-full">
+            {title && <CardTitle className="text-4xl font-semibold">{title}</CardTitle>}
+            {description && (
+              <CardDescription className="text-base text-muted-foreground">{description}</CardDescription>
+            )}
+            <CardAction className="flex flex-row items-end justify-end mt-6">
               {action && actionLink && (
                 <Link href={actionLink}>
-                  <Button variant={"outline"}>{action}</Button>
+                  <Button>{action}</Button>
                 </Link>
               )}
             </CardAction>
           </CardHeader>
         </div>
       )}
-      {separator && <Separator className="mb-4" />}
-      <CardContent className="min-h-[600px] p-0">{children}</CardContent>
+      <div className="w-full  border-t"></div>
+      <CardContent className={cn("p-0", isMinHeight && "min-h-[600px]")}>{children}</CardContent>
     </Card>
   );
 }

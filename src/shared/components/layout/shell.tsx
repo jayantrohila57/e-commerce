@@ -20,7 +20,7 @@ export const Shell = ({ children }: ShellComponent) => {
 const HeaderVariants = cva("", {
   variants: {
     variant: {
-      default: "fixed h-16 bg-background/50 top-0 left-0 backdrop-blur-md right-0 z-50 p-4 bg-none",
+      default: "fixed top-0 left-0 right-0 z-50 bg-none",
     },
   },
   defaultVariants: {
@@ -59,7 +59,7 @@ Shell.Aside = Aside;
 const FooterVariants = cva("", {
   variants: {
     variant: {
-      default: "p-4",
+      default: "",
     },
   },
   defaultVariants: {
@@ -84,7 +84,7 @@ Shell.Footer = Footer;
 const MainVariants = cva("", {
   variants: {
     variant: {
-      default: "min-h-screen p-4",
+      default: "min-h-screen pt-16 border-r",
       dashboard: "flex flex-1 h-screen overflow-hidden flex-col",
     },
   },
@@ -110,10 +110,10 @@ Shell.Main = Main;
 const SectionVariants = cva("", {
   variants: {
     variant: {
-      default: "my-12 container mx-auto px-0 max-w-9xl ",
-      full: "w-full",
+      default: "",
+      full: "w-full h-full",
       flexed: "my-12 flex container mx-auto px-0 max-w-9xl ",
-      dashboard: "flex flex-col gap-0 p-2 bg-background",
+      dashboard: "flex-1 gap-0 bg-background",
       center: "flex min-h-svh flex-col items-center justify-center p-2 md:p-10",
     },
   },

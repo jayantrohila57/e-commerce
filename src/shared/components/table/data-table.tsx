@@ -14,6 +14,7 @@ import {
   useReactTable,
   type VisibilityState,
 } from "@tanstack/react-table";
+import type { LucideIcon } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { type ComponentType, useMemo, useState } from "react";
 import {
@@ -36,11 +37,12 @@ import {
   TableRow,
 } from "@/shared/components/ui/table";
 import { useTableUrlSync } from "@/shared/utils/hooks/use-table-url-sync";
+import { EmptyState } from "../common/empty-state";
 import { Card, CardContent, CardFooter } from "../ui/card";
 import { Separator } from "../ui/separator";
 import type { BulkAction } from "./custom-action/bulk-operations.factory";
 import { useBulkActions } from "./custom-action/bulk-operations.factory";
-import { DataTableProvider } from "./data-table-context";
+import { DataTableProvider, type ExtraFilterConfig } from "./data-table-context";
 import { DataTablePagination } from "./data-table-pagination";
 import { DataTableToolbar } from "./data-table-toolbar";
 
@@ -71,6 +73,7 @@ interface DataTableProps<TData, TValue> {
     color: string;
     icon?: ComponentType<{ className?: string }>;
   }[];
+  extraFilters?: ExtraFilterConfig[];
   displayKey: keyof TData;
   bulkActions?: BulkAction<TData>[];
   deletionOptions?: {
@@ -81,6 +84,19 @@ interface DataTableProps<TData, TValue> {
   }[];
   pageCount?: number;
   rowCount?: number;
+  initialPageIndex?: number;
+  initialPageSize?: number;
+  initialSortBy?: string;
+  initialSortDir?: "asc" | "desc";
+  emptyState?: {
+    title: string;
+    description: string;
+    icons?: LucideIcon[];
+    action: {
+      label: string;
+      url: string;
+    };
+  };
 }
 
 export function DataTable<TData, TValue>({
@@ -91,34 +107,47 @@ export function DataTable<TData, TValue>({
   visibilityOptions,
   featuredOptions,
   deletionOptions,
+  extraFilters,
   displayKey,
   bulkActions,
   pageCount,
   rowCount,
+  initialPageIndex,
+  initialPageSize,
+  initialSortBy,
+  initialSortDir,
+  emptyState,
 }: DataTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [sorting, setSorting] = useState<SortingState>([]);
+  const [sorting, setSortingState] = useState<SortingState>(() => {
+    if (initialSortBy && initialSortDir) {
+      return [{ id: initialSortBy, desc: initialSortDir === "desc" }];
+    }
+    return [];
+  });
 
-  const { setFilter, setSearch, clearFilters } = useTableUrlSync();
+  const { setFilter, setSearch, clearFilters, setSorting } = useTableUrlSync();
   const searchParams = useSearchParams();
 
   const currentFilters = useMemo(() => {
     const filters: Record<string, string | null> = {};
-    const keys = ["status", "visibility", "displayType", "color", "contentType", "isFeatured", "deleted"];
+    const baseKeys = ["status", "visibility", "displayType", "color", "contentType", "isFeatured", "deleted"];
+    const extraKeys = extraFilters?.map((f) => f.key) ?? [];
+    const keys = [...baseKeys, ...extraKeys];
     keys.forEach((key) => {
       filters[key] = searchParams.get(key);
     });
     return filters;
-  }, [searchParams]);
+  }, [searchParams, extraFilters]);
 
   const pagination = useMemo(
     () => ({
-      pageIndex: Math.max(0, parseInt(searchParams.get("page") ?? "1", 10) - 1),
-      pageSize: parseInt(searchParams.get("limit") ?? "20", 10),
+      pageIndex: initialPageIndex ?? Math.max(0, parseInt(searchParams.get("page") ?? "1", 10) - 1),
+      pageSize: initialPageSize ?? parseInt(searchParams.get("limit") ?? "20", 10),
     }),
-    [searchParams],
+    [initialPageIndex, initialPageSize, searchParams],
   );
 
   const table = useReactTable({
@@ -135,7 +164,7 @@ export function DataTable<TData, TValue>({
     manualPagination: true,
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
-    onSortingChange: setSorting,
+    onSortingChange: setSortingState,
     onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
     getCoreRowModel: getCoreRowModel(),
@@ -196,23 +225,25 @@ export function DataTable<TData, TValue>({
         visibilityOptions,
         featuredOptions,
         deletionOptions,
+        extraFilters,
         filters: currentFilters,
         setFilter,
         setSearch,
         clearFilters,
+        setSorting,
         bulkActions,
         runBulkAction: bulkActions && bulkActions.length > 0 ? runBulkAction : undefined,
         isBulkActionLoading: bulk.isBulkActionLoading,
         rowCount: rowCount ?? data.length,
       }}
     >
-      <Card className="p-0 bg-transparent border-none shadow-none">
-        <CardContent className="p-0">
+      <Card className="bg-transparent justify-between h-full p-0 gap-0 shadow-none border-0 ring-0 ">
+        <CardContent className="p-0 border-b">
           <DataTableToolbar />
         </CardContent>
-        <CardContent className="relative overflow-x-hidden p-0">
+        <CardContent className="p-0 relative border-b h-[calc(100vh-17.6rem)] w-full overflow-auto">
           <Table>
-            <TableHeader className="sticky top-0 z-10 rounded-md">
+            <TableHeader className="sticky bg-background/50 backdrop-blur-md top-0 z-10 rounded-none">
               {table?.getHeaderGroups()?.map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
                   {headerGroup.headers.map((header) => {
@@ -237,7 +268,17 @@ export function DataTable<TData, TValue>({
               ) : (
                 <TableRow>
                   <TableCell colSpan={columns.length} className="h-[60vh] text-center">
-                    No results found
+                    <EmptyState
+                      title={emptyState?.title ?? "No Data Found"}
+                      description={
+                        emptyState?.description ?? "You don't have any data yet. Data helps you organize your data."
+                      }
+                      icons={emptyState?.icons}
+                      action={{
+                        label: emptyState?.action?.label ?? "Create",
+                        url: emptyState?.action?.url ?? "/",
+                      }}
+                    />
                   </TableCell>
                 </TableRow>
               )}
@@ -257,7 +298,7 @@ export function DataTable<TData, TValue>({
             </TableFooter>
           </Table>
         </CardContent>
-        <CardFooter className="w-full p-0">
+        <CardFooter className="w-full h-16 p-0">
           <DataTablePagination />
         </CardFooter>
       </Card>

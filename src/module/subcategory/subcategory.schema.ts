@@ -1,6 +1,6 @@
 import { z } from "zod/v3";
+import { productVariantBaseSchema } from "@/module/product-variant/product-variant.schema";
 import { detailedResponse, offsetPaginationSchema, visibilityEnum } from "@/shared/schema";
-// Note: seriesSelectSchema import has been removed to avoid circular dependency
 
 export const displayTypeEnum = z.enum(["grid", "carousel", "banner", "list", "featured"]);
 
@@ -48,6 +48,7 @@ const searchSchema = z.object({
   visibility: visibilityEnum.optional(),
   isFeatured: z.boolean().optional(),
   categorySlug: z.string().optional(),
+  deleted: z.boolean().optional(),
 });
 
 // --- Contract ---
@@ -70,7 +71,41 @@ export const subcategoryContract = {
       z
         .object({
           subcategoryData: subcategorySelectSchema,
-          seriesData: z.array(z.any()), // Using z.any() to avoid circular dependency
+          variants: z.array(
+            z.object({
+              // Variant data
+              id: z.string(),
+              slug: z.string(),
+              title: z.string(),
+              priceModifierType: z.string(),
+              priceModifierValue: z.string(),
+              attributes: z
+                .array(
+                  z.object({
+                    title: z.string(),
+                    type: z.string(),
+                    value: z.string(),
+                  }),
+                )
+                .nullable(),
+              media: z
+                .array(
+                  z.object({
+                    url: z.string(),
+                  }),
+                )
+                .nullable(),
+              // Product base data
+              productId: z.string(),
+              productTitle: z.string(),
+              productSlug: z.string(),
+              productDescription: z.string().nullable(),
+              productBasePrice: z.number(),
+              productBaseImage: z.string().nullable(),
+              // Computed
+              finalPrice: z.number(),
+            }),
+          ),
         })
         .nullable(),
     ),
@@ -96,6 +131,26 @@ export const subcategoryContract = {
       params: z.object({ id: z.string() }),
     }),
     output: detailedResponse(subcategorySelectSchema.pick({ id: true }).nullable()),
+  },
+
+  getAvailable: {
+    input: z.object({
+      query: z.object({
+        excludeCategorySlug: z.string(),
+        search: z.string().min(2).max(100).optional(),
+      }),
+    }),
+    output: detailedResponse(z.array(subcategorySelectSchema)),
+  },
+
+  transfer: {
+    input: z.object({
+      params: z.object({ id: z.string() }),
+      body: z.object({
+        categorySlug: z.string().min(1),
+      }),
+    }),
+    output: detailedResponse(subcategorySelectSchema),
   },
 };
 

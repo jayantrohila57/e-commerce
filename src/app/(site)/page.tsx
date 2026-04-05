@@ -1,5 +1,6 @@
 import GetFeaturedCategories from "@/module/category/category.get-featured";
 import ShopByCategoryGrid from "@/module/category/category.shop-by";
+import { ContentCTA, ContentFeatureHighlights, ContentOfferBanner } from "@/module/site/content-sections";
 import SiteHero from "@/module/site/site.hero";
 import Shell from "@/shared/components/layout/shell";
 
@@ -18,7 +19,13 @@ export default async function Home({}: PageProps<"/">) {
         <GetFeaturedCategories />
       </Shell.Section>
       <Shell.Section>
+        <ContentOfferBanner page="home" />
+      </Shell.Section>
+      <Shell.Section>
         <ShopByCategoryGrid />
+      </Shell.Section>
+      <Shell.Section>
+        <ContentCTA page="home" />
       </Shell.Section>
     </Shell>
   );

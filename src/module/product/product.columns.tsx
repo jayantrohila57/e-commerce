@@ -1,11 +1,12 @@
 "use client";
 
-import type { Row } from "@tanstack/react-table";
+import type { ColumnDef, Row } from "@tanstack/react-table";
 import type { Route } from "next";
 import { useRouter } from "next/navigation";
 import { useMemo } from "react";
 import { toast } from "sonner";
 import { apiClient } from "@/core/api/api.client";
+import { DataTableColumnHeader } from "@/shared/components/table/data-table-column-header";
 import { commonColumns } from "@/shared/components/table/data-table-columns";
 import { STATUS } from "@/shared/config/api.config";
 import { productTableConfig } from "./product.table.config";
@@ -27,7 +28,7 @@ export function useProductColumns() {
     onError: (err) => toast.error(err.message),
   });
 
-  return useMemo(() => {
+  return useMemo<ColumnDef<ProductBase>[]>(() => {
     const handleView = (row: Row<ProductBase>) => {
       const slug = row.getValue(productTableConfig.fields.slug);
       if (slug && typeof slug === "string") {
@@ -56,6 +57,25 @@ export function useProductColumns() {
     return [
       ...commonColumns.selectColumn<ProductBase>(),
       ...commonColumns.titleColumn<ProductBase>(productTableConfig.routes.studio),
+      {
+        accessorKey: "categorySlug",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Category" />,
+        cell: ({ row }) => (
+          <div className="w-[160px] truncate text-xs text-muted-foreground">
+            {row.getValue("categorySlug") as string}
+          </div>
+        ),
+      },
+      {
+        accessorKey: "subcategorySlug",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Subcategory" />,
+        cell: ({ row }) => (
+          <div className="w-[160px] truncate text-xs text-muted-foreground">
+            {row.getValue("subcategorySlug") as string}
+          </div>
+        ),
+      },
+      ...commonColumns.statusColumn<ProductBase>(),
       ...commonColumns.slugColumn<ProductBase>(productTableConfig.routes.viewStorePrefix),
       ...commonColumns.createdAtColumn<ProductBase>(),
       ...commonColumns.updatedAtColumn<ProductBase>(),

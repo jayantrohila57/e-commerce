@@ -1,8 +1,8 @@
-import { and, eq, ilike, isNull, sql } from "drizzle-orm";
+import { and, eq, ilike, isNull, not, sql } from "drizzle-orm";
 import { v4 as uuidv4 } from "uuid";
 import { createTRPCRouter, publicProcedure, staffProcedure } from "@/core/api/api.methods";
 import { db } from "@/core/db/db";
-import { product } from "@/core/db/db.schema";
+import { product, productVariant } from "@/core/db/db.schema";
 import { MESSAGE, STATUS } from "@/shared/config/api.config";
 import { API_RESPONSE } from "@/shared/config/api.utils";
 import { buildPagination, buildPaginationMeta } from "@/shared/schema";
@@ -74,18 +74,58 @@ export const productRouter = createTRPCRouter({
         return API_RESPONSE(STATUS.ERROR, MESSAGE.PRODUCT.GET_BY_SLUG.ERROR, null, err as Error);
       }
     }),
+  getBySubcategorySlug: publicProcedure
+    .input(productContract.getBySubcategorySlug.input)
+    .output(productContract.getBySubcategorySlug.output)
+    .query(async ({ input }) => {
+      try {
+        const { subcategorySlug, categorySlug } = input.params;
+
+        const products = await db.query.product.findMany({
+          where: (p, { eq, and, isNull }) =>
+            and(
+              eq(p.subcategorySlug, subcategorySlug),
+              eq(p.categorySlug, categorySlug),
+              eq(p.isActive, true),
+              eq(p.status, "live"),
+              isNull(p.deletedAt),
+            ),
+          with: {
+            variants: {
+              where: (pv, { isNull }) => isNull(pv.deletedAt),
+            },
+          },
+          orderBy: (p, { desc }) => [desc(p.createdAt)],
+        });
+
+        return API_RESPONSE(
+          products.length ? STATUS.SUCCESS : STATUS.FAILED,
+          products.length ? MESSAGE.PRODUCT.GET_MANY.SUCCESS : MESSAGE.PRODUCT.GET_MANY.FAILED,
+          products,
+        );
+      } catch (err) {
+        debugError("PRODUCT:GET_BY_SUBCATEGORY_SLUG:ERROR", err);
+        return API_RESPONSE(STATUS.ERROR, MESSAGE.PRODUCT.GET_MANY.ERROR, null, err as Error);
+      }
+    }),
   getMany: staffProcedure
     .input(productContract.getMany.input)
     .output(productContract.getMany.output)
     .query(async ({ input }) => {
       try {
         const { query } = input;
-        const { limit, offset, categorySlug, seriesSlug, isActive, search } = query;
+        const { limit, offset, categorySlug, subcategorySlug, isActive, deleted, search, status } = query;
 
-        const conditions = [isNull(product.deletedAt)];
+        const conditions = [];
+        if (deleted === true) {
+          conditions.push(not(isNull(product.deletedAt)));
+        } else {
+          conditions.push(isNull(product.deletedAt));
+        }
         if (categorySlug) conditions.push(eq(product.categorySlug, categorySlug));
-        if (seriesSlug) conditions.push(eq(product.seriesSlug, seriesSlug));
+        if (subcategorySlug) conditions.push(eq(product.subcategorySlug, subcategorySlug));
         if (isActive !== undefined) conditions.push(eq(product.isActive, isActive));
+        if (status) conditions.push(eq(product.status, status));
         if (search) conditions.push(ilike(product.title, `%${search}%`));
 
         const where = conditions.length ? and(...conditions) : undefined;
@@ -130,41 +170,6 @@ export const productRouter = createTRPCRouter({
         return API_RESPONSE(STATUS.ERROR, MESSAGE.PRODUCT.GET_MANY.ERROR, null, err as Error);
       }
     }),
-  getProductsBySeriesSlug: publicProcedure
-    .input(productContract.getProductsBySeriesSlug.input)
-    .output(productContract.getProductsBySeriesSlug.output)
-    .query(async ({ input }) => {
-      try {
-        const { slug } = input.params;
-
-        const products = await db.query.product.findMany({
-          where: (p, { eq, and, isNull }) => and(eq(p.seriesSlug, slug), isNull(p.deletedAt), eq(p.isActive, true)),
-          with: {
-            variants: {
-              where: (pv, { isNull }) => isNull(pv.deletedAt),
-              orderBy: (pv, { asc }) => [asc(pv.createdAt)],
-            },
-          },
-          orderBy: (p, { desc }) => [desc(p.createdAt)],
-        });
-
-        if (!products.length) {
-          return API_RESPONSE(STATUS.FAILED, MESSAGE.PRODUCT.GET_BY_SERIES.FAILED, []);
-        }
-
-        const flattened = products.flatMap((p) =>
-          p.variants.map((v) => ({
-            ...p,
-            variant: v,
-          })),
-        );
-
-        return API_RESPONSE(STATUS.SUCCESS, MESSAGE.PRODUCT.GET_BY_SERIES.SUCCESS, flattened);
-      } catch (err) {
-        debugError("PRODUCT:GET_BY_SERIES:ERROR", err);
-        return API_RESPONSE(STATUS.ERROR, MESSAGE.PRODUCT.GET_BY_SERIES.ERROR, null, err as Error);
-      }
-    }),
   getPDPProductByVariant: publicProcedure
     .input(productContract.getPDPProduct.input)
     .output(productContract.getPDPProduct.output)
@@ -203,6 +208,96 @@ export const productRouter = createTRPCRouter({
         });
       } catch (err) {
         debugError("PRODUCT:GET_PDP_PRODUCT:ERROR", err);
+        return API_RESPONSE(STATUS.ERROR, MESSAGE.PRODUCT.GET_PDP_PRODUCT.ERROR, null, err as Error);
+      }
+    }),
+  getPDPProductByVariantFullPath: publicProcedure
+    .input(productContract.getPDPProductByVariantFullPath.input)
+    .output(productContract.getPDPProductByVariantFullPath.output)
+    .query(async ({ input }) => {
+      try {
+        const { categorySlug, subcategorySlug, variantSlug } = input.params;
+
+        // Step 1: Try to locate variant by slug
+        const variant = await db.query.productVariant.findFirst({
+          where: (pv, { eq, and, isNull }) => and(eq(pv.slug, variantSlug), isNull(pv.deletedAt)),
+        });
+
+        if (variant) {
+          const productData = await db.query.product.findFirst({
+            where: (p, { eq, and, isNull }) =>
+              and(
+                eq(p.id, variant.productId),
+                eq(p.categorySlug, categorySlug),
+                eq(p.subcategorySlug, subcategorySlug),
+                eq(p.isActive, true),
+                eq(p.status, "live"),
+                isNull(p.deletedAt),
+              ),
+            with: { variants: { where: (pv, { isNull }) => isNull(pv.deletedAt) } },
+          });
+          if (!productData) {
+            return API_RESPONSE(STATUS.FAILED, MESSAGE.PRODUCT.GET_PDP_PRODUCT.NOT_FOUND, null);
+          }
+          // Ensure variant matching URL is first so PDP displays correct one
+          const variants = [...productData.variants];
+          const matchIdx = variants.findIndex((v) => v.slug === variantSlug);
+          if (matchIdx > 0) {
+            const [matched] = variants.splice(matchIdx, 1);
+            variants.unshift(matched);
+          }
+          return API_RESPONSE(STATUS.SUCCESS, MESSAGE.PRODUCT.GET_PDP_PRODUCT.SUCCESS, {
+            product: { ...productData, variants },
+          });
+        }
+
+        // Fallback: variantSlug may be product slug (product without variants)
+        const found = await db.query.product.findFirst({
+          where: (p, { eq, and, isNull }) =>
+            and(
+              eq(p.slug, variantSlug),
+              eq(p.categorySlug, categorySlug),
+              eq(p.subcategorySlug, subcategorySlug),
+              eq(p.isActive, true),
+              eq(p.status, "live"),
+              isNull(p.deletedAt),
+            ),
+          with: { variants: { where: (pv, { isNull }) => isNull(pv.deletedAt) } },
+        });
+
+        if (!found) {
+          return API_RESPONSE(STATUS.FAILED, MESSAGE.PRODUCT.GET_PDP_PRODUCT.NOT_FOUND, null);
+        }
+
+        if (found.variants.length === 0) {
+          const productWithVirtualVariant = {
+            ...found,
+            variants: [
+              {
+                id: found.id,
+                slug: found.slug,
+                title: found.title,
+                productId: found.id,
+                priceModifierType: "flat_decrease" as const,
+                priceModifierValue: "0",
+                attributes: null as { title: string; type: string; value: string }[] | null,
+                media: null as { url: string }[] | null,
+                createdAt: found.createdAt,
+                updatedAt: found.updatedAt,
+                deletedAt: null as Date | null,
+              },
+            ],
+          };
+          return API_RESPONSE(STATUS.SUCCESS, MESSAGE.PRODUCT.GET_PDP_PRODUCT.SUCCESS, {
+            product: productWithVirtualVariant,
+          });
+        }
+
+        return API_RESPONSE(STATUS.SUCCESS, MESSAGE.PRODUCT.GET_PDP_PRODUCT.SUCCESS, {
+          product: found,
+        });
+      } catch (err) {
+        debugError("PRODUCT:GET_PDP_PRODUCT_FULL_PATH:ERROR", err);
         return API_RESPONSE(STATUS.ERROR, MESSAGE.PRODUCT.GET_PDP_PRODUCT.ERROR, null, err as Error);
       }
     }),
@@ -256,7 +351,6 @@ export const productRouter = createTRPCRouter({
             // new required fields
             categorySlug: body.categorySlug,
             subcategorySlug: body.subcategorySlug,
-            seriesSlug: body.seriesSlug,
 
             basePrice: body.basePrice,
             baseCurrency: body.baseCurrency ?? "INR",

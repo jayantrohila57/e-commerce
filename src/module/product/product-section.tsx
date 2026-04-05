@@ -1,5 +1,7 @@
+import type { Route } from "next";
 import { FormSection } from "@/shared/components/form/form.helper";
 import { Separator } from "@/shared/components/ui/separator";
+import { PATH } from "@/shared/config/routes";
 import type { ProductBase } from "./product.types";
 import { ProductCard } from "./product-card";
 
@@ -28,7 +30,7 @@ export const ProductSection = ({ title, description, products, emptyMessage = "N
     <div className="grid grid-cols-1 gap-2">
       {products && products?.length > 0 ? (
         products?.map((product) => (
-          <ProductCard href={`/studio/products/${product.slug}`} key={product.id} product={product} />
+          <ProductCard href={PATH.STUDIO.PRODUCTS.VIEW(product.slug) as Route} key={product.id} product={product} />
         ))
       ) : (
         <p className="text-muted-foreground px-2 text-sm">{emptyMessage}</p>

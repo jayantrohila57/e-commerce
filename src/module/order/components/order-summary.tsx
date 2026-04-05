@@ -16,7 +16,7 @@ export function OrderSummary({ order }: OrderSummaryProps) {
   const total = order.grandTotal;
 
   return (
-    <Card className="bg-muted/30 border border-border">
+    <Card className="bg-transparent border-none border-r border-b">
       <CardHeader className="pb-3">
         <CardTitle className="text-sm font-semibold">Order Summary</CardTitle>
       </CardHeader>
@@ -41,6 +41,25 @@ export function OrderSummary({ order }: OrderSummaryProps) {
         </div>
 
         <Separator className="my-2" />
+
+        {(order.shippingProviderId ||
+          order.shippingMethodId ||
+          order.shippingZoneId ||
+          (order as Order).warehouseId) && (
+          <>
+            <div className="space-y-1">
+              <p className="text-[11px] text-muted-foreground">Delivery & fulfilment</p>
+              <p className="text-xs font-medium text-foreground">
+                {order.shippingProviderId ? `Provider ${order.shippingProviderId.slice(0, 8)}` : "No provider"}
+                {order.shippingMethodId ? ` • Method ${order.shippingMethodId.slice(0, 8)}` : ""}
+                {order.shippingZoneId ? ` • Zone ${order.shippingZoneId.slice(0, 8)}` : ""}
+                {(order as Order).warehouseId ? ` • Warehouse ${(order as Order).warehouseId?.slice(0, 8)}` : ""}
+              </p>
+            </div>
+
+            <Separator className="my-2" />
+          </>
+        )}
 
         <div className="flex items-center justify-between text-sm font-semibold">
           <span>Total</span>

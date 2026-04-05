@@ -2,12 +2,14 @@
 @import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
+@custom-variant data-horizontal (&[data-orientation="horizontal"]);
+@custom-variant data-vertical (&[data-orientation="vertical"]);
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-oswald-sans);
-  --font-oswald: var(--font-oswald-sans);
+  --font-sans: var(--font-outfit-sans);
+  --font-outfit: var(--font-outfit-sans);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -44,7 +46,7 @@
 }
 
 :root {
-  --radius: 0.225rem;
+  --radius: 0rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
@@ -69,7 +71,7 @@
   --chart-3: oklch(0.398 0.07 227.392);
   --chart-4: oklch(0.828 0.189 84.429);
   --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
+  --sidebar: oklch(1 0 0);
   --sidebar-foreground: oklch(0.145 0 0);
   --sidebar-primary: oklch(0.205 0 0);
   --sidebar-primary-foreground: oklch(0.985 0 0);
@@ -104,7 +106,7 @@
   --chart-3: oklch(0.769 0.188 70.08);
   --chart-4: oklch(0.627 0.265 303.9);
   --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
+  --sidebar: oklch(0.145 0 0);
   --sidebar-foreground: oklch(0.985 0 0);
   --sidebar-primary: oklch(0.488 0.243 264.376);
   --sidebar-primary-foreground: oklch(0.985 0 0);
@@ -120,14 +122,14 @@
     @apply [&::-webkit-scrollbar]:h-4;
     @apply [&::-webkit-scrollbar]:w-4;
     @apply [&::-webkit-scrollbar-corner]:bg-transparent;
-    @apply [&::-webkit-scrollbar-thumb]:rounded-lg;
+    @apply [&::-webkit-scrollbar-thumb]:rounded-none;
     @apply [&::-webkit-scrollbar-thumb]:bg-muted-foreground/40;
     @apply [&::-webkit-scrollbar-thumb]:border-[5px];
     @apply [&::-webkit-scrollbar-thumb]:border-solid;
     @apply [&::-webkit-scrollbar-thumb]:border-transparent;
     @apply [&::-webkit-scrollbar-thumb]:bg-clip-padding;
     @apply [&::-webkit-scrollbar-thumb:hover]:bg-muted-foreground/60;
-    @apply [&::-webkit-scrollbar-track]:rounded-lg;
+    @apply [&::-webkit-scrollbar-track]:rounded-none;
     @apply [&::-webkit-scrollbar-track]:m-1;
     @apply [&::-webkit-scrollbar-track]:bg-transparent;
     @apply [&::-moz-selection]:bg-accent;

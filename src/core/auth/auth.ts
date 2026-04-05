@@ -3,7 +3,6 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { createAuthMiddleware } from "better-auth/api";
 import { nextCookies } from "better-auth/next-js";
 import { admin as adminPlugin } from "better-auth/plugins/admin";
-import { passkey } from "better-auth/plugins/passkey";
 import { twoFactor } from "better-auth/plugins/two-factor";
 import { db } from "@/core/db/db";
 import {
@@ -120,7 +119,6 @@ export const auth = betterAuth({
   plugins: [
     nextCookies(),
     twoFactor(),
-    passkey(),
     adminPlugin({
       ac,
       roles: {

@@ -1,9 +1,9 @@
+import { passkey } from "@better-auth/passkey";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { createAuthMiddleware } from "better-auth/api";
 import { nextCookies } from "better-auth/next-js";
 import { admin as adminPlugin } from "better-auth/plugins/admin";
-import { twoFactor } from "better-auth/plugins/two-factor";
 import { db } from "@/core/db/db";
 import {
   sendDeleteAccountEmail,
@@ -119,6 +119,7 @@ export const auth = betterAuth({
   plugins: [
     nextCookies(),
     twoFactor(),
+    passkey(),
     adminPlugin({
       ac,
       roles: {

@@ -77,11 +77,11 @@ export default async function StudioOrdersPage({
     limit: listQuery.pagination.limit,
     status,
     q: listQuery.search.q,
-    customerType,
-    shippingProviderPresence,
-    shippingMethodPresence,
-    shippingZonePresence,
-    warehousePresence,
+    customerType: customerType as "registered" | "guest",
+    shippingProviderPresence: shippingProviderPresence as "assigned" | "unassigned",
+    shippingMethodPresence: shippingMethodPresence as "assigned" | "unassigned",
+    shippingZonePresence: shippingZonePresence as "assigned" | "unassigned",
+    warehousePresence: warehousePresence as "assigned" | "unassigned",
   };
 
   const result = await apiServer.order.getManyAdmin({

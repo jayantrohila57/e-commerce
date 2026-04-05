@@ -37,12 +37,8 @@ export function AuthCard({
             <AlertTitle>Need help?</AlertTitle>
             <AlertDescription className="flex flex-row flex-wrap gap-1">
               Contact
-              <Link
-                target="_blank"
-                href={"mailto:support@yourapp.com" as Route} // TODO: fix route
-                className="underline"
-              >
-                support@yourapp.com
+              <Link target="_blank" href={`mailto:${site.email}` as Route} className="underline">
+                {site.email}
               </Link>
               or use live chat.
             </AlertDescription>

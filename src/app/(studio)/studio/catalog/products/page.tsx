@@ -7,11 +7,12 @@ import ProductTable from "@/module/product/product.table";
 import DashboardSection from "@/shared/components/layout/section/section-dashboard";
 import Shell from "@/shared/components/layout/shell";
 import { PATH } from "@/shared/config/routes";
+import { site } from "@/shared/config/site";
 import { getListQueryFromSearchParams } from "@/shared/utils/lib/list-query.utils";
 
 export const metadata = {
-  title: "Products",
-  description: "Products Description",
+  title: `${site.name} Products`,
+  description: `${site.name} product catalog.`,
 };
 
 export default async function ProductsPage({

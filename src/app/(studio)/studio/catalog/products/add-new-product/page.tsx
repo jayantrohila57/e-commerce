@@ -7,10 +7,11 @@ import ProductForm from "@/module/product/product-form";
 import DashboardSection from "@/shared/components/layout/section/section-dashboard";
 import Shell from "@/shared/components/layout/shell";
 import { PATH } from "@/shared/config/routes";
+import { site } from "@/shared/config/site";
 
 export const metadata = {
-  title: "Add Products",
-  description: "Add Products Description",
+  title: `Add ${site.name} Product`,
+  description: `Create a new product in ${site.name}.`,
 };
 
 export default async function Home() {

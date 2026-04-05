@@ -2,15 +2,15 @@ import { clientEnv } from "./env.client";
 
 export const siteConfig = {
   // Site Identity
-  name: "ShopHub",
-  domain: "shophub.com",
-  description: "ShopHub is your premier online shopping destination for quality products and exceptional service.",
+  name: "Lucsum",
+  domain: "lucsum.com",
+  description: "Lucsum is a modern commerce brand built to feel focused, trustworthy, and unmistakably present.",
 
   // Contact Information
   contact: {
-    email: "support@shophub.com",
-    supportEmail: "support@shophub.com",
-    noreplyEmail: "noreply@shophub.com",
+    email: "support@lucsum.com",
+    supportEmail: "support@lucsum.com",
+    noreplyEmail: "noreply@lucsum.com",
     phone: "+1 (555) 123-4567",
     address: {
       line1: "123 Commerce Street",
@@ -25,29 +25,29 @@ export const siteConfig = {
   // URLs
   urls: {
     base: clientEnv.NEXT_PUBLIC_BASE_URL,
-    website: "https://shophub.com",
-    support: "https://shophub.com/support",
-    help: "https://shophub.com/help",
-    returns: "https://shophub.com/returns",
-    shipping: "https://shophub.com/shipping",
-    terms: "https://shophub.com/legal/terms",
-    privacy: "https://shophub.com/legal/privacy",
-    unsubscribe: "https://shophub.com/unsubscribe",
+    website: "https://lucsum.com",
+    support: "https://lucsum.com/support",
+    help: "https://lucsum.com/help",
+    returns: "https://lucsum.com/returns",
+    shipping: "https://lucsum.com/shipping",
+    terms: "https://lucsum.com/legal/terms",
+    privacy: "https://lucsum.com/legal/privacy",
+    unsubscribe: "https://lucsum.com/unsubscribe",
   },
 
   // Email Configuration
   email: {
     from: {
-      name: "ShopHub",
-      address: "noreply@shophub.com",
+      name: "Lucsum",
+      address: "noreply@lucsum.com",
     },
     support: {
-      name: "ShopHub Support",
-      address: "support@shophub.com",
+      name: "Lucsum Support",
+      address: "support@lucsum.com",
     },
-    replyTo: "support@shophub.com",
+    replyTo: "support@lucsum.com",
     footer: {
-      company: "ShopHub Inc.",
+      company: "Lucsum",
       address: "123 Commerce Street, Suite 100, San Francisco, CA 94105, United States",
       unsubscribe: "If you no longer wish to receive these emails, you can unsubscribe here.",
       privacy: "Privacy Policy",
@@ -59,27 +59,27 @@ export const siteConfig = {
   socialLinks: [
     {
       name: "Facebook",
-      url: "https://facebook.com/shophub",
+      url: "https://facebook.com/lucsum",
       icon: "facebook",
     },
     {
       name: "Instagram",
-      url: "https://instagram.com/shophub",
+      url: "https://instagram.com/lucsum",
       icon: "instagram",
     },
     {
       name: "Twitter",
-      url: "https://twitter.com/shophub",
+      url: "https://twitter.com/lucsum",
       icon: "twitter",
     },
     {
       name: "LinkedIn",
-      url: "https://linkedin.com/company/shophub",
+      url: "https://linkedin.com/company/lucsum",
       icon: "linkedin",
     },
     {
       name: "YouTube",
-      url: "https://youtube.com/@shophub",
+      url: "https://youtube.com/@lucsum",
       icon: "youtube",
     },
   ],
@@ -107,7 +107,7 @@ export const siteConfig = {
 
   // Legal
   legal: {
-    companyName: "ShopHub Inc.",
+    companyName: "Lucsum",
     taxId: "12-3456789",
     lastUpdated: "March 2026",
   },

@@ -1,9 +1,10 @@
 import { Loader } from "lucide-react";
 import Header from "@/shared/components/layout/header/header";
 import { Shell } from "@/shared/components/layout/shell";
+import { site } from "@/shared/config/site";
 
 export const metadata = {
-  title: "Loading",
+  title: `${site.name} | Loading`,
   description: "Loading...",
 };
 

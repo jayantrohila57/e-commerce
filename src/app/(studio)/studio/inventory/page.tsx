@@ -9,11 +9,12 @@ import type { InventoryMovement } from "@/module/inventory/inventory.types";
 import DashboardSection from "@/shared/components/layout/section/section-dashboard";
 import Shell from "@/shared/components/layout/shell";
 import { PATH } from "@/shared/config/routes";
+import { site } from "@/shared/config/site";
 import { getListQueryFromSearchParams } from "@/shared/utils/lib/list-query.utils";
 
 export const metadata = {
-  title: "Inventory",
-  description: "Inventory Description",
+  title: `${site.name} Inventory`,
+  description: `${site.name} inventory management.`,
 };
 
 export default async function InventoryPage({

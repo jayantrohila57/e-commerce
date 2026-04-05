@@ -1,9 +1,10 @@
 import Section from "@/shared/components/layout/section/section";
 import Shell from "@/shared/components/layout/shell";
+import { site } from "@/shared/config/site";
 
 export const metadata = {
   title: "Contact Support",
-  description: "Get in touch with us to discuss your project, ask a question, or simply to say hello.",
+  description: `Get in touch with ${site.name} for returns and exchanges support.`,
 };
 
 export default function Page() {

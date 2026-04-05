@@ -8,10 +8,11 @@ import {
 } from "@/module/site/content-sections";
 import Section from "@/shared/components/layout/section/section";
 import Shell from "@/shared/components/layout/shell";
+import { site } from "@/shared/config/site";
 
 export const metadata = {
   title: "About",
-  description: "Learn more about us and what we offer.",
+  description: `Learn more about ${site.name} and what we offer.`,
 };
 
 export default function Page() {

@@ -7,10 +7,11 @@ import DashboardSection from "@/shared/components/layout/section/section-dashboa
 import Shell from "@/shared/components/layout/shell";
 import { Avatar, AvatarFallback } from "@/shared/components/ui/avatar";
 import { PATH } from "@/shared/config/routes";
+import { site } from "@/shared/config/site";
 
 export const metadata = {
-  title: "Studio",
-  description: "Studio Description",
+  title: `${site.name} Studio`,
+  description: `${site.name} operations and analytics.`,
 };
 const MetricsData = [
   {

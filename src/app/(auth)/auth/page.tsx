@@ -4,10 +4,11 @@ import { AuthPageComponent } from "@/module/auth/auth.page";
 import { AuthCard } from "@/shared/components/layout/section/auth.card-layout";
 import Shell from "@/shared/components/layout/shell";
 import { PATH } from "@/shared/config/routes";
+import { site } from "@/shared/config/site";
 
 export const metadata = {
-  title: "Get on board",
-  description: "Get on board with our platform.",
+  title: `Join ${site.name}`,
+  description: `Get started with ${site.name}.`,
 };
 
 export default async function AuthPage() {

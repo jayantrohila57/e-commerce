@@ -1,6 +1,6 @@
 # Email System
 
-This directory contains the complete email system for ShopHub, including templates, styles, and sending methods.
+This directory contains the complete email system for Lucsum, including templates, styles, and sending methods.
 
 ## Configuration
 
@@ -68,7 +68,7 @@ await sendOrderConfirmationEmail({
     postalCode: "94105",
     country: "USA"
   },
-  orderUrl: "https://shophub.com/account/orders/ORD-12345"
+  orderUrl: "https://lucsum.com/account/orders/ORD-12345"
 });
 ```
 

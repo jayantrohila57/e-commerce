@@ -7,7 +7,7 @@ import { ThemeToggle } from "@/shared/components/theme/theme-toggle";
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
 import { PATH } from "@/shared/config/routes";
-import { site } from "@/shared/config/site";
+import { site, siteConfig } from "@/shared/config/site";
 import { AppBrand } from "../section/auth.card-layout";
 
 type NavItem<T extends string = string> = {
@@ -54,9 +54,9 @@ export const footer: NavType[] = [
   {
     title: "Connect",
     submenu: [
-      { title: "Instagram", href: "https://instagram.com/yourstore" as Route, newTab: true },
-      { title: "Twitter", href: "https://twitter.com/yourstore" as Route, newTab: true },
-      { title: "Facebook", href: "https://facebook.com/yourstore" as Route, newTab: true },
+      { title: "Instagram", href: siteConfig.socialLinks[1]!.url as Route, newTab: true },
+      { title: "Twitter", href: siteConfig.socialLinks[2]!.url as Route, newTab: true },
+      { title: "Facebook", href: siteConfig.socialLinks[0]!.url as Route, newTab: true },
       { title: "Newsletter", href: "/newsletter" as Route, newTab: false },
     ],
   },

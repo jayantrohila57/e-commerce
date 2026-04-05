@@ -8,10 +8,11 @@ import {
 } from "@/module/site/content-sections";
 import Section from "@/shared/components/layout/section/section";
 import Shell from "@/shared/components/layout/shell";
+import { site } from "@/shared/config/site";
 
 export const metadata = {
   title: "Newsletter",
-  description: "Subscribe to our newsletter for updates and offers.",
+  description: `Subscribe to ${site.name} for updates and offers.`,
 };
 
 export default function Page() {

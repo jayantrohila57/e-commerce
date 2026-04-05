@@ -1,9 +1,10 @@
 import Header from "@/shared/components/layout/header/header";
 import Section from "@/shared/components/layout/section/section";
 import { Shell } from "@/shared/components/layout/shell";
+import { site } from "@/shared/config/site";
 
 export const metadata = {
-  title: "Not Found",
+  title: `${site.name} | Not Found`,
   description: "The page you are looking for does not exist or has been moved.",
 };
 

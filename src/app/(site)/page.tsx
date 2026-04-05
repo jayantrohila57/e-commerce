@@ -3,10 +3,11 @@ import ShopByCategoryGrid from "@/module/category/category.shop-by";
 import { ContentCTA, ContentFeatureHighlights, ContentOfferBanner } from "@/module/site/content-sections";
 import SiteHero from "@/module/site/site.hero";
 import Shell from "@/shared/components/layout/shell";
+import { site } from "@/shared/config/site";
 
 export const metadata = {
-  title: "Home",
-  description: "Home Description",
+  title: site.name,
+  description: site.description,
 };
 
 export default async function Home({}: PageProps<"/">) {

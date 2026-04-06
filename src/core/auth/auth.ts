@@ -22,7 +22,7 @@ const MAX_AGE = 60 * 60; // 1 hour
 
 function getTrustedOrigins(): string[] {
   const origins: string[] = [];
-  
+
   // Add BETTER_AUTH_URL if set
   if (serverEnv.BETTER_AUTH_URL) {
     try {
@@ -32,7 +32,7 @@ function getTrustedOrigins(): string[] {
       // Invalid URL, skip
     }
   }
-  
+
   // Add site URL if set
   if (site.url) {
     try {
@@ -42,21 +42,21 @@ function getTrustedOrigins(): string[] {
       // Invalid URL, skip
     }
   }
-  
+
   // Add production website
   origins.push(siteConfig.urls.website);
-  
+
   // Add common development origins
   origins.push("http://localhost:3000");
   origins.push("http://127.0.0.1:3000");
   origins.push("http://localhost:3001");
   origins.push("http://127.0.0.1:3001");
-  
+
   // Add Vercel preview URLs pattern
   if (serverEnv.VERCEL_URL) {
     origins.push(`https://${serverEnv.VERCEL_URL}`);
   }
-  
+
   // Remove duplicates
   return [...new Set(origins)].filter(Boolean);
 }
@@ -159,7 +159,9 @@ export const auth = betterAuth({
     autoSignInAfterVerification: false,
     sendOnSignUp: true,
     sendVerificationEmail: async ({ user, url }) => {
-      await sendEmailVerificationEmail({ user: normalizeEmailUser(user), url });
+      const verificationUrl = new URL(url);
+      verificationUrl.searchParams.set("callbackURL", "/auth/sign-in?verified=1");
+      await sendEmailVerificationEmail({ user: normalizeEmailUser(user), url: verificationUrl.toString() });
     },
   },
   socialProviders: {

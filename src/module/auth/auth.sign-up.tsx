@@ -23,19 +23,17 @@ export function SignUpForm() {
     startTransition(async () => {
       const toastId = toast.loading("Signing up");
       const options = {
-        onSuccess: ({ data }) => {
-          router.push(`/auth/verify-email?email=${data?.user?.email}`);
-          toast.success("Sign up successful", { id: toastId });
-        },
-        onError: (error) => {
-          toast.error(error.error.message || "Failed to sign up", { id: toastId });
+        onError: (error: { error?: { message?: string } }) => {
+          toast.error(error.error?.message || "Failed to sign up", { id: toastId });
         },
       } satisfies NonNullable<Parameters<typeof signUp.email>[1]>;
 
       const res = await signUp.email({ ...data }, options);
 
-      if (res.error == null && !res.data.user.emailVerified) {
-        router.push(`/auth/verify-email?email=${res?.data?.user?.email}`);
+      if (res.error == null) {
+        const email = encodeURIComponent(res?.data?.user?.email ?? "");
+        router.push(`/auth/sign-in?verified=1&email=${email}`);
+        toast.success("Sign up successful", { id: toastId });
       }
     });
   }

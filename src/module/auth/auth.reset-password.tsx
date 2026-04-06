@@ -24,8 +24,8 @@ export default function ResetPasswordForm({ token, error }: { token: string; err
       if (token == null) return;
 
       const options = {
-        onError: (error) => {
-          toast.error(error.error.message || "Failed to reset password");
+        onError: (error: { error?: { message?: string } }) => {
+          toast.error(error.error?.message || "Failed to reset password");
         },
         onSuccess: () => {
           toast.success("Password reset successful", {
@@ -53,7 +53,9 @@ export default function ResetPasswordForm({ token, error }: { token: string; err
         <Card className="mx-auto w-full max-w-md">
           <CardHeader>
             <CardTitle>Invalid Reset Link</CardTitle>
-            <CardDescription>The password reset link is invalid or has expired.</CardDescription>
+            <CardDescription>
+              The password reset link is invalid or has expired. Request a fresh email to continue.
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <Button className="w-full" asChild>

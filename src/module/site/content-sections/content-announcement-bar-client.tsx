@@ -58,8 +58,10 @@ export default function ContentAnnouncementBarClient({ content }: ContentAnnounc
   return (
     <div className="bg-secondary z-50 text-secondary-foreground relative">
       <div className="mx-auto flex max-w-6xl items-center justify-center gap-2 px-4 py-2 pr-12 text-xs sm:text-sm">
-        <span className="font-medium">{content.title ?? "Announcement"}</span>
-        {content.bodyText && <span className="opacity-90">{content.bodyText}</span>}
+        <div className="flex flex-col gap-1">
+          <span className="font-medium">{content.title ?? "Announcement"}</span>
+          {content.bodyText && <span className="opacity-90">{content.bodyText}</span>}
+        </div>
         {content.ctaLabel && content.ctaLink && (
           <a href={content.ctaLink} className="ml-3 underline underline-offset-4">
             {content.ctaLabel}

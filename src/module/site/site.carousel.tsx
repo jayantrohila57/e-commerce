@@ -1,13 +1,12 @@
 "use client";
 
 import Autoplay from "embla-carousel-autoplay";
-import { ChevronRightCircle, SquareIcon, Squircle } from "lucide-react";
+import { SquareIcon } from "lucide-react";
 import type { Route } from "next";
 import Link from "next/link";
 import * as React from "react";
 import { BlurImage } from "@/shared/components/common/image";
 import { Button } from "@/shared/components/ui/button";
-import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/components/ui/card";
 import {
   Carousel,
   type CarouselApi,
@@ -59,7 +58,7 @@ export function MarketingCarousel({ items }: { items: CarouselItem[] | null | un
             return (
               <CarouselItem key={i}>
                 <div className="bg-transparent h-full w-full  group grid grid-cols-12 text-balance p-0">
-                  <div className="flex h-auto hover:cursor-grab active:cursor-grabbing p-0 col-span-9 aspect-video w-full items-center justify-center overflow-hidden">
+                  <div className="flex h-auto hover:cursor-grab active:cursor-grabbing p-0 col-span-12 sm:col-span-9 md:col-span-9 aspect-video w-full items-center justify-center overflow-hidden">
                     <BlurImage
                       src={getImageSrc(item.image)}
                       alt={title}
@@ -68,7 +67,7 @@ export function MarketingCarousel({ items }: { items: CarouselItem[] | null | un
                       className="motion-all h-full w-full object-cover"
                     />
                   </div>
-                  <div className="p-8 col-span-3 bg-secondary flex flex-col gap-8 justify-center items-start">
+                  <div className="p-8 col-span-12 sm:col-span-3 md:col-span-3 bg-secondary flex flex-col gap-8 justify-center items-start">
                     <h2 className="text-6xl font-semibold">{title}</h2>
                     <p className="text-base text-muted-foreground">{item.bodyText ?? ""}</p>
                     <Button variant="default" size={"lg"} asChild>
@@ -81,13 +80,13 @@ export function MarketingCarousel({ items }: { items: CarouselItem[] | null | un
           })}
         </CarouselContent>
       </div>
-      <div className="flex w-full border-y h-16 flex-row items-center justify-between">
+      <div className="flex w-full border-y h-12 md:h-16 flex-row items-center justify-between">
         <div className="flex h-full w-full items-center justify-start">
           {slides.map((_, i) => (
             <div
               key={i}
               onClick={() => api?.scrollTo(i)}
-              className="size-16 cursor-pointer hover:bg-secondary flex items-center justify-center border-r"
+              className="size-12 md:size-16 cursor-pointer hover:bg-secondary flex items-center justify-center border-r"
             >
               <SquareIcon
                 className={cn(
@@ -99,10 +98,10 @@ export function MarketingCarousel({ items }: { items: CarouselItem[] | null | un
           ))}
         </div>
         <div className="flex relative h-full w-full items-center justify-end">
-          <div className="size-16 cursor-pointer hover:bg-secondary flex items-center justify-center border-l">
+          <div className="size-12 md:size-16 cursor-pointer hover:bg-secondary flex items-center justify-center border-l">
             <CarouselPrevious variant={"ghost"} className="relative cursor-pointer rounded-none" />
           </div>
-          <div className="size-16 cursor-pointer hover:bg-secondary flex items-center justify-center border-l">
+          <div className="size-12 md:size-16 cursor-pointer hover:bg-secondary flex items-center justify-center border-l">
             <CarouselNext variant={"ghost"} className="relative cursor-pointer rounded-none" />
           </div>
         </div>

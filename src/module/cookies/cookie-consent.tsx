@@ -150,12 +150,12 @@ export default function CookieConsent() {
 
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 p-4 backdrop-blur-sm">
-      <Card className="max-h-[90vh] w-full max-w-2xl overflow-y-auto">
-        <CardHeader className="pb-4">
+      <Card className="max-h-[70vh] w-full max-w-2xl overflow-y-auto">
+        <CardHeader>
           <div className="flex items-start justify-between">
             <div>
               <CardTitle className="text-xl font-semibold">{"Cookie Preferences"}</CardTitle>
-              <CardDescription className="mt-2">
+              <CardDescription className="text-xs">
                 {
                   "We use cookies to enhance your browsing experience, serve personalized content, and analyze our traffic."
                 }
@@ -168,16 +168,16 @@ export default function CookieConsent() {
           </div>
         </CardHeader>
 
-        <CardContent className="space-y-6">
+        <CardContent className="space-y-2">
           {showDetails && (
             <div className="space-y-4">
               {/* Essential Cookies */}
-              <div className="flex items-start justify-between rounded-lg border p-4">
-                <div className="flex flex-1 items-start gap-3">
-                  <Shield className="mt-0.5 h-5 w-5 shrink-0 text-green-600" />
+              <div className="flex items-start justify-between rounded-lg border p-2">
+                <div className="flex flex-1 items-start gap-2">
+                  <Shield className="mt-0.5 h-5 w-5 shrink-0" />
                   <div className="space-y-1">
                     <h4 className="font-medium">{"Essential Cookies"}</h4>
-                    <p className="text-muted-foreground text-sm">
+                    <p className="text-muted-foreground text-xs">
                       {"Required for the website to function properly. These cannot be disabled."}
                     </p>
                   </div>
@@ -186,12 +186,12 @@ export default function CookieConsent() {
               </div>
 
               {/* Functional Cookies */}
-              <div className="flex items-start justify-between rounded-lg border p-4">
-                <div className="flex flex-1 items-start gap-3">
-                  <Settings className="mt-0.5 h-5 w-5 shrink-0 text-blue-600" />
+              <div className="flex items-start justify-between rounded-lg border p-2">
+                <div className="flex flex-1 items-start gap-2">
+                  <Settings className="mt-0.5 h-5 w-5 shrink-0" />
                   <div className="space-y-1">
                     <h4 className="font-medium">{"Functional Cookies"}</h4>
-                    <p className="text-muted-foreground text-sm">
+                    <p className="text-muted-foreground text-xs">
                       {"Enable enhanced functionality like chat widgets, videos, and personalized content."}
                     </p>
                   </div>
@@ -204,12 +204,12 @@ export default function CookieConsent() {
               </div>
 
               {/* Analytics Cookies */}
-              <div className="flex items-start justify-between rounded-lg border p-4">
-                <div className="flex flex-1 items-start gap-3">
-                  <BarChart3 className="mt-0.5 h-5 w-5 shrink-0 text-purple-600" />
+              <div className="flex items-start justify-between rounded-lg border p-2">
+                <div className="flex flex-1 items-start gap-2">
+                  <BarChart3 className="mt-0.5 h-5 w-5 shrink-0" />
                   <div className="space-y-1">
                     <h4 className="font-medium">{"Analytics Cookies"}</h4>
-                    <p className="text-muted-foreground text-sm">
+                    <p className="text-muted-foreground text-xs">
                       {
                         "    Help us understand how visitors interact with our website by collecting anonymous information."
                       }
@@ -224,12 +224,12 @@ export default function CookieConsent() {
               </div>
 
               {/* Marketing Cookies */}
-              <div className="flex items-start justify-between rounded-lg border p-4">
-                <div className="flex flex-1 items-start gap-3">
-                  <Target className="mt-0.5 h-5 w-5 shrink-0 text-orange-600" />
+              <div className="flex items-start justify-between rounded-lg border p-2">
+                <div className="flex flex-1 items-start gap-2">
+                  <Target className="mt-0.5 h-5 w-5 shrink-0" />
                   <div className="space-y-1">
                     <h4 className="font-medium"> {"Marketing Cookies"}</h4>
-                    <p className="text-muted-foreground text-sm">
+                    <p className="text-muted-foreground text-xs">
                       {"Used to track visitors across websites to display relevant advertisements."}
                     </p>
                   </div>
@@ -244,15 +244,13 @@ export default function CookieConsent() {
           )}
 
           <div className="flex flex-col gap-3 sm:flex-row">
-            <Button onClick={handleAcceptAll} className="flex-1">
-              {"Accept All"}
-            </Button>
+            <Button onClick={handleAcceptAll}>{"Accept All"}</Button>
 
-            <Button onClick={handleRejectAll} variant="outline" className="flex-1 bg-transparent">
+            <Button onClick={handleRejectAll} variant="outline">
               {"Reject All"}
             </Button>
 
-            <Button onClick={() => setShowDetails(!showDetails)} variant="outline" className="flex-1">
+            <Button onClick={() => setShowDetails(!showDetails)} variant="outline">
               {showDetails ? "Hide Details" : "Customize"}
             </Button>
           </div>

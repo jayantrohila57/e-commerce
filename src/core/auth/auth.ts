@@ -20,6 +20,47 @@ import { ac, admin, customer, staff, user } from "./permissions";
 
 const MAX_AGE = 60 * 60; // 1 hour
 
+function getTrustedOrigins(): string[] {
+  const origins: string[] = [];
+  
+  // Add BETTER_AUTH_URL if set
+  if (serverEnv.BETTER_AUTH_URL) {
+    try {
+      const url = new URL(serverEnv.BETTER_AUTH_URL);
+      origins.push(url.origin);
+    } catch {
+      // Invalid URL, skip
+    }
+  }
+  
+  // Add site URL if set
+  if (site.url) {
+    try {
+      const url = new URL(site.url);
+      origins.push(url.origin);
+    } catch {
+      // Invalid URL, skip
+    }
+  }
+  
+  // Add production website
+  origins.push(siteConfig.urls.website);
+  
+  // Add common development origins
+  origins.push("http://localhost:3000");
+  origins.push("http://127.0.0.1:3000");
+  origins.push("http://localhost:3001");
+  origins.push("http://127.0.0.1:3001");
+  
+  // Add Vercel preview URLs pattern
+  if (serverEnv.VERCEL_URL) {
+    origins.push(`https://${serverEnv.VERCEL_URL}`);
+  }
+  
+  // Remove duplicates
+  return [...new Set(origins)].filter(Boolean);
+}
+
 function getPasskeyConfig() {
   const authUrl = serverEnv.BETTER_AUTH_URL || site.url || siteConfig.urls.website;
 
@@ -56,6 +97,7 @@ export const auth = betterAuth({
     },
   },
   appName: site.name,
+  trustedOrigins: getTrustedOrigins(),
   user: {
     additionalFields: {
       role: {

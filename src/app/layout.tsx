@@ -1,9 +1,9 @@
 import "@/shared/styles/globals.css";
 
-import { Analytics } from "@vercel/analytics/next";
 import { TRPCReactProvider } from "@/core/api/api.client";
 import RazorpayProvider from "@/core/payment/razorpay.provider";
 import { ThemeProvider } from "@/core/theme/theme.provider";
+import { ConsentAwareAnalytics } from "@/module/cookies/cookie-analytics";
 import { Toaster } from "@/shared/components/ui/sonner";
 import { TooltipProvider } from "@/shared/components/ui/tooltip";
 import { className, viewport } from "@/shared/utils/methods/font";
@@ -18,7 +18,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             <TooltipProvider>
               <RazorpayProvider>
                 {children}
-                <Analytics />
+                <ConsentAwareAnalytics />
               </RazorpayProvider>
             </TooltipProvider>
             <Toaster />

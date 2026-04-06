@@ -11,7 +11,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
 
-const profileUpdateSchema = AuthSchema.SIGN_UP.INPUT.pick({
+const profileUpdateSchema = AuthSchema.SIGN_UP.INPUT_OBJECT.pick({
   name: true,
   email: true,
 });

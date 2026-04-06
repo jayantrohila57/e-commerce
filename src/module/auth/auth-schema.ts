@@ -4,6 +4,20 @@ import { detailedResponse } from "@/shared/schema";
 export const OTP_LENGTH = 6;
 export const PASSWORD_MIN = 8;
 
+/** Sign-up fields as a plain object schema (before password-match refine). Use for `.pick()` / partial shapes. */
+const signUpInputObjectSchema = z.object({
+  name: z.string().min(2, "Name is too short").trim(),
+  email: z.string().email("Enter a valid email").trim(),
+  password: z
+    .string()
+    .min(8, "Password must be at least 8 characters long")
+    .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
+    .regex(/[a-z]/, "Password must contain at least one lowercase letter")
+    .regex(/[0-9]/, "Password must contain at least one number")
+    .regex(/[@$!%*?&#]/, "Password must contain at least one special character (@$!%*?&)"),
+  confirmPassword: z.string().min(1, "Please confirm your password"),
+});
+
 export const AuthSchema = {
   SIGN_IN: {
     INPUT: z.object({
@@ -14,23 +28,11 @@ export const AuthSchema = {
     OUTPUT: detailedResponse(z.null()),
   },
   SIGN_UP: {
-    INPUT: z
-      .object({
-        name: z.string().min(2, "Name is too short").trim(),
-        email: z.string().email("Enter a valid email").trim(),
-        password: z
-          .string()
-          .min(8, "Password must be at least 8 characters long")
-          .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
-          .regex(/[a-z]/, "Password must contain at least one lowercase letter")
-          .regex(/[0-9]/, "Password must contain at least one number")
-          .regex(/[@$!%*?&#]/, "Password must contain at least one special character (@$!%*?&)"),
-        confirmPassword: z.string().min(1, "Please confirm your password"),
-      })
-      .refine((data) => data.password === data.confirmPassword, {
-        message: "Passwords do not match",
-        path: ["confirmPassword"],
-      }),
+    INPUT_OBJECT: signUpInputObjectSchema,
+    INPUT: signUpInputObjectSchema.refine((data) => data.password === data.confirmPassword, {
+      message: "Passwords do not match",
+      path: ["confirmPassword"],
+    }),
     OUTPUT: detailedResponse(
       z.object({
         token: z.string(),

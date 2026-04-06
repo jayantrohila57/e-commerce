@@ -1,4 +1,5 @@
 import type React from "react";
+import CookieConsent from "@/module/cookies/cookie-consent";
 import { ScrollProgress } from "@/shared/components/common/scroll-progress";
 import ScrollToTopButton from "@/shared/components/common/scroll-to-top";
 import Footer from "@/shared/components/layout/footer/footer";
@@ -12,6 +13,7 @@ export default async function AccountLayout({ children }: { children: React.Reac
     <Shell>
       <ScrollProgress />
       <ScrollToTopButton />
+      <CookieConsent />
       <Shell.Header>
         <Header />
       </Shell.Header>

@@ -21,6 +21,7 @@ const sections: NavItem<Route>[] = [
     href: PATH.ACCOUNT.ROOT,
     id: "account",
   },
+  { id: "privacy", label: "Privacy", href: PATH.ACCOUNT.PRIVACY, icon: <Lock size={14} /> },
   { id: "cart", label: "Cart", href: PATH.ACCOUNT.CART, icon: <ShoppingCart size={14} /> },
   { id: "wishlist", label: "Wishlist", href: PATH.ACCOUNT.WISHLIST, icon: <Heart size={14} /> },
   { id: "order", label: "Order", href: PATH.ACCOUNT.ORDER, icon: <Boxes size={14} /> },

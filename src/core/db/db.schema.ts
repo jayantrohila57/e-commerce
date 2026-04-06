@@ -52,6 +52,7 @@ export const shipmentStatusEnum = pgEnum("shipment_status", [
 export const displayTypeEnum = pgEnum("display_type", ["grid", "carousel", "banner", "list", "featured"]);
 export const visibilityEnum = pgEnum("visibility", ["public", "private", "hidden"]);
 export const productStatusEnum = pgEnum("product_status", ["draft", "archive", "live"]);
+export const cookieConsentSourceEnum = pgEnum("cookie_consent_source", ["banner", "account", "sync", "server"]);
 
 // Enterprise enums (single-merchant, company-owned platform)
 export const productRelationTypeEnum = pgEnum("product_relation_type", ["related", "cross_sell", "upsell"]);
@@ -198,6 +199,58 @@ export const rateLimit = pgTable("rate_limit", {
   count: integer("count"),
   lastRequest: bigint("last_request", { mode: "number" }),
 });
+
+export const userCookieConsent = pgTable(
+  "user_cookie_consent",
+  {
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    essential: boolean("essential").default(true).notNull(),
+    functional: boolean("functional").default(false).notNull(),
+    analytics: boolean("analytics").default(false).notNull(),
+    marketing: boolean("marketing").default(false).notNull(),
+    region: text("region"),
+    consentVersion: integer("consent_version").default(1).notNull(),
+    source: cookieConsentSourceEnum("source").default("banner").notNull(),
+    expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+    ipAddress: text("ip_address"),
+    userAgent: text("user_agent"),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .defaultNow()
+      .$onUpdate(() => new Date())
+      .notNull(),
+  },
+  (table) => ({
+    userIdUniqueIdx: uniqueIndex("user_cookie_consent_user_id_unique").on(table.userId),
+    expiresAtIdx: index("user_cookie_consent_expires_at_idx").on(table.expiresAt),
+  }),
+);
+
+export const cookieConsentAuditLog = pgTable(
+  "cookie_consent_audit_log",
+  {
+    id: text("id").primaryKey(),
+    userId: text("user_id").references(() => user.id, { onDelete: "set null" }),
+    essential: boolean("essential").default(true).notNull(),
+    functional: boolean("functional").default(false).notNull(),
+    analytics: boolean("analytics").default(false).notNull(),
+    marketing: boolean("marketing").default(false).notNull(),
+    region: text("region"),
+    consentVersion: integer("consent_version").default(1).notNull(),
+    source: cookieConsentSourceEnum("source").default("banner").notNull(),
+    expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+    ipAddress: text("ip_address"),
+    userAgent: text("user_agent"),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => ({
+    userIdIdx: index("cookie_consent_audit_log_user_id_idx").on(table.userId),
+    createdAtIdx: index("cookie_consent_audit_log_created_at_idx").on(table.createdAt),
+  }),
+);
 
 export const category = pgTable(
   "category",

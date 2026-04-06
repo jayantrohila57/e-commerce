@@ -47,6 +47,12 @@ export const accountSections = {
           icon: Settings,
           link: PATH.ACCOUNT.SETTINGS,
         },
+        {
+          name: "Privacy",
+          description: "Manage cookie consent and saved privacy preferences across devices.",
+          icon: Shield,
+          link: PATH.ACCOUNT.PRIVACY,
+        },
       ],
     },
     {

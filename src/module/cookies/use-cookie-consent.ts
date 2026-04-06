@@ -1,75 +1,78 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { debugError } from "@/shared/utils/lib/logger.utils";
-
-interface CookiePreferences {
-  essential: boolean;
-  functional: boolean;
-  analytics: boolean;
-  marketing: boolean;
-}
-
-const STORAGE_KEY = "cookie-consent-preferences";
-const CONSENT_GIVEN_KEY = "cookie-consent-given";
+import {
+  clearCookieConsentStorage,
+  clearOptionalConsentCookies,
+  overwriteCookieConsentRecord,
+  readCookieConsentFromStorage,
+  writeCookieConsentToStorage,
+} from "./cookie-consent.browser";
+import type { ConsentSource, CookieConsentPreferences, CookieConsentRecord } from "./cookie-consent.schema";
+import {
+  areCookiePreferencesEqual,
+  defaultCookieConsentPreferences,
+  hasCookieConsentExpired,
+} from "./cookie-consent.shared";
 
 export function useCookieConsent() {
-  const [preferences, setPreferences] = useState<CookiePreferences>({
-    essential: true,
-    functional: false,
-    analytics: false,
-    marketing: false,
-  });
-  const [hasConsent, setHasConsent] = useState(false);
+  const [record, setRecord] = useState<CookieConsentRecord | null>(null);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    const consentGiven = localStorage.getItem(CONSENT_GIVEN_KEY);
-    const savedPreferences = localStorage.getItem(STORAGE_KEY);
-
-    let parsedPrefs: CookiePreferences | null = null;
-    if (savedPreferences) {
-      try {
-        parsedPrefs = JSON.parse(savedPreferences);
-      } catch (error) {
-        debugError("Failed to parse saved cookie preferences:", error);
-      }
+    const current = readCookieConsentFromStorage();
+    if (current && hasCookieConsentExpired(current)) {
+      clearCookieConsentStorage();
+      setRecord(null);
+    } else {
+      setRecord(current);
     }
-
-    // Update once, asynchronously — no warning, no re-render storm
-    queueMicrotask(() => {
-      if (consentGiven) setHasConsent(true);
-      if (parsedPrefs) setPreferences(parsedPrefs);
-    });
+    setIsLoaded(true);
   }, []);
 
-  const updatePreferences = (newPreferences: CookiePreferences) => {
-    setPreferences(newPreferences);
-    setHasConsent(true);
+  const updatePreferences = (
+    preferences: Partial<CookieConsentPreferences>,
+    options?: {
+      region?: string | null;
+      source?: ConsentSource;
+    },
+  ) => {
+    const next = writeCookieConsentToStorage(
+      {
+        ...defaultCookieConsentPreferences,
+        ...preferences,
+        essential: true,
+      },
+      options,
+    );
+    if (next) setRecord(next);
+    return next;
+  };
+
+  const overwriteFromServer = (next: CookieConsentRecord) => {
+    const saved = overwriteCookieConsentRecord(next);
+    if (saved) setRecord(saved);
+    return saved;
   };
 
   const resetConsent = () => {
-    localStorage.removeItem(STORAGE_KEY);
-    localStorage.removeItem(CONSENT_GIVEN_KEY);
-    setHasConsent(false);
-    setPreferences({
-      essential: true,
-      functional: false,
-      analytics: false,
-      marketing: false,
-    });
+    clearCookieConsentStorage();
+    setRecord(null);
   };
 
-  const canUseAnalytics = () => preferences.analytics && hasConsent;
-  const canUseMarketing = () => preferences.marketing && hasConsent;
-  const canUseFunctional = () => preferences.functional && hasConsent;
-
   return {
-    preferences,
-    hasConsent,
+    record,
+    isLoaded,
+    hasConsent: Boolean(record),
+    isExpired: hasCookieConsentExpired(record),
+    preferences: record ?? null,
     updatePreferences,
+    overwriteFromServer,
     resetConsent,
-    canUseAnalytics,
-    canUseMarketing,
-    canUseFunctional,
+    canUseAnalytics: Boolean(record?.analytics) && !hasCookieConsentExpired(record),
+    canUseMarketing: Boolean(record?.marketing) && !hasCookieConsentExpired(record),
+    canUseFunctional: Boolean(record?.functional) && !hasCookieConsentExpired(record),
+    hasSamePreferences: (other: Partial<CookieConsentPreferences> | null | undefined) =>
+      areCookiePreferencesEqual(record, other),
   };
 }

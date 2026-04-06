@@ -8,6 +8,13 @@
       "when": 1773919232971,
       "tag": "0000_fixed_lorna_dane",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1775473085820,
+      "tag": "0001_thick_eddie_brock",
+      "breakpoints": true
     }
   ]
 }

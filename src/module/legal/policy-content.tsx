@@ -582,78 +582,80 @@ export const policyContent: Record<string, PolicyContent> = {
   "cookies-policy": {
     id: "cookies-policy",
     href: PATH.SITE.LEGAL.COOKIES,
-    title: "Contact & Grievance Redressal",
+    title: "Cookie Policy",
     icon: <Mail className="h-6 w-6" />,
     lastUpdated: "October 15, 2024",
     description:
-      "This Contact & Grievance Redressal Policy outlines our commitment to providing responsive and effective customer support and handling grievances in a fair and transparent manner.",
+      "This Cookie Policy explains which cookies we use, why we use them, and how you can control your consent choices on our store.",
     tableOfContents: [
-      "Contact Information",
-      "Customer Support Hours",
-      "Grievance Redressal Process",
-      "Escalation Procedure",
-      "Response Timeline",
-      "Feedback and Suggestions",
+      "What Cookies Are",
+      "Cookie Categories",
+      "How We Use Consent",
+      "Changing Your Preferences",
+      "Consent Retention",
+      "Contact",
     ],
     sections: [
       {
-        heading: "1. Contact Information",
-        content: ["We are here to help! You can reach our customer service team through multiple channels:"],
-        list: [
-          "Email: support@ecommerce.com",
-          "Phone: 1-800-123-4567 (Toll-free)",
-          "Live Chat: Available on our website",
-          "Mailing Address: 123 Commerce Street, Business City, BC 12345",
-          "Social Media: @ecommerce on Twitter, Facebook, and Instagram",
-        ],
-      },
-      {
-        heading: "2. Customer Support Hours",
-        content: ["Our customer support team is available to assist you:"],
-        list: [
-          "Monday - Friday: 8:00 AM - 8:00 PM EST",
-          "Saturday: 9:00 AM - 6:00 PM EST",
-          "Sunday: 10:00 AM - 5:00 PM EST",
-          "Live Chat: 24/7",
-          "Email: Responses within 24 hours",
-        ],
-      },
-      {
-        heading: "3. Grievance Redressal Process",
-        content: ["If you have a complaint or grievance, please follow this process:"],
-        list: [
-          "Contact our customer service team with details of your issue",
-          "Provide your order number and relevant documentation",
-          "Our team will investigate and respond within 48 hours",
-          "If unresolved, your case will be escalated to a supervisor",
-          "You will receive updates throughout the resolution process",
-        ],
-      },
-      {
-        heading: "4. Escalation Procedure",
+        heading: "1. What Cookies Are",
         content: [
-          "If you are not satisfied with the initial response to your complaint, you may request escalation:",
-          "Level 1: Customer Service Representative (Initial contact)",
-          "Level 2: Customer Service Supervisor (48-72 hours)",
-          "Level 3: Customer Service Manager (1 week)",
-          "Level 4: Grievance Officer (Final escalation)",
+          "Cookies are small text files stored on your device that help our website remember useful information between visits.",
+          "We use cookies to keep essential shopping features working, understand store usage when you allow analytics, and prepare for future marketing integrations when you explicitly consent.",
         ],
-      },
-      {
-        heading: "5. Response Timeline",
-        content: ["We are committed to resolving your issues promptly:"],
         list: [
-          "Initial acknowledgment: Within 24 hours",
-          "Full response to queries: Within 48-72 hours",
-          "Resolution of complaints: Within 5-7 business days",
-          "Complex issues: Within 14 business days with regular updates",
+          "Authentication and security cookies",
+          "Cart and checkout continuity cookies",
+          "Optional analytics cookies",
+          "Optional marketing cookies",
         ],
       },
       {
-        heading: "6. Feedback and Suggestions",
+        heading: "2. Cookie Categories",
         content: [
-          "We value your feedback and suggestions for improving our services. Please share your thoughts at feedback@ecommerce.com.",
-          "All feedback is reviewed by our management team and helps us enhance your shopping experience. We may contact you for additional details about your suggestions.",
+          "We group cookies into clear categories so you can choose the optional uses that feel right for you.",
+        ],
+        list: [
+          "Essential: always active for sign-in, cart, checkout, and security",
+          "Functional: optional enhancements tied to this device",
+          "Analytics: optional usage measurement and performance insights",
+          "Marketing: optional advertising and retargeting support",
+        ],
+      },
+      {
+        heading: "3. How We Use Consent",
+        content: [
+          "Optional cookies are disabled by default until you make a choice in our cookie banner or from your account privacy settings.",
+          "Essential cookies remain active because the store cannot function correctly without them.",
+        ],
+        list: [
+          "Accept all to enable all optional categories",
+          "Reject all except essential to keep only mandatory cookies active",
+          "Customize to choose categories one by one",
+        ],
+      },
+      {
+        heading: "4. Changing Your Preferences",
+        content: [
+          "You can update your cookie choices at any time from the cookie banner when consent is missing or expired, and from your account privacy settings after signing in.",
+          "When you withdraw optional consent, we stop future optional tracking and keep only essential cookies active.",
+        ],
+      },
+      {
+        heading: "5. Consent Retention",
+        content: [
+          "We remember your cookie choice for 6 months before asking again so your privacy preference stays current.",
+        ],
+        list: [
+          "Consent choices are stored in your browser",
+          "If you are signed in, we also save them to your account so they can be applied across devices",
+          "We maintain consent history for compliance and audit purposes",
+        ],
+      },
+      {
+        heading: "6. Contact",
+        content: [
+          "If you have questions about cookies or privacy choices, please contact our support team.",
+          "For broader details about personal data handling, please also review our Privacy Policy and Data Protection pages.",
         ],
       },
     ],

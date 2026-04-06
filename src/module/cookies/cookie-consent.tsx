@@ -1,271 +1,295 @@
 "use client";
 
-import { BarChart3, Settings, Shield, Target, X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { BarChart3, Globe2, Settings, Shield, Target, X } from "lucide-react";
+import Link from "next/link";
+import { useEffect, useRef, useState, useTransition } from "react";
+import { toast } from "sonner";
+import { apiClient } from "@/core/api/api.client";
+import { useSession } from "@/core/auth/auth.client";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/shared/components/ui/alert-dialog";
 import { Button } from "@/shared/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/components/ui/card";
 import { Switch } from "@/shared/components/ui/switch";
-import { debugError, debugLog } from "@/shared/utils/lib/logger.utils";
-
-const onConsentChange = (newPreferences: CookiePreferences) => {
-  debugLog("Cookie preferences updated:", newPreferences);
-
-  if (newPreferences.analytics) {
-    debugLog("Analytics enabled - initialize Google Analytics, etc.");
-  }
-
-  if (newPreferences.marketing) {
-    debugLog("Marketing enabled - initialize Facebook Pixel, etc.");
-  }
-};
-
-export interface CookiePreferences {
-  essential: boolean;
-  functional: boolean;
-  analytics: boolean;
-  marketing: boolean;
-}
-
-const STORAGE_KEY = "cookie-consent-preferences";
-const CONSENT_GIVEN_KEY = "cookie-consent-given";
+import { PATH } from "@/shared/config/routes";
+import type { ConsentCategory, CookieConsentPreferences, CookieConsentRecord } from "./cookie-consent.schema";
+import { defaultCookieConsentPreferences } from "./cookie-consent.shared";
+import { useCookieConsent } from "./use-cookie-consent";
 
 export default function CookieConsent() {
-  const [isVisible, setIsVisible] = useState(false);
+  const { data: session } = useSession();
+  const { record, isLoaded, overwriteFromServer, updatePreferences } = useCookieConsent();
   const [showDetails, setShowDetails] = useState(false);
-  const [preferences, setPreferences] = useState<CookiePreferences>(() => {
-    if (typeof window === "undefined") {
-      return {
-        essential: true,
-        functional: false,
-        analytics: false,
-        marketing: false,
-      };
+  const [showSyncDialog, setShowSyncDialog] = useState(false);
+  const [pendingServerConsent, setPendingServerConsent] = useState<CookieConsentRecord | null>(null);
+  const [draftPreferences, setDraftPreferences] = useState<CookieConsentPreferences>(defaultCookieConsentPreferences);
+  const [isPending, startTransition] = useTransition();
+  const syncedForUserRef = useRef<string | null>(null);
+
+  const syncMutation = apiClient.cookieConsent.syncAfterLogin.useMutation();
+  const saveMutation = apiClient.cookieConsent.save.useMutation();
+
+  useEffect(() => {
+    setDraftPreferences({
+      essential: true,
+      functional: record?.functional ?? false,
+      analytics: record?.analytics ?? false,
+      marketing: record?.marketing ?? false,
+    });
+  }, [record]);
+
+  useEffect(() => {
+    const userId = session?.user?.id;
+    if (!userId || !isLoaded || syncedForUserRef.current === userId) return;
+
+    syncedForUserRef.current = userId;
+    void syncMutation
+      .mutateAsync({
+        body: {
+          browserConsent: record,
+        },
+      })
+      .then((result) => {
+        if (result.status !== "success" || !result.data) return;
+        if (result.data.mode === "db-overrides" && result.data.consent) {
+          setPendingServerConsent(result.data.consent);
+          setShowSyncDialog(true);
+          return;
+        }
+
+        if (result.data.mode === "db-saved" && result.data.consent) {
+          overwriteFromServer(result.data.consent);
+        }
+      });
+  }, [isLoaded, overwriteFromServer, record, session?.user?.id, syncMutation]);
+
+  const isVisible = isLoaded && !record;
+
+  function persistConsent(nextPreferences: CookieConsentPreferences, source: "banner" | "account") {
+    const localRecord = updatePreferences(nextPreferences, { source });
+
+    if (session?.user?.id) {
+      void saveMutation.mutateAsync({
+        body: {
+          essential: true,
+          functional: nextPreferences.functional,
+          analytics: nextPreferences.analytics,
+          marketing: nextPreferences.marketing,
+          region: localRecord?.region ?? null,
+          source,
+        },
+      });
     }
 
-    try {
-      const savedPreferences = localStorage.getItem(STORAGE_KEY);
-      if (!savedPreferences) {
-        return {
+    return localRecord;
+  }
+
+  function handleAcceptAll() {
+    startTransition(() => {
+      persistConsent(
+        {
+          essential: true,
+          functional: true,
+          analytics: true,
+          marketing: true,
+        },
+        "banner",
+      );
+      toast.success("Cookie preferences saved");
+    });
+  }
+
+  function handleRejectAll() {
+    startTransition(() => {
+      persistConsent(
+        {
           essential: true,
           functional: false,
           analytics: false,
           marketing: false,
-        };
-      }
+        },
+        "banner",
+      );
+      toast.success("Only essential cookies will remain active");
+    });
+  }
 
-      const parsed = JSON.parse(savedPreferences);
-      const newPreferences: CookiePreferences = {
-        essential: true, // Ensure essential is always true
-        functional: parsed.functional ?? false,
-        analytics: parsed.analytics ?? false,
-        marketing: parsed.marketing ?? false,
-      };
+  function handleSaveSelected() {
+    startTransition(() => {
+      persistConsent(draftPreferences, "banner");
+      toast.success("Cookie preferences saved");
+    });
+  }
 
-      // Call onConsentChange with the loaded preferences
-      onConsentChange(newPreferences);
-      return newPreferences;
-    } catch (error) {
-      debugError("Failed to parse saved cookie preferences:", error);
-      return {
-        essential: true,
-        functional: false,
-        analytics: false,
-        marketing: false,
-      };
-    }
-  });
-
-  useEffect(() => {
-    try {
-      setIsVisible(!window.localStorage.getItem(CONSENT_GIVEN_KEY));
-    } catch {
-      setIsVisible(true);
-    }
-  }, []);
-
-  const savePreferences = (preferences: CookiePreferences) => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(preferences));
-    localStorage.setItem(CONSENT_GIVEN_KEY, "true");
-    onConsentChange?.(preferences);
-
-    // Set actual cookies based on preferences
-    if (preferences.analytics) {
-      document.cookie = "analytics_enabled=true; path=/; max-age=31536000; SameSite=Lax";
-    } else {
-      document.cookie = "analytics_enabled=false; path=/; max-age=0";
-    }
-
-    if (preferences.marketing) {
-      document.cookie = "marketing_enabled=true; path=/; max-age=31536000; SameSite=Lax";
-    } else {
-      document.cookie = "marketing_enabled=false; path=/; max-age=0";
-    }
-
-    if (preferences.functional) {
-      document.cookie = "functional_enabled=true; path=/; max-age=31536000; SameSite=Lax";
-    } else {
-      document.cookie = "functional_enabled=false; path=/; max-age=0";
-    }
-  };
-
-  const handleAcceptAll = () => {
-    const allAccepted: CookiePreferences = {
-      essential: true,
-      functional: true,
-      analytics: true,
-      marketing: true,
-    };
-    setPreferences(allAccepted);
-    savePreferences(allAccepted);
-    setIsVisible(false);
-  };
-
-  const handleAcceptSelected = () => {
-    savePreferences(preferences);
-    setIsVisible(false);
-  };
-
-  const handleRejectAll = () => {
-    const essentialOnly: CookiePreferences = {
-      essential: true,
-      functional: false,
-      analytics: false,
-      marketing: false,
-    };
-    setPreferences(essentialOnly);
-    savePreferences(essentialOnly);
-    setIsVisible(false);
-  };
-
-  const handlePreferenceChange = (key: keyof CookiePreferences, value: boolean) => {
-    if (key === "essential") return; // Essential cookies cannot be disabled
-
-    setPreferences((prev) => ({
+  function handlePreferenceChange(key: ConsentCategory, value: boolean) {
+    if (key === "essential") return;
+    setDraftPreferences((prev) => ({
       ...prev,
       [key]: value,
     }));
-  };
+  }
 
-  if (!isVisible) return null;
+  function applySavedPrivacyPreferences() {
+    if (!pendingServerConsent) return;
+    overwriteFromServer(pendingServerConsent);
+    setShowSyncDialog(false);
+    setPendingServerConsent(null);
+    toast.success("Saved privacy preferences applied to this device");
+  }
+
+  if (!isVisible) {
+    return (
+      <AlertDialog open={showSyncDialog} onOpenChange={setShowSyncDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Use your saved privacy preferences?</AlertDialogTitle>
+            <AlertDialogDescription>
+              We found cookie choices saved in your account. To keep privacy consistent across devices, we can apply
+              those saved preferences here now.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Keep this device for now</AlertDialogCancel>
+            <AlertDialogAction onClick={applySavedPrivacyPreferences}>Apply saved preferences</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    );
+  }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 p-4 backdrop-blur-sm">
-      <Card className="max-h-[70vh] w-full max-w-2xl overflow-y-auto">
-        <CardHeader>
-          <div className="flex items-start justify-between">
-            <div>
-              <CardTitle className="text-xl font-semibold">{"Cookie Preferences"}</CardTitle>
-              <CardDescription className="text-xs">
-                {
-                  "We use cookies to enhance your browsing experience, serve personalized content, and analyze our traffic."
-                }
-                {"Choose which cookies you allow us to use."}
-              </CardDescription>
-            </div>
-            <Button variant="ghost" size="sm" onClick={() => setIsVisible(false)} className="shrink-0">
-              <X className="h-4 w-4" />
-            </Button>
-          </div>
-        </CardHeader>
-
-        <CardContent className="space-y-2">
-          {showDetails && (
-            <div className="space-y-4">
-              {/* Essential Cookies */}
-              <div className="flex items-start justify-between rounded-lg border p-2">
-                <div className="flex flex-1 items-start gap-2">
-                  <Shield className="mt-0.5 h-5 w-5 shrink-0" />
-                  <div className="space-y-1">
-                    <h4 className="font-medium">{"Essential Cookies"}</h4>
-                    <p className="text-muted-foreground text-xs">
-                      {"Required for the website to function properly. These cannot be disabled."}
-                    </p>
-                  </div>
-                </div>
-                <Switch checked={preferences.essential} disabled={true} className="shrink-0" />
+    <>
+      <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/45 p-4 backdrop-blur-sm">
+        <Card className="w-full max-w-3xl border-border/60 shadow-2xl">
+          <CardHeader className="border-b">
+            <div className="flex items-start justify-between gap-4">
+              <div className="space-y-2">
+                <CardTitle className="text-xl">Privacy and cookie choices</CardTitle>
+                <CardDescription className="max-w-2xl text-sm">
+                  We use essential cookies to keep sign-in, cart, checkout, and security working. You can also choose
+                  whether we use optional cookies for functionality, analytics, and marketing. Read our{" "}
+                  <Link href={PATH.SITE.LEGAL.COOKIES} className="underline underline-offset-4">
+                    cookie policy
+                  </Link>
+                  .
+                </CardDescription>
               </div>
+              <Button variant="ghost" size="sm" className="shrink-0" onClick={() => setShowDetails((value) => !value)}>
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+          </CardHeader>
 
-              {/* Functional Cookies */}
-              <div className="flex items-start justify-between rounded-lg border p-2">
-                <div className="flex flex-1 items-start gap-2">
-                  <Settings className="mt-0.5 h-5 w-5 shrink-0" />
-                  <div className="space-y-1">
-                    <h4 className="font-medium">{"Functional Cookies"}</h4>
-                    <p className="text-muted-foreground text-xs">
-                      {"Enable enhanced functionality like chat widgets, videos, and personalized content."}
-                    </p>
-                  </div>
-                </div>
-                <Switch
-                  checked={preferences.functional}
+          <CardContent className="space-y-4 pt-6">
+            {showDetails && (
+              <div className="grid gap-3">
+                <PreferenceRow
+                  description="Required for account sessions, cart state, checkout, and security."
+                  icon={<Shield className="h-5 w-5" />}
+                  label="Essential cookies"
+                  locked
+                  checked
+                />
+                <PreferenceRow
+                  description="Optional site features tied to this device only. Existing account preferences stay separate."
+                  icon={<Settings className="h-5 w-5" />}
+                  label="Functional cookies"
+                  checked={draftPreferences.functional}
                   onCheckedChange={(checked) => handlePreferenceChange("functional", checked)}
-                  className="shrink-0"
                 />
-              </div>
-
-              {/* Analytics Cookies */}
-              <div className="flex items-start justify-between rounded-lg border p-2">
-                <div className="flex flex-1 items-start gap-2">
-                  <BarChart3 className="mt-0.5 h-5 w-5 shrink-0" />
-                  <div className="space-y-1">
-                    <h4 className="font-medium">{"Analytics Cookies"}</h4>
-                    <p className="text-muted-foreground text-xs">
-                      {
-                        "    Help us understand how visitors interact with our website by collecting anonymous information."
-                      }
-                    </p>
-                  </div>
-                </div>
-                <Switch
-                  checked={preferences.analytics}
+                <PreferenceRow
+                  description="Helps us understand store usage and prepares the app for future analytics integrations."
+                  icon={<BarChart3 className="h-5 w-5" />}
+                  label="Analytics cookies"
+                  checked={draftPreferences.analytics}
                   onCheckedChange={(checked) => handlePreferenceChange("analytics", checked)}
-                  className="shrink-0"
                 />
-              </div>
-
-              {/* Marketing Cookies */}
-              <div className="flex items-start justify-between rounded-lg border p-2">
-                <div className="flex flex-1 items-start gap-2">
-                  <Target className="mt-0.5 h-5 w-5 shrink-0" />
-                  <div className="space-y-1">
-                    <h4 className="font-medium"> {"Marketing Cookies"}</h4>
-                    <p className="text-muted-foreground text-xs">
-                      {"Used to track visitors across websites to display relevant advertisements."}
-                    </p>
-                  </div>
-                </div>
-                <Switch
-                  checked={preferences.marketing}
+                <PreferenceRow
+                  description="Reserved for future advertising and retargeting integrations."
+                  icon={<Target className="h-5 w-5" />}
+                  label="Marketing cookies"
+                  checked={draftPreferences.marketing}
                   onCheckedChange={(checked) => handlePreferenceChange("marketing", checked)}
-                  className="shrink-0"
                 />
               </div>
+            )}
+
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <Button disabled={isPending} onClick={handleAcceptAll}>
+                Accept all
+              </Button>
+              <Button disabled={isPending} onClick={handleRejectAll} variant="outline">
+                Reject all except essential
+              </Button>
+              <Button disabled={isPending} onClick={() => setShowDetails((value) => !value)} variant="outline">
+                {showDetails ? "Hide customization" : "Customize"}
+              </Button>
             </div>
-          )}
 
-          <div className="flex flex-col gap-3 sm:flex-row">
-            <Button onClick={handleAcceptAll}>{"Accept All"}</Button>
+            {showDetails && (
+              <div className="flex items-center justify-between rounded-xl border bg-muted/40 px-4 py-3">
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <Globe2 className="h-4 w-4" />
+                  Your choice will be remembered for 6 months and can be changed later from Account Settings {" > "}
+                  Privacy.
+                </div>
+                <Button disabled={isPending} onClick={handleSaveSelected} variant="secondary">
+                  Save preferences
+                </Button>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
 
-            <Button onClick={handleRejectAll} variant="outline">
-              {"Reject All"}
-            </Button>
+      <AlertDialog open={showSyncDialog} onOpenChange={setShowSyncDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Use your saved privacy preferences?</AlertDialogTitle>
+            <AlertDialogDescription>
+              We found cookie choices saved in your account. To keep privacy consistent across devices, we can apply
+              those saved preferences here now.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Keep this device for now</AlertDialogCancel>
+            <AlertDialogAction onClick={applySavedPrivacyPreferences}>Apply saved preferences</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
+  );
+}
 
-            <Button onClick={() => setShowDetails(!showDetails)} variant="outline">
-              {showDetails ? "Hide Details" : "Customize"}
-            </Button>
+function PreferenceRow(props: {
+  checked: boolean;
+  description: string;
+  icon: React.ReactNode;
+  label: string;
+  locked?: boolean;
+  onCheckedChange?: (checked: boolean) => void;
+}) {
+  return (
+    <div className="flex items-start justify-between gap-4 rounded-xl border p-4">
+      <div className="flex flex-1 items-start gap-3">
+        <div className="mt-0.5 text-muted-foreground">{props.icon}</div>
+        <div className="space-y-1">
+          <div className="flex items-center gap-2">
+            <p className="font-medium">{props.label}</p>
+            {props.locked && <span className="text-xs text-muted-foreground">Always on</span>}
           </div>
-
-          {showDetails && (
-            <Button onClick={handleAcceptSelected} className="w-full" variant="secondary">
-              {"Save Preferences"}
-            </Button>
-          )}
-
-          <p className="text-muted-foreground text-center text-xs">
-            {"You can change your preferences at any time in your browser settings or by clearing your cookies."}
-          </p>
-        </CardContent>
-      </Card>
+          <p className="text-sm text-muted-foreground">{props.description}</p>
+        </div>
+      </div>
+      <Switch checked={props.checked} disabled={props.locked} onCheckedChange={props.onCheckedChange} />
     </div>
   );
 }

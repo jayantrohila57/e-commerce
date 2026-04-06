@@ -27,6 +27,7 @@ export const PATH = {
     ADDRESS_EDIT: (id: string) => `/account/address/${id}/edit`,
     REVIEW: "/account/review" as Route,
     SETTINGS: "/account/setting" as Route,
+    PRIVACY: "/account/setting/privacy" as Route,
     SHIPMENT: "/account/shipment" as Route,
     SHIPMENT_DETAIL: (id: string) => `/account/shipment/${id}`,
   },

@@ -32,7 +32,7 @@ export function SignUpForm() {
 
       if (res.error == null) {
         const email = encodeURIComponent(res?.data?.user?.email ?? "");
-        router.push(`/auth/sign-in?verified=1&email=${email}`);
+        router.push(`/auth/verify-email?email=${email}`);
         toast.success("Sign up successful", { id: toastId });
       }
     });

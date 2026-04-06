@@ -160,7 +160,7 @@ export const auth = betterAuth({
     sendOnSignUp: true,
     sendVerificationEmail: async ({ user, url }) => {
       const verificationUrl = new URL(url);
-      verificationUrl.searchParams.set("callbackURL", "/auth/sign-in?verified=1");
+      verificationUrl.searchParams.set("callbackURL", "/auth/verify-email?verified=1");
       await sendEmailVerificationEmail({ user: normalizeEmailUser(user), url: verificationUrl.toString() });
     },
   },

@@ -224,9 +224,16 @@ export const paymentRouter = createTRPCRouter({
   getStatus: customerProcedure
     .input(paymentContract.getStatus.input)
     .output(paymentContract.getStatus.output)
-    .query(async ({ input }) => {
+    .query(async ({ input, ctx }) => {
       try {
         const { orderId } = input.params;
+        const orderRow = await db.query.order.findFirst({
+          where: eq(order.id, orderId),
+        });
+
+        if (!orderRow || (orderRow.userId && orderRow.userId !== ctx.user.id)) {
+          return API_RESPONSE(STATUS.FAILED, "Unauthorized", []);
+        }
 
         const data = await db.query.payment.findMany({
           where: eq(payment.orderId, orderId),

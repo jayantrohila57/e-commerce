@@ -72,10 +72,8 @@ export const orderRouter = createTRPCRouter({
     .query(async ({ ctx }) => {
       try {
         const userId = ctx.user.id;
-
-        const role = normalizeRole(ctx.user.role);
         const data = await db.query.order.findMany({
-          where: role === APP_ROLE.CUSTOMER ? eq(order.userId, userId) : undefined,
+          where: eq(order.userId, userId),
           orderBy: (orderTable, { desc }) => [desc(orderTable.placedAt)],
           with: {
             items: true,

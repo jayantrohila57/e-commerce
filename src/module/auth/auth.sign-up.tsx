@@ -22,13 +22,14 @@ export function SignUpForm() {
   async function handleSubmit(data: FormValues) {
     startTransition(async () => {
       const toastId = toast.loading("Signing up");
+      const { confirmPassword: _confirmPassword, ...signUpData } = data;
       const options = {
         onError: (error: { error?: { message?: string } }) => {
           toast.error(error.error?.message || "Failed to sign up", { id: toastId });
         },
       } satisfies NonNullable<Parameters<typeof signUp.email>[1]>;
 
-      const res = await signUp.email({ ...data }, options);
+      const res = await signUp.email({ ...signUpData }, options);
 
       if (res.error == null) {
         const email = encodeURIComponent(res?.data?.user?.email ?? "");
@@ -44,7 +45,7 @@ export function SignUpForm() {
 
   return (
     <Form
-      defaultValues={{ name: "", email: "", password: "" }}
+      defaultValues={{ name: "", email: "", password: "", confirmPassword: "" }}
       schema={AuthSchema.SIGN_UP.INPUT}
       onSubmitAction={onSubmit}
       className="grid h-auto grid-cols-1 gap-4 px-1"
@@ -72,6 +73,14 @@ export function SignUpForm() {
           type: "password",
           placeholder: "********",
           needValidation: true,
+        }}
+      />
+      <Form.Field
+        {...{
+          name: "confirmPassword",
+          label: "Confirm Password",
+          type: "password",
+          placeholder: "********",
         }}
       />
 

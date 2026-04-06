@@ -65,5 +65,11 @@ export default withSentryConfig(nextConfig, {
   org: "jayantrohila57",
   project: "lucsum",
   widenClientFileUpload: true,
+  release: {
+    create: false,
+  },
+  sourcemaps: {
+    disable: true,
+  },
   silent: !process.env.CI,
 });

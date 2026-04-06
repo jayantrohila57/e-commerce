@@ -2,12 +2,53 @@ import { and, eq, ilike, isNull, not, sql } from "drizzle-orm";
 import { v4 as uuidv4 } from "uuid";
 import { createTRPCRouter, publicProcedure, staffProcedure } from "@/core/api/api.methods";
 import { db } from "@/core/db/db";
-import { product, productVariant } from "@/core/db/db.schema";
+import { inventoryItem, product, productVariant, review } from "@/core/db/db.schema";
 import { MESSAGE, STATUS } from "@/shared/config/api.config";
 import { API_RESPONSE } from "@/shared/config/api.utils";
 import { buildPagination, buildPaginationMeta } from "@/shared/schema";
 import { debugError } from "@/shared/utils/lib/logger.utils";
 import { productContract } from "./product.schema";
+
+async function loadPdpSeoForVariant(productId: string, variantId: string) {
+  const [aggRow] = await db
+    .select({
+      avg: sql<number>`coalesce(avg(${review.rating}), 0)`,
+      count: sql<number>`count(*)::int`,
+    })
+    .from(review)
+    .where(and(eq(review.productId, productId), eq(review.isApproved, true)));
+
+  const reviewCount = Number(aggRow?.count ?? 0);
+  const reviewAggregate =
+    reviewCount > 0
+      ? {
+          ratingValue: Math.round(Number(aggRow?.avg ?? 0) * 10) / 10,
+          reviewCount,
+        }
+      : null;
+
+  const invRows = await db
+    .select({
+      sku: inventoryItem.sku,
+      qty: sql<number>`greatest(0, ${inventoryItem.quantity} - ${inventoryItem.reserved})`,
+    })
+    .from(inventoryItem)
+    .where(and(eq(inventoryItem.variantId, variantId), isNull(inventoryItem.deletedAt)));
+
+  let availableQuantity = 0;
+  for (const row of invRows) {
+    availableQuantity += Number(row.qty);
+  }
+  const variantInventory =
+    invRows.length > 0
+      ? {
+          sku: invRows[0]?.sku ?? null,
+          availableQuantity,
+        }
+      : null;
+
+  return { reviewAggregate, variantInventory };
+}
 
 export const productRouter = createTRPCRouter({
   get: staffProcedure
@@ -246,8 +287,11 @@ export const productRouter = createTRPCRouter({
             const [matched] = variants.splice(matchIdx, 1);
             variants.unshift(matched);
           }
+          const productPayload = { ...productData, variants };
+          const seo = await loadPdpSeoForVariant(productPayload.id, variants[0]!.id);
           return API_RESPONSE(STATUS.SUCCESS, MESSAGE.PRODUCT.GET_PDP_PRODUCT.SUCCESS, {
-            product: { ...productData, variants },
+            product: productPayload,
+            seo,
           });
         }
 
@@ -288,13 +332,21 @@ export const productRouter = createTRPCRouter({
               },
             ],
           };
+          const seo = await loadPdpSeoForVariant(found.id, found.id);
           return API_RESPONSE(STATUS.SUCCESS, MESSAGE.PRODUCT.GET_PDP_PRODUCT.SUCCESS, {
             product: productWithVirtualVariant,
+            seo,
           });
         }
 
+        const primaryVariant = found.variants.find((v) => v.slug === variantSlug) ?? found.variants[0] ?? null;
+        if (!primaryVariant) {
+          return API_RESPONSE(STATUS.FAILED, MESSAGE.PRODUCT.GET_PDP_PRODUCT.NOT_FOUND, null);
+        }
+        const seo = await loadPdpSeoForVariant(found.id, primaryVariant.id);
         return API_RESPONSE(STATUS.SUCCESS, MESSAGE.PRODUCT.GET_PDP_PRODUCT.SUCCESS, {
           product: found,
+          seo,
         });
       } catch (err) {
         debugError("PRODUCT:GET_PDP_PRODUCT_FULL_PATH:ERROR", err);

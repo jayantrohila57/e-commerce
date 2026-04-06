@@ -3,10 +3,17 @@ import { LegalSidebar } from "@/module/legal/legal.sidebar";
 import { TableOfContents } from "@/module/legal/legal.toc";
 import { getMetadata } from "@/module/legal/policy-content";
 import Section from "@/shared/components/layout/section/section";
+import { buildPageMetadata } from "@/shared/seo/metadata-builders";
 
 export async function generateMetadata({ params }: PageProps<"/legal/[slug]">) {
   const { slug } = await params;
-  return getMetadata(slug);
+  const base = getMetadata(slug);
+  return buildPageMetadata({
+    title: base.title,
+    description: base.description,
+    canonicalPath: `/legal/${slug}`,
+    ogType: "article",
+  });
 }
 
 export default async function Page({ params }: PageProps<"/legal/[slug]">) {

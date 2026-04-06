@@ -4,11 +4,14 @@ import { ContentCTA, ContentFeatureHighlights, ContentOfferBanner } from "@/modu
 import SiteHero from "@/module/site/site.hero";
 import Shell from "@/shared/components/layout/shell";
 import { site } from "@/shared/config/site";
+import { buildPageMetadata } from "@/shared/seo/metadata-builders";
 
-export const metadata = {
-  title: site.name,
+export const metadata = buildPageMetadata({
+  title: "Home",
   description: site.description,
-};
+  canonicalPath: "/",
+  ogType: "website",
+});
 
 export default async function Home({}: PageProps<"/">) {
   return (

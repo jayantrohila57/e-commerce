@@ -1,26 +1,19 @@
 import type { Route } from "next";
-import Link from "next/link";
 import { apiServer } from "@/core/api/api.server";
 import CategoryCard from "@/module/category/category-card";
-import {
-  ContentAnnouncementBar,
-  ContentCTA,
-  ContentFeatureHighlights,
-  ContentOfferBanner,
-  ContentPromoBanner,
-  ContentSplitBanner,
-} from "@/module/site/content-sections";
-import { BlurImage } from "@/shared/components/common/image";
+import { ContentCTA, ContentFeatureHighlights, ContentOfferBanner } from "@/module/site/content-sections";
 import Section from "@/shared/components/layout/section/section";
 import Shell from "@/shared/components/layout/shell";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/components/ui/card";
 import { PATH } from "@/shared/config/routes";
-import { getImageSrc } from "@/shared/utils/lib/image.utils";
+import { site } from "@/shared/config/site";
+import { buildPageMetadata } from "@/shared/seo/metadata-builders";
 
-export const metadata = {
+export const metadata = buildPageMetadata({
   title: "Store",
-  description: "Store Home",
-};
+  description: `Shop ${site.name} — browse categories and discover products.`,
+  canonicalPath: "/store",
+  ogType: "website",
+});
 
 export default async function StorePage() {
   const { data } = await apiServer.category.getManyWithSubcategories({

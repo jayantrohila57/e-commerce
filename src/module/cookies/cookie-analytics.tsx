@@ -1,7 +1,10 @@
 "use client";
 
+import { GoogleAnalytics, GoogleTagManager } from "@next/third-parties/google";
+
 import { Analytics } from "@vercel/analytics/next";
 import { usePathname } from "next/navigation";
+import { clientEnv } from "@/shared/config/env.client";
 import { useCookieConsent } from "./use-cookie-consent";
 
 export function ConsentAwareAnalytics() {
@@ -14,5 +17,11 @@ export function ConsentAwareAnalytics() {
     return null;
   }
 
-  return <Analytics />;
+  return (
+    <>
+      <Analytics />
+      <GoogleAnalytics gaId={clientEnv.NEXT_PUBLIC_GOOGLE_TAG_MANAGER_ID} />
+      <GoogleTagManager gtmId={clientEnv.NEXT_PUBLIC_GOOGLE_TAG_MANAGER_ID} />
+    </>
+  );
 }

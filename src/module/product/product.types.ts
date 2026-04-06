@@ -33,6 +33,11 @@ export type GetProductsBySubcategorySlugOutput = z.output<typeof productContract
 export type GetPDPProductInput = z.input<typeof productContract.getPDPProduct.input>;
 export type GetPDPProductOutput = z.output<typeof productContract.getPDPProduct.output>;
 
+/** Storefront variant URL PDP payload (includes `seo` extras for metadata / JSON-LD). */
+export type PDPVariantFullPathPayload = NonNullable<
+  z.infer<typeof productContract.getPDPProductByVariantFullPath.output>["data"]
+>;
+
 // PRODUCT WITH VARIANTS
 export type GetProductWithProductVariantsInput = z.input<typeof productContract.getProductWithProductVariants.input>;
 export type GetProductWithProductVariantsOutput = z.output<typeof productContract.getProductWithProductVariants.output>;

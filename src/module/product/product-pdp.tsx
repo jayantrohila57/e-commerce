@@ -8,11 +8,11 @@ import { ViewCartButton } from "@/shared/components/common/view-cart-button";
 import { Badge } from "@/shared/components/ui/badge";
 import { Button } from "@/shared/components/ui/button";
 import { getImageSrc } from "@/shared/utils/lib/image.utils";
-import type { GetPDPProductOutput } from "./product.types";
+import type { PDPVariantFullPathPayload } from "./product.types";
 import { extractAttributeGroups, isOptionAvailable, resolveNextVariant } from "./product-utility";
 
 interface PDPProductProps {
-  data: GetPDPProductOutput["data"];
+  data: PDPVariantFullPathPayload;
   slug: string;
   categorySlug?: string;
   subcategorySlug?: string;

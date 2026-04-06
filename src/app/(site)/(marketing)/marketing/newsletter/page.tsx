@@ -9,11 +9,19 @@ import {
 import Section from "@/shared/components/layout/section/section";
 import Shell from "@/shared/components/layout/shell";
 import { site } from "@/shared/config/site";
+import { buildPageMetadata } from "@/shared/seo/metadata-builders";
 
-export const metadata = {
+const pageHeading = {
   title: "Newsletter",
   description: `Subscribe to ${site.name} for updates and offers.`,
 };
+
+export const metadata = buildPageMetadata({
+  title: pageHeading.title,
+  description: pageHeading.description,
+  canonicalPath: "/marketing/newsletter",
+  ogType: "website",
+});
 
 export default function Page() {
   return (
@@ -28,9 +36,9 @@ export default function Page() {
         <ContentSplitBanner page="newsletter" />
       </Shell.Section>
       <Shell.Section>
-        <Section title={metadata.title} description={metadata.description}>
-          <h1>{metadata.title}</h1>
-          <p>{metadata.description}</p>
+        <Section title={pageHeading.title} description={pageHeading.description}>
+          <h1>{pageHeading.title}</h1>
+          <p>{pageHeading.description}</p>
         </Section>
       </Shell.Section>
       <Shell.Section>

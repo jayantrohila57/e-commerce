@@ -144,6 +144,20 @@ export const productContract = {
           product: productSelectSchema.extend({
             variants: z.array(productVariantBaseSchema),
           }),
+          seo: z.object({
+            reviewAggregate: z
+              .object({
+                ratingValue: z.number(),
+                reviewCount: z.number(),
+              })
+              .nullable(),
+            variantInventory: z
+              .object({
+                sku: z.string().nullable(),
+                availableQuantity: z.number(),
+              })
+              .nullable(),
+          }),
         })
         .nullable(),
     ),

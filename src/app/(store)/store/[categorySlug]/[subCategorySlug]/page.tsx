@@ -1,16 +1,12 @@
 import { notFound } from "next/navigation";
 import { apiServer, HydrateClient } from "@/core/api/api.server";
-import {
-  ContentAnnouncementBar,
-  ContentCTA,
-  ContentFeatureHighlights,
-  ContentOfferBanner,
-  ContentPromoBanner,
-  ContentSplitBanner,
-} from "@/module/site/content-sections";
 import { SubCategoryItem } from "@/module/subcategory/subcategory-listing";
 import Shell from "@/shared/components/layout/shell";
-import { clientEnv } from "@/shared/config/env.client";
+import { breadcrumbJsonLd } from "@/shared/seo/json-ld";
+import { JsonLdScript } from "@/shared/seo/json-ld-script";
+import { buildPageMetadata } from "@/shared/seo/metadata-builders";
+import { absoluteUrl } from "@/shared/seo/site-origin";
+import { getStoreCategoryTitle } from "@/shared/seo/store-breadcrumb";
 import { getImageSrc } from "@/shared/utils/lib/image.utils";
 
 export async function generateMetadata({ params }: PageProps<"/store/[categorySlug]/[subCategorySlug]">) {
@@ -25,18 +21,18 @@ export async function generateMetadata({ params }: PageProps<"/store/[categorySl
   const subCategory = data?.subcategoryData;
   if (!subCategory) return notFound();
 
+  const title = subCategory.metaTitle ?? subCategory.title;
+  const description = subCategory.metaDescription ?? subCategory.description ?? subCategory.title;
   const imageUrl = getImageSrc(subCategory.image);
+  const ogImages = imageUrl ? [imageUrl.startsWith("http") ? imageUrl : absoluteUrl(imageUrl)] : undefined;
 
-  return {
-    title: subCategory?.title,
-    description: subCategory?.description,
-    openGraph: {
-      title: subCategory?.title,
-      description: subCategory?.description,
-      url: `${clientEnv.NEXT_PUBLIC_BASE_URL}/store/${categorySlug}/${slug}`,
-      images: imageUrl ? [{ url: imageUrl }] : [],
-    },
-  };
+  return buildPageMetadata({
+    title,
+    description,
+    canonicalPath: `/store/${categorySlug}/${slug}`,
+    ogImageUrls: ogImages,
+    ogType: "website",
+  });
 }
 
 export default async function SubCategoryPage({ params }: PageProps<"/store/[categorySlug]/[subCategorySlug]">) {
@@ -48,6 +44,14 @@ export default async function SubCategoryPage({ params }: PageProps<"/store/[cat
     },
   });
   if (!data?.subcategoryData) return notFound();
+
+  const categoryTitle = await getStoreCategoryTitle(categorySlug);
+  const breadcrumbLd = breadcrumbJsonLd([
+    { name: "Home", path: "/" },
+    { name: "Store", path: "/store" },
+    { name: categoryTitle, path: `/store/${categorySlug}` },
+    { name: data.subcategoryData.title, path: `/store/${categorySlug}/${slug}` },
+  ]);
 
   // New flattened variant structure
   const variants = data.variants as unknown as {
@@ -69,6 +73,7 @@ export default async function SubCategoryPage({ params }: PageProps<"/store/[cat
 
   return (
     <HydrateClient>
+      <JsonLdScript id="jsonld-breadcrumb-subcategory" data={breadcrumbLd} />
       <Shell>
         {/* <Shell.Section>
           <ContentAnnouncementBar page="store_subcategory" />

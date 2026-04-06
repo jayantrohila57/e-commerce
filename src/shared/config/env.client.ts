@@ -7,4 +7,6 @@ export const clientEnv = {
 
   /** Razorpay Key ID (public). Used by checkout.js to open payment modal. */
   NEXT_PUBLIC_RAZORPAY_KEY_ID: String(process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID ?? ""),
+
+  NEXT_PUBLIC_GOOGLE_TAG_MANAGER_ID: String(process.env.NEXT_PUBLIC_GOOGLE_TAG_MANAGER_ID ?? "G-CFV7V6EFQ3"),
 };

@@ -4,7 +4,13 @@ import { CategoryItem } from "@/module/category/category.component.all";
 import { ContentCTA } from "@/module/site/content-sections";
 import Section from "@/shared/components/layout/section/section";
 import Shell from "@/shared/components/layout/shell";
-import { breadcrumbJsonLd } from "@/shared/seo/json-ld";
+import { PATH } from "@/shared/config/routes";
+import {
+  breadcrumbGraphNode,
+  buildSchemaGraph,
+  collectionPageGraphNode,
+  itemListGraphNode,
+} from "@/shared/seo/json-ld";
 import { JsonLdScript } from "@/shared/seo/json-ld-script";
 import { buildPageMetadata } from "@/shared/seo/metadata-builders";
 import { absoluteUrl } from "@/shared/seo/site-origin";
@@ -43,15 +49,31 @@ export default async function CartPage({ params }: PageProps<"/store/[categorySl
   });
   if (!data) return notFound();
 
-  const breadcrumbLd = breadcrumbJsonLd([
-    { name: "Home", path: "/" },
-    { name: "Store", path: "/store" },
-    { name: data.title, path: `/store/${slug}` },
+  const categoryLd = buildSchemaGraph([
+    collectionPageGraphNode({
+      name: data.title,
+      description: data.description ?? data.metaDescription ?? data.title,
+      path: `/store/${slug}`,
+    }),
+    itemListGraphNode({
+      name: `Subcategories in ${data.title}`,
+      path: `/store/${slug}`,
+      idSuffix: "subcategories",
+      items: (data.subcategories ?? []).map((s) => ({
+        name: s.title,
+        url: absoluteUrl(PATH.STORE.SUB_CATEGORIES.SUBCATEGORY(s.slug, slug)),
+      })),
+    }),
+    breadcrumbGraphNode([
+      { name: "Home", path: "/" },
+      { name: "Store", path: "/store" },
+      { name: data.title, path: `/store/${slug}` },
+    ]),
   ]);
 
   return (
     <HydrateClient>
-      <JsonLdScript id="jsonld-breadcrumb-category" data={breadcrumbLd} />
+      <JsonLdScript id="jsonld-category" data={categoryLd} />
       <Shell>
         {/* <Shell.Section>
           <ContentAnnouncementBar page="store_category" />

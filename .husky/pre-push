@@ -2,4 +2,4 @@
 . "$(dirname "$0")/_/husky.sh"
 
 # Run fast checks before pushing (biome check + typecheck) — full builds should run in CI
-# pnpm run check
+pnpm run check

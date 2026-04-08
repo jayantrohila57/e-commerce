@@ -40,6 +40,14 @@ export const inventoryMovementSummaryItemSchema = z.object({
   totalDecrease: z.number().int(),
 });
 
+/** Studio home KPIs (amounts in smallest currency unit, e.g. paise). */
+export const studioDashboardKpisSchema = z.object({
+  totalOrders: z.number().int(),
+  pendingOrders: z.number().int(),
+  paidRevenuePaise: z.number().int(),
+  discountValuePaise: z.number().int(),
+});
+
 export const analyticsContract = {
   providerShippingSummary: {
     input: z
@@ -105,8 +113,14 @@ export const analyticsContract = {
     }),
     output: detailedResponse(z.array(inventoryMovementSummaryItemSchema)),
   },
+
+  studioDashboardKpis: {
+    input: z.object({}).optional(),
+    output: detailedResponse(studioDashboardKpisSchema),
+  },
 };
 
 export type ProviderShippingSummaryItem = z.infer<typeof providerShippingSummaryItemSchema>;
 export type InventoryStockSummaryItem = z.infer<typeof inventoryStockSummaryItemSchema>;
 export type InventoryMovementSummaryItem = z.infer<typeof inventoryMovementSummaryItemSchema>;
+export type StudioDashboardKpis = z.infer<typeof studioDashboardKpisSchema>;

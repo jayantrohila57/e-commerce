@@ -2,7 +2,12 @@ import { notFound } from "next/navigation";
 import { apiServer, HydrateClient } from "@/core/api/api.server";
 import { SubCategoryItem } from "@/module/subcategory/subcategory-listing";
 import Shell from "@/shared/components/layout/shell";
-import { breadcrumbJsonLd } from "@/shared/seo/json-ld";
+import {
+  breadcrumbGraphNode,
+  buildSchemaGraph,
+  collectionPageGraphNode,
+  itemListGraphNode,
+} from "@/shared/seo/json-ld";
 import { JsonLdScript } from "@/shared/seo/json-ld-script";
 import { buildPageMetadata } from "@/shared/seo/metadata-builders";
 import { absoluteUrl } from "@/shared/seo/site-origin";
@@ -46,12 +51,6 @@ export default async function SubCategoryPage({ params }: PageProps<"/store/[cat
   if (!data?.subcategoryData) return notFound();
 
   const categoryTitle = await getStoreCategoryTitle(categorySlug);
-  const breadcrumbLd = breadcrumbJsonLd([
-    { name: "Home", path: "/" },
-    { name: "Store", path: "/store" },
-    { name: categoryTitle, path: `/store/${categorySlug}` },
-    { name: data.subcategoryData.title, path: `/store/${categorySlug}/${slug}` },
-  ]);
 
   // New flattened variant structure
   const variants = data.variants as unknown as {
@@ -71,9 +70,38 @@ export default async function SubCategoryPage({ params }: PageProps<"/store/[cat
     finalPrice: number;
   }[];
 
+  const listItems = variants.map((v) => {
+    const displayTitle = v.title !== v.productTitle ? `${v.productTitle} - ${v.title}` : v.productTitle;
+    return {
+      name: displayTitle,
+      url: absoluteUrl(`/store/${categorySlug}/${slug}/${v.slug}`),
+    };
+  });
+
+  const subcategoryLd = buildSchemaGraph([
+    collectionPageGraphNode({
+      name: data.subcategoryData.title,
+      description:
+        data.subcategoryData.description ?? data.subcategoryData.metaDescription ?? data.subcategoryData.title,
+      path: `/store/${categorySlug}/${slug}`,
+    }),
+    itemListGraphNode({
+      name: `Products in ${data.subcategoryData.title}`,
+      path: `/store/${categorySlug}/${slug}`,
+      idSuffix: "products",
+      items: listItems,
+    }),
+    breadcrumbGraphNode([
+      { name: "Home", path: "/" },
+      { name: "Store", path: "/store" },
+      { name: categoryTitle, path: `/store/${categorySlug}` },
+      { name: data.subcategoryData.title, path: `/store/${categorySlug}/${slug}` },
+    ]),
+  ]);
+
   return (
     <HydrateClient>
-      <JsonLdScript id="jsonld-breadcrumb-subcategory" data={breadcrumbLd} />
+      <JsonLdScript id="jsonld-subcategory" data={subcategoryLd} />
       <Shell>
         {/* <Shell.Section>
           <ContentAnnouncementBar page="store_subcategory" />

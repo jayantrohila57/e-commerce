@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+    branches: [master, main]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "pnpm"
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run check
+      - run: pnpm run test
+      - run: pnpm run build
+        env:
+          SKIP_ENV_VALIDATION: "true"
+          DATABASE_URL: "postgres://user:pass@localhost:5432/ci"
+          BETTER_AUTH_SECRET: "01234567890123456789012345678901"
+          BETTER_AUTH_URL: "http://localhost:3000"
+          RESEND_API_KEY: "re_test_ci"
+          RESEND_FROM_EMAIL: "ci@example.com"
+          RAZORPAY_API_KEY: "rzp_test_ci"
+          RAZORPAY_API_SECRET: "secret_ci_min_length_ok"
+          RAZORPAY_WEBHOOK_SECRET: "whsec_ci"
+          NEXT_PUBLIC_BASE_URL: "http://localhost:3000"

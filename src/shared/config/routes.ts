@@ -35,6 +35,7 @@ export const PATH = {
     ROOT: "/store",
     CHECKOUT: {
       ROOT: "/store/checkout" as Route,
+      PAY: "/store/checkout/pay" as Route,
       CONFIRMATION: "/store/checkout/confirmation" as Route,
     },
     ORDER: {

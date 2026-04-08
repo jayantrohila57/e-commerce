@@ -17,11 +17,17 @@ export function ConsentAwareAnalytics() {
     return null;
   }
 
+  const analyticsId = clientEnv.NEXT_PUBLIC_GOOGLE_TAG_MANAGER_ID?.trim();
+
   return (
     <>
       <Analytics />
-      <GoogleAnalytics gaId={clientEnv.NEXT_PUBLIC_GOOGLE_TAG_MANAGER_ID} />
-      <GoogleTagManager gtmId={clientEnv.NEXT_PUBLIC_GOOGLE_TAG_MANAGER_ID} />
+      {analyticsId ? (
+        <>
+          <GoogleAnalytics gaId={analyticsId} />
+          <GoogleTagManager gtmId={analyticsId} />
+        </>
+      ) : null}
     </>
   );
 }

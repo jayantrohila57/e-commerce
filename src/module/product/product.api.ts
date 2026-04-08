@@ -27,9 +27,35 @@ async function loadPdpSeoForVariant(productId: string, variantId: string) {
         }
       : null;
 
+  const reviewRows = await db.query.review.findMany({
+    where: (r, { eq, and }) => and(eq(r.productId, productId), eq(r.isApproved, true)),
+    orderBy: (r, { desc: d }) => [d(r.createdAt)],
+    limit: 5,
+    columns: {
+      rating: true,
+      title: true,
+      comment: true,
+      createdAt: true,
+    },
+  });
+
+  const reviewsForSchema =
+    reviewRows.length > 0
+      ? reviewRows.map((r) => {
+          const parts = [r.title?.trim(), r.comment?.trim()].filter(Boolean);
+          const reviewBody = (parts.join(" — ").trim() || "Review").slice(0, 5000);
+          return {
+            ratingValue: r.rating,
+            reviewBody,
+            datePublished: r.createdAt.toISOString().slice(0, 10),
+          };
+        })
+      : undefined;
+
   const invRows = await db
     .select({
       sku: inventoryItem.sku,
+      barcode: inventoryItem.barcode,
       qty: sql<number>`greatest(0, ${inventoryItem.quantity} - ${inventoryItem.reserved})`,
     })
     .from(inventoryItem)
@@ -44,10 +70,11 @@ async function loadPdpSeoForVariant(productId: string, variantId: string) {
       ? {
           sku: invRows[0]?.sku ?? null,
           availableQuantity,
+          barcode: invRows[0]?.barcode ?? null,
         }
       : null;
 
-  return { reviewAggregate, variantInventory };
+  return { reviewAggregate, reviewsForSchema, variantInventory };
 }
 
 export const productRouter = createTRPCRouter({
@@ -403,6 +430,8 @@ export const productRouter = createTRPCRouter({
             // new required fields
             categorySlug: body.categorySlug,
             subcategorySlug: body.subcategorySlug,
+            taxClassId: body.taxClassId ?? null,
+            tracksInventory: body.tracksInventory ?? true,
 
             basePrice: body.basePrice,
             baseCurrency: body.baseCurrency ?? "INR",

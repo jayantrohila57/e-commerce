@@ -2,6 +2,7 @@ import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
 import type { NextRequest } from "next/server";
 import { createTRPCContext } from "@/core/api/api.methods";
 import { appRouter } from "@/core/api/api.routes";
+import { guardTrpcRateLimit } from "@/core/api/arcjet.trpc";
 import { serverEnv } from "@/shared/config/env.server";
 import { debugLog } from "@/shared/utils/lib/logger.utils";
 
@@ -25,4 +26,12 @@ const handler = (req: NextRequest) =>
         : undefined,
   });
 
-export { handler as GET, handler as POST };
+async function guarded(req: NextRequest) {
+  if (req.method === "POST") {
+    const denied = await guardTrpcRateLimit(req);
+    if (denied) return denied;
+  }
+  return handler(req);
+}
+
+export { guarded as GET, guarded as POST };

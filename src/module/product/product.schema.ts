@@ -15,6 +15,7 @@ export const baseProductSchema = z.object({
   categorySlug: z.string().min(1),
   subcategorySlug: z.string().min(1),
   taxClassId: z.string().nullable().optional(),
+  tracksInventory: z.boolean().default(true),
 
   // PRICING (currency field stores string; coerce for API/DB)
   basePrice: z.coerce.number().min(0),
@@ -151,10 +152,21 @@ export const productContract = {
                 reviewCount: z.number(),
               })
               .nullable(),
+            /** Approved reviews (first page, same cap as storefront UI) for JSON-LD */
+            reviewsForSchema: z
+              .array(
+                z.object({
+                  ratingValue: z.number().int().min(1).max(5),
+                  reviewBody: z.string(),
+                  datePublished: z.string(),
+                }),
+              )
+              .optional(),
             variantInventory: z
               .object({
                 sku: z.string().nullable(),
                 availableQuantity: z.number(),
+                barcode: z.string().nullable().optional(),
               })
               .nullable(),
           }),

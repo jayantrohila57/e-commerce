@@ -388,6 +388,8 @@ export const product = pgTable(
       .notNull()
       .references(() => subcategory.slug),
     taxClassId: text("tax_class_id").references(() => taxClass.id, { onDelete: "set null" }),
+    /** When false, order placement does not require an inventory_item row (e.g. digital goods). */
+    tracksInventory: boolean("tracks_inventory").default(true).notNull(),
     basePrice: integer("base_price").notNull(),
     baseCurrency: text("base_currency").default("INR"),
     baseImage: text("base_image"),

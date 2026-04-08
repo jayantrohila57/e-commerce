@@ -32,7 +32,7 @@ export function PlaceOrderButton({ disabled, isLoading, razorpayConfigured = tru
             Payment not configured
           </>
         ) : (
-          "Pay with Razorpay"
+          "Continue to payment"
         )}
       </Button>
     </div>

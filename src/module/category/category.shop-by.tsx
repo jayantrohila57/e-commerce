@@ -4,12 +4,23 @@ import Section from "@/shared/components/layout/section/section";
 import { PATH } from "@/shared/config/routes";
 import CategoryCard from "./category-card";
 
-export default async function ShopByCategoryGrid() {
-  const { data: categories } = await apiServer.category.getMany({
-    query: {},
-  });
+type ShopByCategoryData = NonNullable<Awaited<ReturnType<typeof apiServer.category.getMany>>["data"]>;
 
-  if (!categories) {
+export default async function ShopByCategoryGrid({
+  prefetched,
+}: {
+  /** When set, should be the visible slice (e.g. first 4) to match JSON-LD and avoid a duplicate fetch. */
+  prefetched?: ShopByCategoryData;
+} = {}) {
+  const categories =
+    prefetched ??
+    (
+      await apiServer.category.getMany({
+        query: {},
+      })
+    ).data?.slice(0, 4);
+
+  if (!categories?.length) {
     return null;
   }
   return (
@@ -23,7 +34,7 @@ export default async function ShopByCategoryGrid() {
         }}
       >
         <div className="grid grid-cols-1 h-full w-full border-b sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4">
-          {categories?.slice(0, 4)?.map((category) => (
+          {categories.map((category) => (
             <CategoryCard
               key={category.id}
               id={category.id}

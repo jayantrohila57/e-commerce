@@ -2,8 +2,12 @@ import { apiServer, HydrateClient } from "@/core/api/api.server";
 import CategoriesListing from "@/module/category/category.component.listing";
 import Section from "@/shared/components/layout/section/section";
 import Shell from "@/shared/components/layout/shell";
+import { PATH } from "@/shared/config/routes";
 import { site } from "@/shared/config/site";
+import { buildSchemaGraph, collectionPageGraphNode, itemListGraphNode } from "@/shared/seo/json-ld";
+import { JsonLdScript } from "@/shared/seo/json-ld-script";
 import { buildPageMetadata } from "@/shared/seo/metadata-builders";
+import { absoluteUrl } from "@/shared/seo/site-origin";
 
 const pageHeading = {
   title: "Categories",
@@ -22,8 +26,28 @@ export default async function CategoriesPage() {
     query: {},
   });
 
+  const categories = data ?? [];
+  const categoriesLd = buildSchemaGraph([
+    collectionPageGraphNode({
+      name: pageHeading.title,
+      description: pageHeading.description,
+      path: "/store/categories",
+    }),
+    itemListGraphNode({
+      name: "All product categories",
+      description: pageHeading.description,
+      path: "/store/categories",
+      idSuffix: "all",
+      items: categories.map((c) => ({
+        name: c.title,
+        url: absoluteUrl(PATH.STORE.CATEGORIES.CATEGORY(c.slug)),
+      })),
+    }),
+  ]);
+
   return (
     <Shell>
+      <JsonLdScript id="jsonld-categories-index" data={categoriesLd} />
       <Shell.Section>
         <HydrateClient>
           <Section {...pageHeading}>

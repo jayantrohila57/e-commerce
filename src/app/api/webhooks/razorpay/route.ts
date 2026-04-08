@@ -88,7 +88,13 @@ export async function POST(request: Request) {
         paymentRow = await findPaymentByRazorpayOrderId(razorpayOrderId);
       }
 
-      if (paymentRow && paymentRow.status !== "completed") {
+      const capturedAmount = entity.amount;
+      if (
+        paymentRow &&
+        paymentRow.status !== "completed" &&
+        typeof capturedAmount === "number" &&
+        capturedAmount === paymentRow.amount
+      ) {
         await db
           .update(payment)
           .set({
@@ -106,6 +112,13 @@ export async function POST(request: Request) {
         });
 
         await notifyOrderConfirmation(paymentRow.orderId);
+      } else if (paymentRow && paymentRow.status !== "completed") {
+        debugError("RAZORPAY_WEBHOOK", "payment.captured skipped: amount mismatch or missing amount", {
+          paymentId: paymentRow.id,
+          orderId: paymentRow.orderId,
+          expected: paymentRow.amount,
+          captured: capturedAmount,
+        });
       }
     } else if (event === "payment.failed" && body.payload?.payment?.entity) {
       const entity = body.payload.payment.entity;

@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import { apiServer, HydrateClient } from "@/core/api/api.server";
 import { PDPProduct } from "@/module/product/product-pdp";
 import Shell from "@/shared/components/layout/shell";
-import { breadcrumbJsonLd, productWithOfferJsonLd } from "@/shared/seo/json-ld";
+import { breadcrumbGraphNode, buildSchemaGraph, digitsOnlyGtin, productWithOfferGraphNode } from "@/shared/seo/json-ld";
 import { JsonLdScript } from "@/shared/seo/json-ld-script";
 import { buildPageMetadata } from "@/shared/seo/metadata-builders";
 import { computeVariantUnitPrice, formatSchemaPrice } from "@/shared/seo/pricing";
@@ -63,10 +63,18 @@ export default async function ProductVariantPage({
   const canonicalPath = `/store/${categorySlug}/${subCategorySlug}/${variantSlug}`;
   const productUrl = absoluteUrl(canonicalPath);
 
-  const rawImages = [getImageSrc(primaryVariant.media?.[0]?.url), getImageSrc(data.product.baseImage)].filter(
-    Boolean,
-  ) as string[];
-  const images = rawImages.map((u) => (u.startsWith("http") ? u : absoluteUrl(u)));
+  const imageUrls: string[] = [];
+  const pushUnique = (src: string | null | undefined) => {
+    const u = src ? getImageSrc(src) : null;
+    if (!u) return;
+    const abs = u.startsWith("http") ? u : absoluteUrl(u);
+    if (!imageUrls.includes(abs)) imageUrls.push(abs);
+  };
+  for (const m of primaryVariant.media ?? []) {
+    pushUnique(m.url);
+  }
+  pushUnique(data.product.baseImage);
+  const images = (imageUrls.length ? imageUrls : [absoluteUrl("/opengraph-image")]).slice(0, 20);
 
   const price = formatSchemaPrice(computeVariantUnitPrice(data.product, primaryVariant));
   const currency = data.product.baseCurrency ?? "INR";
@@ -78,36 +86,47 @@ export default async function ProductVariantPage({
         ? ("https://schema.org/InStock" as const)
         : ("https://schema.org/OutOfStock" as const);
 
+  const gtin = digitsOnlyGtin(inv?.barcode ?? null) ?? undefined;
+
+  const reviewsForProduct =
+    data.seo.reviewsForSchema?.map((r) => ({
+      reviewBody: r.reviewBody,
+      datePublished: r.datePublished,
+      ratingValue: r.ratingValue,
+    })) ?? undefined;
+
   const [categoryTitle, subcategoryTitle] = await Promise.all([
     getStoreCategoryTitle(categorySlug),
     getStoreSubcategoryTitle(categorySlug, subCategorySlug),
   ]);
 
-  const productLd = productWithOfferJsonLd({
-    name: data.product.title,
-    description: (data.product.description ?? data.product.title).slice(0, 5000),
-    images: images.length ? images : [absoluteUrl("/opengraph-image")],
-    sku: inv?.sku ?? undefined,
-    brandName: seoConfig.siteName,
-    productUrl,
-    price,
-    priceCurrency: currency,
-    availability,
-    aggregateRating: data.seo.reviewAggregate ?? undefined,
-  });
-
-  const breadcrumbLd = breadcrumbJsonLd([
-    { name: "Home", path: "/" },
-    { name: "Store", path: "/store" },
-    { name: categoryTitle, path: `/store/${categorySlug}` },
-    { name: subcategoryTitle, path: `/store/${categorySlug}/${subCategorySlug}` },
-    { name: data.product.title, path: canonicalPath },
+  const pdpLd = buildSchemaGraph([
+    productWithOfferGraphNode({
+      name: data.product.title,
+      description: (data.product.description ?? data.product.title).slice(0, 5000),
+      images,
+      sku: inv?.sku ?? undefined,
+      gtin,
+      brandName: seoConfig.siteName,
+      productUrl,
+      price,
+      priceCurrency: currency,
+      availability,
+      aggregateRating: data.seo.reviewAggregate ?? undefined,
+      reviews: reviewsForProduct,
+    }),
+    breadcrumbGraphNode([
+      { name: "Home", path: "/" },
+      { name: "Store", path: "/store" },
+      { name: categoryTitle, path: `/store/${categorySlug}` },
+      { name: subcategoryTitle, path: `/store/${categorySlug}/${subCategorySlug}` },
+      { name: data.product.title, path: canonicalPath },
+    ]),
   ]);
 
   return (
     <HydrateClient>
-      <JsonLdScript id="jsonld-breadcrumb-pdp" data={breadcrumbLd} />
-      <JsonLdScript id="jsonld-product-pdp" data={productLd} />
+      <JsonLdScript id="jsonld-pdp" data={pdpLd} />
       <Shell>
         <Shell.Section>
           <PDPProduct data={data} slug={variantSlug} categorySlug={categorySlug} subcategorySlug={subCategorySlug} />

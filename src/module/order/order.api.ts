@@ -1,30 +1,25 @@
 import { and, eq, ilike, inArray, isNotNull, isNull, sql } from "drizzle-orm";
 import { v4 as uuidv4 } from "uuid";
-import { adminProcedure, createTRPCRouter, customerProcedure, staffProcedure } from "@/core/api/api.methods";
+import { createTRPCRouter, customerProcedure, staffProcedure } from "@/core/api/api.methods";
 import { APP_ROLE, normalizeRole } from "@/core/auth/auth.roles";
 import { db } from "@/core/db/db";
-import {
-  cart,
-  cartLine,
-  discount,
-  discountUsageEvent,
-  inventoryItem,
-  order,
-  orderDiscount,
-  orderItem,
-  shippingMethod,
-  shippingProvider,
-  shippingRateRule,
-  user as userTable,
-} from "@/core/db/db.schema";
+import { address, cart, cartLine, inventoryItem, order, orderItem, user as userTable } from "@/core/db/db.schema";
 import { applyInventoryDelta, type InventoryDbLike } from "@/module/inventory/inventory.api";
+import {
+  computeCheckoutTotals,
+  type PricingDb,
+  persistDiscountInTransaction,
+} from "@/module/order/checkout-pricing.service";
 import { notifyLowStock, notifyOrderStatusChange } from "@/shared/components/mail/notification.service";
 import { MESSAGE, STATUS } from "@/shared/config/api.config";
 import { API_RESPONSE } from "@/shared/config/api.utils";
-import { siteConfig } from "@/shared/config/site";
 import { buildPagination, buildPaginationMeta } from "@/shared/schema";
 import { debugError } from "@/shared/utils/lib/logger.utils";
 import { type Order, type OrderStatus, orderContract } from "./order.schema";
+
+class CheckoutValidationError extends Error {
+  override readonly name = "CheckoutValidationError";
+}
 
 export const orderRouter = createTRPCRouter({
   /**
@@ -50,10 +45,12 @@ export const orderRouter = createTRPCRouter({
           return API_RESPONSE(STATUS.FAILED, MESSAGE.ORDER.GET.FAILED, null);
         }
 
-        // Verify ownership if order belongs to a user
         const role = normalizeRole(ctx.user.role);
-        if (role === APP_ROLE.CUSTOMER && data.userId && data.userId !== userId) {
-          return API_RESPONSE(STATUS.FAILED, "Unauthorized", null);
+        const isPrivileged = role === APP_ROLE.ADMIN || role === APP_ROLE.STAFF;
+        if (!isPrivileged) {
+          if (!data.userId || data.userId !== userId) {
+            return API_RESPONSE(STATUS.FAILED, "Unauthorized", null);
+          }
         }
 
         return API_RESPONSE(STATUS.SUCCESS, MESSAGE.ORDER.GET.SUCCESS, data);
@@ -91,7 +88,7 @@ export const orderRouter = createTRPCRouter({
   /**
    * Admin/staff: list all orders with pagination & optional filters
    */
-  getManyAdmin: adminProcedure
+  getManyAdmin: staffProcedure
     .input(orderContract.getManyAdmin.input)
     .output(orderContract.getManyAdmin.output)
     .query(async ({ input }) => {
@@ -182,6 +179,95 @@ export const orderRouter = createTRPCRouter({
     }),
 
   /**
+   * Server-authoritative checkout totals (shipping, discount, tax) for UI parity with order.create.
+   */
+  previewCheckoutTotals: customerProcedure
+    .input(orderContract.previewCheckoutTotals.input)
+    .output(orderContract.previewCheckoutTotals.output)
+    .query(async ({ input, ctx }) => {
+      try {
+        const userId = ctx.user.id;
+        const { cartId, shippingAddressId, shippingProviderId, shippingMethodId, discountCode } = input.body;
+
+        const addr = await db.query.address.findFirst({
+          where: eq(address.id, shippingAddressId),
+        });
+        if (!addr || addr.userId !== userId) {
+          return API_RESPONSE(STATUS.FAILED, "Invalid shipping address", null);
+        }
+
+        const cartData = cartId
+          ? await db.query.cart.findFirst({
+              where: eq(cart.id, cartId),
+              with: {
+                lines: {
+                  with: {
+                    variant: { with: { product: true } },
+                  },
+                },
+              },
+            })
+          : await db.query.cart.findFirst({
+              where: eq(cart.userId, userId),
+              with: {
+                lines: {
+                  with: {
+                    variant: { with: { product: true } },
+                  },
+                },
+              },
+            });
+
+        if (!cartData?.lines.length) {
+          return API_RESPONSE(STATUS.FAILED, "Cart is empty", null);
+        }
+        if (cartData.userId && cartData.userId !== userId) {
+          return API_RESPONSE(STATUS.FAILED, "Unauthorized cart access", null);
+        }
+
+        const lines = cartData.lines.map((line) => ({
+          variantId: line.variantId,
+          quantity: line.quantity,
+          unitPrice: line.price,
+          variantTaxClassId: line.variant.taxClassId,
+          productTaxClassId: line.variant.product.taxClassId,
+        }));
+
+        const totals = await computeCheckoutTotals(db, {
+          lines,
+          shippingAddress: {
+            country: addr.country,
+            state: addr.state,
+            city: addr.city ?? undefined,
+            postalCode: addr.postalCode,
+          },
+          shippingProviderId,
+          shippingMethodId,
+          discountCode,
+          userId,
+          preview: true,
+        });
+
+        if (!totals.ok) {
+          return API_RESPONSE(STATUS.FAILED, totals.message, null);
+        }
+
+        const { subtotal, discountTotal, shippingTotal, taxTotal, grandTotal, currency } = totals.data;
+        return API_RESPONSE(STATUS.SUCCESS, "Totals computed", {
+          subtotal,
+          discountTotal,
+          shippingTotal,
+          taxTotal,
+          grandTotal,
+          currency,
+        });
+      } catch (err) {
+        debugError("ORDER:PREVIEW_CHECKOUT_TOTALS:ERROR", err);
+        return API_RESPONSE(STATUS.ERROR, "Error computing checkout totals", null, err as Error);
+      }
+    }),
+
+  /**
    * Create order from cart
    */
   create: customerProcedure
@@ -230,59 +316,38 @@ export const orderRouter = createTRPCRouter({
           return API_RESPONSE(STATUS.FAILED, "Shipping address is required", null);
         }
 
-        // 2. Validate shipping method + provider and resolve shipping zone + rate
-        const methodRow = await db.query.shippingMethod.findFirst({
-          where: eq(shippingMethod.id, shippingMethodId),
-          with: {
-            provider: true,
-            rates: {
-              with: {
-                zone: true,
-              },
-            },
-          },
-        });
+        const pricingLines = cartData.lines.map((line) => ({
+          variantId: line.variantId,
+          quantity: line.quantity,
+          unitPrice: line.price,
+          variantTaxClassId: line.variant.taxClassId,
+          productTaxClassId: line.variant.product.taxClassId,
+        }));
 
-        if (!methodRow || !methodRow.isActive) {
-          return API_RESPONSE(STATUS.FAILED, "Selected delivery method is not available", null);
-        }
-
-        if (!methodRow.provider || !methodRow.provider.isActive || methodRow.provider.id !== shippingProviderId) {
-          return API_RESPONSE(STATUS.FAILED, "Selected delivery provider is not available", null);
-        }
-
-        const normalizedCountry = shippingAddress.country.toUpperCase();
-        const normalizedRegion = shippingAddress.state.toUpperCase();
-
-        const matchingRate =
-          methodRow.rates.find(
-            (rate) =>
-              rate.isActive &&
-              rate.zone.countryCode.toUpperCase() === normalizedCountry &&
-              (rate.zone.regionCode?.toUpperCase() === normalizedRegion || rate.zone.regionCode === null),
-          ) ?? null;
-
-        if (!matchingRate) {
-          return API_RESPONSE(
-            STATUS.FAILED,
-            "No delivery rate is configured for the selected address and method",
-            null,
-          );
-        }
-
-        const shippingZoneId = matchingRate.zoneId;
-        const shippingTotal = matchingRate.price;
-
-        // 3. Start transaction
+        // Start transaction — totals computed inside for consistency with cart + rates
         const result = await db.transaction(async (tx) => {
-          const orderId = uuidv4();
-          let subtotal = 0;
+          const txDb = tx as unknown as PricingDb;
+          const totalsResult = await computeCheckoutTotals(txDb, {
+            lines: pricingLines,
+            shippingAddress,
+            shippingProviderId,
+            shippingMethodId,
+            discountCode,
+            userId,
+            preview: false,
+          });
 
-          // Process each cart line
+          if (!totalsResult.ok) {
+            throw new CheckoutValidationError(totalsResult.message);
+          }
+
+          const { subtotal, discountTotal, shippingTotal, taxTotal, grandTotal, shippingZoneId, appliedDiscount } =
+            totalsResult.data;
+
+          const orderId = uuidv4();
+
           const orderItemsData = cartData.lines.map((line) => {
             const lineTotal = line.price * line.quantity;
-            subtotal += lineTotal;
-
             return {
               id: uuidv4(),
               orderId,
@@ -297,55 +362,6 @@ export const orderRouter = createTRPCRouter({
             };
           });
 
-          // 4. Optional discount application
-          let discountTotal = 0;
-          let appliedDiscountRecord: {
-            id: string;
-            discountId: string;
-            appliedAmount: number;
-          } | null = null;
-
-          if (discountCode) {
-            const now = new Date();
-            const discountRow = await tx.query.discount.findFirst({
-              where: (d, { and: andLocal, eq: eqLocal }) =>
-                andLocal(eqLocal(d.code, discountCode), eqLocal(d.isActive, true)),
-            });
-
-            if (discountRow && (!discountRow.expiresAt || discountRow.expiresAt > now)) {
-              const minOrderAmount = discountRow.minOrderAmount ?? 0;
-              const maxUses = discountRow.maxUses ?? null;
-              const usedCount = discountRow.usedCount ?? 0;
-
-              if (subtotal >= minOrderAmount && (!maxUses || usedCount < maxUses)) {
-                if (discountRow.type === "percent") {
-                  const basisPoints = discountRow.value;
-                  discountTotal = Math.floor((subtotal * basisPoints) / 10000);
-                } else if (discountRow.type === "flat") {
-                  discountTotal = Math.min(discountRow.value, subtotal);
-                }
-
-                if (discountTotal > 0) {
-                  const orderDiscountId = uuidv4();
-                  appliedDiscountRecord = {
-                    id: orderDiscountId,
-                    discountId: discountRow.id,
-                    appliedAmount: discountTotal,
-                  };
-
-                  await tx
-                    .update(discount)
-                    .set({
-                      usedCount: sql`${discount.usedCount} + 1`,
-                      updatedAt: new Date(),
-                    })
-                    .where(eq(discount.id, discountRow.id));
-                }
-              }
-            }
-          }
-
-          // 5. Create Order
           const [newOrder] = await tx
             .insert(order)
             .values({
@@ -354,8 +370,9 @@ export const orderRouter = createTRPCRouter({
               status: "pending",
               subtotal,
               discountTotal,
+              taxTotal,
               shippingTotal,
-              grandTotal: Math.max(0, subtotal + shippingTotal - discountTotal),
+              grandTotal,
               currency: "INR",
               shippingProviderId,
               shippingMethodId,
@@ -369,57 +386,52 @@ export const orderRouter = createTRPCRouter({
             })
             .returning();
 
-          // 6. Persist order-level discount + usage event if applied
-          if (appliedDiscountRecord) {
-            await tx.insert(orderDiscount).values({
-              id: appliedDiscountRecord.id,
+          if (discountCode?.trim() && appliedDiscount) {
+            const persisted = await persistDiscountInTransaction(txDb, {
+              discountCode: discountCode.trim(),
+              subtotal,
               orderId,
-              discountId: appliedDiscountRecord.discountId,
-              appliedAmount: appliedDiscountRecord.appliedAmount,
-              createdAt: new Date(),
-            });
-
-            await tx.insert(discountUsageEvent).values({
-              id: uuidv4(),
-              orderId,
-              discountId: appliedDiscountRecord.discountId,
-              orderDiscountId: appliedDiscountRecord.id,
-              userId: userId ?? null,
+              userId,
               currency: "INR",
-              appliedAmount: appliedDiscountRecord.appliedAmount,
-              createdAt: new Date(),
             });
+            if (!persisted) {
+              throw new CheckoutValidationError("Discount could not be applied");
+            }
           }
 
-          // 7. Create Order Items
           await tx.insert(orderItem).values(orderItemsData);
 
-          // 8. Update Inventory (Deduct reserved, decrease quantity) with centralized movement logging
           for (const item of orderItemsData) {
+            const cartLineRow = cartData.lines.find((l) => l.variantId === item.variantId);
+            const tracksInventory = cartLineRow?.variant.product.tracksInventory !== false;
+
             const inventoryRow = await tx.query.inventoryItem.findFirst({
               where: (inv, { and, eq: eqLocal, isNull }) =>
                 and(eqLocal(inv.variantId, item.variantId), isNull(inv.deletedAt)),
             });
 
-            if (!inventoryRow) {
-              continue;
-            }
+            if (tracksInventory) {
+              if (!inventoryRow) {
+                throw new CheckoutValidationError(
+                  `No inventory record for variant ${item.variantTitle}. Cannot complete order.`,
+                );
+              }
 
-            await applyInventoryDelta(tx, {
-              inventoryId: inventoryRow.id,
-              quantityDelta: -item.quantity,
-              reservedDelta: -item.quantity,
-              type: "order",
-              warehouseId: inventoryRow.warehouseId,
-              variantId: inventoryRow.variantId,
-              orderId,
-              refundId: null,
-              reason: "Order placed",
-              adjustedBy: userId,
-            });
+              await applyInventoryDelta(tx as InventoryDbLike, {
+                inventoryId: inventoryRow.id,
+                quantityDelta: -item.quantity,
+                reservedDelta: -item.quantity,
+                type: "order",
+                warehouseId: inventoryRow.warehouseId,
+                variantId: inventoryRow.variantId,
+                orderId,
+                refundId: null,
+                reason: "Order placed",
+                adjustedBy: userId,
+              });
+            }
           }
 
-          // 9. Clear Cart
           await tx.delete(cartLine).where(eq(cartLine.cartId, cartData.id));
           await tx.update(cart).set({ updatedAt: new Date() }).where(eq(cart.id, cartData.id));
 
@@ -454,6 +466,9 @@ export const orderRouter = createTRPCRouter({
 
         return API_RESPONSE(STATUS.SUCCESS, MESSAGE.ORDER.CREATE.SUCCESS, result);
       } catch (err) {
+        if (err instanceof CheckoutValidationError) {
+          return API_RESPONSE(STATUS.FAILED, err.message, null);
+        }
         debugError("ORDER:CREATE:ERROR", err);
         return API_RESPONSE(STATUS.ERROR, "Error placing order", null, err as Error);
       }

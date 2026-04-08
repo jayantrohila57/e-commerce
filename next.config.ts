@@ -14,6 +14,9 @@ const nextConfig: NextConfig = {
               'gyroscope=(self "https://checkout.razorpay.com" "https://api.razorpay.com" "https://razorpay.com")',
             ].join(", "),
           },
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+          { key: "X-Frame-Options", value: "SAMEORIGIN" },
         ],
       },
     ];

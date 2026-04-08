@@ -1,20 +1,11 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { apiClient } from "@/core/api/api.client";
 import type { Address } from "@/module/address/address.schema";
 import { useAddress } from "@/module/address/use-address";
 import { useCart } from "@/module/cart/use-cart";
-import { PATH } from "@/shared/config/routes";
 import type { CheckoutFormBody, CheckoutInitResult } from "./checkout.schema";
-
-/** Razorpay checkout.js success payload */
-export interface RazorpaySuccessResponse {
-  razorpay_payment_id: string;
-  razorpay_order_id: string;
-  razorpay_signature: string;
-}
 
 function addressToSnapshot(addr: Pick<Address, "line1" | "line2" | "city" | "state" | "postalCode" | "country">) {
   return {
@@ -30,20 +21,18 @@ function addressToSnapshot(addr: Pick<Address, "line1" | "line2" | "city" | "sta
 }
 
 export function useCheckout() {
-  const router = useRouter();
   const { cart, isLoading: cartLoading } = useCart();
   const { addresses, isLoading: addressLoading } = useAddress();
 
   const createOrder = apiClient.order.create.useMutation();
   const createIntent = apiClient.payment.createIntent.useMutation();
-  const confirmPayment = apiClient.payment.confirm.useMutation();
 
   const shippingAddresses = addresses.filter((a) => a.type === "shipping");
   const billingAddresses = addresses.filter((a) => a.type === "billing");
 
   /**
    * Create order from cart and create Razorpay payment intent.
-   * Returns { order, payment, razorpayOrderId } for opening Razorpay checkout, or null on failure.
+   * Returns { order, payment, razorpayOrderId } for the payment page redirect flow.
    */
   async function initiateCheckout(body: CheckoutFormBody): Promise<CheckoutInitResult | null> {
     if (!cart || cart.items.length === 0) {
@@ -109,41 +98,11 @@ export function useCheckout() {
     }
   }
 
-  async function handlePaymentSuccess(
-    orderId: string,
-    paymentId: string,
-    response: RazorpaySuccessResponse,
-  ): Promise<boolean> {
-    try {
-      const res = await confirmPayment.mutateAsync({
-        body: {
-          paymentId,
-          providerPaymentId: response.razorpay_payment_id,
-          status: "completed",
-          razorpayOrderId: response.razorpay_order_id,
-          razorpayPaymentId: response.razorpay_payment_id,
-          razorpaySignature: response.razorpay_signature,
-        },
-      });
-      if (res.status === "success") {
-        router.push(`${PATH.STORE.CHECKOUT.CONFIRMATION}?orderId=${orderId}`);
-        return true;
-      }
-      toast.error(res.message ?? "Payment verification failed");
-      return false;
-    } catch {
-      toast.error("Payment verification failed");
-      return false;
-    }
-  }
-
   return {
     cart,
     addresses: { shipping: shippingAddresses, billing: billingAddresses, all: addresses },
     isLoading: cartLoading || addressLoading,
     isPlacingOrder: createOrder.isPending || createIntent.isPending,
-    isConfirmingPayment: confirmPayment.isPending,
     initiateCheckout,
-    handlePaymentSuccess,
   };
 }

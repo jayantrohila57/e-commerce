@@ -1,4 +1,4 @@
-import { and, between, desc, eq, gte, lte, sql } from "drizzle-orm";
+import { and, between, desc, eq, gte, inArray, lte, sql } from "drizzle-orm";
 import { createTRPCRouter, staffProcedure } from "@/core/api/api.methods";
 import { db } from "@/core/db/db";
 import {
@@ -284,6 +284,42 @@ export const analyticsRouter = createTRPCRouter({
       } catch (err) {
         debugError("ANALYTICS:INVENTORY_MOVEMENT_SUMMARY:ERROR", err);
         return API_RESPONSE(STATUS.ERROR, "Error fetching inventory movement summary", null, err as Error);
+      }
+    }),
+
+  /** Aggregate KPIs for Studio home (database-backed). */
+  studioDashboardKpis: staffProcedure
+    .input(analyticsContract.studioDashboardKpis.input)
+    .output(analyticsContract.studioDashboardKpis.output)
+    .query(async () => {
+      try {
+        const [totalsRes, pendingRes, revenueRes, discountRes] = await Promise.all([
+          db.select({ c: sql<number>`count(*)::int` }).from(order),
+          db.select({ c: sql<number>`count(*)::int` }).from(order).where(eq(order.status, "pending")),
+          db
+            .select({
+              s: sql<number>`coalesce(sum(${order.grandTotal}), 0)`,
+            })
+            .from(order)
+            .where(inArray(order.status, ["paid", "shipped", "delivered"])),
+          db
+            .select({
+              s: sql<number>`coalesce(sum(${order.discountTotal}), 0)`,
+            })
+            .from(order),
+        ]);
+
+        const data = {
+          totalOrders: Number(totalsRes[0]?.c ?? 0),
+          pendingOrders: Number(pendingRes[0]?.c ?? 0),
+          paidRevenuePaise: Number(revenueRes[0]?.s ?? 0),
+          discountValuePaise: Number(discountRes[0]?.s ?? 0),
+        };
+
+        return API_RESPONSE(STATUS.SUCCESS, "Studio KPIs loaded", data);
+      } catch (err) {
+        debugError("ANALYTICS:STUDIO_DASHBOARD_KPIS:ERROR", err);
+        return API_RESPONSE(STATUS.ERROR, "Error loading studio KPIs", null, err as Error);
       }
     }),
 });

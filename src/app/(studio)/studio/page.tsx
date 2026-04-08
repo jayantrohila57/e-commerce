@@ -1,6 +1,6 @@
 import { BadgePercentIcon, DollarSignIcon, ShoppingBagIcon, TrendingUpIcon } from "lucide-react";
 import { forbidden, redirect } from "next/navigation";
-import { HydrateClient } from "@/core/api/api.server";
+import { apiServer, HydrateClient } from "@/core/api/api.server";
 import { APP_ROLE, normalizeRole } from "@/core/auth/auth.roles";
 import { getServerSession } from "@/core/auth/auth.server";
 import DashboardSection from "@/shared/components/layout/section/section-dashboard";
@@ -13,32 +13,50 @@ export const metadata = {
   title: `${site.name} Studio`,
   description: `${site.name} operations and analytics.`,
 };
-const MetricsData = [
-  {
-    icons: <TrendingUpIcon className="size-5" />,
-    title: "Sales trend",
-    value: "$11,548",
-  },
-  {
-    icons: <BadgePercentIcon className="size-5" />,
-    title: "Discount offers",
-    value: "$1,326",
-  },
-  {
-    icons: <DollarSignIcon className="size-5" />,
-    title: "Net profit",
-    value: "$17,356",
-  },
-  {
-    icons: <ShoppingBagIcon className="size-5" />,
-    title: "Total orders",
-    value: "248",
-  },
-];
+
+/** Matches storefront order summary formatting (integer minor units as displayed). */
+function formatInr(amount: number) {
+  return `₹${amount.toLocaleString("en-IN", { maximumFractionDigits: 0 })}`;
+}
+
 export default async function Home() {
   const { session, user } = await getServerSession();
   if (!session) return redirect(PATH.ROOT);
   if (normalizeRole(user?.role) === APP_ROLE.CUSTOMER) forbidden();
+
+  const kpisRes = await apiServer.analytics.studioDashboardKpis({});
+  const k =
+    kpisRes.status === "success" && kpisRes.data
+      ? kpisRes.data
+      : {
+          totalOrders: 0,
+          pendingOrders: 0,
+          paidRevenuePaise: 0,
+          discountValuePaise: 0,
+        };
+
+  const metrics = [
+    {
+      icons: <TrendingUpIcon className="size-5" />,
+      title: "Paid revenue",
+      value: formatInr(k.paidRevenuePaise),
+    },
+    {
+      icons: <BadgePercentIcon className="size-5" />,
+      title: "Discount value (orders)",
+      value: formatInr(k.discountValuePaise),
+    },
+    {
+      icons: <DollarSignIcon className="size-5" />,
+      title: "Pending checkout",
+      value: String(k.pendingOrders),
+    },
+    {
+      icons: <ShoppingBagIcon className="size-5" />,
+      title: "Total orders",
+      value: String(k.totalOrders),
+    },
+  ];
 
   return (
     <HydrateClient>
@@ -47,8 +65,8 @@ export default async function Home() {
           <DashboardSection {...metadata}>
             <div className="grid grid-cols-6 gap-2 h-full w-full">
               <div className="col-span-2 flex flex-col h-full border-r w-full">
-                {MetricsData.map((metric, index) => (
-                  <div key={index} className="flex items-center gap-4 rounded-md border-b p-4">
+                {metrics.map((metric, index) => (
+                  <div key={metric.title} className="flex items-center gap-4 rounded-md border-b p-4">
                     <Avatar className="size-8.5 rounded-sm">
                       <AvatarFallback className="bg-primary/10 text-primary shrink-0 rounded-sm">
                         {metric.icons}
@@ -62,7 +80,9 @@ export default async function Home() {
                 ))}
               </div>
               <div className="col-span-4 h-full w-full">
-                <div className="h-full w-full flex justify-center border-b items-center">1</div>
+                <div className="h-full w-full flex justify-center border-b items-center text-sm text-muted-foreground">
+                  Overview charts can be added here.
+                </div>
               </div>
             </div>
           </DashboardSection>

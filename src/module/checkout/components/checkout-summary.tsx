@@ -9,23 +9,72 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui
 import { Separator } from "@/shared/components/ui/separator";
 
 interface CheckoutSummaryProps {
+  cartId: string | undefined;
   subtotal: number;
   itemCount: number;
   currency?: string;
 }
 
-export function CheckoutSummary({ subtotal, itemCount, currency = "INR" }: CheckoutSummaryProps) {
+function formatMoney(amount: number, currency: string) {
+  if (currency === "INR") {
+    return `₹${amount.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+  }
+  return `${amount.toLocaleString(undefined, { maximumFractionDigits: 0 })} ${currency}`;
+}
+
+export function CheckoutSummary({ cartId, subtotal, itemCount, currency = "INR" }: CheckoutSummaryProps) {
   const form = useFormContext();
   const discountCode = useWatch({
     control: form.control,
     name: "body.discountCode",
   }) as string | undefined;
 
-  // For now, keep shipping/tax simple; discount is client-estimated as 0.
-  const shipping = 0;
-  const tax = Math.round(subtotal * 0.18);
-  const discountAmount = 0;
-  const total = subtotal + shipping + tax - discountAmount;
+  const shippingAddressId = useWatch({
+    control: form.control,
+    name: "body.shippingAddressId",
+  }) as string | undefined;
+
+  const shippingMethodId = useWatch({
+    control: form.control,
+    name: "body.shippingMethodId",
+  }) as string | undefined;
+
+  const shippingProviderId = useWatch({
+    control: form.control,
+    name: "body.shippingProviderId",
+  }) as string | undefined;
+
+  const hasAddress = typeof shippingAddressId === "string" && shippingAddressId.length > 0;
+  const hasMethod =
+    typeof shippingMethodId === "string" &&
+    shippingMethodId.length > 0 &&
+    typeof shippingProviderId === "string" &&
+    shippingProviderId.length > 0;
+
+  const previewEnabled = Boolean(cartId && hasAddress && hasMethod);
+
+  const { data: previewRes, isLoading } = apiClient.order.previewCheckoutTotals.useQuery(
+    {
+      body: {
+        cartId,
+        shippingAddressId: shippingAddressId ?? "",
+        shippingProviderId: shippingProviderId ?? "",
+        shippingMethodId: shippingMethodId ?? "",
+        discountCode: discountCode?.trim() || undefined,
+      },
+    },
+    {
+      enabled: previewEnabled,
+    },
+  );
+
+  const totals = previewRes?.status === "success" && previewRes.data ? previewRes.data : null;
+  const previewError = previewRes?.status === "failed" ? previewRes.message : null;
+
+  const displayDiscount = totals?.discountTotal ?? 0;
+  const displayShipping = totals?.shippingTotal ?? null;
+  const displayTax = totals?.taxTotal ?? null;
+  const displayTotal = totals?.grandTotal ?? null;
 
   return (
     <Card className="border-border bg-muted/30">
@@ -36,29 +85,73 @@ export function CheckoutSummary({ subtotal, itemCount, currency = "INR" }: Check
       <CardContent className="space-y-3 text-sm">
         <div className="flex justify-between">
           <span className="text-muted-foreground">Subtotal</span>
-          <span>₹{subtotal.toLocaleString(undefined, { maximumFractionDigits: 0 })}</span>
+          <span>{formatMoney(subtotal, currency)}</span>
         </div>
         {discountCode && (
           <div className="flex justify-between">
             <span className="text-muted-foreground">Discount ({discountCode})</span>
             <span className="text-green-600">
-              -₹{discountAmount.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+              {previewEnabled && totals ? (
+                <>-{formatMoney(displayDiscount, currency)}</>
+              ) : (
+                <span className="text-muted-foreground">…</span>
+              )}
             </span>
           </div>
         )}
         <div className="flex justify-between">
           <span className="text-muted-foreground">Shipping</span>
-          <span className="font-medium text-green-600">Free</span>
+          <span className="font-medium">
+            {!previewEnabled ? (
+              <span className="text-muted-foreground text-xs font-normal">Select address &amp; delivery</span>
+            ) : isLoading ? (
+              <span className="text-muted-foreground text-xs font-normal">Calculating…</span>
+            ) : displayShipping != null ? (
+              <span className="text-foreground">{formatMoney(displayShipping, currency)}</span>
+            ) : (
+              <span className="text-destructive text-xs">—</span>
+            )}
+          </span>
         </div>
         <div className="flex justify-between">
-          <span className="text-muted-foreground">Estimated tax (18%)</span>
-          <span>₹{tax.toLocaleString(undefined, { maximumFractionDigits: 0 })}</span>
+          <span className="text-muted-foreground">Tax</span>
+          <span>
+            {!previewEnabled ? (
+              <span className="text-muted-foreground text-xs">—</span>
+            ) : isLoading ? (
+              <span className="text-muted-foreground text-xs">…</span>
+            ) : displayTax != null ? (
+              formatMoney(displayTax, currency)
+            ) : (
+              "—"
+            )}
+          </span>
         </div>
+        {previewError && (
+          <p className="text-xs text-destructive" role="alert">
+            {previewError}
+          </p>
+        )}
         <Separator className="my-2" />
         <div className="flex justify-between text-base font-semibold">
           <span>Total</span>
-          <span>₹{total.toLocaleString(undefined, { maximumFractionDigits: 0 })}</span>
+          <span>
+            {!previewEnabled ? (
+              <span className="text-muted-foreground text-sm font-normal">Complete shipping to see total</span>
+            ) : isLoading ? (
+              <span className="text-muted-foreground text-sm font-normal">…</span>
+            ) : displayTotal != null ? (
+              formatMoney(displayTotal, currency)
+            ) : (
+              <span className="text-destructive text-sm">—</span>
+            )}
+          </span>
         </div>
+        {previewEnabled && totals && (
+          <p className="text-[10px] text-muted-foreground leading-tight">
+            Total matches what you will pay at checkout (includes tax and delivery).
+          </p>
+        )}
       </CardContent>
     </Card>
   );

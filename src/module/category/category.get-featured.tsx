@@ -4,10 +4,23 @@ import Section from "@/shared/components/layout/section/section";
 import { PATH } from "@/shared/config/routes";
 import CategoryCard from "./category-card";
 
-export default async function GetFeaturedCategories() {
-  const { data: categories } = await apiServer.category.getAllFeaturedCategories({
-    query: {},
-  });
+type FeaturedCategoriesData = NonNullable<
+  Awaited<ReturnType<typeof apiServer.category.getAllFeaturedCategories>>["data"]
+>;
+
+export default async function GetFeaturedCategories({
+  prefetched,
+}: {
+  /** When set (e.g. from the homepage server component), avoids a duplicate fetch. */
+  prefetched?: FeaturedCategoriesData;
+} = {}) {
+  const categories =
+    prefetched ??
+    (
+      await apiServer.category.getAllFeaturedCategories({
+        query: {},
+      })
+    ).data;
 
   if (!categories) {
     return null;

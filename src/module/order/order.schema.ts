@@ -128,6 +128,28 @@ export const orderContract = {
     }),
     output: detailedResponse(orderSelectSchema),
   },
+  /** Server-authoritative totals for checkout UI; must match order.create + Razorpay amount. */
+  previewCheckoutTotals: {
+    input: z.object({
+      body: z.object({
+        cartId: z.string().optional(),
+        shippingAddressId: z.string().min(1),
+        shippingProviderId: z.string().min(1),
+        shippingMethodId: z.string().min(1),
+        discountCode: z.string().optional(),
+      }),
+    }),
+    output: detailedResponse(
+      z.object({
+        subtotal: z.number().int(),
+        discountTotal: z.number().int(),
+        shippingTotal: z.number().int(),
+        taxTotal: z.number().int(),
+        grandTotal: z.number().int(),
+        currency: z.string(),
+      }),
+    ),
+  },
   updateStatus: {
     input: z.object({
       params: z.object({ id: z.string().min(1) }),

@@ -1,9 +1,9 @@
-import { MuseoModerno as Font } from "next/font/google";
+import { Onest as Font } from "next/font/google";
 import { siteConfig } from "@/shared/config/site";
 
 const font = Font({
   subsets: ["latin"],
-  variable: "--font-museo-moderno",
+  variable: "--font-common",
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
   style: ["normal"],
 });
@@ -20,6 +20,6 @@ const viewport = {
   userScalable: false,
 };
 
-const className = `${font.variable} font-museo-moderno antialiased`;
+const className = `${font.variable} font-common antialiased`;
 
 export { font, viewport, className };

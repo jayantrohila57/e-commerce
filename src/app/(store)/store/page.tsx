@@ -1,7 +1,14 @@
 import type { Route } from "next";
 import { apiServer } from "@/core/api/api.server";
 import CategoryCard from "@/module/category/category-card";
-import { ContentCTA, ContentFeatureHighlights, ContentOfferBanner } from "@/module/site/content-sections";
+import {
+  ContentAnnouncementBar,
+  ContentCTA,
+  ContentFeatureHighlights,
+  ContentOfferBanner,
+  ContentPromoBanner,
+  ContentSplitBanner,
+} from "@/module/site/content-sections";
 import Section from "@/shared/components/layout/section/section";
 import Shell from "@/shared/components/layout/shell";
 import { PATH } from "@/shared/config/routes";
@@ -78,15 +85,15 @@ export default async function StorePage({ searchParams }: { searchParams: Promis
   return (
     <Shell>
       <JsonLdScript id="jsonld-store" data={storeLd} />
-      {/* <Shell.Section>
+      <Shell.Section>
         <ContentAnnouncementBar page="store" />
       </Shell.Section>
       <Shell.Section>
         <ContentPromoBanner page="store" />
-      </Shell.Section> */}
-      {/* <Shell.Section>
+      </Shell.Section>
+      <Shell.Section>
         <ContentSplitBanner page="store" />
-      </Shell.Section> */}
+      </Shell.Section>
       <Shell.Section>
         {q.trim() && filtered.length === 0 ? (
           <p className="text-muted-foreground px-4 py-8 text-center text-sm">

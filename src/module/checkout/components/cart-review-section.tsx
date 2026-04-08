@@ -1,9 +1,13 @@
 "use client";
 
+import type { Route } from "next";
+import Link from "next/link";
 import type { CartItem } from "@/module/cart/cart.schema";
 import { BlurImage } from "@/shared/components/common/image";
+import { Button } from "@/shared/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/card";
 import { Skeleton } from "@/shared/components/ui/skeleton";
+import { PATH } from "@/shared/config/routes";
 import { getImageSrc } from "@/shared/utils/lib/image.utils";
 
 interface CartReviewSectionProps {
@@ -67,7 +71,19 @@ export function CartReviewSection({ items, isLoading }: CartReviewSectionProps) 
   }
 
   if (!items.length) {
-    return null;
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-sm font-semibold">Cart review</CardTitle>
+          <p className="text-muted-foreground text-xs">Your cart is empty. Add something before checkout.</p>
+        </CardHeader>
+        <CardContent>
+          <Button asChild variant="outline" size="sm">
+            <Link href={PATH.STORE.ROOT as Route}>Continue shopping</Link>
+          </Button>
+        </CardContent>
+      </Card>
+    );
   }
 
   return (

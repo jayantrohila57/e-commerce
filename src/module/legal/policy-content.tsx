@@ -48,10 +48,10 @@ export const policyContent: Record<string, PolicyContent> = {
     href: PATH.SITE.LEGAL.ROOT,
     title: "Legal",
     icon: <FileText className="h-6 w-6" />,
-    description: "",
+    description: "Policies, terms, and compliance information for shopping with us.",
     sections: [],
     tableOfContents: [],
-    lastUpdated: "",
+    lastUpdated: "—",
   },
   "terms-of-service": {
     id: "terms-of-service",

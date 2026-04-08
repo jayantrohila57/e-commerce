@@ -1,9 +1,12 @@
 "use client";
 
 import { Calendar, Printer, Share2 } from "lucide-react";
+import type { Route } from "next";
+import Link from "next/link";
 import { Button } from "@/shared/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/shared/components/ui/card";
 import { Separator } from "@/shared/components/ui/separator";
+import { PATH } from "@/shared/config/routes";
 import { policyContent } from "./policy-content";
 
 interface LegalContentProps {
@@ -80,7 +83,9 @@ export function LegalContent({ activeSection }: LegalContentProps) {
           <p className="text-muted-foreground mb-4 text-sm leading-relaxed">
             If you have any questions about this policy, please contact our support team.
           </p>
-          <Button>Contact Support</Button>
+          <Button asChild>
+            <Link href={PATH.SITE.CONTACT as Route}>Contact support</Link>
+          </Button>
         </div>
       </CardFooter>
     </Card>

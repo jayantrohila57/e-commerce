@@ -25,6 +25,7 @@ const STATIC_PATHS = [
   "/support/returns",
   "/support/faq",
   "/support/help-center",
+  "/support/size-guide",
   "/legal",
 ] as const;
 

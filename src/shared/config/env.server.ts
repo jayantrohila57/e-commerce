@@ -1,5 +1,6 @@
 import "server-only";
 
+import { PHASE_PRODUCTION_BUILD } from "next/constants";
 import { z } from "zod/v3";
 
 function truthyEnv(v: string | undefined): boolean {
@@ -45,6 +46,8 @@ const serverEnvSchema = z
   })
   .superRefine((val, ctx) => {
     if (val.NODE_ENV !== "production" || val.SKIP_ENV_VALIDATION) return;
+    // `next build` sets NODE_ENV=production; secrets may be runtime-only on Vercel.
+    if (process.env.NEXT_PHASE === PHASE_PRODUCTION_BUILD) return;
 
     const req = [
       ["DATABASE_URL", val.DATABASE_URL],
@@ -97,6 +100,7 @@ function readRawFromProcess() {
 }
 
 /**
- * Validated server environment. In production (unless SKIP_ENV_VALIDATION), missing payment/auth/db vars throw at boot.
+ * Validated server environment. In production (unless SKIP_ENV_VALIDATION), missing payment/auth/db vars throw at runtime.
+ * Strict checks are skipped during `next build` (NEXT_PHASE=phase-production-build) so build-time prerender/data collection does not require runtime-only secrets.
  */
 export const serverEnv = serverEnvSchema.parse(readRawFromProcess());

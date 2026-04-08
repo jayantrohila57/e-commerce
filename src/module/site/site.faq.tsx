@@ -1,28 +1,23 @@
 import type { LucideIcon } from "lucide-react";
-import Image from "next/image";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/shared/components/ui/accordion";
 import { Card, CardContent, CardTitle } from "@/shared/components/ui/card";
 
 export function FAQSection({ data }: { data: { id: string; title: string; content: string; icon: LucideIcon }[] }) {
+  const defaultOpen = data[0]?.id ?? "1";
   return (
-    <Card className="grid grid-cols-2">
-      <CardContent className="h-full w-full p-0">
-        <CardContent className="flex h-auto w-full items-center justify-center overflow-hidden">
-          <Image
-            src={
-              "https://images.unsplash.com/photo-1513118043662-d90fa1fbb315?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=805"
-            }
-            alt="design"
-            width={400}
-            height={800}
-            className="h-full w-full rounded-md object-cover"
-          />
-        </CardContent>
+    <Card className="grid grid-cols-1 overflow-hidden lg:grid-cols-2">
+      <CardContent className="bg-muted/40 flex min-h-[280px] items-center justify-center p-0 lg:min-h-[420px]">
+        <div className="flex h-full w-full flex-col items-center justify-center gap-2 p-8 text-center" aria-hidden>
+          <span className="text-primary text-4xl font-semibold tracking-tight">?</span>
+          <p className="text-muted-foreground max-w-sm text-sm leading-relaxed">
+            Answers to the questions shoppers ask most — orders, delivery, returns, and account help.
+          </p>
+        </div>
       </CardContent>
-      <CardContent className="flex h-full w-full flex-col gap-2 p-0">
-        <Accordion type="single" collapsible className="w-full gap-4" defaultValue="1">
-          <h2 className="text-3xl font-bold">{"Frequently Asked Questions"}</h2>
-          <p className="text-muted-foreground">{" Here are some of the most common questions we get asked."}</p>
+      <CardContent className="flex h-full w-full flex-col gap-2 p-4 md:p-6">
+        <Accordion type="single" collapsible className="w-full gap-4" defaultValue={defaultOpen}>
+          <h2 className="text-2xl font-bold tracking-tight md:text-3xl">Frequently asked questions</h2>
+          <p className="text-muted-foreground text-sm">Here are some of the most common questions we get asked.</p>
           {data.map((item) => (
             <AccordionItem
               value={item.id}

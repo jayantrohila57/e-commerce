@@ -41,12 +41,18 @@ interface ProductSubcategoryCardsProps {
 export function ProductSubcategoryCards({ data, categorySlug, subcategorySlug }: ProductSubcategoryCardsProps) {
   if (!data || data.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center gap-2 py-12 text-center">
-        <p className="text-muted-foreground text-sm">No products available in this category.</p>
-        <p className="text-muted-foreground text-xs max-w-md">
-          Products must be set to <strong>Live</strong> status and <strong>Active</strong> to appear here. Check your
-          product settings in the studio.
+      <div className="flex flex-col items-center justify-center gap-3 py-12 text-center">
+        <p className="text-muted-foreground text-sm">No products in this category right now.</p>
+        <p className="text-muted-foreground max-w-md text-xs">
+          Check back soon — we&apos;re often restocking. Browse other categories or contact us if you&apos;re looking
+          for something specific.
         </p>
+        <Link
+          href={`/store/${categorySlug}` as Route}
+          className="text-primary text-sm font-medium underline-offset-4 hover:underline"
+        >
+          Back to category
+        </Link>
       </div>
     );
   }

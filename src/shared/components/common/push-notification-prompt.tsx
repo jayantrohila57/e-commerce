@@ -25,7 +25,7 @@ export function PushNotificationPrompt() {
       const permission = await Notification.requestPermission();
       if (permission === "granted") {
         new Notification("Thanks!", {
-          body: "You'll now receive updates about new posts.",
+          body: "You may receive order and offer updates from us when we enable push.",
           icon: "/favicon.ico",
         });
       }
@@ -47,7 +47,7 @@ export function PushNotificationPrompt() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Bell className="text-primary h-5 w-5" />
-            <CardTitle className="text-lg">{"Stay Updated"}</CardTitle>
+            <CardTitle className="text-lg">Stay in the loop</CardTitle>
           </div>
           <Button variant="ghost" size="sm" onClick={handleDeny}>
             <X className="h-4 w-4" />
@@ -56,7 +56,9 @@ export function PushNotificationPrompt() {
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          <p className="text-muted-foreground text-sm">{"Get notified when we publish new articles and updates."}</p>
+          <p className="text-muted-foreground text-sm">
+            Optional browser alerts for restocks, orders, and promotions when we turn them on for your region.
+          </p>
           <div className="flex gap-2">
             <Button onClick={void handleAllow} size={"sm"} className="flex-1">
               {"Allow"}

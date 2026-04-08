@@ -1,3 +1,4 @@
+import { LegalPolicyHub } from "@/module/legal/legal.policy-hub";
 import { LegalSidebar } from "@/module/legal/legal.sidebar";
 import Section from "@/shared/components/layout/section/section";
 import { buildPageMetadata } from "@/shared/seo/metadata-builders";
@@ -21,7 +22,9 @@ export default function Page() {
         <div className="col-span-2 h-full w-full">
           <LegalSidebar activeSection={"legal"} />
         </div>
-        <div className="col-span-10 h-full w-full"></div>
+        <div className="col-span-10 h-full w-full">
+          <LegalPolicyHub />
+        </div>
       </div>
     </Section>
   );

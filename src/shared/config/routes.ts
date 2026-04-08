@@ -237,6 +237,7 @@ export const PATH = {
     ROOT: "/",
     FORBIDDEN: "/forbidden" as Route,
     ABOUT: "/marketing/about",
+    NEWSLETTER: "/marketing/newsletter" as Route,
     CONTACT: "/support/contact",
     LEGAL: {
       ROOT: "/legal",
@@ -253,7 +254,8 @@ export const PATH = {
     },
     SUPPORT: {
       ROOT: "/support",
-      CONTACT: "/support/contact-support",
+      CONTACT: "/support/contact",
+      SIZE_GUIDE: "/support/size-guide" as Route,
       FAQ: "/support/faq",
       HELP_CENTER: "/support/help-center",
       TICKETS: {

@@ -1,7 +1,14 @@
 import { notFound } from "next/navigation";
 import { apiServer, HydrateClient } from "@/core/api/api.server";
 import { CategoryItem } from "@/module/category/category.component.all";
-import { ContentCTA } from "@/module/site/content-sections";
+import {
+  ContentAnnouncementBar,
+  ContentCTA,
+  ContentFeatureHighlights,
+  ContentOfferBanner,
+  ContentPromoBanner,
+  ContentSplitBanner,
+} from "@/module/site/content-sections";
 import Section from "@/shared/components/layout/section/section";
 import Shell from "@/shared/components/layout/shell";
 import { PATH } from "@/shared/config/routes";
@@ -75,7 +82,7 @@ export default async function CartPage({ params }: PageProps<"/store/[categorySl
     <HydrateClient>
       <JsonLdScript id="jsonld-category" data={categoryLd} />
       <Shell>
-        {/* <Shell.Section>
+        <Shell.Section>
           <ContentAnnouncementBar page="store_category" />
         </Shell.Section>
         <Shell.Section>
@@ -83,7 +90,7 @@ export default async function CartPage({ params }: PageProps<"/store/[categorySl
         </Shell.Section>
         <Shell.Section>
           <ContentSplitBanner page="store_category" />
-        </Shell.Section> */}
+        </Shell.Section>
         <Shell.Section>
           <Section title={`Shop by ${data.title}`} description={data.description ?? ""}>
             <CategoryItem data={data} />
@@ -92,13 +99,12 @@ export default async function CartPage({ params }: PageProps<"/store/[categorySl
         <Shell.Section>
           <ContentCTA page="store_category" />
         </Shell.Section>
-        {/*
         <Shell.Section>
           <ContentOfferBanner page="store_category" />
         </Shell.Section>
         <Shell.Section>
           <ContentFeatureHighlights page="store_category" />
-        </Shell.Section> */}
+        </Shell.Section>
       </Shell>
     </HydrateClient>
   );

@@ -18,13 +18,7 @@ export default async function ResetPasswordPage({ searchParams }: PageProps<"/au
     <Shell>
       <AuthCard
         {...metadata}
-        footer={
-          <AuthFooterNote
-            hint="Need help?"
-            action="Contact support"
-            href={PATH.SITE.ROOT} // TODO: Fix route
-          />
-        }
+        footer={<AuthFooterNote hint="Need help?" action="Contact support" href={PATH.SITE.CONTACT} />}
       >
         <ResetPasswordForm token={token as string} error={error as string} />
       </AuthCard>

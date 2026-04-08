@@ -1,3 +1,4 @@
+import { SupportQuickLinkGrid } from "@/module/site/support-hub";
 import Section from "@/shared/components/layout/section/section";
 import Shell from "@/shared/components/layout/shell";
 import { site } from "@/shared/config/site";
@@ -12,12 +13,13 @@ export const metadata = buildPageMetadata({
 
 export default function Page() {
   return (
-    <Shell>
-      <Shell.Section>
-        <Section title="Support" description="Get help with any issues or questions you may have.">
-          <h1>{"Support Page"}</h1>
-        </Section>
-      </Shell.Section>
-    </Shell>
+    <Shell.Section>
+      <Section
+        title="Support"
+        description={`Find answers about orders, shipping, and returns — or reach the ${site.name} team directly.`}
+      >
+        <SupportQuickLinkGrid />
+      </Section>
+    </Shell.Section>
   );
 }

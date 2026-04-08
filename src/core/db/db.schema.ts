@@ -372,6 +372,20 @@ export const marketingContent = pgTable(
   }),
 );
 
+/** Public marketing signups (footer + newsletter page). */
+export const newsletterSubscriber = pgTable(
+  "newsletter_subscriber",
+  {
+    id: text("id").primaryKey(),
+    email: text("email").notNull().unique(),
+    source: text("source").default("website").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => ({
+    createdAtIdx: index("newsletter_subscriber_created_at_idx").on(table.createdAt),
+  }),
+);
+
 export const product = pgTable(
   "product",
   {

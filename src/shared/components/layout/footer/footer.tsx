@@ -1,11 +1,10 @@
 import type { Route } from "next";
 import Link from "next/link";
+import { NewsletterSignupForm } from "@/module/newsletter/newsletter-signup-form";
 import { Icons } from "@/shared/components/common/icons";
 import RSS from "@/shared/components/common/rss";
 import Social from "@/shared/components/common/social";
 import { ThemeToggle } from "@/shared/components/theme/theme-toggle";
-import { Button } from "@/shared/components/ui/button";
-import { Input } from "@/shared/components/ui/input";
 import { PATH } from "@/shared/config/routes";
 import { site, siteConfig } from "@/shared/config/site";
 import { AppBrand } from "../section/auth.card-layout";
@@ -25,30 +24,27 @@ export const footer: NavType[] = [
   {
     title: "Shop",
     submenu: [
-      { title: "New Arrivals", href: "/store/new" as Route, newTab: false },
-      { title: "Best Sellers", href: "/store/best-sellers" as Route, newTab: false },
-      { title: "Sale", href: "/store/sale" as Route, newTab: false },
-      { title: "Gift Cards", href: "/store/gift-cards" as Route, newTab: false },
-      { title: "All Products", href: "/store" as Route, newTab: false },
+      { title: "All products", href: PATH.STORE.ROOT as Route, newTab: false },
+      { title: "Categories", href: PATH.STORE.CATEGORIES.ROOT as Route, newTab: false },
     ],
   },
   {
     title: "Customer Care",
     submenu: [
-      { title: "Track Order", href: "/orders/track" as Route, newTab: false },
-      { title: "Shipping Info", href: "/support/shipping" as Route, newTab: false },
-      { title: "Returns & Exchanges", href: "/support/returns" as Route, newTab: false },
-      { title: "Size Guide", href: "/support/size-guide" as Route, newTab: false },
-      { title: "Contact Support", href: "/support/contact" as Route, newTab: false },
+      { title: "Track order", href: PATH.ACCOUNT.ORDER as Route, newTab: false },
+      { title: "Shipping info", href: "/support/shipping" as Route, newTab: false },
+      { title: "Returns & exchanges", href: "/support/returns" as Route, newTab: false },
+      { title: "Size guide", href: PATH.SITE.SUPPORT.SIZE_GUIDE, newTab: false },
+      { title: "Contact support", href: PATH.SITE.CONTACT as Route, newTab: false },
     ],
   },
   {
     title: "Legal",
     submenu: [
-      { title: "Privacy Policy", href: "/legal/privacy-policy" as Route, newTab: false },
-      { title: "Terms of Service", href: "/legal/terms-of-service" as Route, newTab: false },
-      { title: "Refund Policy", href: "/legal/refund-policy" as Route, newTab: false },
-      { title: "Cookies Settings", href: "/legal/cookies-policy" as Route, newTab: false },
+      { title: "Privacy Policy", href: PATH.SITE.LEGAL.PRIVACY, newTab: false },
+      { title: "Terms of Service", href: PATH.SITE.LEGAL.TERMS, newTab: false },
+      { title: "Refund Policy", href: PATH.SITE.LEGAL.REFUND, newTab: false },
+      { title: "Cookies", href: PATH.SITE.LEGAL.COOKIES, newTab: false },
     ],
   },
   {
@@ -57,7 +53,7 @@ export const footer: NavType[] = [
       { title: "Instagram", href: siteConfig.socialLinks[1]!.url as Route, newTab: true },
       { title: "Twitter", href: siteConfig.socialLinks[2]!.url as Route, newTab: true },
       { title: "Facebook", href: siteConfig.socialLinks[0]!.url as Route, newTab: true },
-      { title: "Newsletter", href: "/newsletter" as Route, newTab: false },
+      { title: "Newsletter", href: PATH.SITE.NEWSLETTER, newTab: false },
     ],
   },
 ];
@@ -103,13 +99,13 @@ export default function Footer() {
                 </div>
               </div>
               <div className="col-span-1 md:col-span-2">
-                <h4 className="mb-2 text-lg font-semibold">{"Sign up to our Newsletter"}</h4>
-                <form className="flex space-x-2">
-                  <Input className="flex-1" placeholder="Enter your email" type="email" />
-                  <Button size={"sm"} type="submit">
-                    {"Subscribe"}
-                  </Button>
-                </form>
+                <h4 className="mb-2 text-lg font-semibold">Sign up to our newsletter</h4>
+                <NewsletterSignupForm
+                  source="footer"
+                  className="max-w-md space-y-2"
+                  inputClassName="flex-1"
+                  submitLabel="Subscribe"
+                />
               </div>
             </div>
             <div className="grid w-full grid-cols-2 sm:grid-cols-2 md:grid-cols-6 p-4">

@@ -18,7 +18,7 @@
     "db:drop": "npx drizzle-kit drop --config ./src/core/db/drizzle.ts",
     "db:reset": "pnpm db:drop && pnpm db:push",
     "db:seed": "tsx src/core/db/seed.ts",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "next typegen && tsc --noEmit",
     "lint": "biome lint .",
     "lint:fix": "biome lint --write .",
     "format": "biome format --write .",

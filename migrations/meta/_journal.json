@@ -19,8 +19,15 @@
     {
       "idx": 2,
       "version": "7",
-      "when": 1776000000000,
+      "when": 1775629977942,
       "tag": "0002_product_tracks_inventory",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1775630026185,
+      "tag": "0003_remarkable_baron_strucker",
       "breakpoints": true
     }
   ]

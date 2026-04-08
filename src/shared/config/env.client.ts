@@ -6,7 +6,9 @@ const clientEnvSchema = z
     NEXT_PUBLIC_BASE_URL: z.string().default(""),
     NEXT_PUBLIC_API_URL: z.string().default(""),
     NEXT_PUBLIC_RAZORPAY_KEY_ID: z.string().default(""),
-    /** Set explicitly in production; no hardcoded default analytics ID. */
+    /** GA4 measurement ID (G-…). Loaded only when set. */
+    NEXT_PUBLIC_GA_MEASUREMENT_ID: z.string().default(""),
+    /** Google Tag Manager container ID (GTM-…). Loaded only when set. */
     NEXT_PUBLIC_GOOGLE_TAG_MANAGER_ID: z.string().default(""),
   })
   .superRefine((val, ctx) => {
@@ -24,5 +26,6 @@ export const clientEnv = clientEnvSchema.parse({
   NEXT_PUBLIC_BASE_URL: process.env.NEXT_PUBLIC_BASE_URL,
   NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
   NEXT_PUBLIC_RAZORPAY_KEY_ID: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+  NEXT_PUBLIC_GA_MEASUREMENT_ID: process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID,
   NEXT_PUBLIC_GOOGLE_TAG_MANAGER_ID: process.env.NEXT_PUBLIC_GOOGLE_TAG_MANAGER_ID,
 });

@@ -17,15 +17,17 @@ export function ConsentAwareAnalytics() {
     return null;
   }
 
-  const analyticsId = clientEnv.NEXT_PUBLIC_GOOGLE_TAG_MANAGER_ID?.trim();
+  const gaId = clientEnv.NEXT_PUBLIC_GA_MEASUREMENT_ID?.trim();
+  const gtmId = clientEnv.NEXT_PUBLIC_GOOGLE_TAG_MANAGER_ID?.trim();
+  const hasGaOrGtm = Boolean(gaId) || Boolean(gtmId);
 
   return (
     <>
       <Analytics />
-      {analyticsId ? (
+      {hasGaOrGtm ? (
         <>
-          <GoogleAnalytics gaId={analyticsId} />
-          <GoogleTagManager gtmId={analyticsId} />
+          {gaId ? <GoogleAnalytics gaId={gaId} /> : null}
+          {gtmId ? <GoogleTagManager gtmId={gtmId} /> : null}
         </>
       ) : null}
     </>

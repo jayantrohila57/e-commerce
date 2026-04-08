@@ -1,4 +1,4 @@
-import { relations } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import {
   bigint,
   boolean,
@@ -689,6 +689,9 @@ export const payment = pgTable(
   },
   (table) => ({
     orderIdIdx: index("payment_order_id_idx").on(table.orderId),
+    orderProviderPendingUidx: uniqueIndex("payment_order_provider_pending_uidx")
+      .on(table.orderId, table.provider)
+      .where(sql`${table.status} = 'pending'`),
   }),
 );
 

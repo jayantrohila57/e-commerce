@@ -14,9 +14,13 @@ export const metadata = {
   description: `${site.name} operations and analytics.`,
 };
 
-/** Matches storefront order summary formatting (integer minor units as displayed). */
-function formatInr(amount: number) {
-  return `₹${amount.toLocaleString("en-IN", { maximumFractionDigits: 0 })}`;
+/** Whole INR rupees (not paise). */
+function formatInr(amountRupees: number) {
+  return `₹${amountRupees.toLocaleString("en-IN", { maximumFractionDigits: 0 })}`;
+}
+
+function formatPaiseToInr(paise: number) {
+  return formatInr(paise / 100);
 }
 
 export default async function Home() {
@@ -39,12 +43,12 @@ export default async function Home() {
     {
       icons: <TrendingUpIcon className="size-5" />,
       title: "Paid revenue",
-      value: formatInr(k.paidRevenuePaise),
+      value: formatPaiseToInr(k.paidRevenuePaise),
     },
     {
       icons: <BadgePercentIcon className="size-5" />,
       title: "Discount value (orders)",
-      value: formatInr(k.discountValuePaise),
+      value: formatPaiseToInr(k.discountValuePaise),
     },
     {
       icons: <DollarSignIcon className="size-5" />,

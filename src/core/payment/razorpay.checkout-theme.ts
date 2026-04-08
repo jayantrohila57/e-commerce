@@ -4,6 +4,8 @@
  */
 export function getPrimaryColorForRazorpayCheckout(fallbackHex = "#ea580c"): string {
   if (typeof document === "undefined") return fallbackHex;
+  const body = document.body;
+  if (!body) return fallbackHex;
 
   const probe = document.createElement("span");
   probe.setAttribute("aria-hidden", "true");
@@ -13,9 +15,13 @@ export function getPrimaryColorForRazorpayCheckout(fallbackHex = "#ea580c"): str
   probe.style.overflow = "hidden";
   probe.style.pointerEvents = "none";
   probe.style.backgroundColor = "var(--primary)";
-  document.body.appendChild(probe);
-  const rgb = getComputedStyle(probe).backgroundColor;
-  document.body.removeChild(probe);
+  let rgb: string;
+  try {
+    body.appendChild(probe);
+    rgb = getComputedStyle(probe).backgroundColor;
+  } finally {
+    body.removeChild(probe);
+  }
 
   return rgbToHex(rgb) ?? fallbackHex;
 }

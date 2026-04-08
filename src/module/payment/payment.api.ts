@@ -38,6 +38,17 @@ function toPaymentDto(row: {
   };
 }
 
+function isPgUniqueViolation(err: unknown): boolean {
+  if (typeof err !== "object" || err === null) return false;
+  const o = err as { code?: string; cause?: unknown };
+  if (o.code === "23505") return true;
+  const c = o.cause;
+  if (typeof c === "object" && c !== null && "code" in c) {
+    return (c as { code?: string }).code === "23505";
+  }
+  return false;
+}
+
 export const paymentRouter = createTRPCRouter({
   /**
    * Get a single payment by ID (admin/staff).
@@ -94,42 +105,126 @@ export const paymentRouter = createTRPCRouter({
         }
 
         const paymentId = uuidv4();
-        let razorpayOrderId: string | undefined;
 
         if (provider === "razorpay") {
-          const existingPending = await db.query.payment.findFirst({
-            where: (p, { and: andP, eq: eqP }) =>
-              andP(eqP(p.orderId, orderId), eqP(p.provider, "razorpay"), eqP(p.status, "pending")),
-            orderBy: (p, { desc }) => [desc(p.createdAt)],
-          });
+          return await db.transaction(async (tx) => {
+            await tx.select().from(order).where(eq(order.id, orderId)).for("update");
 
-          if (existingPending) {
-            if (existingPending.amount !== orderData.grandTotal) {
-              await db
-                .update(payment)
-                .set({ status: "failed", updatedAt: new Date() })
-                .where(eq(payment.id, existingPending.id));
-            } else {
-              const meta = (existingPending.providerMetadata ?? {}) as { razorpayOrderId?: string };
-              const existingRzId = meta.razorpayOrderId;
-              if (existingRzId) {
-                const payload = toPaymentDto(existingPending);
+            const orderLocked = await tx.query.order.findFirst({
+              where: eq(order.id, orderId),
+            });
+
+            if (!orderLocked) {
+              return API_RESPONSE(STATUS.FAILED, "Order not found", null);
+            }
+
+            if (orderLocked.userId && orderLocked.userId !== userId) {
+              return API_RESPONSE(STATUS.FAILED, "Unauthorized", null);
+            }
+
+            if (orderLocked.status !== "pending") {
+              return API_RESPONSE(STATUS.FAILED, "Order is not in pending state", null);
+            }
+
+            let existingPending = await tx.query.payment.findFirst({
+              where: (p, { and: andP, eq: eqP }) =>
+                andP(eqP(p.orderId, orderId), eqP(p.provider, "razorpay"), eqP(p.status, "pending")),
+              orderBy: (p, { desc }) => [desc(p.createdAt)],
+            });
+
+            if (existingPending) {
+              if (existingPending.amount !== orderLocked.grandTotal) {
+                await tx
+                  .update(payment)
+                  .set({ status: "failed", updatedAt: new Date() })
+                  .where(eq(payment.id, existingPending.id));
+                existingPending = undefined;
+              } else {
+                const meta = (existingPending.providerMetadata ?? {}) as Record<string, unknown>;
+                const existingRzId = typeof meta.razorpayOrderId === "string" ? meta.razorpayOrderId : undefined;
+                if (existingRzId) {
+                  return API_RESPONSE(STATUS.SUCCESS, "Payment intent created", {
+                    payment: toPaymentDto(existingPending),
+                    razorpayOrderId: existingRzId,
+                  });
+                }
+
+                const optionsStale = buildRazorpayOrderOptions({
+                  amount: orderLocked.grandTotal,
+                  currency: orderLocked.currency ?? "INR",
+                  receipt: orderId,
+                  notes: { orderId },
+                });
+                const rzOrderStale = await razorpay.orders.create(optionsStale);
+                await tx
+                  .update(payment)
+                  .set({
+                    providerMetadata: { ...meta, razorpayOrderId: rzOrderStale.id },
+                    updatedAt: new Date(),
+                  })
+                  .where(eq(payment.id, existingPending.id));
+
+                const updated = await tx.query.payment.findFirst({
+                  where: eq(payment.id, existingPending.id),
+                });
+                if (!updated) {
+                  return API_RESPONSE(STATUS.ERROR, "Error creating payment intent", null);
+                }
                 return API_RESPONSE(STATUS.SUCCESS, "Payment intent created", {
-                  payment: payload,
-                  razorpayOrderId: existingRzId,
+                  payment: toPaymentDto(updated),
+                  razorpayOrderId: rzOrderStale.id,
                 });
               }
             }
-          }
 
-          const options = buildRazorpayOrderOptions({
-            amount: orderData.grandTotal,
-            currency: orderData.currency ?? "INR",
-            receipt: orderId,
-            notes: { orderId },
+            const options = buildRazorpayOrderOptions({
+              amount: orderLocked.grandTotal,
+              currency: orderLocked.currency ?? "INR",
+              receipt: orderId,
+              notes: { orderId },
+            });
+            const rzOrder = await razorpay.orders.create(options);
+
+            try {
+              const [newPayment] = await tx
+                .insert(payment)
+                .values({
+                  id: paymentId,
+                  orderId,
+                  provider: "razorpay",
+                  status: "pending",
+                  amount: orderLocked.grandTotal,
+                  currency: orderLocked.currency,
+                  providerMetadata: { razorpayOrderId: rzOrder.id },
+                  createdAt: new Date(),
+                  updatedAt: new Date(),
+                })
+                .returning();
+
+              return API_RESPONSE(STATUS.SUCCESS, "Payment intent created", {
+                payment: toPaymentDto(newPayment),
+                razorpayOrderId: rzOrder.id,
+              });
+            } catch (insErr) {
+              if (!isPgUniqueViolation(insErr)) throw insErr;
+
+              const row = await tx.query.payment.findFirst({
+                where: (p, { and: andP, eq: eqP }) =>
+                  andP(eqP(p.orderId, orderId), eqP(p.provider, "razorpay"), eqP(p.status, "pending")),
+                orderBy: (p, { desc }) => [desc(p.createdAt)],
+              });
+
+              if (!row) throw insErr;
+
+              const metaRow = (row.providerMetadata ?? {}) as { razorpayOrderId?: string };
+              if (!metaRow.razorpayOrderId) throw insErr;
+
+              return API_RESPONSE(STATUS.SUCCESS, "Payment intent created", {
+                payment: toPaymentDto(row),
+                razorpayOrderId: metaRow.razorpayOrderId,
+              });
+            }
           });
-          const rzOrder = await razorpay.orders.create(options);
-          razorpayOrderId = rzOrder.id;
         }
 
         const [newPayment] = await db
@@ -141,7 +236,6 @@ export const paymentRouter = createTRPCRouter({
             status: "pending",
             amount: orderData.grandTotal,
             currency: orderData.currency,
-            providerMetadata: razorpayOrderId != null ? { razorpayOrderId } : undefined,
             createdAt: new Date(),
             updatedAt: new Date(),
           })
@@ -151,7 +245,7 @@ export const paymentRouter = createTRPCRouter({
 
         return API_RESPONSE(STATUS.SUCCESS, "Payment intent created", {
           payment: payload,
-          razorpayOrderId,
+          razorpayOrderId: undefined,
         });
       } catch (err) {
         debugError("PAYMENT:CREATE_INTENT:ERROR", err);

@@ -1,7 +1,7 @@
 import arcjet, { slidingWindow } from "@arcjet/next";
 import { serverEnv } from "@/shared/config/env.server";
 
-const key = serverEnv.ARKJET_API_KEY?.trim();
+const key = (serverEnv.ARKJET_API_KEY ?? "").trim();
 
 const aj =
   key.length > 0

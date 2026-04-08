@@ -142,17 +142,19 @@ export async function completeRazorpayPaymentAfterVerification(input: {
     return { ok: false, reason: "payment_not_successful" };
   }
 
-  await db
-    .update(payment)
-    .set({
-      status: "completed",
-      providerPaymentId: razorpayPaymentId,
-      providerMetadata: mergedMeta,
-      updatedAt: new Date(),
-    })
-    .where(eq(payment.id, paymentRow.id));
+  await db.transaction(async (tx) => {
+    await tx
+      .update(payment)
+      .set({
+        status: "completed",
+        providerPaymentId: razorpayPaymentId,
+        providerMetadata: mergedMeta,
+        updatedAt: new Date(),
+      })
+      .where(eq(payment.id, paymentRow.id));
 
-  await db.update(order).set({ status: "paid", updatedAt: new Date() }).where(eq(order.id, paymentRow.orderId));
+    await tx.update(order).set({ status: "paid", updatedAt: new Date() }).where(eq(order.id, paymentRow.orderId));
+  });
 
   await notifyOrderConfirmation(paymentRow.orderId);
 

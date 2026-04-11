@@ -1,3 +1,7 @@
+/**
+ * tRPC HTTP adapter for the App Router. Context includes Better Auth session and `guestCartSessionId`
+ * from the `cart_session_id` cookie (see `createTRPCContext`). Arcjet rate limits apply to GET and POST when configured.
+ */
 import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
 import type { NextRequest } from "next/server";
 import { createTRPCContext } from "@/core/api/api.methods";
@@ -18,19 +22,19 @@ const handler = (req: NextRequest) =>
     req,
     router: appRouter,
     createContext: () => createContext(req),
-    onError:
-      serverEnv.NODE_ENV === "development"
-        ? ({ path, error }) => {
-            debugLog(`❌ tRPC failed on ${path ?? "<no-path>"}: ${error.message}`);
-          }
-        : undefined,
+    onError: ({ path, error }) => {
+      if (serverEnv.NODE_ENV === "development") {
+        debugLog(`❌ tRPC failed on ${path ?? "<no-path>"}: ${error.message}`);
+        return;
+      }
+      const code = "code" in error ? String((error as { code: unknown }).code) : undefined;
+      debugLog(`tRPC error`, { path: path ?? "<no-path>", code, message: error.message });
+    },
   });
 
 async function guarded(req: NextRequest) {
-  if (req.method === "POST") {
-    const denied = await guardTrpcRateLimit(req);
-    if (denied) return denied;
-  }
+  const denied = await guardTrpcRateLimit(req);
+  if (denied) return denied;
   return handler(req);
 }
 

@@ -224,6 +224,11 @@ export const orderRouter = createTRPCRouter({
         if (cartData.userId && cartData.userId !== userId) {
           return API_RESPONSE(STATUS.FAILED, "Unauthorized cart access", null);
         }
+        if (!cartData.userId) {
+          if (!ctx.guestCartSessionId || cartData.sessionId !== ctx.guestCartSessionId) {
+            return API_RESPONSE(STATUS.FAILED, "Unauthorized cart access", null);
+          }
+        }
 
         const lines = cartData.lines.map((line) => ({
           variantId: line.variantId,
@@ -276,40 +281,50 @@ export const orderRouter = createTRPCRouter({
     .mutation(async ({ input, ctx }) => {
       try {
         const userId = ctx.user.id;
-        const {
-          cartId,
-          sessionId,
-          shippingAddress,
-          billingAddress,
-          notes,
-          shippingProviderId,
-          shippingMethodId,
-          discountCode,
-        } = input.body;
+        const { cartId, shippingAddress, billingAddress, notes, shippingProviderId, shippingMethodId, discountCode } =
+          input.body;
 
-        // 1. Get cart items
-        const cartData = await db.query.cart.findFirst({
-          where: cartId ? eq(cart.id, cartId) : sessionId ? eq(cart.sessionId, sessionId) : undefined,
-          with: {
-            lines: {
+        const cartData = cartId
+          ? await db.query.cart.findFirst({
+              where: eq(cart.id, cartId),
               with: {
-                variant: {
+                lines: {
                   with: {
-                    product: true,
+                    variant: {
+                      with: {
+                        product: true,
+                      },
+                    },
                   },
                 },
               },
-            },
-          },
-        });
+            })
+          : await db.query.cart.findFirst({
+              where: eq(cart.userId, userId),
+              with: {
+                lines: {
+                  with: {
+                    variant: {
+                      with: {
+                        product: true,
+                      },
+                    },
+                  },
+                },
+              },
+            });
 
         if (!cartData || cartData.lines.length === 0) {
           return API_RESPONSE(STATUS.FAILED, "Cart is empty", null);
         }
 
-        // Verify cart ownership if applicable
         if (cartData.userId && cartData.userId !== userId) {
           return API_RESPONSE(STATUS.FAILED, "Unauthorized cart access", null);
+        }
+        if (!cartData.userId) {
+          if (!ctx.guestCartSessionId || cartData.sessionId !== ctx.guestCartSessionId) {
+            return API_RESPONSE(STATUS.FAILED, "Unauthorized cart access", null);
+          }
         }
 
         if (!shippingAddress) {

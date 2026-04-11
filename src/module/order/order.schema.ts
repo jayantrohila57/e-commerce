@@ -72,7 +72,8 @@ export const orderSelectSchema = orderBaseSchema.extend({
 
 export const orderCreateInputSchema = z.object({
   cartId: z.string().optional(), // If provided, convert from cart
-  sessionId: z.string().optional(), // For guest orders
+  // Deprecated: ignored for cart resolution — use cartId or default user cart; guest carts use cart_session_id cookie.
+  sessionId: z.string().optional(),
   shippingAddressId: z.string().optional(), // If using existing address
   shippingAddress: addressSnapshotSchema.optional(), // Or providing descriptive address
   billingAddressId: z.string().optional(),

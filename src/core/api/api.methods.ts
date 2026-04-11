@@ -1,22 +1,28 @@
 import "server-only";
 
 import { initTRPC, TRPCError } from "@trpc/server";
-import { forbidden } from "next/navigation";
 import superjson from "superjson";
 import { ZodError } from "zod/v3";
 import { STATUS } from "@/shared/config/api.config";
 import { API_RESPONSE, prettyZodError, zodErrorObject } from "@/shared/config/api.utils";
 import { debugError } from "@/shared/utils/lib/logger.utils";
+import { parseGuestCartSessionIdFromCookieHeader } from "@/shared/utils/lib/sessionId";
 import { canUseGuard } from "../auth/auth.guard";
 import { normalizeRole } from "../auth/auth.roles";
 import { getServerSession } from "../auth/auth.server";
 
+/**
+ * tRPC bootstrap: SuperJSON, Zod error shaping via `API_RESPONSE`, and procedure guards.
+ * `enforceRole` throws `TRPCError` FORBIDDEN (appropriate for route handlers / JSON clients).
+ */
 export const createTRPCContext = async (opts: { headers: Headers }) => {
   const { session, user } = await getServerSession();
+  const guestCartSessionId = parseGuestCartSessionIdFromCookieHeader(opts.headers.get("cookie"));
 
   return {
     session,
     user,
+    guestCartSessionId,
     ...opts,
   };
 };
@@ -59,7 +65,7 @@ const enforceRole = (guard: "admin" | "staff" | "customer") =>
         "ACCESS_DENIED",
         `User ${ctx.user?.id} attempted to access ${guard} resource with role ${currentRole}`,
       );
-      forbidden();
+      throw new TRPCError({ code: "FORBIDDEN", message: "Insufficient permissions" });
     }
 
     return next({

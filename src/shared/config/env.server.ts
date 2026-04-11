@@ -73,6 +73,14 @@ const serverEnvSchema = z
         path: ["BETTER_AUTH_SECRET"],
       });
     }
+
+    if (val.VERCEL > 0 && (!val.BLOB_READ_WRITE_TOKEN || val.BLOB_READ_WRITE_TOKEN === "undefined")) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "BLOB_READ_WRITE_TOKEN is required on Vercel for /api/blob/upload",
+        path: ["BLOB_READ_WRITE_TOKEN"],
+      });
+    }
   });
 
 function readRawFromProcess() {

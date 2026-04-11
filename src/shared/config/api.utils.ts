@@ -31,7 +31,14 @@ export function API_RESPONSE<T>(
   message: string;
   data: T | null;
 } {
-  if (status === "success") debugLog(`API:RESPONSE:${status}`, [message], JSON.stringify(data, null, 2));
+  // Avoid logging full success payloads in production (PII, cart contents, payment metadata).
+  if (status === "success") {
+    if (process.env.NODE_ENV === "development") {
+      debugLog(`API:RESPONSE:${status}`, [message], JSON.stringify(data, null, 2));
+    } else {
+      debugLog(`API:RESPONSE:${status}`, [message]);
+    }
+  }
   if (status === "failed") debugWarn(`API:RESPONSE:${status}`, [message], { data });
   if (status === "error") debugError(`API:RESPONSE:${status}`, [message], { error });
   return {

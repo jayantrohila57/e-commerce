@@ -10,34 +10,31 @@ import { debugError } from "@/shared/utils/lib/logger.utils";
 import { cartContract } from "./cart.schema";
 
 /**
- * Helper function to get or create cart for user or session
+ * Guest carts are bound to the `cart_session_id` cookie (`ctx.guestCartSessionId`).
+ * Authenticated carts use `ctx.user.id` only — never trust client-supplied userId for reads/writes.
  */
-async function getOrCreateCart(userId?: string, sessionId?: string) {
+type CartRow = typeof cart.$inferSelect;
+
+/**
+ * Resolve cart by a single owner key (never mix user + guest OR — avoids cart fixation).
+ */
+async function getOrCreateCart(opts: { userId?: string; sessionId?: string }): Promise<CartRow> {
+  const { userId, sessionId } = opts;
   if (!userId && !sessionId) {
     throw new Error("Either userId or sessionId is required");
   }
 
-  // Try to find existing cart
   let existingCart = await db.query.cart.findFirst({
-    where: (c, { and, eq, or }) => {
-      if (userId && sessionId) {
-        return or(eq(c.userId, userId), eq(c.sessionId, sessionId));
-      }
-      if (userId) {
-        return eq(c.userId, userId);
-      }
-      return eq(c.sessionId, sessionId!);
-    },
+    where: userId ? eq(cart.userId, userId) : eq(cart.sessionId, sessionId!),
   });
 
-  // Create new cart if not found
   if (!existingCart) {
     const [newCart] = await db
       .insert(cart)
       .values({
         id: uuidv4(),
-        userId: userId || null,
-        sessionId: sessionId || null,
+        userId: userId ?? null,
+        sessionId: sessionId ?? null,
         updatedAt: new Date(),
       })
       .returning();
@@ -45,6 +42,21 @@ async function getOrCreateCart(userId?: string, sessionId?: string) {
   }
 
   return existingCart;
+}
+
+/**
+ * Guest cart lines must match `cart_session_id` cookie; user carts must match `ctx.user.id`.
+ */
+function assertCallerOwnsCartLine(ctx: {
+  user?: { id: string } | null;
+  guestCartSessionId?: string | undefined;
+  lineCart: { userId: string | null; sessionId: string | null };
+}): boolean {
+  const { userId, sessionId } = ctx.lineCart;
+  if (userId) {
+    return Boolean(ctx.user?.id && ctx.user.id === userId);
+  }
+  return Boolean(ctx.guestCartSessionId && sessionId === ctx.guestCartSessionId);
 }
 
 /**
@@ -166,29 +178,22 @@ async function releaseReservation(inventoryId: string, quantity: number) {
 
 export const cartRouter = createTRPCRouter({
   /**
-   * Get cart by userId or sessionId
-   * Public procedure - can be called by guests
+   * Get cart: authenticated callers use their user id; guests use `cart_session_id` cookie only.
    */
   get: publicProcedure
     .input(cartContract.get.input)
     .output(cartContract.get.output)
-    .query(async ({ input, ctx }) => {
+    .query(async ({ ctx }) => {
       try {
-        const userId = input.query?.userId || ctx.user?.id;
-        const sessionId = input.query?.sessionId;
+        const userId = ctx.user?.id;
+        const sessionId = ctx.guestCartSessionId;
 
         if (!userId && !sessionId) {
           return API_RESPONSE(STATUS.FAILED, MESSAGE.CART.GET.FAILED, null);
         }
 
-        // Find cart
         const cartData = await db.query.cart.findFirst({
-          where: (c, { and, eq, or }) => {
-            const conditions = [];
-            if (userId) conditions.push(eq(c.userId, userId));
-            if (sessionId) conditions.push(eq(c.sessionId, sessionId));
-            return conditions.length > 1 ? or(...conditions) : conditions[0];
-          },
+          where: userId ? eq(cart.userId, userId) : eq(cart.sessionId, sessionId!),
         });
 
         if (!cartData) {
@@ -261,8 +266,18 @@ export const cartRouter = createTRPCRouter({
     .output(cartContract.add.output)
     .mutation(async ({ input, ctx }) => {
       try {
-        const { variantId, quantity, sessionId, warehouseId } = input.body;
+        const { variantId, quantity, sessionId: bodySessionId, warehouseId } = input.body;
         const userId = ctx.user?.id;
+        const cookieSessionId = ctx.guestCartSessionId;
+
+        if (!userId) {
+          if (!cookieSessionId) {
+            return API_RESPONSE(STATUS.FAILED, "Guest cart requires cart_session_id cookie", null);
+          }
+          if (bodySessionId && bodySessionId !== cookieSessionId) {
+            return API_RESPONSE(STATUS.FAILED, "Session mismatch", null);
+          }
+        }
 
         // Get variant details
         const variant = await db.query.productVariant.findFirst({
@@ -298,8 +313,9 @@ export const cartRouter = createTRPCRouter({
           return API_RESPONSE(STATUS.FAILED, (inventoryErr as Error).message, null);
         }
 
-        // Get or create cart
-        const cartData = await getOrCreateCart(userId, sessionId);
+        const cartData = userId
+          ? await getOrCreateCart({ userId })
+          : await getOrCreateCart({ sessionId: cookieSessionId! });
 
         // Check if item already exists in cart
         const existingLine = await db.query.cartLine.findFirst({
@@ -351,9 +367,7 @@ export const cartRouter = createTRPCRouter({
       try {
         const { lineId } = input.params;
         const { quantity } = input.body;
-        const userId = ctx.user?.id;
 
-        // Find cart line
         const line = await db.query.cartLine.findFirst({
           where: eq(cartLine.id, lineId),
           with: {
@@ -365,10 +379,17 @@ export const cartRouter = createTRPCRouter({
           return API_RESPONSE(STATUS.FAILED, MESSAGE.CART.UPDATE_ITEM.FAILED, null);
         }
 
-        // Verify ownership (if user is logged in)
-        if (userId && line.cart.userId && line.cart.userId !== userId) {
+        if (
+          !assertCallerOwnsCartLine({
+            user: ctx.user,
+            guestCartSessionId: ctx.guestCartSessionId,
+            lineCart: { userId: line.cart.userId, sessionId: line.cart.sessionId },
+          })
+        ) {
           return API_RESPONSE(STATUS.FAILED, "Unauthorized", null);
         }
+
+        const userId = ctx.user?.id;
 
         if (quantity === 0) {
           // Release reservation before deleting
@@ -444,9 +465,7 @@ export const cartRouter = createTRPCRouter({
     .mutation(async ({ input, ctx }) => {
       try {
         const { lineId } = input.params;
-        const userId = ctx.user?.id;
 
-        // Find cart line
         const line = await db.query.cartLine.findFirst({
           where: eq(cartLine.id, lineId),
           with: {
@@ -458,8 +477,13 @@ export const cartRouter = createTRPCRouter({
           return API_RESPONSE(STATUS.FAILED, MESSAGE.CART.REMOVE_ITEM.FAILED, null);
         }
 
-        // Verify ownership (if user is logged in)
-        if (userId && line.cart.userId && line.cart.userId !== userId) {
+        if (
+          !assertCallerOwnsCartLine({
+            user: ctx.user,
+            guestCartSessionId: ctx.guestCartSessionId,
+            lineCart: { userId: line.cart.userId, sessionId: line.cart.sessionId },
+          })
+        ) {
           return API_RESPONSE(STATUS.FAILED, "Unauthorized", null);
         }
 
@@ -493,16 +517,18 @@ export const cartRouter = createTRPCRouter({
     .mutation(async ({ input, ctx }) => {
       try {
         const userId = ctx.user?.id;
-        const sessionId = input.body?.sessionId;
+        const cookieSession = ctx.guestCartSessionId;
+        const bodySessionId = input.body?.sessionId;
 
-        // Find cart
+        if (!userId && !cookieSession) {
+          return API_RESPONSE(STATUS.FAILED, "Guest cart requires cart_session_id cookie", null);
+        }
+        if (!userId && bodySessionId && bodySessionId !== cookieSession) {
+          return API_RESPONSE(STATUS.FAILED, "Session mismatch", null);
+        }
+
         const cartData = await db.query.cart.findFirst({
-          where: (c, { and, eq, or }) => {
-            const conditions = [];
-            if (userId) conditions.push(eq(c.userId, userId));
-            if (sessionId) conditions.push(eq(c.sessionId, sessionId));
-            return conditions.length > 1 ? or(...conditions) : conditions[0];
-          },
+          where: userId ? eq(cart.userId, userId) : eq(cart.sessionId, cookieSession!),
         });
 
         if (!cartData) {
@@ -579,7 +605,10 @@ export const cartRouter = createTRPCRouter({
         const userId = ctx.user.id;
         const { sessionId } = input.body;
 
-        // Find guest cart
+        if (!ctx.guestCartSessionId || sessionId !== ctx.guestCartSessionId) {
+          return API_RESPONSE(STATUS.FAILED, "Guest session mismatch — merge only the cart from this browser", null);
+        }
+
         const guestCart = await db.query.cart.findFirst({
           where: eq(cart.sessionId, sessionId),
           with: {

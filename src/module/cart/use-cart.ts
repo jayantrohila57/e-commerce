@@ -11,12 +11,7 @@ export function useCart() {
   const sessionId = typeof window !== "undefined" ? getOrGenerateSessionId() : undefined;
 
   const cartQuery = apiClient.cart.get.useQuery(
-    {
-      query: {
-        userId: session?.user?.id,
-        sessionId: session?.user?.id ? undefined : sessionId,
-      },
-    },
+    {},
     {
       enabled: !!(session?.user?.id || sessionId),
     },
@@ -38,10 +33,7 @@ export function useCart() {
       }
     },
     onError: (err, newInfo, context) => {
-      utils.cart.get.setData(
-        { query: { userId: session?.user?.id, sessionId: session?.user?.id ? undefined : sessionId } },
-        context?.previousCart,
-      );
+      utils.cart.get.setData({}, context?.previousCart);
       toast.error("Error adding to cart");
     },
   });

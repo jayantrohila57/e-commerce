@@ -7,15 +7,12 @@ export const { GET } = authHandlers;
 
 export async function POST(request: Request) {
   const clonedRequest = request.clone();
-  if (request) {
-    const decision = await checkArcjet(request);
-    if (decision.isDenied()) {
-      return new Response(null, {
-        status: 403,
-        statusText: "Too many requests Please try again later",
-      });
-    }
-    return authHandlers.POST(clonedRequest);
+  const decision = await checkArcjet(request);
+  if (decision.isDenied()) {
+    return new Response(null, {
+      status: 403,
+      statusText: "Too many requests Please try again later",
+    });
   }
   return authHandlers.POST(clonedRequest);
 }

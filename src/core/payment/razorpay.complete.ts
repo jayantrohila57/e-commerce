@@ -1,4 +1,4 @@
-import { eq, sql } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 import { db } from "@/core/db/db";
 import { order, payment } from "@/core/db/db.schema";
 import { razorpay } from "@/core/payment/razorpay.client";
@@ -134,7 +134,7 @@ export async function completeRazorpayPaymentAfterVerification(input: {
         providerMetadata: mergedMeta,
         updatedAt: new Date(),
       })
-      .where(eq(payment.id, paymentRow.id));
+      .where(and(eq(payment.id, paymentRow.id), eq(payment.status, "pending")));
     return { ok: false, reason: "payment_not_successful" };
   }
 
@@ -142,8 +142,10 @@ export async function completeRazorpayPaymentAfterVerification(input: {
     return { ok: false, reason: "payment_not_successful" };
   }
 
+  // Single transaction + conditional update so concurrent callback/webhook does not double-complete or double-email.
+  let transitionedToCompleted = false;
   await db.transaction(async (tx) => {
-    await tx
+    const updated = await tx
       .update(payment)
       .set({
         status: "completed",
@@ -151,12 +153,27 @@ export async function completeRazorpayPaymentAfterVerification(input: {
         providerMetadata: mergedMeta,
         updatedAt: new Date(),
       })
-      .where(eq(payment.id, paymentRow.id));
+      .where(and(eq(payment.id, paymentRow.id), eq(payment.status, "pending")))
+      .returning({ id: payment.id });
 
+    if (updated.length === 0) {
+      return;
+    }
+    transitionedToCompleted = true;
     await tx.update(order).set({ status: "paid", updatedAt: new Date() }).where(eq(order.id, paymentRow.orderId));
   });
 
-  await notifyOrderConfirmation(paymentRow.orderId);
+  if (transitionedToCompleted) {
+    await notifyOrderConfirmation(paymentRow.orderId);
+    return { ok: true, orderId: paymentRow.orderId };
+  }
 
-  return { ok: true, orderId: paymentRow.orderId };
+  const latest = await db.query.payment.findFirst({
+    where: eq(payment.id, paymentRow.id),
+  });
+  if (latest?.status === "completed") {
+    return { ok: true, orderId: paymentRow.orderId };
+  }
+
+  return { ok: false, reason: "payment_not_successful" };
 }

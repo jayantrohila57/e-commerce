@@ -24,7 +24,8 @@ const aj = arcjet({
 
 const botSettings = {
   mode: "LIVE",
-  allow: ["STRIPE_WEBHOOK"],
+  // Provider webhooks use dedicated routes (e.g. /api/webhooks/razorpay), not Better Auth.
+  allow: [],
 } satisfies BotOptions;
 
 const restrictiveRateLimitSettings = {

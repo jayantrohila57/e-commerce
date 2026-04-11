@@ -25,6 +25,17 @@ export const shipmentBaseSchema = z.object({
 
 export const shipmentSelectSchema = shipmentBaseSchema;
 
+/** Minimal fields safe to expose on public tracking lookup (no internal notes or cost). */
+export const shipmentPublicTrackingSchema = z.object({
+  id: z.string().min(1),
+  status: shipmentStatusEnum,
+  trackingNumber: z.string().nullable().optional(),
+  carrier: z.string().nullable().optional(),
+  shippedAt: z.date().nullable().optional(),
+  deliveredAt: z.date().nullable().optional(),
+  estimatedDeliveryAt: z.date().nullable().optional(),
+});
+
 export const shipmentCreateInputSchema = z.object({
   orderId: z.string().min(1),
   trackingNumber: z.string().optional(),
@@ -70,7 +81,7 @@ export const shipmentContract = {
     input: z.object({
       params: z.object({ trackingNumber: z.string().min(1) }),
     }),
-    output: detailedResponse(shipmentSelectSchema.nullable()),
+    output: detailedResponse(shipmentPublicTrackingSchema.nullable()),
   },
   create: {
     input: z.object({

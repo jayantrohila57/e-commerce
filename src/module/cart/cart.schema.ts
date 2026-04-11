@@ -83,16 +83,9 @@ export const cartTotalsSchema = z.object({
 
 // API Contracts
 export const cartContract = {
-  // Get cart by userId or sessionId
+  // Cart identity: authenticated users use ctx.user.id; guests use cart_session_id cookie only (no client userId).
   get: {
-    input: z.object({
-      query: z
-        .object({
-          userId: z.string().optional(),
-          sessionId: z.string().optional(),
-        })
-        .optional(),
-    }),
+    input: z.object({}).optional(),
     output: detailedResponse(cartWithItemsSchema.nullable()),
   },
 

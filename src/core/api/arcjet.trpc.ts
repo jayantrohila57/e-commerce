@@ -17,7 +17,7 @@ const aj =
       })
     : null;
 
-/** Rate-limit anonymous tRPC traffic when Arcjet is configured. */
+/** Rate-limit tRPC traffic (GET and POST) when Arcjet is configured — batch reads can still be abusive. */
 export async function guardTrpcRateLimit(request: Request): Promise<Response | null> {
   if (!aj || serverEnv.NODE_ENV === "development") return null;
   const decision = await aj.protect(request);

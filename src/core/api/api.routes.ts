@@ -1,3 +1,8 @@
+/**
+ * Composes domain routers into `appRouter`. Procedure levels: `publicProcedure`, `protectedProcedure`,
+ * `customerProcedure`, `staffProcedure`, `adminProcedure` (see `api.methods.ts`). Prefer `customerProcedure`
+ * for checkout/cart-of-user flows; guests use cookie-bound cart procedures where documented.
+ */
 import { createCallerFactory, createTRPCRouter } from "@/core/api/api.methods";
 
 import { addressRouter } from "@/module/address/address.api";

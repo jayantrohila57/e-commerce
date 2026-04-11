@@ -1,4 +1,4 @@
-import { eq, sql } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { db } from "@/core/db/db";
 import { order, payment } from "@/core/db/db.schema";
@@ -8,6 +8,11 @@ import { serverEnv } from "@/shared/config/env.server";
 import { debugError, debugLog } from "@/shared/utils/lib/logger.utils";
 
 export const dynamic = "force-dynamic";
+
+/**
+ * Razorpay retries webhooks; we use a DB transaction and `WHERE status = 'pending'` on payment
+ * so duplicate deliveries are idempotent and order confirmation is sent at most once per completion.
+ */
 
 type RazorpayWebhookPayload = {
   event: string;
@@ -89,29 +94,33 @@ export async function POST(request: Request) {
       }
 
       const capturedAmount = entity.amount;
-      if (
-        paymentRow &&
-        paymentRow.status !== "completed" &&
-        typeof capturedAmount === "number" &&
-        capturedAmount === paymentRow.amount
-      ) {
-        await db
-          .update(payment)
-          .set({
-            status: "completed",
-            providerPaymentId: razorpayPaymentId ?? paymentRow.providerPaymentId,
-            updatedAt: new Date(),
-          })
-          .where(eq(payment.id, paymentRow.id));
+      if (paymentRow && typeof capturedAmount === "number" && capturedAmount === paymentRow.amount) {
+        let didComplete = false;
+        await db.transaction(async (tx) => {
+          const updated = await tx
+            .update(payment)
+            .set({
+              status: "completed",
+              providerPaymentId: razorpayPaymentId ?? paymentRow.providerPaymentId,
+              updatedAt: new Date(),
+            })
+            .where(and(eq(payment.id, paymentRow.id), eq(payment.status, "pending")))
+            .returning({ id: payment.id });
 
-        await db.update(order).set({ status: "paid", updatedAt: new Date() }).where(eq(order.id, paymentRow.orderId));
-
-        debugLog("RAZORPAY_WEBHOOK", "payment.captured reconciled", {
-          paymentId: paymentRow.id,
-          orderId: paymentRow.orderId,
+          if (updated.length === 0) {
+            return;
+          }
+          didComplete = true;
+          await tx.update(order).set({ status: "paid", updatedAt: new Date() }).where(eq(order.id, paymentRow.orderId));
         });
 
-        await notifyOrderConfirmation(paymentRow.orderId);
+        if (didComplete) {
+          debugLog("RAZORPAY_WEBHOOK", "payment.captured reconciled", {
+            paymentId: paymentRow.id,
+            orderId: paymentRow.orderId,
+          });
+          await notifyOrderConfirmation(paymentRow.orderId);
+        }
       } else if (paymentRow && paymentRow.status !== "completed") {
         debugError("RAZORPAY_WEBHOOK", "payment.captured skipped: amount mismatch or missing amount", {
           paymentId: paymentRow.id,
@@ -126,10 +135,16 @@ export async function POST(request: Request) {
       const paymentRow = razorpayOrderId ? await findPaymentByRazorpayOrderId(razorpayOrderId) : null;
 
       if (paymentRow && paymentRow.status === "pending") {
-        await db.update(payment).set({ status: "failed", updatedAt: new Date() }).where(eq(payment.id, paymentRow.id));
-        debugLog("RAZORPAY_WEBHOOK", "payment.failed reconciled", {
-          paymentId: paymentRow.id,
-        });
+        const [row] = await db
+          .update(payment)
+          .set({ status: "failed", updatedAt: new Date() })
+          .where(and(eq(payment.id, paymentRow.id), eq(payment.status, "pending")))
+          .returning({ id: payment.id });
+        if (row) {
+          debugLog("RAZORPAY_WEBHOOK", "payment.failed reconciled", {
+            paymentId: paymentRow.id,
+          });
+        }
       }
     }
   } catch (err) {

@@ -11,7 +11,7 @@ import { MESSAGE, STATUS } from "@/shared/config/api.config";
 import { API_RESPONSE } from "@/shared/config/api.utils";
 import { buildPaginationMeta } from "@/shared/schema";
 import { debugError } from "@/shared/utils/lib/logger.utils";
-import { shipmentContract } from "./shipment.schema";
+import { shipmentContract, shipmentPublicTrackingSchema } from "./shipment.schema";
 
 export const shipmentRouter = createTRPCRouter({
   /**
@@ -118,13 +118,24 @@ export const shipmentRouter = createTRPCRouter({
     .query(async ({ input }) => {
       try {
         const { trackingNumber } = input.params;
-        const data = await db.query.shipment.findFirst({
+        const row = await db.query.shipment.findFirst({
           where: eq(shipment.trackingNumber, trackingNumber),
         });
+        const data = row
+          ? shipmentPublicTrackingSchema.parse({
+              id: row.id,
+              status: row.status,
+              trackingNumber: row.trackingNumber,
+              carrier: row.carrier,
+              shippedAt: row.shippedAt,
+              deliveredAt: row.deliveredAt,
+              estimatedDeliveryAt: row.estimatedDeliveryAt,
+            })
+          : null;
         return API_RESPONSE(
           STATUS.SUCCESS,
           data ? MESSAGE.SHIPMENT.GET.SUCCESS : MESSAGE.SHIPMENT.GET_MANY.FAILED,
-          data ?? null,
+          data,
         );
       } catch (err) {
         debugError("SHIPMENT:GET_BY_TRACKING:ERROR", err);

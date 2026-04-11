@@ -2,7 +2,7 @@ import { and, eq, ilike, isNull, not } from "drizzle-orm";
 import { v4 as uuidv4 } from "uuid";
 import { createTRPCRouter, publicProcedure, staffProcedure } from "@/core/api/api.methods";
 import { db } from "@/core/db/db";
-import { subcategory } from "@/core/db/db.schema";
+import { product, subcategory } from "@/core/db/db.schema";
 import { MESSAGE, STATUS } from "@/shared/config/api.config";
 import { API_RESPONSE } from "@/shared/config/api.utils";
 import { subcategoryContract } from "./subcategory.schema";
@@ -26,6 +26,44 @@ const computePrice = (basePrice: number, priceModifierValue: string, priceModifi
 };
 
 export const subcategoryRouter = createTRPCRouter({
+  get: publicProcedure
+    .input(subcategoryContract.get.input)
+    .output(subcategoryContract.get.output)
+    .query(async ({ input }) => {
+      try {
+        const { id, slug, categorySlug } = input.params;
+
+        // Must provide either id or (slug + categorySlug)
+        if (!id && (!slug || !categorySlug)) {
+          return API_RESPONSE(STATUS.FAILED, MESSAGE.SUBCATEGORY.GET_BY_SLUG.FAILED, null);
+        }
+
+        const conditions = [isNull(subcategory.deletedAt)];
+
+        if (id) {
+          conditions.push(eq(subcategory.id, id));
+        }
+        if (slug) {
+          conditions.push(eq(subcategory.slug, slug));
+        }
+        if (categorySlug) {
+          conditions.push(eq(subcategory.categorySlug, categorySlug));
+        }
+
+        const output = await db.query.subcategory.findFirst({
+          where: and(...conditions),
+        });
+
+        return API_RESPONSE(
+          output ? STATUS.SUCCESS : STATUS.FAILED,
+          output ? MESSAGE.SUBCATEGORY.GET_BY_SLUG.SUCCESS : MESSAGE.SUBCATEGORY.GET_BY_SLUG.FAILED,
+          output ?? null,
+        );
+      } catch (err) {
+        return API_RESPONSE(STATUS.ERROR, MESSAGE.SUBCATEGORY.GET_BY_SLUG.ERROR, null, err as Error);
+      }
+    }),
+
   getMany: publicProcedure
     .input(subcategoryContract.getMany.input)
     .output(subcategoryContract.getMany.output)
@@ -269,19 +307,70 @@ export const subcategoryRouter = createTRPCRouter({
     .output(subcategoryContract.transfer.output)
     .mutation(async ({ input }) => {
       try {
-        const [output] = await db
-          .update(subcategory)
-          .set({
-            categorySlug: input.body.categorySlug,
-            updatedAt: new Date(),
-          })
-          .where(eq(subcategory.id, String(input.params.id)))
-          .returning();
+        const subcategoryId = String(input.params.id);
+        const newCategorySlug = input.body.categorySlug;
+
+        // Get the subcategory to transfer
+        const [subcat] = await db
+          .select({ slug: subcategory.slug, categorySlug: subcategory.categorySlug })
+          .from(subcategory)
+          .where(and(eq(subcategory.id, subcategoryId), isNull(subcategory.deletedAt)))
+          .limit(1);
+
+        if (!subcat) {
+          return API_RESPONSE(STATUS.FAILED, "Subcategory not found", null);
+        }
+
+        // Get all linked products to track them for the update
+        const linkedProducts = await db
+          .select({ id: product.id })
+          .from(product)
+          .where(
+            and(
+              eq(product.subcategorySlug, subcat.slug),
+              eq(product.categorySlug, subcat.categorySlug),
+              isNull(product.deletedAt),
+            ),
+          );
+
+        // Perform the transfer in a transaction:
+        // 1. Update the subcategory's categorySlug
+        // 2. Update all linked products' categorySlug to match
+        const result = await db.transaction(async (tx) => {
+          // Update subcategory
+          const [updatedSubcategory] = await tx
+            .update(subcategory)
+            .set({
+              categorySlug: newCategorySlug,
+              updatedAt: new Date(),
+            })
+            .where(eq(subcategory.id, subcategoryId))
+            .returning();
+
+          // Update linked products' categorySlug to stay in sync
+          if (linkedProducts.length > 0 && updatedSubcategory) {
+            await tx
+              .update(product)
+              .set({
+                categorySlug: newCategorySlug,
+                updatedAt: new Date(),
+              })
+              .where(
+                and(
+                  eq(product.subcategorySlug, subcat.slug),
+                  eq(product.categorySlug, subcat.categorySlug),
+                  isNull(product.deletedAt),
+                ),
+              );
+          }
+
+          return updatedSubcategory;
+        });
 
         return API_RESPONSE(
-          output ? STATUS.SUCCESS : STATUS.FAILED,
-          output ? MESSAGE.SUBCATEGORY.UPDATE.SUCCESS : MESSAGE.SUBCATEGORY.UPDATE.FAILED,
-          output,
+          result ? STATUS.SUCCESS : STATUS.FAILED,
+          result ? MESSAGE.SUBCATEGORY.UPDATE.SUCCESS : MESSAGE.SUBCATEGORY.UPDATE.FAILED,
+          result,
         );
       } catch (err) {
         return API_RESPONSE(STATUS.ERROR, MESSAGE.SUBCATEGORY.UPDATE.ERROR, null, err as Error);

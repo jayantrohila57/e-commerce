@@ -53,6 +53,17 @@ const searchSchema = z.object({
 
 // --- Contract ---
 export const subcategoryContract = {
+  get: {
+    input: z.object({
+      params: z.object({
+        id: z.string().optional(),
+        slug: z.string().optional(),
+        categorySlug: z.string().optional(),
+      }),
+    }),
+    output: detailedResponse(subcategorySelectSchema.nullable()),
+  },
+
   getMany: {
     input: z.object({
       query: searchSchema.merge(offsetPaginationSchema).optional(),

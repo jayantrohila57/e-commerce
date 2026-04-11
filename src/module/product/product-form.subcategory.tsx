@@ -6,6 +6,9 @@ import { apiClient } from "@/core/api/api.client";
 import Form from "@/shared/components/form/form";
 import type { Option } from "@/shared/components/form/form.types";
 
+// Placeholder value that should never be submitted
+const PLACEHOLDER_VALUE = "";
+
 export function SubCategorySelect() {
   const form = useFormContext();
   const categorySlug = useWatch({ name: "body.categorySlug" });
@@ -17,11 +20,11 @@ export function SubCategorySelect() {
   });
 
   const buildSubcategoryOptions = (category: string): Option[] => {
-    if (!category || category === "select-type") return [];
+    if (!category || category === PLACEHOLDER_VALUE) return [];
     return [
       {
-        label: "Select type...",
-        value: "select-type",
+        label: "Select subcategory...",
+        value: PLACEHOLDER_VALUE,
         disabled: true,
       },
       ...(subcategories?.data
@@ -42,7 +45,7 @@ export function SubCategorySelect() {
       return;
     }
     if (prevCategoryRef.current !== categorySlug && prevCategoryRef.current !== undefined) {
-      form.setValue("body.subcategorySlug", "");
+      form.setValue("body.subcategorySlug", PLACEHOLDER_VALUE);
       prevCategoryRef.current = categorySlug;
     }
   }, [categorySlug, form]);
@@ -53,11 +56,11 @@ export function SubCategorySelect() {
         name: "body.subcategorySlug",
         label: "Subcategory",
         type: "select",
-        description: "Select the subcategory of the post",
-        helperText: "The subcategory is used to display the subcategory",
+        description: "Select the subcategory of the product",
+        helperText: "The subcategory is used to organize products",
         required: true,
         placeholder: "Select subcategory",
-        hidden: !categorySlug || categorySlug === "select-type",
+        hidden: !categorySlug || categorySlug === PLACEHOLDER_VALUE,
         options: buildSubcategoryOptions(categorySlug ?? ""),
       }}
     />

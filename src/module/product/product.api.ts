@@ -2,12 +2,48 @@ import { and, eq, ilike, isNull, not, sql } from "drizzle-orm";
 import { v4 as uuidv4 } from "uuid";
 import { createTRPCRouter, publicProcedure, staffProcedure } from "@/core/api/api.methods";
 import { db } from "@/core/db/db";
-import { inventoryItem, product, productVariant, review } from "@/core/db/db.schema";
+import { category, inventoryItem, product, productVariant, review, subcategory } from "@/core/db/db.schema";
 import { MESSAGE, STATUS } from "@/shared/config/api.config";
 import { API_RESPONSE } from "@/shared/config/api.utils";
 import { buildPagination, buildPaginationMeta } from "@/shared/schema";
 import { debugError } from "@/shared/utils/lib/logger.utils";
 import { productContract } from "./product.schema";
+
+/**
+ * Validate that category and subcategory exist and belong together.
+ * Returns null if valid, error message string if invalid.
+ */
+async function validateCategorySubcategory(categorySlug: string, subcategorySlug: string): Promise<string | null> {
+  // Check category exists
+  const [cat] = await db
+    .select({ slug: category.slug })
+    .from(category)
+    .where(and(eq(category.slug, categorySlug), isNull(category.deletedAt)))
+    .limit(1);
+
+  if (!cat) {
+    return "Selected category does not exist";
+  }
+
+  // Check subcategory exists and belongs to the category
+  const [sub] = await db
+    .select({ slug: subcategory.slug, parentSlug: subcategory.categorySlug })
+    .from(subcategory)
+    .where(
+      and(
+        eq(subcategory.slug, subcategorySlug),
+        eq(subcategory.categorySlug, categorySlug),
+        isNull(subcategory.deletedAt),
+      ),
+    )
+    .limit(1);
+
+  if (!sub) {
+    return "Selected subcategory does not exist or does not belong to the selected category";
+  }
+
+  return null;
+}
 
 async function loadPdpSeoForVariant(productId: string, variantId: string) {
   const [aggRow] = await db
@@ -415,7 +451,24 @@ export const productRouter = createTRPCRouter({
         const now = new Date();
         const body = input.body;
 
+        // Validate category and subcategory relationship
+        const validationError = await validateCategorySubcategory(body.categorySlug, body.subcategorySlug);
+        if (validationError) {
+          return API_RESPONSE(STATUS.FAILED, validationError, null);
+        }
+
         const slug = body.slug ?? body.title.toLowerCase().replace(/[^a-z0-9]+/g, "-") + "-" + Date.now();
+
+        // Check for duplicate slug
+        const [existingSlug] = await db
+          .select({ slug: product.slug })
+          .from(product)
+          .where(and(eq(product.slug, slug), isNull(product.deletedAt)))
+          .limit(1);
+
+        if (existingSlug) {
+          return API_RESPONSE(STATUS.FAILED, "Product slug already exists", null);
+        }
 
         const [output] = await db
           .insert(product)
@@ -427,14 +480,16 @@ export const productRouter = createTRPCRouter({
             metaDescription: body.metaDescription ?? null,
             slug,
 
-            // new required fields
+            // Relations
             categorySlug: body.categorySlug,
             subcategorySlug: body.subcategorySlug,
             taxClassId: body.taxClassId ?? null,
             tracksInventory: body.tracksInventory ?? true,
 
+            // Pricing
             basePrice: body.basePrice,
             baseCurrency: body.baseCurrency ?? "INR",
+            baseImage: body.baseImage ?? null,
 
             features: body.features ?? null,
 
@@ -471,6 +526,18 @@ export const productRouter = createTRPCRouter({
 
         if (!existingProduct) {
           return API_RESPONSE(STATUS.FAILED, MESSAGE.PRODUCT.UPDATE.FAILED, null);
+        }
+
+        // Determine effective category/subcategory values
+        const effectiveCategorySlug = body.categorySlug ?? existingProduct.categorySlug;
+        const effectiveSubcategorySlug = body.subcategorySlug ?? existingProduct.subcategorySlug;
+
+        // Validate category/subcategory if either is being updated
+        if (body.categorySlug !== undefined || body.subcategorySlug !== undefined) {
+          const validationError = await validateCategorySubcategory(effectiveCategorySlug, effectiveSubcategorySlug);
+          if (validationError) {
+            return API_RESPONSE(STATUS.FAILED, validationError, null);
+          }
         }
 
         if (body.slug && body.slug !== existingProduct.slug) {

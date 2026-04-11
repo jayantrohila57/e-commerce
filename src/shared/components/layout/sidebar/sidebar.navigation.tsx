@@ -44,17 +44,22 @@ export function NavMain() {
   const collapsibleId = useId();
   const { sections, isPending } = useSidebarSections();
 
-  const [openStates, setOpenStates] = useState<Record<string, boolean>>(() => {
-    const initial: Record<string, boolean> = {};
+  // Track only a single open section (accordion-like behavior)
+  const [openId, setOpenId] = useState<string | null>(() => {
+    // Find the first active item to open initially
+    let firstActiveId: string | null = null;
     sections?.forEach((section, sectionIndex) => {
       section.section.forEach((item, itemIndex) => {
+        if (firstActiveId !== null) return;
         const itemId = `${collapsibleId}-${sectionIndex}-${itemIndex}`;
         const hasActiveChild = item.items?.some((sub) => isActive(sub.url, true)) || false;
         const isItemActive = isActive(item.url, true) || hasActiveChild;
-        initial[itemId] = !!isItemActive;
+        if (isItemActive) {
+          firstActiveId = itemId;
+        }
       });
     });
-    return initial;
+    return firstActiveId;
   });
 
   if (isPending) {
@@ -85,14 +90,14 @@ export function NavMain() {
                 );
               }
 
-              const open = !!openStates[itemId];
+              const open = openId === itemId;
 
               return (
                 <Collapsible
                   key={item.title}
                   asChild
                   open={open}
-                  onOpenChange={(next) => setOpenStates((prev) => ({ ...prev, [itemId]: next }))}
+                  onOpenChange={(next) => setOpenId(next ? itemId : null)}
                   id={itemId}
                 >
                   <SidebarMenuItem>

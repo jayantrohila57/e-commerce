@@ -11,7 +11,7 @@ import { FormSection } from "@/shared/components/form/form.helper";
 import { Button } from "@/shared/components/ui/button";
 import { STATUS } from "@/shared/config/api.config";
 import { PATH } from "@/shared/config/routes";
-import { discountContract } from "./discount.schema";
+import { type Discount, discountContract } from "./discount.schema";
 
 const createSchema = discountContract.create.input;
 const updateSchema = discountContract.update.input;
@@ -22,9 +22,11 @@ type UpdateFormValues = z.infer<typeof updateSchema>;
 interface DiscountFormProps {
   mode: "create" | "edit";
   id?: string;
+  /** Loaded on the server for edit mode. */
+  initial?: Discount | null;
 }
 
-export function DiscountForm({ mode, id }: DiscountFormProps) {
+export function DiscountForm({ mode, id, initial }: DiscountFormProps) {
   const router = useRouter();
   const [toastId, setToastId] = useState<string | number>("");
 
@@ -94,7 +96,17 @@ export function DiscountForm({ mode, id }: DiscountFormProps) {
 
   const defaultValuesUpdate: UpdateFormValues = {
     params: { id: id ?? "" },
-    body: {},
+    body: initial
+      ? {
+          code: initial.code,
+          type: initial.type,
+          value: initial.value,
+          minOrderAmount: initial.minOrderAmount ?? 0,
+          maxUses: initial.maxUses ?? null,
+          expiresAt: initial.expiresAt ?? null,
+          isActive: initial.isActive ?? true,
+        }
+      : {},
   };
 
   const isSubmitting = createMutation.isPending || updateMutation.isPending;

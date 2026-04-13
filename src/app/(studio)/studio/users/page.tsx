@@ -40,6 +40,8 @@ export default async function StudioCustomersPage({
       searchOperator: "contains",
       filterField: roleFilter ? "role" : undefined,
       filterValue: roleFilter,
+      banned,
+      emailVerified,
     },
   });
 

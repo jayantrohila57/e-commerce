@@ -1,17 +1,14 @@
 import {
-  BarChart3,
   CreditCard,
-  DollarSign,
   Layout,
   LayoutDashboard,
   LifeBuoy,
   type LucideIcon,
-  Mail,
   MessageSquare,
   Package,
   Percent,
-  Settings2,
   ShoppingBag,
+  Star,
   Tags,
   Truck,
   Users,
@@ -32,17 +29,6 @@ export interface NavSection {
   title: string;
   section: NavItem[];
 }
-
-export const getMainItems = (role?: string): NavItem[] => [
-  {
-    title: "Marketing",
-    url: PATH.STUDIO.MARKETING.CONTENT.ROOT,
-    icon: MessageSquare,
-    items: [{ title: "Content", url: PATH.STUDIO.MARKETING.CONTENT.ROOT, icon: Layout }],
-  },
-];
-
-// ---------------------------------------------
 
 export const getDashboardItems = (role?: string): NavItem[] => [
   {
@@ -82,8 +68,9 @@ export const getCustomersItems = (role?: string): NavItem[] => [
     icon: Users,
     items: [
       { title: "All Users", url: PATH.STUDIO.USERS.ROOT, icon: Users },
-      { title: "Customers", url: `${PATH.STUDIO.USERS.ROOT}?role=CUSTOMER`, icon: Users },
-      { title: "Staff", url: `${PATH.STUDIO.USERS.ROOT}?role=STAFF`, icon: Users },
+      { title: "Customers", url: `${PATH.STUDIO.USERS.ROOT}?role=customer`, icon: Users },
+      { title: "Staff", url: `${PATH.STUDIO.USERS.ROOT}?role=staff`, icon: Users },
+      { title: "Reviews", url: PATH.STUDIO.REVIEWS.ROOT, icon: Star },
     ],
   },
 ];

@@ -1,10 +1,14 @@
 "use client";
 
 import { Star } from "lucide-react";
+import { toast } from "sonner";
 import type { RouterOutputs } from "@/core/api/api.client";
 import { apiClient } from "@/core/api/api.client";
 import { DataTable } from "@/shared/components/table/data-table";
 import { filters as tableFilters } from "@/shared/components/table/data-table-filter.config";
+import { Button } from "@/shared/components/ui/button";
+import { STATUS } from "@/shared/config/api.config";
+import { PATH } from "@/shared/config/routes";
 
 type ReviewListOutput = RouterOutputs["review"]["getManyAdmin"];
 
@@ -19,8 +23,16 @@ export function ReviewTable({ data }: ReviewTableProps) {
 
   const utils = apiClient.useUtils();
   const updateApproval = apiClient.review.updateApproval.useMutation({
-    onSuccess: () => {
+    onSuccess: (res) => {
       void utils.review.getManyAdmin.invalidate();
+      if (res.status === STATUS.SUCCESS) {
+        toast.success(res.message ?? "Review updated");
+      } else {
+        toast.error(res.message ?? "Could not update review");
+      }
+    },
+    onError: (err) => {
+      toast.error(err.message || "Could not update review");
     },
   });
 
@@ -74,6 +86,49 @@ export function ReviewTable({ data }: ReviewTableProps) {
             );
           },
         },
+        {
+          id: "actions",
+          header: "",
+          cell: ({ row }) => {
+            const id = row.original.id;
+            const isApproved = row.original.isApproved;
+            const busy = updateApproval.isPending;
+            return (
+              <div className="flex flex-wrap justify-end gap-1">
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  className="h-7 text-xs"
+                  disabled={busy || isApproved}
+                  onClick={() =>
+                    updateApproval.mutate({
+                      params: { id },
+                      body: { isApproved: true },
+                    })
+                  }
+                >
+                  Approve
+                </Button>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  className="h-7 text-xs"
+                  disabled={busy || !isApproved}
+                  onClick={() =>
+                    updateApproval.mutate({
+                      params: { id },
+                      body: { isApproved: false },
+                    })
+                  }
+                >
+                  Unapprove
+                </Button>
+              </div>
+            );
+          },
+        },
       ]}
       displayKey="id"
       extraFilters={[
@@ -95,7 +150,7 @@ export function ReviewTable({ data }: ReviewTableProps) {
         icons: [Star],
         action: {
           label: "View catalog",
-          url: "/studio/catalog/products",
+          url: PATH.STUDIO.PRODUCTS.ROOT,
         },
       }}
     />

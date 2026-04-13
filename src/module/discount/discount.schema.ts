@@ -69,6 +69,12 @@ export const discountContract = {
     input: discountListInputSchema.optional(),
     output: detailedResponse(z.array(discountSchema)),
   },
+  get: {
+    input: z.object({
+      params: z.object({ id: z.string().min(1) }),
+    }),
+    output: detailedResponse(discountSchema),
+  },
   create: {
     input: z.object({ body: discountInsertSchema }),
     output: detailedResponse(discountSchema),

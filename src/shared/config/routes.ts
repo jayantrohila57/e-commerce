@@ -113,7 +113,12 @@ export const PATH = {
 
     USERS: {
       ROOT: "/studio/users",
+      NEW: "/studio/users/new" as Route,
       VIEW: (id: string) => `/studio/users/${id}`,
+    },
+
+    REVIEWS: {
+      ROOT: "/studio/reviews" as Route,
     },
 
     DISCOUNTS: {
@@ -125,7 +130,6 @@ export const PATH = {
     SHIPPING: {
       ROOT: "/studio/shipping",
       VIEW: (id: string) => `/studio/shipping/${id}`,
-      EDIT: (id: string) => `/studio/shipping/${id}/edit`,
       PROVIDERS: "/studio/shipping/providers" as Route,
       PROVIDERS_NEW: "/studio/shipping/providers/new" as Route,
       PROVIDERS_EDIT: (id: string) => `/studio/shipping/providers/${id}/edit`,
@@ -164,10 +168,11 @@ export const PATH = {
         NEW: "/studio/marketing/promotions/new",
         EDIT: (id: string) => `/studio/marketing/promotions/${id}/edit`,
       },
+      /** Discount codes; implemented under `/studio/discounts` until dedicated coupon UI exists. */
       COUPONS: {
-        ROOT: "/studio/marketing/coupons",
-        NEW: "/studio/marketing/coupons/new",
-        EDIT: (id: string) => `/studio/marketing/coupons/${id}/edit`,
+        ROOT: "/studio/discounts" as Route,
+        NEW: "/studio/discounts/new" as Route,
+        EDIT: (id: string) => `/studio/discounts/${id}/edit`,
       },
       EMAIL_TEMPLATES: {
         ROOT: "/studio/marketing/email-templates",

@@ -1,31 +1,51 @@
+import type { Route } from "next";
+import Link from "next/link";
+import { forbidden, redirect } from "next/navigation";
 import { HydrateClient } from "@/core/api/api.server";
+import { APP_ROLE, normalizeRole } from "@/core/auth/auth.roles";
+import { getServerSession } from "@/core/auth/auth.server";
 import DashboardSection from "@/shared/components/layout/section/section-dashboard";
 import Shell from "@/shared/components/layout/shell";
+import { Button } from "@/shared/components/ui/button";
+import { PATH } from "@/shared/config/routes";
 import { slugToTitle } from "@/shared/utils/lib/url.utils";
 
 export default async function SeriesPage({
   params,
 }: PageProps<"/studio/catalog/categories/[categorySlug]/[subCategorySlug]/[seriesSlug]">) {
+  const { session, user } = await getServerSession();
+  if (!session) return redirect(PATH.ROOT);
+  if (normalizeRole(user?.role) === APP_ROLE.CUSTOMER) forbidden();
+
   const { categorySlug: slug, subCategorySlug: sub, seriesSlug: series } = await params;
+  const storefrontSeriesUrl = `/store/${slug}/${sub}/${series}` as Route;
+  const studioProductsUrl =
+    `${PATH.STUDIO.PRODUCTS.ROOT}?categorySlug=${encodeURIComponent(slug)}&subcategorySlug=${encodeURIComponent(sub)}` as Route;
 
   return (
     <HydrateClient>
       <Shell>
         <Shell.Section variant="dashboard">
           <DashboardSection
-            title={slugToTitle(sub)}
-            description="Manage your product categories and subcategories"
-            // action="Add Sub Category"
-            // actionUrl={PATH.STUDIO.PRODUCTS.CATEGORIES.SUB_CATEGORIES.NEW(String(data?.category?.id), slug) as Route}
+            title={slugToTitle(series)}
+            description="Series is a URL segment in the storefront hierarchy (category → subcategory → series). It is not a separate database entity; manage products and variants from the catalog."
           >
-            <div className="grid h-full w-full grid-cols-6 gap-2">
-              <div className="bg-muted col-span-2 h-full w-full rounded-md p-3">
-                <h2 className="text-lg font-semibold">Category Details</h2>
-                <pre className="overflow-auto font-mono text-sm wrap-break-word whitespace-pre-wrap">
-                  {JSON.stringify({ slug, sub }, null, 2)}
-                </pre>
+            <div className="flex max-w-2xl flex-col gap-4 p-4 text-sm text-muted-foreground">
+              <p>
+                Customer-facing listing for this segment:{" "}
+                <span className="font-mono text-xs text-foreground">{storefrontSeriesUrl}</span>
+              </p>
+              <div className="flex flex-wrap gap-2">
+                <Button asChild variant="default" size="sm">
+                  <Link href={storefrontSeriesUrl}>View on storefront</Link>
+                </Button>
+                <Button asChild variant="outline" size="sm">
+                  <Link href={studioProductsUrl}>Open products (filtered)</Link>
+                </Button>
+                <Button asChild variant="outline" size="sm">
+                  <Link href={PATH.STUDIO.CATEGORIES.ROOT}>Back to categories</Link>
+                </Button>
               </div>
-              <div className="bg-muted col-span-4 h-full w-full rounded-md p-3"></div>
             </div>
           </DashboardSection>
         </Shell.Section>

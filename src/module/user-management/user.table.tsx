@@ -1,9 +1,9 @@
 "use client";
 
 import { Book, PencilIcon, Tag } from "lucide-react";
-import { EmptyState } from "@/shared/components/common/empty-state";
 import { DataTable } from "@/shared/components/table/data-table";
 import { filters as tableFilters } from "@/shared/components/table/data-table-filter.config";
+import { PATH } from "@/shared/config/routes";
 import { useUserBulkActions } from "./user.bulk-actions";
 import { useUserColumns } from "./user.columns";
 import type { StudioManagedUserList } from "./user-management.types";
@@ -62,7 +62,7 @@ export default function UserTable({ data }: { data: StudioManagedUserList }) {
         icons: [Book, PencilIcon, Tag],
         action: {
           label: "Create Customer",
-          url: "/studio/users/new",
+          url: PATH.STUDIO.USERS.NEW,
         },
       }}
     />

@@ -31,6 +31,8 @@ export const userManagementContract = {
           filterField: z.enum(["id", "name", "email", "role"]).optional(),
           filterValue: z.string().optional(),
           filterOperator: z.enum(["eq", "contains", "ne", "lt", "lte", "gt", "gte"]).optional(),
+          banned: z.boolean().optional(),
+          emailVerified: z.boolean().optional(),
         })
         .default({}),
     }),

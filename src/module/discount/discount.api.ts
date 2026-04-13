@@ -18,6 +18,25 @@ export const discountRouter = createTRPCRouter({
   // ----------------------
   // Admin / staff listing
   // ----------------------
+  get: staffProcedure
+    .input(discountContract.get.input)
+    .output(discountContract.get.output)
+    .query(async ({ input }) => {
+      try {
+        const { id } = input.params;
+        const row = await db.query.discount.findFirst({
+          where: eq(discount.id, id),
+        });
+        if (!row) {
+          return API_RESPONSE(STATUS.FAILED, MESSAGE.DISCOUNT.GET.FAILED, null);
+        }
+        return API_RESPONSE(STATUS.SUCCESS, MESSAGE.DISCOUNT.GET.SUCCESS, row as Discount);
+      } catch (err) {
+        debugError("DISCOUNT:GET:ERROR", err);
+        return API_RESPONSE(STATUS.ERROR, MESSAGE.DISCOUNT.GET.ERROR, null, err as Error);
+      }
+    }),
+
   list: staffProcedure
     .input(discountContract.list.input)
     .output(discountContract.list.output)

@@ -1,10 +1,13 @@
 "use server";
 
+import { and, desc, eq, ilike, or, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { forbidden } from "next/navigation";
 import { auth } from "@/core/auth/auth";
 import { APP_ROLE, normalizeRole } from "@/core/auth/auth.roles";
+import { db } from "@/core/db/db";
+import { user as userTable } from "@/core/db/db.schema";
 import { PATH } from "@/shared/config/routes";
 import { userManagementContract } from "../user-management.schema";
 import type { StudioManagedUser, StudioManagedUserList } from "../user-management.types";
@@ -59,9 +62,77 @@ export async function requireAdminUser() {
   return session.user;
 }
 
+function buildStudioUserDbWhere(query: {
+  filterField?: "id" | "name" | "email" | "role";
+  filterValue?: string;
+  searchValue?: string;
+  banned?: boolean;
+  emailVerified?: boolean;
+}) {
+  const conditions = [];
+  if (query.filterField === "role" && query.filterValue) {
+    conditions.push(eq(userTable.role, query.filterValue));
+  }
+  if (typeof query.banned === "boolean") {
+    conditions.push(eq(userTable.banned, query.banned));
+  }
+  if (typeof query.emailVerified === "boolean") {
+    conditions.push(eq(userTable.emailVerified, query.emailVerified));
+  }
+  if (query.searchValue) {
+    const term = `%${query.searchValue}%`;
+    conditions.push(or(ilike(userTable.name, term), ilike(userTable.email, term))!);
+  }
+  return conditions.length ? and(...conditions) : undefined;
+}
+
 export async function getStudioUsers(input: unknown): Promise<StudioManagedUserList> {
   await requireAdminUser();
   const parsed = userManagementContract.listUsers.input.parse(input ?? { query: {} });
+  const q = parsed.query;
+
+  const listViaDb = typeof q.banned === "boolean" || typeof q.emailVerified === "boolean";
+
+  if (listViaDb) {
+    const where = buildStudioUserDbWhere(q);
+    const limit = q.limit ?? 20;
+    const offset = q.offset ?? 0;
+    const [{ count: totalRaw = 0 } = { count: 0 }] = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(userTable)
+      .where(where);
+    const total = Number(totalRaw ?? 0);
+    const rows = await db
+      .select()
+      .from(userTable)
+      .where(where)
+      .orderBy(desc(userTable.createdAt))
+      .limit(limit)
+      .offset(offset);
+    const users = rows.map((row) =>
+      mapManagedUser({
+        id: row.id,
+        name: row.name,
+        email: row.email,
+        role: row.role,
+        banned: row.banned,
+        banReason: row.banReason,
+        banExpires: row.banExpires,
+        emailVerified: row.emailVerified,
+        image: row.image,
+        createdAt: row.createdAt,
+        updatedAt: row.updatedAt,
+        twoFactorEnabled: row.twoFactorEnabled,
+      }),
+    );
+    return {
+      users,
+      total,
+      limit,
+      offset,
+    };
+  }
+
   const response = (await auth.api.listUsers({
     query: parsed.query,
     headers: await headers(),

@@ -3,9 +3,9 @@ import type { Route } from "next";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { apiServer } from "@/core/api/api.server";
+import { AccountSection } from "@/module/account/account-section";
 import { ShipmentStatusBadge } from "@/module/shipment/components/shipment-status-badge";
 import { ShipmentTimeline } from "@/module/shipment/components/shipment-timeline";
-import Section from "@/shared/components/layout/section/section";
 import { Button } from "@/shared/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/card";
 import { PATH } from "@/shared/config/routes";
@@ -46,7 +46,7 @@ export default async function AccountShipmentDetailPage({ params }: AccountShipm
   const trackingUrl = buildTrackingUrl(shipment.carrier, shipment.trackingNumber);
 
   return (
-    <Section {...metadata}>
+    <AccountSection {...metadata}>
       <div className="mx-auto flex max-w-5xl flex-col gap-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
@@ -141,6 +141,6 @@ export default async function AccountShipmentDetailPage({ params }: AccountShipm
           </Card>
         </div>
       </div>
-    </Section>
+    </AccountSection>
   );
 }

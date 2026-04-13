@@ -2,11 +2,16 @@
 
 import { toast } from "sonner";
 import { apiClient } from "@/core/api/api.client";
+import { useSession } from "@/core/auth/auth.client";
+import { handleTrpcAuthClientError } from "@/shared/utils/handle-trpc-auth-error";
 
 export function useWishlist() {
+  const { data: session } = useSession();
   const utils = apiClient.useUtils();
+  const isAuthenticated = Boolean(session?.user?.id);
 
   const wishlistQuery = apiClient.wishlist.get.useQuery(undefined, {
+    enabled: isAuthenticated,
     staleTime: 30_000,
   });
 
@@ -19,7 +24,8 @@ export function useWishlist() {
         toast.error(res.message || "Failed to add to wishlist");
       }
     },
-    onError: () => {
+    onError: (err) => {
+      if (handleTrpcAuthClientError(err, "Could not update your wishlist. Please sign in again.")) return;
       toast.error("Error adding to wishlist");
     },
   });
@@ -33,7 +39,8 @@ export function useWishlist() {
         toast.error(res.message || "Failed to remove from wishlist");
       }
     },
-    onError: () => {
+    onError: (err) => {
+      if (handleTrpcAuthClientError(err, "Could not update your wishlist. Please sign in again.")) return;
       toast.error("Error removing from wishlist");
     },
   });
@@ -47,7 +54,8 @@ export function useWishlist() {
         toast.error(res.message || "Failed to clear wishlist");
       }
     },
-    onError: () => {
+    onError: (err) => {
+      if (handleTrpcAuthClientError(err, "Could not clear your wishlist. Please sign in again.")) return;
       toast.error("Error clearing wishlist");
     },
   });
@@ -63,18 +71,40 @@ export function useWishlist() {
         toast.error(res.message || "Failed to move item to cart");
       }
     },
-    onError: () => {
+    onError: (err) => {
+      if (handleTrpcAuthClientError(err, "Could not move the item to your cart. Please sign in again.")) return;
       toast.error("Error moving item to cart");
     },
   });
 
+  function addToWishlist(variantId: string) {
+    if (!isAuthenticated) return;
+    addMutation.mutate({ body: { variantId } });
+  }
+
+  function removeFromWishlist(id: string) {
+    if (!isAuthenticated) return;
+    removeMutation.mutate({ params: { id } });
+  }
+
+  function clearWishlist() {
+    if (!isAuthenticated) return;
+    clearMutation.mutate({});
+  }
+
+  function moveToCart(id: string) {
+    if (!isAuthenticated) return;
+    moveToCartMutation.mutate({ params: { id } });
+  }
+
   return {
     wishlist: wishlistQuery.data?.data ?? [],
-    isLoading: wishlistQuery.isLoading,
-    addToWishlist: (variantId: string) => addMutation.mutate({ body: { variantId } }),
-    removeFromWishlist: (id: string) => removeMutation.mutate({ params: { id } }),
-    clearWishlist: () => clearMutation.mutate({}),
-    moveToCart: (id: string) => moveToCartMutation.mutate({ params: { id } }),
+    isLoading: isAuthenticated && wishlistQuery.isLoading,
+    isAuthenticated,
+    addToWishlist,
+    removeFromWishlist,
+    clearWishlist,
+    moveToCart,
     isAdding: addMutation.isPending,
     isRemoving: removeMutation.isPending,
     isClearing: clearMutation.isPending,

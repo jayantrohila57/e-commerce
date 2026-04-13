@@ -1,3 +1,4 @@
+import { LayoutGrid } from "lucide-react";
 import type { Route } from "next";
 import { apiServer } from "@/core/api/api.server";
 import CategoryCard from "@/module/category/category-card";
@@ -9,6 +10,7 @@ import {
   ContentPromoBanner,
   ContentSplitBanner,
 } from "@/module/site/content-sections";
+import { ContentEmpty } from "@/shared/components/common/content-empty";
 import Section from "@/shared/components/layout/section/section";
 import Shell from "@/shared/components/layout/shell";
 import { PATH } from "@/shared/config/routes";
@@ -57,13 +59,23 @@ export default async function StorePage({ searchParams }: { searchParams: Promis
   });
 
   const filtered = filterCategoriesByQuery(data, q);
+  const categoriesForDisplay = filtered.map((c) => ({ ...c, subcategories: c.subcategories ?? [] }));
 
-  const listItems = filtered.flatMap((category) =>
-    (category.subcategories ?? []).map((sub) => ({
+  const listItems = categoriesForDisplay.flatMap((category) => {
+    const subs = category.subcategories ?? [];
+    if (subs.length === 0) {
+      return [
+        {
+          name: category.title,
+          url: absoluteUrl(PATH.STORE.CATEGORIES.CATEGORY(category.slug)),
+        },
+      ];
+    }
+    return subs.map((sub) => ({
       name: `${category.title} — ${sub.title}`,
       url: absoluteUrl(PATH.STORE.SUB_CATEGORIES.SUBCATEGORY(sub.slug, category.slug)),
-    })),
-  );
+    }));
+  });
 
   const storeLd = buildSchemaGraph([
     collectionPageGraphNode({
@@ -95,12 +107,25 @@ export default async function StorePage({ searchParams }: { searchParams: Promis
         <ContentSplitBanner page="store" />
       </Shell.Section>
       <Shell.Section>
-        {q.trim() && filtered.length === 0 ? (
-          <p className="text-muted-foreground px-4 py-8 text-center text-sm">
-            No categories or subcategories match &quot;{q.trim()}&quot;. Try a different search term.
-          </p>
+        {q.trim() && categoriesForDisplay.length === 0 ? (
+          <ContentEmpty
+            className="mx-auto max-w-lg"
+            title="No matches"
+            description={`No categories or subcategories match "${q.trim()}". Try a different search term or browse the full store.`}
+            primaryAction={{ label: "Clear search", href: "/store" }}
+            secondaryAction={{ label: "All categories", href: PATH.STORE.CATEGORIES.ROOT }}
+          />
+        ) : !q.trim() && categoriesForDisplay.length === 0 ? (
+          <ContentEmpty
+            icon={LayoutGrid}
+            className="mx-auto max-w-lg"
+            title="Store catalog is empty"
+            description="There are no categories with products to browse yet. Check back soon, or contact us if you expected to see listings here."
+            primaryAction={{ label: "Home", href: PATH.ROOT }}
+            secondaryAction={{ label: "Contact support", href: PATH.SITE.CONTACT }}
+          />
         ) : (
-          filtered.map((category) => (
+          categoriesForDisplay.map((category) => (
             <Section
               key={category.id}
               title={category.title}
@@ -108,18 +133,33 @@ export default async function StorePage({ searchParams }: { searchParams: Promis
               action="View All "
               actionLink={PATH.STORE.CATEGORIES.CATEGORY(category.slug) as Route}
             >
-              <div className="grid mb-16 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-                {category?.subcategories?.map((subcategory) => (
+              {category.subcategories.length > 0 ? (
+                <div className="mb-16 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+                  {category.subcategories.map((subcategory) => (
+                    <CategoryCard
+                      key={subcategory.id}
+                      id={subcategory.id}
+                      href={PATH.STORE.SUB_CATEGORIES.SUBCATEGORY(subcategory?.slug, category.slug) as Route}
+                      title={subcategory.title}
+                      description={subcategory.description}
+                      image={subcategory.image}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <div className="mb-16 flex flex-col gap-4 sm:flex-row sm:items-start">
                   <CategoryCard
-                    key={subcategory.id}
-                    id={subcategory.id}
-                    href={PATH.STORE.SUB_CATEGORIES.SUBCATEGORY(subcategory?.slug, category.slug) as Route}
-                    title={subcategory.title}
-                    description={subcategory.description}
-                    image={subcategory.image}
+                    id={category.id}
+                    href={PATH.STORE.CATEGORIES.CATEGORY(category.slug) as Route}
+                    title={category.title}
+                    description={category.description}
+                    image={category.image}
                   />
-                ))}
-              </div>
+                  <p className="text-muted-foreground max-w-md text-sm sm:pt-4">
+                    Subcollections will appear here once they are published. Open the category to browse when available.
+                  </p>
+                </div>
+              )}
             </Section>
           ))
         )}

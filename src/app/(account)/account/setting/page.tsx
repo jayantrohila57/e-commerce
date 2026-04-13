@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getServerSession } from "@/core/auth/auth.server";
-import Section from "@/shared/components/layout/section/section";
+import { AccountSection } from "@/module/account/account-section";
 import { Button } from "@/shared/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/components/ui/card";
 import { PATH } from "@/shared/config/routes";
@@ -16,7 +16,7 @@ export default async function SettingPage() {
   if (!data?.session) return redirect(PATH.ROOT);
 
   return (
-    <Section {...metadata}>
+    <AccountSection {...metadata}>
       <div className="max-w-2xl">
         <Card>
           <CardHeader>
@@ -38,6 +38,6 @@ export default async function SettingPage() {
           </CardContent>
         </Card>
       </div>
-    </Section>
+    </AccountSection>
   );
 }

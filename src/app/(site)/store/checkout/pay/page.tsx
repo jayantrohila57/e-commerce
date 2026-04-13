@@ -1,9 +1,10 @@
-import type { Metadata } from "next";
+import type { Metadata, Route } from "next";
 import { redirect } from "next/navigation";
 import { getServerSession } from "@/core/auth/auth.server";
 import { CheckoutPayClient } from "@/module/checkout/components/checkout-pay-client";
 import Shell from "@/shared/components/layout/shell";
 import { PATH } from "@/shared/config/routes";
+import { signInUrlWithCallback } from "@/shared/utils/auth-callback";
 
 export const metadata: Metadata = {
   title: "Payment",
@@ -22,7 +23,8 @@ export default async function CheckoutPayPage({ searchParams }: PageProps) {
 
   const { session, user } = await getServerSession();
   if (!session || !user) {
-    redirect(PATH.AUTH.SIGN_IN);
+    const returnTo = `${PATH.STORE.CHECKOUT.PAY}?orderId=${encodeURIComponent(orderId)}`;
+    redirect(signInUrlWithCallback(returnTo) as Route);
   }
 
   return (

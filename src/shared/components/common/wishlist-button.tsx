@@ -1,19 +1,25 @@
 "use client";
 
 import { Heart } from "lucide-react";
+import type { Route } from "next";
 import { useRouter } from "next/navigation";
 import { useWishlist } from "@/module/wishlist/use-wishlist";
 import { Badge } from "@/shared/components/ui/badge";
 import { Button } from "@/shared/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/shared/components/ui/tooltip";
 import { PATH } from "@/shared/config/routes";
+import { signInUrlWithCallback } from "@/shared/utils/auth-callback";
 
 export default function WishListButton() {
   const router = useRouter();
-  const { wishlist, isLoading } = useWishlist();
+  const { wishlist, isLoading, isAuthenticated } = useWishlist();
   const count = wishlist.length;
 
   const handleClick = () => {
+    if (!isAuthenticated) {
+      router.push(signInUrlWithCallback(PATH.ACCOUNT.WISHLIST) as Route);
+      return;
+    }
     router.push(PATH.ACCOUNT.WISHLIST);
   };
 
@@ -39,7 +45,11 @@ export default function WishListButton() {
         </TooltipTrigger>
         <TooltipContent sideOffset={10}>
           <p id="wishlist-tooltip">
-            {count > 0 ? `You have ${count} item${count === 1 ? "" : "s"} in your wishlist` : "Your wishlist is empty"}
+            {!isAuthenticated
+              ? "Sign in to use your wishlist"
+              : count > 0
+                ? `You have ${count} item${count === 1 ? "" : "s"} in your wishlist`
+                : "Your wishlist is empty"}
           </p>
         </TooltipContent>
       </Tooltip>

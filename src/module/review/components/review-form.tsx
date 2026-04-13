@@ -14,6 +14,7 @@ import { Button } from "@/shared/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/components/ui/card";
 import { Input } from "@/shared/components/ui/input";
 import { Textarea } from "@/shared/components/ui/textarea";
+import { handleTrpcAuthClientError } from "@/shared/utils/handle-trpc-auth-error";
 
 const reviewFormSchema = z.object({
   rating: z.number().min(1).max(5),
@@ -59,8 +60,9 @@ export function ReviewForm({ productId, orderItemId, onSuccess, onCancel }: Revi
         toast.error(result.message || "Failed to submit review");
       }
     },
-    onError: (error: { message?: string }) => {
-      toast.error(error.message || "An error occurred");
+    onError: (error) => {
+      if (handleTrpcAuthClientError(error, "Please sign in to submit your review.")) return;
+      toast.error(error instanceof Error ? error.message : "An error occurred");
     },
   });
 

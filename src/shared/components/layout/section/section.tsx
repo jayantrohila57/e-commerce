@@ -3,8 +3,7 @@ import type { Route } from "next";
 import Link from "next/link";
 import { cn } from "@/shared/utils/lib/utils";
 import { Button } from "../../ui/button";
-import { Card, CardAction, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../../ui/card";
-import { Separator } from "../../ui/separator";
+import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "../../ui/card";
 
 interface SectionProps {
   title?: string;
@@ -35,29 +34,33 @@ export default function Section({
   return (
     <Card className={cn("bg-background ring-0 gap-0 border-none p-0 shadow-none", className)}>
       {title && description && (
-        <div className="w-full p-0 border-t flex flex-row">
+        <div className="flex w-full flex-col border-t sm:flex-row">
           {DynamicIcon && (
-            <div className="h-full w-40 aspect-square border-r flex items-center justify-center">
-              <DynamicIcon className="w-10 h-10 text-muted-foreground" />
+            <div className="flex w-full items-center justify-center border-b bg-muted/15 py-4 sm:w-40 sm:shrink-0 sm:border-b-0 sm:border-r sm:bg-transparent sm:py-0">
+              <div className="flex size-20 items-center justify-center sm:aspect-square sm:size-full sm:max-h-40 sm:max-w-40">
+                <DynamicIcon className="size-8 text-muted-foreground sm:size-10" aria-hidden />
+              </div>
             </div>
           )}
-          <CardHeader className="p-4 w-full">
-            {title && <CardTitle className="text-4xl font-semibold">{title}</CardTitle>}
+          <CardHeader className="w-full p-4 sm:p-6">
+            {title && <CardTitle className="text-2xl font-semibold sm:text-3xl md:text-4xl">{title}</CardTitle>}
             {description && (
-              <CardDescription className="text-base text-muted-foreground">{description}</CardDescription>
+              <CardDescription className="text-sm text-muted-foreground sm:text-base">{description}</CardDescription>
             )}
-            <CardAction className="flex flex-row items-end justify-end mt-6">
+            <CardAction className="mt-4 flex flex-row items-stretch justify-start sm:mt-6 sm:items-end sm:justify-end">
               {action && actionLink && (
-                <Link href={actionLink}>
-                  <Button>{action}</Button>
+                <Link href={actionLink} className="w-full sm:w-auto">
+                  <Button className="w-full sm:w-auto">{action}</Button>
                 </Link>
               )}
             </CardAction>
           </CardHeader>
         </div>
       )}
-      <div className="w-full  border-t"></div>
-      <CardContent className={cn("p-0", isMinHeight && "min-h-[600px]")}>{children}</CardContent>
+      <div className="w-full border-t" />
+      <CardContent className={cn("min-w-0 p-0", isMinHeight && "min-h-0 sm:min-h-[360px] lg:min-h-[600px]")}>
+        {children}
+      </CardContent>
     </Card>
   );
 }

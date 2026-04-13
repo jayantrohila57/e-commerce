@@ -3,6 +3,7 @@
 import { toast } from "sonner";
 import { apiClient } from "@/core/api/api.client";
 import { useSession } from "@/core/auth/auth.client";
+import { handleTrpcAuthClientError } from "@/shared/utils/handle-trpc-auth-error";
 import { getOrGenerateSessionId } from "@/shared/utils/lib/sessionId";
 
 export function useCart() {
@@ -32,14 +33,16 @@ export function useCart() {
         toast.error(res.message || "Failed to add to cart");
       }
     },
-    onError: (err, newInfo, context) => {
+    onError: (err, _newInfo, context) => {
       utils.cart.get.setData({}, context?.previousCart);
+      if (handleTrpcAuthClientError(err, "Could not update your cart. Please sign in again.")) return;
       toast.error("Error adding to cart");
     },
   });
 
   const updateMutation = apiClient.cart.update.useMutation({
-    onError: () => {
+    onError: (err) => {
+      if (handleTrpcAuthClientError(err, "Could not update your cart. Please sign in again.")) return;
       toast.error("Error updating cart item");
     },
     onSuccess: (res) => {
@@ -51,7 +54,8 @@ export function useCart() {
   });
 
   const removeMutation = apiClient.cart.remove.useMutation({
-    onError: () => {
+    onError: (err) => {
+      if (handleTrpcAuthClientError(err, "Could not update your cart. Please sign in again.")) return;
       toast.error("Error removing item from cart");
     },
     onSuccess: (res) => {
@@ -64,7 +68,8 @@ export function useCart() {
   });
 
   const clearMutation = apiClient.cart.clear.useMutation({
-    onError: () => {
+    onError: (err) => {
+      if (handleTrpcAuthClientError(err, "Could not clear your cart. Please sign in again.")) return;
       toast.error("Error clearing cart");
     },
     onSuccess: (res) => {

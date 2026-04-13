@@ -1,19 +1,28 @@
 "use client";
 
 import { ShoppingBag } from "lucide-react";
+import type { Route } from "next";
 import { useRouter } from "next/navigation";
+import { useSession } from "@/core/auth/auth.client";
 import { useCart } from "@/module/cart/use-cart";
 import { Badge } from "@/shared/components/ui/badge";
 import { Button } from "@/shared/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/shared/components/ui/tooltip";
 import { PATH } from "@/shared/config/routes";
+import { signInUrlWithCallback } from "@/shared/utils/auth-callback";
 
 export default function CartButton() {
   const router = useRouter();
+  const { data: session } = useSession();
   const { cart } = useCart();
   const count = cart?.itemCount ?? 0;
+  const isSignedIn = Boolean(session?.user?.id);
 
   const handleClick = () => {
+    if (!isSignedIn) {
+      router.push(signInUrlWithCallback(PATH.ACCOUNT.CART) as Route);
+      return;
+    }
     router.push(PATH.ACCOUNT.CART);
   };
 
@@ -38,7 +47,11 @@ export default function CartButton() {
         </TooltipTrigger>
         <TooltipContent sideOffset={10}>
           <p id="cart-tooltip">
-            {count > 0 ? `You have ${count} item${count === 1 ? "" : "s"} in your cart` : "Your cart is empty"}
+            {!isSignedIn
+              ? "Sign in to open your saved cart"
+              : count > 0
+                ? `You have ${count} item${count === 1 ? "" : "s"} in your cart`
+                : "Your cart is empty"}
           </p>
         </TooltipContent>
       </Tooltip>

@@ -1,6 +1,6 @@
+import { AccountSection } from "@/module/account/account-section";
 import { CartItemList } from "@/module/cart/components/cart-item-list";
 import { CartSummary } from "@/module/cart/components/cart-summary";
-import Section from "@/shared/components/layout/section/section";
 import { Card, CardContent } from "@/shared/components/ui/card";
 
 export const metadata = {
@@ -10,7 +10,7 @@ export const metadata = {
 
 export default async function CartPage() {
   return (
-    <Section {...metadata}>
+    <AccountSection {...metadata}>
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
         <div className="lg:col-span-12">
           <Card className="h-full w-full border-none">
@@ -21,6 +21,6 @@ export default async function CartPage() {
           <CartSummary />
         </div>
       </div>
-    </Section>
+    </AccountSection>
   );
 }

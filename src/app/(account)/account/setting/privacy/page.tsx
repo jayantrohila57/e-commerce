@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { getServerSession } from "@/core/auth/auth.server";
+import { AccountSection } from "@/module/account/account-section";
 import { CookiePrivacySettings } from "@/module/cookies/cookie-privacy-settings";
-import Section from "@/shared/components/layout/section/section";
 import { PATH } from "@/shared/config/routes";
 
 export const metadata = {
@@ -14,10 +14,10 @@ export default async function PrivacySettingsPage() {
   if (!data?.session) return redirect(PATH.ROOT);
 
   return (
-    <Section {...metadata}>
+    <AccountSection {...metadata}>
       <div className="max-w-3xl p-4">
         <CookiePrivacySettings />
       </div>
-    </Section>
+    </AccountSection>
   );
 }

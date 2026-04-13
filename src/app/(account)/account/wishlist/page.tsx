@@ -1,6 +1,6 @@
+import { AccountSection } from "@/module/account/account-section";
 import { WishlistItemList } from "@/module/wishlist/components/wishlist-item-list";
 import { WishlistSummary } from "@/module/wishlist/components/wishlist-summary";
-import Section from "@/shared/components/layout/section/section";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/components/ui/card";
 
 export const metadata = {
@@ -10,7 +10,7 @@ export const metadata = {
 
 export default async function WishlistPage() {
   return (
-    <Section {...metadata}>
+    <AccountSection {...metadata}>
       <div className="lg:col-span-12">
         <Card className="h-full w-full border-none">
           <CardHeader>
@@ -23,6 +23,6 @@ export default async function WishlistPage() {
         </Card>
         <WishlistSummary />
       </div>
-    </Section>
+    </AccountSection>
   );
 }

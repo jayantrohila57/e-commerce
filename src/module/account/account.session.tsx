@@ -5,6 +5,7 @@ import { Monitor, Smartphone, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { UAParser } from "ua-parser-js";
 import { revokeSession } from "@/core/auth/auth.client";
+import { ContentEmpty } from "@/shared/components/common/content-empty";
 import { Badge } from "@/shared/components/ui/badge";
 import { Button } from "@/shared/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/card";
@@ -22,7 +23,14 @@ export function SessionManagement({
 
   return (
     <div className="space-y-6">
-      {currentSession && <SessionCard session={currentSession} isCurrentSession />}
+      {currentSession ? (
+        <SessionCard session={currentSession} isCurrentSession />
+      ) : (
+        <ContentEmpty
+          title="Current session unavailable"
+          description="We could not load details for this device. Try refreshing the page or signing out and back in."
+        />
+      )}
 
       <div className="space-y-4">
         <div className="flex items-center justify-between">

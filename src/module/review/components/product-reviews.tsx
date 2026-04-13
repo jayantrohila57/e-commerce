@@ -2,6 +2,7 @@
 
 import { Star } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 import type { z } from "zod/v3";
 import { apiClient } from "@/core/api/api.client";
 import { useSession } from "@/core/auth/auth.client";
@@ -11,6 +12,7 @@ import { FormSection } from "@/shared/components/form/form.helper";
 import { Button } from "@/shared/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/card";
 import { Separator } from "@/shared/components/ui/separator";
+import { handleTrpcAuthClientError } from "@/shared/utils/handle-trpc-auth-error";
 
 interface ProductReviewsProps {
   productId: string;
@@ -47,6 +49,10 @@ export function ProductReviews({ productId, canWriteReview = false }: ProductRev
   const createReview = apiClient.review.create.useMutation({
     onSuccess: () => {
       void utils.review.getMany.invalidate();
+    },
+    onError: (err) => {
+      if (handleTrpcAuthClientError(err, "Please sign in to post a review.")) return;
+      toast.error("Could not submit your review. Please try again.");
     },
   });
 

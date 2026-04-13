@@ -2,9 +2,9 @@ import type { Route } from "next";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { apiServer } from "@/core/api/api.server";
+import { AccountSection } from "@/module/account/account-section";
 import { OrderDetailSection } from "@/module/order/order-detail.section";
 import { ShipmentTrackingSection } from "@/module/shipment/components/shipment-tracking-section";
-import Section from "@/shared/components/layout/section/section";
 import { Button } from "@/shared/components/ui/button";
 import { PATH } from "@/shared/config/routes";
 
@@ -37,7 +37,7 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
   const order = res.data;
 
   return (
-    <Section {...metadata}>
+    <AccountSection {...metadata}>
       <div className="mx-auto flex max-w-5xl flex-col gap-6">
         <div className="flex flex-col gap-2">
           <h1 className="text-xl font-semibold">Order #{order.id.slice(0, 8)}</h1>
@@ -52,6 +52,6 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
         </div>
         <ShipmentTrackingSection orderId={order.id} />
       </div>
-    </Section>
+    </AccountSection>
   );
 }

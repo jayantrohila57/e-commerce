@@ -1,5 +1,5 @@
+import { AccountSection } from "@/module/account/account-section";
 import { AddressCreateForm } from "@/module/address/components/address-create-form";
-import Section from "@/shared/components/layout/section/section";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/components/ui/card";
 
 export const metadata = {
@@ -9,7 +9,7 @@ export const metadata = {
 
 export default async function AddressNewPage() {
   return (
-    <Section {...metadata}>
+    <AccountSection {...metadata}>
       <Card className="h-full w-full border-none">
         <CardHeader>
           <CardTitle>Add new address</CardTitle>
@@ -19,6 +19,6 @@ export default async function AddressNewPage() {
           <AddressCreateForm />
         </CardContent>
       </Card>
-    </Section>
+    </AccountSection>
   );
 }

@@ -167,7 +167,7 @@ export default function CookieConsent() {
 
   return (
     <>
-      <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/45 p-4 backdrop-blur-sm">
+      <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/45 p-4 pb-[max(1rem,env(safe-area-inset-bottom,0px))] backdrop-blur-sm">
         <Card className="w-full max-w-3xl border-border/60 shadow-2xl">
           <CardHeader className="border-b">
             <div className="flex items-start justify-between gap-4">

@@ -35,7 +35,7 @@ function AuthSlotSkeleton() {
   return <Skeleton className="h-9 w-9 rounded-md" />;
 }
 
-export function HeaderActions() {
+function useAuthToolbarSlot() {
   const [mounted, setMounted] = useState(false);
   const { data: session } = useSession();
 
@@ -43,30 +43,66 @@ export function HeaderActions() {
     setMounted(true);
   }, []);
 
-  const authSlot = !mounted ? (
-    <AuthSlotSkeleton />
-  ) : session?.user ? (
-    <UserDropdown user={session.user} />
-  ) : (
+  if (!mounted) return <AuthSlotSkeleton />;
+  if (session?.user) return <UserDropdown user={session.user} />;
+  return (
     <Link href={PATH.AUTH.SIGN_UP}>
-      <Button size="sm" variant="ghost">
+      <Button size="sm" variant="ghost" className="px-2 sm:px-3">
         Sign Up
       </Button>
     </Link>
   );
+}
 
+/** Cart + wishlist — always visible in the header (including narrow mobile). */
+export function HeaderCommerceActions() {
   return (
-    <div className="flex flex-row h-full">
-      <div className="h-full flex flex-row items-center p-2 px-4 border-l">
+    <div className="flex h-full flex-row items-stretch">
+      <div className="flex items-center border-l px-1.5 py-2 sm:px-4">
         <CartButton />
       </div>
-      <div className="h-full flex flex-row items-center p-2 px-4 border-l">
+      <div className="flex items-center border-l px-1.5 py-2 sm:px-4">
         <WishListButton />
       </div>
-      <div className="h-full flex flex-row items-center p-2 px-4 border-l">
+    </div>
+  );
+}
+
+type HeaderUtilityVariant = "toolbar" | "sheet";
+
+/** Theme + account — toolbar uses borders; sheet is a compact inline row for the mobile menu. */
+export function HeaderUtilityActions({ variant = "toolbar" }: { variant?: HeaderUtilityVariant }) {
+  const authSlot = useAuthToolbarSlot();
+  const isSheet = variant === "sheet";
+
+  if (isSheet) {
+    return (
+      <div className="flex flex-col gap-3 px-4 py-3">
+        <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Appearance &amp; account</p>
+        <div className="flex flex-wrap items-center gap-3">
+          <ModeToggle />
+          {authSlot}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex h-full flex-row items-stretch">
+      <div className="flex items-center border-l px-2 py-2 sm:px-4">
         <ModeToggle />
       </div>
-      <div className="h-full flex flex-row items-center p-2 px-4 border-l">{authSlot}</div>
+      <div className="flex min-w-0 items-center border-l px-2 py-2 sm:px-4">{authSlot}</div>
+    </div>
+  );
+}
+
+/** Full header action strip (commerce + utilities) — for wide toolbars only. */
+export function HeaderActions() {
+  return (
+    <div className="flex h-full flex-row items-stretch">
+      <HeaderCommerceActions />
+      <HeaderUtilityActions />
     </div>
   );
 }

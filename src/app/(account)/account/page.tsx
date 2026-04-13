@@ -8,8 +8,8 @@ import { SessionManagement } from "@/module/account/account.session";
 import { SetPasswordButton } from "@/module/account/account.set-password";
 import { TwoFactorAuthForm } from "@/module/account/account.two-factor";
 import AccountUserComponent from "@/module/account/account.user-layout";
+import { AccountSection } from "@/module/account/account-section";
 import { ProfileCard } from "@/module/user/component.user.profile";
-import Section from "@/shared/components/layout/section/section";
 import { Alert, AlertDescription } from "@/shared/components/ui/alert";
 import { Badge } from "@/shared/components/ui/badge";
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/components/ui/card";
@@ -30,7 +30,7 @@ export default async function AccountPage() {
   if (!data?.session) return redirect(PATH.ROOT);
 
   return (
-    <Section {...metadata}>
+    <AccountSection {...metadata}>
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
         <div className="lg:col-span-8">
           <Card>
@@ -116,6 +116,6 @@ export default async function AccountPage() {
           </CardContent>
         </Card>
       </div>
-    </Section>
+    </AccountSection>
   );
 }

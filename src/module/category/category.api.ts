@@ -129,14 +129,17 @@ export const categoryRouter = createTRPCRouter({
         if (input.query?.search) conditions.push(ilike(category.title, `%${input.query.search}%`));
         if (input.query?.visibility) conditions.push(eq(category.visibility, input.query.visibility));
         if (input.query?.isFeatured !== undefined) conditions.push(eq(category.isFeatured, input.query.isFeatured));
+        conditions.push(isNull(category.deletedAt));
+        const where = conditions.length ? and(...conditions) : undefined;
+
         const output = await db.query.category.findMany({
-          where: conditions.length ? and(...conditions) : undefined,
+          where,
           limit: input.query?.limit ?? 50,
           offset: input.query?.offset ?? 0,
           orderBy: (c, { asc }) => [asc(c.displayOrder)],
           with: {
             subcategories: {
-              limit: 4,
+              where: (sc, { isNull: isNullSub }) => isNullSub(sc.deletedAt),
               orderBy: (sc, { asc }) => [asc(sc.displayOrder)],
             },
           },

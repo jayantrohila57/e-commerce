@@ -1,7 +1,7 @@
 import { apiServer } from "@/core/api/api.server";
+import { AccountSection } from "@/module/account/account-section";
 import type { PaymentListItem } from "@/module/payment/components/payment-card";
 import { PaymentList } from "@/module/payment/components/payment-list";
-import Section from "@/shared/components/layout/section/section";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/components/ui/card";
 
 export const metadata = {
@@ -44,7 +44,7 @@ export default async function PaymentPage() {
   }
 
   return (
-    <Section {...metadata}>
+    <AccountSection {...metadata}>
       <Card>
         <CardHeader>
           <CardTitle>Your Payments</CardTitle>
@@ -54,6 +54,6 @@ export default async function PaymentPage() {
           <PaymentList items={items} />
         </CardContent>
       </Card>
-    </Section>
+    </AccountSection>
   );
 }

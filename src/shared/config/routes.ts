@@ -42,9 +42,10 @@ export const PATH = {
       ROOT: "/store/order",
       DETAIL: (orderId: string) => `/store/order/${orderId}`,
     },
-    PRODUCTS: {
-      ROOT: "/store/products",
-      PRODUCT: (productId: string) => `/store/products/${productId}`,
+    /** PDP URL uses purchasable variant slug (not product slug). */
+    PDP: {
+      VARIANT: (categorySlug: string, subcategorySlug: string, variantSlug: string) =>
+        `/store/${categorySlug}/${subcategorySlug}/${variantSlug}` as Route,
     },
     CATEGORIES: {
       ROOT: "/store/categories",

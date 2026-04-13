@@ -1,7 +1,7 @@
 import { apiServer } from "@/core/api/api.server";
+import { AccountSection } from "@/module/account/account-section";
 import { ShipmentList } from "@/module/shipment/components/shipment-list";
 import type { Shipment } from "@/module/shipment/shipment.schema";
-import Section from "@/shared/components/layout/section/section";
 
 export const metadata = {
   title: "Your Shipments",
@@ -19,8 +19,8 @@ export default async function ShipmentPage() {
   });
 
   return (
-    <Section {...metadata}>
+    <AccountSection {...metadata}>
       <ShipmentList shipments={allShipments} />
-    </Section>
+    </AccountSection>
   );
 }

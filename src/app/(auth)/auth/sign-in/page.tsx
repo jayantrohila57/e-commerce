@@ -7,6 +7,8 @@ import Shell from "@/shared/components/layout/shell";
 import { Alert, AlertDescription, AlertTitle } from "@/shared/components/ui/alert";
 import { Separator } from "@/shared/components/ui/separator";
 import { PATH } from "@/shared/config/routes";
+import { safeAuthCallbackPath } from "@/shared/utils/auth-callback";
+import { authRedirectHint } from "@/shared/utils/handle-trpc-auth-error";
 
 export const metadata = {
   title: "Sign In",
@@ -15,11 +17,12 @@ export const metadata = {
 export default async function SignInPage({
   searchParams,
 }: {
-  searchParams: Promise<{ verified?: string; email?: string }>;
+  searchParams: Promise<{ verified?: string; email?: string; callbackUrl?: string }>;
 }) {
-  const { verified, email } = await searchParams;
+  const { verified, email, callbackUrl: callbackUrlRaw } = await searchParams;
+  const redirectAfterLogin = safeAuthCallbackPath(callbackUrlRaw);
   const { session } = await getServerSession();
-  if (session != null) redirect(PATH.ROOT);
+  if (session != null) redirect(redirectAfterLogin ?? PATH.ROOT);
 
   return (
     <Shell>
@@ -27,6 +30,12 @@ export default async function SignInPage({
         {...metadata}
         footer={<AuthFooterNote hint="New here?" action="Create an account" href={PATH.AUTH.SIGN_UP} />}
       >
+        {redirectAfterLogin ? (
+          <Alert>
+            <AlertTitle>Sign in required</AlertTitle>
+            <AlertDescription>{authRedirectHint(redirectAfterLogin)}</AlertDescription>
+          </Alert>
+        ) : null}
         {verified === "1" && (
           <Alert>
             <AlertTitle>Signup complete</AlertTitle>
@@ -44,7 +53,7 @@ export default async function SignInPage({
             </AlertDescription>
           </Alert>
         )}
-        <SignInForm />
+        <SignInForm redirectTo={redirectAfterLogin} />
         <div className="grid grid-cols-11 items-center justify-center">
           <Separator className="col-span-5" />
           <span className="text-muted-foreground col-span-1 w-full text-center text-xs">or</span>

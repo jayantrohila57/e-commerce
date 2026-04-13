@@ -1,8 +1,11 @@
 "use client";
 
 import { Heart } from "lucide-react";
+import type { Route } from "next";
+import { usePathname, useRouter } from "next/navigation";
 import { useWishlist } from "@/module/wishlist/use-wishlist";
 import { Button } from "@/shared/components/ui/button";
+import { signInUrlWithCallback } from "@/shared/utils/auth-callback";
 import { cn } from "@/shared/utils/lib/utils";
 
 interface PDPWishlistToggleProps {
@@ -10,7 +13,9 @@ interface PDPWishlistToggleProps {
 }
 
 export function PDPWishlistToggle({ variantId }: PDPWishlistToggleProps) {
-  const { wishlist, addToWishlist, removeFromWishlist, isAdding, isRemoving } = useWishlist();
+  const router = useRouter();
+  const pathname = usePathname();
+  const { wishlist, addToWishlist, removeFromWishlist, isAdding, isRemoving, isAuthenticated } = useWishlist();
 
   const existing = wishlist.find((item) => item.variantId === variantId);
   const isInWishlist = !!existing;
@@ -18,6 +23,11 @@ export function PDPWishlistToggle({ variantId }: PDPWishlistToggleProps) {
 
   const handleToggle = () => {
     if (isBusy) return;
+
+    if (!isAuthenticated) {
+      router.push(signInUrlWithCallback(pathname || "/store") as Route);
+      return;
+    }
 
     if (isInWishlist && existing) {
       removeFromWishlist(existing.id);

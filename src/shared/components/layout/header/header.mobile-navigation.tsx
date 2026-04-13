@@ -14,7 +14,7 @@ import { PATH } from "@/shared/config/routes";
 import { siteConfig } from "@/shared/config/site";
 import { getImageSrc } from "@/shared/utils/lib/image.utils";
 import { Separator } from "../../ui/separator";
-import { HeaderActions } from "./header.actions";
+import { HeaderUtilityActions } from "./header.actions";
 
 type MobileNavContextType = {
   open: boolean;
@@ -66,7 +66,7 @@ function MobileNavigationSheet() {
           <SheetTitle>{siteConfig.name}</SheetTitle>
         </SheetHeader>
         <Separator />
-        <div className="mt-6flex flex-col gap-2">
+        <div className="mt-6 flex flex-col gap-2">
           {/* MAIN LINKS */}
           <nav className="flex flex-col  p-4  gap-2 text-lg font-medium">
             <Link href={PATH.STORE.ROOT} onClick={() => setOpen(false)}>
@@ -86,9 +86,7 @@ function MobileNavigationSheet() {
             </Link>
           </nav>
           <Separator />
-          <div className="">
-            <HeaderActions />
-          </div>
+          <HeaderUtilityActions variant="sheet" />
           <Separator />
           {/* CATEGORIES */}
           <div className="flex flex-col gap-3 pb-20">
@@ -126,7 +124,7 @@ function MobileNavigationSheet() {
                       {category.subcategories?.map((sub) => (
                         <Link
                           key={sub.id}
-                          href={PATH.STORE.CATEGORIES.CATEGORY(sub.slug ?? "") as Route}
+                          href={PATH.STORE.SUB_CATEGORIES.SUBCATEGORY(sub.slug ?? "", category.slug ?? "") as Route}
                           className="text-sm text-muted-foreground hover:text-foreground"
                           onClick={() => setOpen(false)}
                         >

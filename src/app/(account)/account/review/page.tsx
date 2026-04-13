@@ -1,6 +1,6 @@
 import { HydrateClient } from "@/core/api/api.server";
+import { AccountSection } from "@/module/account/account-section";
 import { AccountReviewList } from "@/module/review/components/account-review-list";
-import Section from "@/shared/components/layout/section/section";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/card";
 
 export const metadata = {
@@ -11,7 +11,7 @@ export const metadata = {
 export default async function ReviewPage() {
   return (
     <HydrateClient>
-      <Section {...metadata}>
+      <AccountSection {...metadata}>
         <Card>
           <CardHeader>
             <CardTitle>Your Reviews</CardTitle>
@@ -20,7 +20,7 @@ export default async function ReviewPage() {
             <AccountReviewList />
           </CardContent>
         </Card>
-      </Section>
+      </AccountSection>
     </HydrateClient>
   );
 }

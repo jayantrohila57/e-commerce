@@ -5,7 +5,9 @@ export const productTableConfig = {
     base: PATH.STUDIO.PRODUCTS.ROOT,
     new: PATH.STUDIO.PRODUCTS.NEW,
     studio: PATH.STUDIO.PRODUCTS.ROOT,
-    viewStorePrefix: PATH.STORE.PRODUCTS.ROOT,
+    /** Subcategory PLP on the storefront (variant PDP needs a variant slug from catalog). */
+    storeSubcategory: (categorySlug: string, subcategorySlug: string) =>
+      PATH.STORE.SUB_CATEGORIES.SUBCATEGORY(subcategorySlug, categorySlug),
     editBySlug: (slug: string, id: string) => PATH.STUDIO.PRODUCTS.EDIT(slug, id),
   },
   fields: {

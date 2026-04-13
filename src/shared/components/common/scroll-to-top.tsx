@@ -28,7 +28,7 @@ function ScrollToTopButton() {
   };
 
   return (
-    <div className="fixed right-4 bottom-4 z-50">
+    <div className="fixed right-3 bottom-[max(1rem,env(safe-area-inset-bottom,0px))] z-50 sm:right-4">
       {isVisible && (
         <Button size="icon" onClick={() => scrollToTop()}>
           <ArrowUpCircle className="fill-primary transition-all duration-300" />

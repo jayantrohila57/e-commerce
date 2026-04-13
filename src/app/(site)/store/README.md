@@ -10,16 +10,19 @@ The Store UI is designed to align with the canonical Drizzle schema found in `sr
 The navigation and browsing experience follows the database hierarchy:
 - **`category`**: Top-level grouping (e.g., Electronics, Fashion).
 - **`subcategory`**: Nested grouping within categories (e.g., Laptops, Men's Wear).
-- **`series`**: Product lines or collections within subcategories.
 - **`product`**: The base product definition.
 - **`product_variant`**: The actual purchasable items with specific attributes (color, size, etc.).
 
+The storefront uses a **flattened URL shape**: listing pages show **variants** as the purchasable units (not a separate `/series/` segment). Optional `series` data in the schema may still exist for merchandising, but it is not part of the public path.
+
 **Mapping to Routes:**
-- `/store` -> Lists all categories and featured subcategories.
-- `/store/[categorySlug]` -> Lists subcategories within a category.
-- `/store/[categorySlug]/[subCategorySlug]` -> Lists series/products within a subcategory.
-- `/store/[categorySlug]/[subCategorySlug]/[seriesSlug]` -> Lists products/variants within a series.
-- `/store/[categorySlug]/[subCategorySlug]/[seriesSlug]/[variantSlug]` -> Product Detail Page (PDP).
+- `/store` — Lists categories and their subcategories (optional `?q=` filter on category/subcategory text).
+- `/store/categories` — Index of all categories.
+- `/store/[categorySlug]` — Subcategories for one category.
+- `/store/[categorySlug]/[subCategorySlug]` — Variant-level product grid (PLP) for that subcategory.
+- `/store/[categorySlug]/[subCategorySlug]/[variantSlug]` — Product Detail Page (PDP) for a single purchasable variant. Slugs must match the live catalog.
+
+**Route helper:** `PATH.STORE.PDP.VARIANT(categorySlug, subcategorySlug, variantSlug)` in `src/shared/config/routes.ts`.
 
 ### 2. Commerce & User Data
 - **`cart` & `cart_line`**: Managed via the cart drawer and checkout flow.

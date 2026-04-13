@@ -60,11 +60,11 @@ export const footer: NavType[] = [
 
 export default function Footer() {
   return (
-    <div className="h-full w-full  mt-16 items-center border-r border-t justify-between">
+    <div className="mt-16 h-full w-full min-w-0 items-center justify-between border-r border-t">
       <div className="h-full w-full flex-row">
-        <div className="relative flex border-b h-full w-full flex-col-reverse justify-between md:flex-row">
-          <div className="z-10 flex max-w-2xl p-4 border-r flex-col justify-between sm:flex-row md:max-w-xl md:flex-col">
-            <div className="w-full">
+        <div className="relative flex h-full w-full flex-col-reverse justify-between border-b md:flex-row">
+          <div className="z-10 flex min-w-0 max-w-2xl flex-col justify-between border-r p-4 sm:flex-row md:max-w-xl md:flex-col">
+            <div className="min-w-0 w-full">
               <Link href={PATH.ROOT}>
                 <div className="flex flex-row items-start justify-start gap-1">
                   <div className="mt-1 text-2xl font-medium">{site.name}</div>
@@ -82,16 +82,16 @@ export default function Footer() {
                 <span className="text-muted-foreground pr-2">{"Address:"}</span> {site.address}
               </p>
             </div>
-            <div className="pb-20">
+            <div className="pb-8 md:pb-16">
               <h4 className="mb-2 text-lg font-semibold">{"Supported Payment"}</h4>
-              <div className="flex space-x-2">
+              <div className="flex flex-wrap gap-2">
                 <Icons.paypal className="h-6 w-9" />
                 <Icons.visa className="h-10 w-auto" />
               </div>
             </div>
           </div>
-          <div className="z-10 col-span-1 grid w-full grid-cols-1 md:col-span-2 pb-20">
-            <div className="grid w-full grid-cols-1 gap-4 p-4 border-b md:grid-cols-4 pb-20">
+          <div className="z-10 col-span-1 grid w-full min-w-0 grid-cols-1 md:col-span-2">
+            <div className="grid w-full grid-cols-1 gap-4 border-b p-4 pb-8 md:grid-cols-4 md:pb-12">
               <div className="col-span-2">
                 <h4 className="mb-2 text-lg font-semibold">{"Connect On Social"}</h4>
                 <div className="flex gap-5">
@@ -108,17 +108,17 @@ export default function Footer() {
                 />
               </div>
             </div>
-            <div className="grid w-full grid-cols-2 sm:grid-cols-2 md:grid-cols-6 p-4">
+            <div className="grid w-full grid-cols-2 gap-x-4 gap-y-8 p-4 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6">
               {footer?.map(({ title, submenu }) => {
                 return (
-                  <div key={title}>
-                    <h3 className="mb-4 text-xl font-semibold">{(title && title) || "No Title"}</h3>
-                    <ul className="space-y-1 text-sm md:space-y-2">
+                  <div key={title} className="min-w-0">
+                    <h3 className="mb-3 text-lg font-semibold md:mb-4 md:text-xl">{(title && title) || "No Title"}</h3>
+                    <ul className="space-y-0 text-sm md:space-y-1">
                       {submenu?.map(({ newTab, href, title }) => {
                         return (
                           <li key={href + title}>
                             <Link
-                              className="underline-offset-4 hover:underline"
+                              className="block py-2 underline-offset-4 hover:underline md:py-1.5"
                               target={newTab ? "_blank" : "_self"}
                               href={href || PATH.ROOT}
                             >
@@ -134,15 +134,15 @@ export default function Footer() {
             </div>
           </div>
         </div>
-        <div className="flex h-16 w-full items-center justify-between">
-          <div className="flex h-full w-auto items-center justify-center">
-            <AppBrand className="p-4 flex h-full border-r px-4 items-center justify-center" />
+        <div className="flex h-16 w-full min-w-0 items-center justify-between pb-[env(safe-area-inset-bottom)]">
+          <div className="flex h-full w-auto min-w-0 items-center justify-center">
+            <AppBrand className="flex h-full items-center justify-center border-r p-3 px-4 sm:p-4" />
           </div>
-          <div className="flex h-full w-auto items-center justify-center">
-            <div className="border-l p-4 w-16">
+          <div className="flex h-full w-auto shrink-0 items-center justify-center">
+            <div className="flex h-full w-14 items-center justify-center border-l p-3 sm:w-16 sm:p-4">
               <ThemeToggle />
             </div>
-            <div className="border-l p-4 w-16">
+            <div className="flex h-full w-14 items-center justify-center border-l p-3 sm:w-16 sm:p-4">
               <RSS />
             </div>
           </div>

@@ -1,8 +1,23 @@
-import type { LucideIcon } from "lucide-react";
+import { HelpCircle, type LucideIcon } from "lucide-react";
+import type { Route } from "next";
+import { ContentEmpty } from "@/shared/components/common/content-empty";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/shared/components/ui/accordion";
 import { Card, CardContent, CardTitle } from "@/shared/components/ui/card";
+import { PATH } from "@/shared/config/routes";
 
 export function FAQSection({ data }: { data: { id: string; title: string; content: string; icon: LucideIcon }[] }) {
+  if (!data.length) {
+    return (
+      <ContentEmpty
+        icon={HelpCircle}
+        title="No questions listed yet"
+        description="FAQ content will appear here when it is published. You can still reach our support team for help."
+        primaryAction={{ label: "Contact support", href: PATH.SITE.SUPPORT.CONTACT as Route }}
+        secondaryAction={{ label: "Help center", href: PATH.SITE.SUPPORT.HELP_CENTER as Route }}
+      />
+    );
+  }
+
   const defaultOpen = data[0]?.id ?? "1";
   return (
     <Card className="grid grid-cols-1 overflow-hidden lg:grid-cols-2">

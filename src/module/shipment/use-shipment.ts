@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { apiClient } from "@/core/api/api.client";
 import type { ShipmentCreateInput, ShipmentUpdateStatusInput } from "@/module/shipment/shipment.schema";
 import { STATUS } from "@/shared/config/api.config";
+import { handleTrpcAuthClientError } from "@/shared/utils/handle-trpc-auth-error";
 
 export function useShipment(orderId?: string | null) {
   const utils = apiClient.useUtils();
@@ -23,7 +24,8 @@ export function useShipment(orderId?: string | null) {
         toast.error(res.message ?? "Failed to create shipment.");
       }
     },
-    onError: () => {
+    onError: (err) => {
+      if (handleTrpcAuthClientError(err, "Could not create the shipment. Please sign in again.")) return;
       toast.error("Error creating shipment.");
     },
   });
@@ -39,7 +41,8 @@ export function useShipment(orderId?: string | null) {
         toast.error(res.message ?? "Failed to update shipment status.");
       }
     },
-    onError: () => {
+    onError: (err) => {
+      if (handleTrpcAuthClientError(err, "Could not update shipment status. Please sign in again.")) return;
       toast.error("Error updating shipment status.");
     },
   });

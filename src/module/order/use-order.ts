@@ -3,6 +3,7 @@
 import { toast } from "sonner";
 import { apiClient } from "@/core/api/api.client";
 import { STATUS } from "@/shared/config/api.config";
+import { handleTrpcAuthClientError } from "@/shared/utils/handle-trpc-auth-error";
 import type { Order } from "./order.schema";
 
 export function useOrder() {
@@ -25,7 +26,8 @@ export function useOrder() {
         toast.error(res.message || "Failed to update order status");
       }
     },
-    onError: () => {
+    onError: (err) => {
+      if (handleTrpcAuthClientError(err, "Could not update the order. Please sign in again.")) return;
       toast.error("Error updating order status");
     },
   });

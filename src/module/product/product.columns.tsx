@@ -1,13 +1,16 @@
 "use client";
 
 import type { ColumnDef, Row } from "@tanstack/react-table";
+import { SquareArrowOutUpRight } from "lucide-react";
 import type { Route } from "next";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMemo } from "react";
 import { toast } from "sonner";
 import { apiClient } from "@/core/api/api.client";
 import { DataTableColumnHeader } from "@/shared/components/table/data-table-column-header";
 import { commonColumns } from "@/shared/components/table/data-table-columns";
+import { Button } from "@/shared/components/ui/button";
 import { STATUS } from "@/shared/config/api.config";
 import { productTableConfig } from "./product.table.config";
 import type { ProductBase } from "./product.types";
@@ -30,9 +33,10 @@ export function useProductColumns() {
 
   return useMemo<ColumnDef<ProductBase>[]>(() => {
     const handleView = (row: Row<ProductBase>) => {
-      const slug = row.getValue(productTableConfig.fields.slug);
-      if (slug && typeof slug === "string") {
-        window.open(`${productTableConfig.routes.viewStorePrefix}/${slug}`, "_blank");
+      const categorySlug = row.original.categorySlug;
+      const subcategorySlug = row.original.subcategorySlug;
+      if (categorySlug && subcategorySlug) {
+        window.open(productTableConfig.routes.storeSubcategory(categorySlug, subcategorySlug), "_blank");
       }
     };
 
@@ -76,7 +80,25 @@ export function useProductColumns() {
         ),
       },
       ...commonColumns.statusColumn<ProductBase>(),
-      ...commonColumns.slugColumn<ProductBase>(productTableConfig.routes.viewStorePrefix),
+      {
+        accessorKey: productTableConfig.fields.slug,
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Store" />,
+        cell: ({ row }) => {
+          const href = productTableConfig.routes.storeSubcategory(
+            row.original.categorySlug,
+            row.original.subcategorySlug,
+          );
+          return (
+            <div className="flex w-[120px]">
+              <Link href={href as Route} target="_blank" rel="noopener noreferrer">
+                <Button variant="link">
+                  View <SquareArrowOutUpRight className="h-4 w-4" />
+                </Button>
+              </Link>
+            </div>
+          );
+        },
+      },
       ...commonColumns.createdAtColumn<ProductBase>(),
       ...commonColumns.updatedAtColumn<ProductBase>(),
       ...commonColumns.actionsColumn<ProductBase>({

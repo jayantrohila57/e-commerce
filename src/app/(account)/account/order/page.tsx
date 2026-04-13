@@ -1,5 +1,5 @@
+import { AccountSection } from "@/module/account/account-section";
 import { OrderList } from "@/module/order/components/order-list";
-import Section from "@/shared/components/layout/section/section";
 
 export const metadata = {
   title: "Orders",
@@ -8,8 +8,8 @@ export const metadata = {
 
 export default async function OrderPage() {
   return (
-    <Section {...metadata}>
+    <AccountSection {...metadata}>
       <OrderList />
-    </Section>
+    </AccountSection>
   );
 }

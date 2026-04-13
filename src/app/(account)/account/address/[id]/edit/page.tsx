@@ -1,5 +1,5 @@
+import { AccountSection } from "@/module/account/account-section";
 import { AddressEditForm } from "@/module/address/components/address-edit-form";
-import Section from "@/shared/components/layout/section/section";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/components/ui/card";
 
 export const metadata = {
@@ -9,7 +9,7 @@ export const metadata = {
 
 export default async function AddressEditPage() {
   return (
-    <Section {...metadata}>
+    <AccountSection {...metadata}>
       <Card className="h-full w-full border-none">
         <CardHeader>
           <CardTitle>Edit address</CardTitle>
@@ -19,6 +19,6 @@ export default async function AddressEditPage() {
           <AddressEditForm />
         </CardContent>
       </Card>
-    </Section>
+    </AccountSection>
   );
 }

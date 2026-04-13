@@ -4,6 +4,7 @@ import { Truck } from "lucide-react";
 import type { Route } from "next";
 import { ShipmentCard } from "@/module/shipment/components/shipment-card";
 import type { Shipment } from "@/module/shipment/shipment.schema";
+import { ContentEmpty } from "@/shared/components/common/content-empty";
 import { Button } from "@/shared/components/ui/button";
 import { Skeleton } from "@/shared/components/ui/skeleton";
 import { PATH } from "@/shared/config/routes";
@@ -39,19 +40,21 @@ export function ShipmentList({
 
   if (!shipments.length) {
     return (
-      <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-border/70 bg-muted/40 px-6 py-10 text-center">
-        <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-background shadow-sm">
-          <Truck className="h-6 w-6 text-muted-foreground" />
-        </div>
-        <h3 className="mb-1 text-lg font-semibold">No shipments yet</h3>
-        <p className="mb-4 max-w-sm text-sm text-muted-foreground">
-          Shipments for your orders will appear here once they are created and dispatched.
-        </p>
-        {onRefresh && (
-          <Button size="sm" variant="outline" onClick={onRefresh}>
-            Refresh
-          </Button>
-        )}
+      <div className="space-y-4">
+        <ContentEmpty
+          icon={Truck}
+          title="No shipments yet"
+          description="Tracking details will show up here after your orders are packed and dispatched."
+          primaryAction={{ label: "Browse store", href: PATH.STORE.ROOT }}
+          secondaryAction={{ label: "Your orders", href: PATH.ACCOUNT.ORDER }}
+        />
+        {onRefresh ? (
+          <div className="flex justify-center">
+            <Button size="sm" variant="outline" onClick={onRefresh}>
+              Refresh
+            </Button>
+          </div>
+        ) : null}
       </div>
     );
   }

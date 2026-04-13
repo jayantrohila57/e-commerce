@@ -1,5 +1,7 @@
+import { Store } from "lucide-react";
 import type { Route } from "next";
 import { apiServer, HydrateClient } from "@/core/api/api.server";
+import { ContentEmpty } from "@/shared/components/common/content-empty";
 import Section from "@/shared/components/layout/section/section";
 import { PATH } from "@/shared/config/routes";
 import CategoryCard from "./category-card";
@@ -20,9 +22,8 @@ export default async function ShopByCategoryGrid({
       })
     ).data?.slice(0, 4);
 
-  if (!categories?.length) {
-    return null;
-  }
+  const list = categories ?? [];
+
   return (
     <HydrateClient>
       <Section
@@ -33,18 +34,28 @@ export default async function ShopByCategoryGrid({
           actionLink: PATH.STORE.CATEGORIES.ROOT as Route,
         }}
       >
-        <div className="grid grid-cols-1 h-full w-full border-b sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4">
-          {categories.map((category) => (
-            <CategoryCard
-              key={category.id}
-              id={category.id}
-              href={PATH.STORE.CATEGORIES.CATEGORY(category.slug) as Route}
-              title={category.title}
-              description={category.description}
-              image={category.image}
-            />
-          ))}
-        </div>
+        {list.length === 0 ? (
+          <ContentEmpty
+            icon={Store}
+            title="Categories coming soon"
+            description="There are no product categories to show yet. Visit the store to see other ways to shop."
+            primaryAction={{ label: "Go to store", href: PATH.STORE.ROOT }}
+            secondaryAction={{ label: "Home", href: PATH.ROOT }}
+          />
+        ) : (
+          <div className="grid grid-cols-1 h-full w-full border-b sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4">
+            {list.map((category) => (
+              <CategoryCard
+                key={category.id}
+                id={category.id}
+                href={PATH.STORE.CATEGORIES.CATEGORY(category.slug) as Route}
+                title={category.title}
+                description={category.description}
+                image={category.image}
+              />
+            ))}
+          </div>
+        )}
       </Section>
     </HydrateClient>
   );

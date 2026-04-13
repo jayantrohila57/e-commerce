@@ -18,7 +18,7 @@ export default async function AccountLayout({ children }: { children: React.Reac
         <Header />
       </Shell.Header>
       <Shell.Main>
-        <Shell.Section>
+        <Shell.Section className="flex min-h-0 flex-1 flex-col">
           <SubNavHeader />
           <AccountPageLayout>{children}</AccountPageLayout>
         </Shell.Section>

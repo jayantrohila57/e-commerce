@@ -1,12 +1,24 @@
+import { LayoutGrid } from "lucide-react";
 import type { Route } from "next";
 import Link from "next/link";
+import { ContentEmpty } from "@/shared/components/common/content-empty";
 import { Button } from "@/shared/components/ui/button";
 import { PATH } from "@/shared/config/routes";
 import type { GetCategoryWithSubcategoriesOutput } from "./category.types";
 import CategoryCard from "./category-card";
 
 export const CategoryItem = ({ data }: { data: GetCategoryWithSubcategoriesOutput["data"] }) => {
-  if (!data) return null;
+  if (!data) {
+    return (
+      <ContentEmpty
+        icon={LayoutGrid}
+        title="Category unavailable"
+        description="We could not load this category. It may have been removed or the link is outdated."
+        primaryAction={{ label: "All categories", href: PATH.STORE.CATEGORIES.ROOT }}
+        secondaryAction={{ label: "Store home", href: PATH.STORE.ROOT }}
+      />
+    );
+  }
 
   const subs = data.subcategories ?? [];
   if (subs.length === 0) {
@@ -29,7 +41,7 @@ export const CategoryItem = ({ data }: { data: GetCategoryWithSubcategoriesOutpu
   }
 
   return (
-    <div className="grid-rows-auto grid h-full w-full grid-cols-4">
+    <div className="grid h-full w-full grid-cols-1 gap-4 px-2 pb-4 sm:grid-cols-2 sm:gap-0 sm:px-0 sm:pb-0 lg:grid-cols-3 xl:grid-cols-4">
       {subs.map((subcategory) => (
         <CategoryCard
           key={subcategory.id}

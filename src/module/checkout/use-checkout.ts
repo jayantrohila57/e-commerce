@@ -5,6 +5,7 @@ import { apiClient } from "@/core/api/api.client";
 import type { Address } from "@/module/address/address.schema";
 import { useAddress } from "@/module/address/use-address";
 import { useCart } from "@/module/cart/use-cart";
+import { handleTrpcAuthClientError } from "@/shared/utils/handle-trpc-auth-error";
 import type { CheckoutFormBody, CheckoutInitResult } from "./checkout.schema";
 
 function addressToSnapshot(addr: Pick<Address, "line1" | "line2" | "city" | "state" | "postalCode" | "country">) {
@@ -92,6 +93,7 @@ export function useCheckout() {
         razorpayOrderId,
       };
     } catch (err) {
+      if (handleTrpcAuthClientError(err, "Please sign in again to complete checkout.")) return null;
       toast.error("Something went wrong. Please try again.");
       console.error(err);
       return null;

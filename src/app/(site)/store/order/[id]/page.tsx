@@ -1,9 +1,13 @@
+import type { Route } from "next";
+import { headers } from "next/headers";
 import { notFound, redirect } from "next/navigation";
 import { apiServer } from "@/core/api/api.server";
+import { getServerSession } from "@/core/auth/auth.server";
 import { OrderDetailSection } from "@/module/order/order-detail.section";
 import { ShipmentTrackingSection } from "@/module/shipment/components/shipment-tracking-section";
 import Section from "@/shared/components/layout/section/section";
 import { PATH } from "@/shared/config/routes";
+import { safeAuthCallbackPath, signInUrlWithCallback } from "@/shared/utils/auth-callback";
 
 interface StoreOrderDetailPageProps {
   params: Promise<{
@@ -21,6 +25,14 @@ export default async function StoreOrderDetailPage({ params }: StoreOrderDetailP
 
   if (!id) {
     return redirect(PATH.STORE.ROOT);
+  }
+
+  const { session } = await getServerSession();
+  if (!session) {
+    const h = await headers();
+    const intended =
+      safeAuthCallbackPath(h.get("x-intended-path") ?? undefined) ?? (`${PATH.STORE.ORDER.DETAIL(id)}` as Route);
+    redirect(signInUrlWithCallback(intended) as Route);
   }
 
   const res = await apiServer.order.get({

@@ -1,5 +1,6 @@
 "use client";
 
+import type { Route } from "next";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 import { toast } from "sonner";
@@ -11,7 +12,7 @@ import { AuthSchema } from "./auth-schema";
 
 type FormValues = z.infer<typeof AuthSchema.SIGN_IN.INPUT>;
 
-export function SignInForm() {
+export function SignInForm({ redirectTo }: { redirectTo?: Route }) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
 
@@ -30,7 +31,7 @@ export function SignInForm() {
         toast.error(result.error.message || "Failed to sign in");
       } else {
         toast.success("Signed in successfully!", { id: toastId });
-        router.push(PATH.SITE.ROOT);
+        router.push(redirectTo ?? PATH.SITE.ROOT);
       }
     });
   };

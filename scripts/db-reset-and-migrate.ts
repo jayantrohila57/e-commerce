@@ -3,8 +3,8 @@
  * Use when migration history and the live schema are out of sync.
  */
 import { execSync } from "node:child_process";
-import { config } from "dotenv";
 import { Pool } from "@neondatabase/serverless";
+import { config } from "dotenv";
 
 config({ path: ".env" });
 config({ path: ".env.local", override: true });

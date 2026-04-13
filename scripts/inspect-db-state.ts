@@ -1,5 +1,5 @@
-import { config } from "dotenv";
 import { Pool } from "@neondatabase/serverless";
+import { config } from "dotenv";
 
 config({ path: ".env" });
 config({ path: ".env.local", override: true });

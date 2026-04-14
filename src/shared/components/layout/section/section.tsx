@@ -42,7 +42,7 @@ export default function Section({
               </div>
             </div>
           )}
-          <CardHeader className="w-full p-4 sm:p-6">
+          <CardHeader className="w-full">
             {title && <CardTitle className="text-2xl font-semibold sm:text-3xl md:text-4xl">{title}</CardTitle>}
             {description && (
               <CardDescription className="text-sm text-muted-foreground sm:text-base">{description}</CardDescription>

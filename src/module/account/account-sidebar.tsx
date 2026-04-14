@@ -45,7 +45,7 @@ export function AccountSidebar() {
 
   return (
     <nav aria-label="Account" className="w-full md:sticky md:top-20 md:self-start">
-      <ul className={cn("flex gap-1 overflow-x-auto p-2 pb-3 md:flex-col md:gap-0.5 md:p-3 md:pb-3")}>
+      <ul className={cn("flex gap-1 overflow-x-auto md:flex-col md:gap-0.5")}>
         {sections.map((section) => {
           const active = isNavActive(pathname, section);
           const Icon = section.icon;

@@ -1,6 +1,7 @@
 "use client";
 
-import { useFormState, useFormStatus } from "react-dom";
+import { useActionState } from "react";
+import { useFormStatus } from "react-dom";
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
 import {
@@ -29,7 +30,7 @@ export function NewsletterSignupForm({
   submitLabel?: string;
   inputClassName?: string;
 }) {
-  const [state, formAction] = useFormState<NewsletterSubscribeState, FormData>(
+  const [state, formAction] = useActionState<NewsletterSubscribeState, FormData>(
     subscribeToNewsletter,
     newsletterSubscribeInitialState,
   );
